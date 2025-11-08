@@ -831,4 +831,210 @@
                     <div class="stat-card">
                         <div class="stat-label">შიში & სიხარბე</div>
                         <div class="stat-value">${parseInt(fearGreedData.value)}</div>
-                    </div
+                    </div>
+                `;
+            } else {
+                statsHTML += '<div class="stat-card"><div class="stat-label">შიში & სიხარბე</div><div class="stat-value">--</div></div>';
+            }
+
+            document.getElementById('marketStats').innerHTML = statsHTML;
+
+            // Top gainer
+            const sortedByChange = [...cryptoData].sort((a, b) => 
+                (b.price_change_percentage_24h || 0) - (a.price_change_percentage_24h || 0)
+            );
+            const topGainer = sortedByChange[0];
+
+            if (topGainer) {
+                const changePercent = topGainer.price_change_percentage_24h || 0;
+                const gaugeWidth = Math.min(Math.abs(changePercent) * 2, 100);
+                
+                document.getElementById('topGainer').innerHTML = `
+                    <div class="top-gainer">
+                        <div class="gainer-label">🏆 Top Gainer (24h)</div>
+                        <div class="gainer-content">
+                            <img src="${topGainer.image}" alt="${topGainer.name}" class="gainer-icon">
+                            <div class="gainer-info">
+                                <div class="gainer-name">${topGainer.name}</div>
+                                <div class="gainer-price">${formatPrice(topGainer.current_price)}</div>
+                            </div>
+                        </div>
+                        <div class="gainer-gauge">
+                            <div class="gauge-bar">
+                                <div class="gauge-fill" style="width: ${gaugeWidth}%"></div>
+                            </div>
+                            <div class="gauge-value">+${changePercent.toFixed(1)}%</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Gold token
+            const goldToken = cryptoData.find(token => token.id === 'tether-gold');
+            if (goldToken) {
+                const changePercent = goldToken.price_change_percentage_24h || 0;
+                const isNegative = changePercent < 0;
+                const gaugeWidth = Math.min(Math.abs(changePercent) * 2, 100);
+                const sign = isNegative ? '-' : '+';
+                const labelColor = isNegative ? '#fca5a5' : '#fbbf24';
+                const priceColor = labelColor;
+                const valueColor = isNegative ? '#ef4444' : '#f59e0b';
+                const gaugeFillColor = isNegative ? 
+                    'linear-gradient(90deg, #ef4444, #dc2626, #ef4444)' : 
+                    'linear-gradient(90deg, #f59e0b, #d97706, #f59e0b)';
+
+                document.getElementById('xautBlock').innerHTML = `
+                    <div class="xaut-block" style="border-color: ${isNegative ? 'rgba(239, 68, 68, 0.4)' : 'rgba(245, 158, 11, 0.4)'}">
+                        <div class="gainer-label" style="color: ${labelColor};">🪙 ოქრო 24ს</div>
+                        <div class="gainer-content">
+                            <img src="${goldToken.image}" alt="Gold" class="gainer-icon">
+                            <div class="gainer-info">
+                                <div class="gainer-name">${goldToken.name}</div>
+                                <div class="gainer-price" style="color: ${priceColor};">${formatPrice(goldToken.current_price)}</div>
+                            </div>
+                        </div>
+                        <div class="gainer-gauge">
+                            <div class="gauge-bar">
+                                <div class="gauge-fill" style="width: ${gaugeWidth}%; background: ${gaugeFillColor}; background-size: 200% auto;"></div>
+                            </div>
+                            <div class="gauge-value" style="color: ${valueColor};">${sign}${Math.abs(changePercent).toFixed(1)}%</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Sort and render tokens
+            cryptoData.sort((a, b) => {
+                let aVal, bVal;
+                
+                if (sortColumn === 'name') {
+                    aVal = a.name.toLowerCase();
+                    bVal = b.name.toLowerCase();
+                } else if (sortColumn === 'price') {
+                    aVal = a.current_price || 0;
+                    bVal = b.current_price || 0;
+                } else if (sortColumn === 'change') {
+                    aVal = a.price_change_percentage_24h || 0;
+                    bVal = b.price_change_percentage_24h || 0;
+                }
+
+                if (sortDirection === 'asc') {
+                    return aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
+                } else {
+                    return aVal < bVal ? 1 : aVal > bVal ? -1 : 0;
+                }
+            });
+
+            renderTokenList();
+        }
+
+        function sortBy(column) {
+            if (sortColumn === column) {
+                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortColumn = column;
+                sortDirection = column === 'name' ? 'asc' : 'desc';
+            }
+
+            cryptoData.sort((a, b) => {
+                let aVal, bVal;
+                
+                if (column === 'name') {
+                    aVal = a.name.toLowerCase();
+                    bVal = b.name.toLowerCase();
+                } else if (column === 'price') {
+                    aVal = a.current_price || 0;
+                    bVal = b.current_price || 0;
+                } else if (column === 'change') {
+                    aVal = a.price_change_percentage_24h || 0;
+                    bVal = b.price_change_percentage_24h || 0;
+                }
+
+                if (sortDirection === 'asc') {
+                    return aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
+                } else {
+                    return aVal < bVal ? 1 : aVal > bVal ? -1 : 0;
+                }
+            });
+
+            renderTokenList();
+        }
+
+        function renderTokenList() {
+            // Update sort arrows
+            document.getElementById('sortName').className = 'sort-arrow';
+            document.getElementById('sortPrice').className = 'sort-arrow';
+            document.getElementById('sortChange').className = 'sort-arrow';
+            
+            const activeArrow = document.getElementById('sort' + sortColumn.charAt(0).toUpperCase() + sortColumn.slice(1));
+            if (activeArrow) {
+                activeArrow.className = 'sort-arrow active';
+                activeArrow.textContent = sortDirection === 'asc' ? '▲' : '▼';
+            }
+
+            // Render tokens
+            const tokenHTML = cryptoData.map(token => {
+                const change = token.price_change_percentage_24h || 0;
+                const changeClass = change >= 0 ? 'positive' : 'negative';
+                const changeSymbol = change >= 0 ? '▲' : '▼';
+                
+                return `
+                    <div class="token-card">
+                        <img src="${token.image}" alt="${token.name}" class="token-icon">
+                        <div class="token-info">
+                            <div class="token-name">${token.name}</div>
+                            <div class="token-symbol">${token.symbol}</div>
+                        </div>
+                        <div class="token-price">${formatPrice(token.current_price)}</div>
+                        <div style="text-align: right;">
+                            <div class="token-change ${changeClass}">
+                                ${changeSymbol} ${Math.abs(change).toFixed(1)}%
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('tokenGrid').innerHTML = tokenHTML || 
+                '<div class="loading">No tokens to display</div>';
+        }
+
+        // Initialize
+        async function init() {
+            await loadFirebaseData();
+            await fetchCryptoData();
+            
+            // Auto-refresh every 90 seconds
+            setInterval(() => fetchCryptoData(), 90000);
+            
+            // Listen for Firebase changes in real-time
+            db.ref('tokens').on('value', async (snapshot) => {
+                const tokensObj = snapshot.val() || {};
+                tokens = Object.values(tokensObj);
+                console.log('Tokens updated from Firebase:', tokens);
+                await fetchCryptoData();
+            });
+
+            db.ref('quotes').on('value', (snapshot) => {
+                const quotesObj = snapshot.val() || {};
+                quotes = Object.values(quotesObj);
+                console.log('Quotes updated from Firebase:', quotes);
+                displayQuote();
+            });
+
+            db.ref('settings').on('value', (snapshot) => {
+                const settings = snapshot.val() || {};
+                if (settings.siteName) {
+                    document.getElementById('siteName').textContent = settings.siteName;
+                    document.getElementById('siteTitle').textContent = settings.siteName;
+                }
+                if (settings.siteTagline) {
+                    document.getElementById('siteTagline').textContent = settings.siteTagline;
+                }
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>
