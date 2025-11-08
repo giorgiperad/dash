@@ -1,4 +1,4 @@
-// api/portfolio.js – COMMONJS (WORKS ON VERCEL)
+// api/portfolio.js – COMMONJS
 const admin = require('firebase-admin');
 
 if (!admin.apps.length) {
@@ -17,26 +17,27 @@ const db = admin.database();
 
 module.exports = async (req, res) => {
   console.log('API called:', req.method);
-
+  
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
-
+  
   try {
     const tokenSnap = await db.ref('tokens').once('value');
     const tokens = Object.values(tokenSnap.val() || {}).map(t => t.id).filter(Boolean);
-
+    
     if (!tokens.length) {
       return res.json({ cryptoData: [], globalData: null, fearGreed: null });
     }
-
+    
     const ids = tokens.join(',');
+    
     const [market, globalres, fg] = await Promise.all([
       fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&price_change_percentage=24h`).then(r => r.json()),
       fetch('https://api.coingecko.com/api/v3/global').then(r => r.json()),
       fetch('https://api.alternative.me/fng/').then(r => r.json())
     ]);
-
+    
     res.json({
       cryptoData: market,
       globalData: globalres.data,
