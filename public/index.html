@@ -134,6 +134,55 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 @media(max-width:1600px){.content-grid{grid-template-columns:340px 1fr}}
 @media(max-width:1400px){.content-grid{grid-template-columns:1fr}.hero-section{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:1024px){.navbar{padding:16px 32px}.container{padding:32px}.token-row{grid-template-columns:60px 1.5fr 1fr 1fr}.token-mcap-col{display:none}.table-header{grid-template-columns:60px 1.5fr 1fr 1fr}.table-header-cell:last-child{display:none}}
+/* ────── ANIMATED SVG ARROW ────── */
+.change-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 900;
+  transition: all .3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.change-arrow {
+  width: 18px;
+  height: 18px;
+  transition: transform .3s ease, filter .3s ease;
+}
+
+.change-badge:hover .change-arrow {
+  transform: translateY(-2px) scale(1.2);
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+/* Pulse animation on load */
+@keyframes arrowPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+.change-arrow {
+  animation: arrowPulse 1.5s ease-in-out infinite;
+}
+
+/* Positive / Negative colors (keep your existing) */
+.change-badge.positive { 
+  background: rgba(16, 185, 129, 0.15); 
+  color: #10b981; 
+  border: 1px solid rgba(16, 185, 129, 0.3); 
+}
+.change-badge.negative { 
+  background: rgba(239, 68, 68, 0.15); 
+  color: #ef4444; 
+  border: 1px solid rgba(239, 68, 68, 0.3); 
+}
+
+.change-value {
+  font-variant-numeric: tabular-nums;
+}
 </style>
 </head>
 <body>
@@ -416,17 +465,33 @@ function sortData(){
 function renderTokenList(){
   const html = cryptoData.map((t,i)=>{
     const ch = t.price_change_percentage_24h||0;
-    const cls = ch>=0?'positive':'negative';
-    const sym = ch>=0?'Up Arrow':'Down Arrow';
+    const isPositive = ch >= 0;
+    const cls = isPositive ? 'positive' : 'negative';
+    const absChange = Math.abs(ch).toFixed(2);
+
+    // Animated SVG Arrow (inline)
+    const arrowSvg = isPositive 
+      ? `<svg class="change-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+           <path d="M12 19V5M5 12l7-7 7 7"/>
+         </svg>`
+      : `<svg class="change-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+           <path d="M12 5v14M19 12l-7 7-7-7"/>
+         </svg>`;
+
     return `<div class="token-row" style="--index:${i}">
       <div class="token-icon-col"><img src="${t.image}" class="token-icon"></div>
       <div class="token-name-col"><h3>${t.name}</h3><div class="token-symbol">${t.symbol.toUpperCase()}</div></div>
       <div class="token-price-col">${formatPrice(t.current_price)}</div>
-      <div class="token-change-col"><span class="change-badge ${cls}">${sym} ${Math.abs(ch).toFixed(2)}%</span></div>
+      <div class="token-change-col">
+        <span class="change-badge ${cls}">
+          ${arrowSvg}
+          <span class="change-value">${absChange}%</span>
+        </span>
+      </div>
       <div class="token-mcap-col">${formatMarketCap(t.market_cap||0)}</div>
     </div>`;
   }).join('');
-  $('tokensList').innerHTML=html;
+  document.getElementById('tokensList').innerHTML=html;
 }
 
 /* ────── Auto-refresh (90 s) ────── */
