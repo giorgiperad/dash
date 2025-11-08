@@ -1,5 +1,12 @@
 {
   "version": 2,
+  "public": true,
+  "builds": [
+    {
+      "src": "public/index.html",
+      "use": "@vercel/static"
+    }
+  ],
   "functions": {
     "api/*.js": {
       "runtime": "@vercel/node@3"
@@ -12,7 +19,7 @@
     },
     {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": "/public/index.html"
     }
   ]
 }
