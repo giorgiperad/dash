@@ -3,19 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="siteTitle">CRYPTO COLLECTIVE X</title>
+    <title>CRYPTO COLLECTIVE X</title>
     <meta name="theme-color" content="#8b5cf6">
-   
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
-        @keyframes sparkle {
-            0%, 100% { opacity: 0; transform: scale(0); }
-            50% { opacity: 1; transform: scale(1); }
         }
 
         @keyframes shimmer {
@@ -28,11 +22,6 @@
             50% { transform: translateY(-10px); }
         }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
@@ -43,408 +32,450 @@
             100% { transform: rotate(360deg); }
         }
 
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #050505;
             color: #ffffff;
-            padding: 0;
             min-height: 100vh;
-            position: relative;
             overflow-x: hidden;
         }
 
-        body::before {
-            content: '';
+        .confetti {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-            opacity: 0.03;
+            width: 10px;
+            height: 10px;
+            z-index: 9999;
             pointer-events: none;
-            z-index: 0;
-        }
-
-        .sparkle {
-            position: fixed;
-            width: 4px;
-            height: 4px;
-            background: radial-gradient(circle, #fff, transparent);
-            border-radius: 50%;
-            pointer-events: none;
-            animation: sparkle 2s infinite;
-            z-index: 1;
+            animation: confetti-fall 3s linear forwards;
         }
 
         .navbar {
             background: rgba(10, 10, 10, 0.95);
             backdrop-filter: blur(20px);
             border-bottom: 2px solid #1a1a1a;
-            padding: 20px 60px;
+            padding: 16px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
 
         .logo-section {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
         }
 
         .logo-icon {
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
             animation: float 3s ease-in-out infinite;
-            overflow: hidden;
-            position: relative;
         }
 
         .logo-icon img {
-            width: 46px;
-            height: 46px;
+            width: 40px;
+            height: 40px;
             object-fit: contain;
         }
 
-        .logo-text {
-            display: flex;
-            flex-direction: column;
-        }
-
         .logo-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 900;
-            letter-spacing: 1px;
             background: linear-gradient(135deg, #8b5cf6, #ec4899);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-        }
-
-        .logo-subtitle {
-            font-size: 11px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 700;
         }
 
         .nav-right {
             display: flex;
             align-items: center;
-            gap: 32px;
+            gap: 16px;
         }
 
-        .live-indicator {
+        .nav-btn {
+            padding: 8px 16px;
+            border: 2px solid #8b5cf6;
+            background: transparent;
+            color: #8b5cf6;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 12px;
+        }
+
+        .nav-btn:hover {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .nav-btn.primary {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            color: white;
+            border: none;
+        }
+
+        .user-info {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
             padding: 8px 16px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 2px solid rgba(16, 185, 129, 0.3);
-            border-radius: 20px;
-        }
-
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            background: #10b981;
-            border-radius: 50%;
-            box-shadow: 0 0 12px #10b981;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        .live-text {
-            font-size: 10px;
-            color: #10b981;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .time-display {
-            font-size: 14px;
-            color: #888;
-            font-weight: 600;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .container {
-            position: relative;
-            z-index: 2;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 60px;
-        }
-
-        .last-update {
-            font-size: 12px;
-            color: #666;
-            text-align: center;
-            padding: 12px;
-            background: rgba(139, 92, 246, 0.05);
+            background: rgba(139, 92, 246, 0.1);
             border-radius: 12px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #0d0d0d;
+            border: 2px solid #8b5cf6;
+            border-radius: 24px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 24px;
         }
 
-        .quote-block {
-            background: #0d0d0d;
-            border-radius: 24px;
-            padding: 28px;
-            margin-bottom: 32px;
-            border: 2px solid #1a1a1a;
-            backdrop-filter: blur(20px);
+        .modal-title {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 28px;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 10px 40px rgba(139, 92, 246, 0.2);
-            position: relative;
-            overflow: hidden;
-            text-align: center;
+            line-height: 1;
         }
 
-        .quote-block::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
+        .close-btn:hover {
+            color: #fff;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #8b5cf6;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .form-group input, .form-group select {
             width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.1), transparent);
-            transition: left 0.5s;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #333;
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
         }
 
-        .quote-block:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 60px rgba(139, 92, 246, 0.3);
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
             border-color: #8b5cf6;
         }
 
-        .quote-block:hover::before {
-            left: 100%;
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        .quote-icon {
-            font-size: 40px;
-            margin-bottom: 16px;
-            filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.8));
-            animation: float 3s ease-in-out infinite;
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.5);
         }
 
-        .quote-text {
-            font-size: 16px;
-            line-height: 1.8;
-            color: #e2e8f0;
-            font-style: italic;
-            margin-bottom: 16px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        .btn-secondary {
+            background: #333;
+            margin-top: 8px;
         }
 
-        .quote-author {
-            font-size: 14px;
-            color: #a78bfa;
+        .btn-secondary:hover {
+            background: #444;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #333;
+            border-radius: 12px;
+            color: #888;
             font-weight: 600;
-            text-align: right;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 14px;
         }
 
-        .market-stats {
+        .tab.active {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border-color: #8b5cf6;
+            color: white;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .portfolio-summary {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 2px solid #8b5cf6;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .portfolio-value {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .portfolio-label {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .portfolio-amount {
+            font-size: 48px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .portfolio-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 32px;
+            gap: 16px;
         }
 
-        .stat-card {
-            background: #0d0d0d;
-            border-radius: 24px;
-            padding: 24px;
-            backdrop-filter: blur(40px);
-            border: 2px solid #1a1a1a;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 60px rgba(139, 92, 246, 0.3);
-            border-color: #8b5cf6;
+        .stat-box {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
         }
 
         .stat-label {
             font-size: 11px;
             color: #666;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-weight: 700;
+            margin-bottom: 8px;
         }
 
         .stat-value {
-            font-size: 28px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #8b5cf6, #ec4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.6));
-        }
-
-        .featured-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 32px;
-        }
-
-        .top-gainer, .xaut-block {
-            border-radius: 28px;
-            padding: 28px;
-            backdrop-filter: blur(40px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .top-gainer {
-            background: #0d0d0d;
-            border: 2px solid rgba(16, 185, 129, 0.3);
-        }
-
-        .xaut-block {
-            background: #0d0d0d;
-            border: 2px solid rgba(245, 158, 11, 0.4);
-        }
-
-        .top-gainer:hover, .xaut-block:hover {
-            transform: translateY(-4px);
-        }
-
-        .gainer-label {
-            font-size: 13px;
-            color: #6ee7b7;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-weight: 800;
-            text-shadow: 0 0 15px rgba(110, 231, 183, 0.8);
-        }
-
-        .gainer-content {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .gainer-icon {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            border: 3px solid rgba(52, 211, 153, 0.6);
-            box-shadow: 0 0 30px rgba(52, 211, 153, 0.5);
-        }
-
-        .gainer-info {
-            flex: 1;
-        }
-
-        .gainer-name {
-            font-size: 24px;
-            font-weight: 800;
-            margin-bottom: 8px;
-            color: #f0fdfa;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-        }
-
-        .gainer-price {
             font-size: 20px;
-            color: #6ee7b7;
-            font-weight: 700;
-            text-shadow: 0 0 15px rgba(110, 231, 183, 0.6);
-        }
-
-        .gainer-gauge {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-top: 20px;
-        }
-
-        .gauge-bar {
-            flex: 1;
-            height: 12px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 6px;
-            overflow: hidden;
-        }
-
-        .gauge-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #10b981, #059669, #10b981);
-            background-size: 200% auto;
-            border-radius: 6px;
-            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.8);
-            animation: shimmer 2s linear infinite;
-        }
-
-        .gauge-value {
-            font-size: 22px;
             font-weight: 800;
-            color: #6ee7b7;
-            text-shadow: 0 0 20px rgba(110, 231, 183, 0.8);
-            min-width: 80px;
+        }
+
+        .stat-value.positive {
+            color: #10b981;
+        }
+
+        .stat-value.negative {
+            color: #ef4444;
+        }
+
+        .holdings-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .holding-card {
+            background: #0d0d0d;
+            border: 2px solid #1a1a1a;
+            border-radius: 16px;
+            padding: 16px;
+            display: grid;
+            grid-template-columns: 40px 1fr auto;
+            gap: 12px;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .holding-card:hover {
+            border-color: #8b5cf6;
+            transform: translateY(-2px);
+        }
+
+        .holding-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        .holding-info h4 {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .holding-info p {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .holding-value {
             text-align: right;
         }
 
-        .table-header {
-            display: grid;
-            grid-template-columns: 56px 1fr 100px 90px;
-            gap: 12px;
-            padding: 18px;
-            margin-bottom: 16px;
-            border-radius: 20px;
+        .holding-amount {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .holding-change {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .alert-card {
             background: #0d0d0d;
             border: 2px solid #1a1a1a;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            backdrop-filter: blur(40px);
         }
 
-        .table-header-text {
-            font-size: 11px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            font-weight: 700;
+        .alert-info h4 {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .alert-info p {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .alert-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: white;
             cursor: pointer;
-            user-select: none;
-            transition: all 0.3s;
+            font-size: 16px;
         }
 
-        .table-header-text:hover {
-            color: #8b5cf6;
+        .icon-btn:hover {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: #8b5cf6;
         }
 
-        .sort-arrow {
-            display: inline-block;
-            margin-left: 6px;
-            opacity: 0.4;
-            font-size: 10px;
-            transition: all 0.3s;
-        }
-
-        .sort-arrow.active {
-            opacity: 1;
-            color: #8b5cf6;
+        .icon-btn.delete:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
         }
 
         .token-grid {
@@ -454,589 +485,861 @@
 
         .token-card {
             background: #0d0d0d;
-            border-radius: 20px;
-            padding: 18px;
-            backdrop-filter: blur(40px);
             border: 2px solid #1a1a1a;
+            border-radius: 16px;
+            padding: 16px;
             display: grid;
-            grid-template-columns: 48px 1fr 100px 90px;
+            grid-template-columns: 40px 1fr 80px 80px;
             gap: 12px;
             align-items: center;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            animation: fadeInUp 0.5s ease-out backwards;
+            transition: all 0.3s;
         }
 
         .token-card:hover {
-            transform: translateY(-4px);
             border-color: #8b5cf6;
-            box-shadow: 0 12px 40px rgba(139, 92, 246, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .token-card.mooning {
+            animation: bounce 1s ease-in-out;
+            border-color: #10b981;
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.5);
         }
 
         .token-icon {
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid #1a1a1a;
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
         }
 
-        .token-info {
-            min-width: 0;
+        .token-info h4 {
+            font-size: 14px;
+            margin-bottom: 2px;
         }
 
-        .token-name {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            color: #f1f5f9;
-        }
-
-        .token-symbol {
-            font-size: 12px;
-            color: #94a3b8;
+        .token-info p {
+            font-size: 11px;
+            color: #888;
             text-transform: uppercase;
-            font-weight: 600;
         }
 
         .token-price {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 700;
-            color: #c7d2fe;
             text-align: right;
         }
 
         .token-change {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 800;
-            padding: 8px 12px;
-            border-radius: 12px;
-            display: inline-block;
-            min-width: 75px;
+            padding: 6px 10px;
+            border-radius: 8px;
             text-align: center;
         }
 
         .positive {
-            color: #6ee7b7;
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.15) 100%);
-            border: 1px solid rgba(52, 211, 153, 0.4);
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+            color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
         }
 
         .negative {
-            color: #fca5a5;
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.15) 100%);
-            border: 1px solid rgba(248, 113, 113, 0.4);
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: #0d0d0d;
+            border: 2px solid #8b5cf6;
+            border-radius: 16px;
+            padding: 16px 20px;
+            min-width: 300px;
+            z-index: 999;
+            animation: slideInRight 0.3s ease-out;
+            box-shadow: 0 10px 40px rgba(139, 92, 246, 0.3);
+        }
+
+        .notification-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .notification-message {
+            font-size: 12px;
+            color: #888;
         }
 
         .loading {
             text-align: center;
-            padding: 60px;
-            font-size: 16px;
-            color: #666;
+            padding: 40px;
+            color: #888;
         }
 
         .spinner {
-            border: 4px solid #1a1a1a;
-            border-top: 4px solid #8b5cf6;
+            border: 3px solid #1a1a1a;
+            border-top: 3px solid #8b5cf6;
             border-radius: 50%;
-            width: 56px;
-            height: 56px;
-            animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-            margin: 0 auto 20px;
-            box-shadow: 0 0 30px rgba(139, 92, 246, 0.6);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
         }
 
-        .error {
-            border-radius: 20px;
-            padding: 20px;
-            margin: 20px 0;
-            background: #0d0d0d;
-            border: 2px solid rgba(239, 68, 68, 0.4);
-            color: #fca5a5;
-            box-shadow: 0 8px 32px rgba(239, 68, 68, 0.3);
+        .empty-state {
             text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        .empty-text {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 24px;
         }
 
         @media (max-width: 768px) {
             .navbar {
-                padding: 16px 20px;
+                padding: 12px 16px;
+            }
+
+            .nav-right {
+                gap: 8px;
+            }
+
+            .nav-btn {
+                padding: 6px 12px;
+                font-size: 11px;
             }
 
             .container {
-                padding: 24px 16px;
-            }
-            
-            .market-stats, .featured-grid {
-                grid-template-columns: 1fr;
+                padding: 16px 12px;
             }
 
-            .table-header, .token-card {
-                grid-template-columns: 40px 1fr 80px 75px;
+            .portfolio-amount {
+                font-size: 32px;
+            }
+
+            .token-card {
+                grid-template-columns: 36px 1fr 70px 70px;
                 gap: 8px;
-                padding: 14px;
+                padding: 12px;
+            }
+
+            .holding-card {
+                grid-template-columns: 36px 1fr auto;
+            }
+
+            .notification {
+                right: 12px;
+                left: 12px;
+                min-width: auto;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Navbar -->
     <nav class="navbar">
         <div class="logo-section">
             <div class="logo-icon">
                 <img src="https://ta3bviqjtxy1kv7x.public.blob.vercel-storage.com/sticker.webp" alt="Logo">
             </div>
-            <div class="logo-text">
-                <div class="logo-title" id="siteName">CRYPTO COLLECTIVE X</div>
-                <div class="logo-subtitle" id="siteTagline"></div>
-            </div>
+            <div class="logo-title" id="siteName">CRYPTO COLLECTIVE X</div>
         </div>
-        <div class="nav-right">
-            <div class="live-indicator">
-                <div class="live-dot"></div>
-                <div class="live-text">LIVE</div>
-            </div>
-            <div class="time-display" id="currentTime">00:00:00</div>
+        <div class="nav-right" id="navRight">
+            <button class="nav-btn" onclick="openModal('loginModal')">Login</button>
+            <button class="nav-btn primary" onclick="openModal('registerModal')">Register</button>
         </div>
     </nav>
 
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Login</h2>
+                <button class="close-btn" onclick="closeModal('loginModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="loginEmail" placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="loginPassword" placeholder="••••••••">
+            </div>
+            <button class="btn" onclick="login()">Login</button>
+            <button class="btn btn-secondary" onclick="closeModal('loginModal'); openModal('registerModal')">
+                Don't have an account? Register
+            </button>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Register</h2>
+                <button class="close-btn" onclick="closeModal('registerModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" id="registerName" placeholder="Your Name">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="registerEmail" placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="registerPassword" placeholder="••••••••">
+            </div>
+            <button class="btn" onclick="register()">Create Account</button>
+            <button class="btn btn-secondary" onclick="closeModal('registerModal'); openModal('loginModal')">
+                Already have an account? Login
+            </button>
+        </div>
+    </div>
+
+    <!-- Add to Portfolio Modal -->
+    <div id="addHoldingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add to Portfolio</h2>
+                <button class="close-btn" onclick="closeModal('addHoldingModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Select Cryptocurrency</label>
+                <select id="holdingCoin">
+                    <option value="">Loading...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Amount You Own</label>
+                <input type="number" step="0.00000001" id="holdingAmount" placeholder="0.00">
+            </div>
+            <div class="form-group">
+                <label>Purchase Price (USD)</label>
+                <input type="number" step="0.01" id="holdingPrice" placeholder="0.00">
+            </div>
+            <button class="btn" onclick="addHolding()">Add to Portfolio</button>
+        </div>
+    </div>
+
+    <!-- Add Price Alert Modal -->
+    <div id="addAlertModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Create Price Alert</h2>
+                <button class="close-btn" onclick="closeModal('addAlertModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Select Cryptocurrency</label>
+                <select id="alertCoin">
+                    <option value="">Loading...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Alert When Price</label>
+                <select id="alertCondition">
+                    <option value="above">Goes Above</option>
+                    <option value="below">Goes Below</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Target Price (USD)</label>
+                <input type="number" step="0.01" id="alertPrice" placeholder="50000.00">
+            </div>
+            <button class="btn" onclick="addAlert()">Create Alert</button>
+        </div>
+    </div>
+
+    <!-- Main Container -->
     <div class="container">
-        <div class="last-update" id="lastUpdate">იტვირთება...</div>
+        <div id="guestView">
+            <div class="empty-state">
+                <div class="empty-icon">🔐</div>
+                <div class="empty-text">Please login or register to access portfolio features</div>
+                <button class="btn" style="max-width: 200px; margin: 0 auto;" onclick="openModal('loginModal')">
+                    Login Now
+                </button>
+            </div>
+        </div>
 
-        <div class="quote-block" id="quoteBlock" onclick="rotateQuote()">
-            <div class="quote-icon">💎</div>
-            <div class="quote-text" id="quoteText">Loading...</div>
-            <div class="quote-author" id="quoteAuthor"></div>
-        </div>
+        <div id="userView" style="display: none;">
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('market')">📊 Market</div>
+                <div class="tab" onclick="switchTab('portfolio')">💼 Portfolio</div>
+                <div class="tab" onclick="switchTab('alerts')">🔔 Alerts</div>
+            </div>
 
-        <div id="marketStats" class="market-stats">
-            <div class="stat-card">
-                <div class="stat-label">BTC დომინაცია</div>
-                <div class="stat-value">--</div>
+            <!-- Market Section -->
+            <div id="marketSection" class="section active">
+                <div id="tokenGrid" class="token-grid">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <div>Loading market data...</div>
+                    </div>
+                </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-label">შიში & სიხარბე</div>
-                <div class="stat-value">--</div>
+
+            <!-- Portfolio Section -->
+            <div id="portfolioSection" class="section">
+                <div class="portfolio-summary">
+                    <div class="portfolio-value">
+                        <div class="portfolio-label">Total Portfolio Value</div>
+                        <div class="portfolio-amount" id="totalValue">$0.00</div>
+                    </div>
+                    <div class="portfolio-stats">
+                        <div class="stat-box">
+                            <div class="stat-label">24h Profit/Loss</div>
+                            <div class="stat-value positive" id="profitLoss">$0.00</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">ROI</div>
+                            <div class="stat-value positive" id="roi">0.00%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <button class="btn" onclick="openModal('addHoldingModal')">+ Add Cryptocurrency</button>
+                </div>
+
+                <div id="holdingsList" class="holdings-list">
+                    <div class="empty-state">
+                        <div class="empty-icon">💼</div>
+                        <div class="empty-text">Your portfolio is empty. Add your first cryptocurrency!</div>
+                    </div>
+                </div>
             </div>
-        </div>
-        
-        <div class="featured-grid">
-            <div id="topGainer"></div>
-            <div id="xautBlock"></div>
-        </div>
-        
-        <div id="loading" class="loading" style="display: none;">
-            <div class="spinner"></div>
-            <div>მონაცემების განახლება...</div>
-        </div>
-        <div id="error"></div>
-        
-        <div class="table-header">
-            <div></div>
-            <div class="table-header-text" style="text-align: left" onclick="sortBy('name')">
-                აქტივი <span class="sort-arrow" id="sortName"></span>
+
+            <!-- Alerts Section -->
+            <div id="alertsSection" class="section">
+                <div style="margin-bottom: 16px;">
+                    <button class="btn" onclick="openModal('addAlertModal')">+ Create Alert</button>
+                </div>
+
+                <div id="alertsList">
+                    <div class="empty-state">
+                        <div class="empty-icon">🔔</div>
+                        <div class="empty-text">No price alerts set. Create your first alert!</div>
+                    </div>
+                </div>
             </div>
-            <div class="table-header-text" style="text-align: right" onclick="sortBy('price')">
-                ფასი <span class="sort-arrow" id="sortPrice"></span>
-            </div>
-            <div class="table-header-text" style="text-align: right" onclick="sortBy('change')">
-                24h <span class="sort-arrow active" id="sortChange">▼</span>
-            </div>
-        </div>
-        
-        <div id="tokenGrid" class="token-grid">
-            <div class="loading">Loading tokens...</div>
         </div>
     </div>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
     <script>
-        // FIREBASE CONFIG - REPLACE WITH YOUR CONFIG
+        // Firebase Config - REPLACE WITH YOUR CONFIG
         const firebaseConfig = {
-    apiKey: "AIzaSyARWG4t3i_pCpu-pOZPqauRufMQhZaI14U",
-    authDomain: "ccx-dashboard.firebaseapp.com",
-    databaseURL: "https://ccx-dashboard-default-rtdb.europe-west1.firebasedatabase.app/",
-    projectId: "ccx-dashboard",
-    storageBucket: "ccx-dashboard.firebasestorage.app",
-    messagingSenderId: "413950601775",
-    appId: "1:413950601775:web:53ca78e202ef7ec884b4da"
-}
+            apiKey: "AIzaSyARWG4t3i_pCpu-pOZPqauRufMQhZaI14U",
+            authDomain: "ccx-dashboard.firebaseapp.com",
+            databaseURL: "https://ccx-dashboard-default-rtdb.europe-west1.firebasedatabase.app/",
+            projectId: "ccx-dashboard",
+            storageBucket: "ccx-dashboard.firebasestorage.app",
+            messagingSenderId: "413950601775",
+            appId: "1:413950601775:web:53ca78e202ef7ec884b4da"
+        };
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+        const auth = firebase.auth();
 
-        let quotes = [];
-        let currentQuoteIndex = 0;
+        let currentUser = null;
         let cryptoData = [];
-        let globalData = null;
-        let fearGreedData = null;
-        let sortColumn = 'change';
-        let sortDirection = 'desc';
+        let userHoldings = [];
+        let userAlerts = [];
         let tokens = [];
 
-        // Update time
-        function updateTime() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('en-US', { 
-                hour12: false,
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-            document.getElementById('currentTime').textContent = timeString;
-        }
-        updateTime();
-        setInterval(updateTime, 1000);
-
-        // Create sparkles
-        function createSparkles() {
-            for (let i = 0; i < 20; i++) {
-                const sparkle = document.createElement('div');
-                sparkle.className = 'sparkle';
-                sparkle.style.left = Math.random() * 100 + '%';
-                sparkle.style.top = Math.random() * 100 + '%';
-                sparkle.style.animationDelay = Math.random() * 2 + 's';
-                document.body.appendChild(sparkle);
+        // Authentication State
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user;
+                showUserView();
+                loadUserData();
+            } else {
+                currentUser = null;
+                showGuestView();
             }
-        }
-        createSparkles();
+        });
 
-        // Load data from Firebase
-        async function loadFirebaseData() {
-            try {
-                // Load tokens
-                const tokensSnapshot = await db.ref('tokens').once('value');
-                const tokensObj = tokensSnapshot.val() || {};
-                tokens = Object.values(tokensObj);
-                console.log('Loaded tokens from Firebase:', tokens);
-
-                // Load quotes
-                const quotesSnapshot = await db.ref('quotes').once('value');
-                const quotesObj = quotesSnapshot.val() || {};
-                quotes = Object.values(quotesObj);
-                console.log('Loaded quotes from Firebase:', quotes);
-
-                // Load settings
-                const settingsSnapshot = await db.ref('settings').once('value');
-                const settings = settingsSnapshot.val() || {};
-                if (settings.siteName) {
-                    document.getElementById('siteName').textContent = settings.siteName;
-                    document.getElementById('siteTitle').textContent = settings.siteName;
-                }
-                if (settings.siteTagline) {
-                    document.getElementById('siteTagline').textContent = settings.siteTagline;
-                }
-
-                displayQuote();
-            } catch (error) {
-                console.error('Error loading from Firebase:', error);
-                document.getElementById('error').innerHTML = 
-                    '<div class="error">⚠️ Firebase connection error. Check console.</div>';
-            }
-        }
-
-        function displayQuote() {
-            if (quotes.length === 0) {
-                document.getElementById('quoteText').textContent = 'No quotes available';
-                return;
-            }
-            const quote = quotes[currentQuoteIndex];
-            document.getElementById('quoteText').textContent = quote.text;
-            document.getElementById('quoteAuthor').textContent = quote.author ? `- ${quote.author}` : '';
-        }
-
-        function rotateQuote() {
-            if (quotes.length === 0) return;
-            currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
-            displayQuote();
-        }
-
-        // Fetch crypto data
-        async function fetchCryptoData() {
-            if (tokens.length === 0) {
-                console.log('No tokens configured yet');
-                return;
-            }
-
-            const errorEl = document.getElementById('error');
-            const loadingEl = document.getElementById('loading');
+        function showUserView() {
+            document.getElementById('guestView').style.display = 'none';
+            document.getElementById('userView').style.display = 'block';
             
-            loadingEl.style.display = 'block';
-            errorEl.innerHTML = '';
+            const navRight = document.getElementById('navRight');
+            navRight.innerHTML = `
+                <div class="user-info">
+                    <div class="user-avatar">${currentUser.email[0].toUpperCase()}</div>
+                    <span style="font-size: 12px; font-weight: 600;">${currentUser.email}</span>
+                </div>
+                <button class="nav-btn" onclick="logout()">Logout</button>
+            `;
+        }
+
+        function showGuestView() {
+            document.getElementById('guestView').style.display = 'block';
+            document.getElementById('userView').style.display = 'none';
+            
+            const navRight = document.getElementById('navRight');
+            navRight.innerHTML = `
+                <button class="nav-btn" onclick="openModal('loginModal')">Login</button>
+                <button class="nav-btn primary" onclick="openModal('registerModal')">Register</button>
+            `;
+        }
+
+        // Modal Functions
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // Authentication
+        async function register() {
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+
+            if (!name || !email || !password) {
+                showNotification('Error', 'Please fill in all fields');
+                return;
+            }
+
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                await userCredential.user.updateProfile({ displayName: name });
+                
+                // Create user profile in database
+                await db.ref(`users/${userCredential.user.uid}`).set({
+                    name: name,
+                    email: email,
+                    createdAt: Date.now()
+                });
+
+                closeModal('registerModal');
+                showNotification('Success', 'Account created! Welcome! 🎉');
+                throwConfetti();
+            } catch (error) {
+                showNotification('Error', error.message);
+            }
+        }
+
+        function logout() {
+            auth.signOut();
+            showNotification('Logged Out', 'See you soon! 👋');
+        }
+
+        // Load User Data
+        async function loadUserData() {
+            if (!currentUser) return;
+
+            // Load tokens
+            const tokensSnapshot = await db.ref('tokens').once('value');
+            const tokensObj = tokensSnapshot.val() || {};
+            tokens = Object.values(tokensObj);
+
+            // Load crypto data
+            await fetchCryptoData();
+
+            // Load user portfolio
+            loadPortfolio();
+
+            // Load user alerts
+            loadAlerts();
+
+            // Populate dropdowns
+            populateDropdowns();
+        }
+
+        // Fetch Crypto Data
+        async function fetchCryptoData() {
+            if (tokens.length === 0) return;
 
             try {
                 const idsParam = tokens.join(',');
-                const [mainResponse, globalResponse, fgResponse] = await Promise.allSettled([
-                    fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${idsParam}&order=market_cap_desc&per_page=250&page=1&sparkline=false&price_change_percentage=24h`),
-                    fetch('https://api.coingecko.com/api/v3/global'),
-                    fetch('https://api.alternative.me/fng/')
-                ]);
-
-                if (mainResponse.status === 'fulfilled') {
-                    cryptoData = await mainResponse.value.json();
-                    console.log('Fetched crypto data:', cryptoData.length);
-                }
-
-                if (globalResponse.status === 'fulfilled') {
-                    const globalJson = await globalResponse.value.json();
-                    globalData = globalJson.data;
-                }
-
-                if (fgResponse.status === 'fulfilled') {
-                    const fgJson = await fgResponse.value.json();
-                    fearGreedData = fgJson.data[0];
-                }
-
-                renderDashboard();
-                document.getElementById('lastUpdate').textContent = 
-                    `ბოლოს განახლდა: ${new Date().toLocaleTimeString()}`;
+                const response = await fetch(
+                    `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${idsParam}&order=market_cap_desc&per_page=250&page=1&sparkline=false&price_change_percentage=24h`
+                );
+                cryptoData = await response.json();
+                renderMarket();
             } catch (error) {
-                console.error('Fetch error:', error);
-                errorEl.innerHTML = 
-                    '<div class="error">⚠️ შეცდომა მონაცემების ჩატვირთვისას</div>';
-            } finally {
-                loadingEl.style.display = 'none';
+                console.error('Error fetching crypto data:', error);
             }
         }
 
-        function formatPrice(price) {
-            if (price >= 1000) return `$${price.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
-            if (price >= 1) return `$${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-            if (price >= 0.01) return `$${price.toFixed(4)}`;
-            return `$${price.toFixed(6)}`;
-        }
-
-        function renderDashboard() {
-            // Render market stats
-            let statsHTML = '';
-            if (globalData) {
-                statsHTML += `
-                    <div class="stat-card">
-                        <div class="stat-label">BTC დომინაცია</div>
-                        <div class="stat-value">${globalData.market_cap_percentage.btc.toFixed(1)}%</div>
-                    </div>
-                `;
-            } else {
-                statsHTML += '<div class="stat-card"><div class="stat-label">BTC დომინაცია</div><div class="stat-value">--</div></div>';
-            }
-
-            if (fearGreedData) {
-                statsHTML += `
-                    <div class="stat-card">
-                        <div class="stat-label">შიში & სიხარბე</div>
-                        <div class="stat-value">${parseInt(fearGreedData.value)}</div>
-                    </div>
-                `;
-            } else {
-                statsHTML += '<div class="stat-card"><div class="stat-label">შიში & სიხარბე</div><div class="stat-value">--</div></div>';
-            }
-
-            document.getElementById('marketStats').innerHTML = statsHTML;
-
-            // Top gainer
-            const sortedByChange = [...cryptoData].sort((a, b) => 
-                (b.price_change_percentage_24h || 0) - (a.price_change_percentage_24h || 0)
-            );
-            const topGainer = sortedByChange[0];
-
-            if (topGainer) {
-                const changePercent = topGainer.price_change_percentage_24h || 0;
-                const gaugeWidth = Math.min(Math.abs(changePercent) * 2, 100);
-                
-                document.getElementById('topGainer').innerHTML = `
-                    <div class="top-gainer">
-                        <div class="gainer-label">🏆 Top Gainer (24h)</div>
-                        <div class="gainer-content">
-                            <img src="${topGainer.image}" alt="${topGainer.name}" class="gainer-icon">
-                            <div class="gainer-info">
-                                <div class="gainer-name">${topGainer.name}</div>
-                                <div class="gainer-price">${formatPrice(topGainer.current_price)}</div>
-                            </div>
-                        </div>
-                        <div class="gainer-gauge">
-                            <div class="gauge-bar">
-                                <div class="gauge-fill" style="width: ${gaugeWidth}%"></div>
-                            </div>
-                            <div class="gauge-value">+${changePercent.toFixed(1)}%</div>
-                        </div>
-                    </div>
-                `;
-            }
-
-            // Gold token
-            const goldToken = cryptoData.find(token => token.id === 'tether-gold');
-            if (goldToken) {
-                const changePercent = goldToken.price_change_percentage_24h || 0;
-                const isNegative = changePercent < 0;
-                const gaugeWidth = Math.min(Math.abs(changePercent) * 2, 100);
-                const sign = isNegative ? '-' : '+';
-                const labelColor = isNegative ? '#fca5a5' : '#fbbf24';
-                const priceColor = labelColor;
-                const valueColor = isNegative ? '#ef4444' : '#f59e0b';
-                const gaugeFillColor = isNegative ? 
-                    'linear-gradient(90deg, #ef4444, #dc2626, #ef4444)' : 
-                    'linear-gradient(90deg, #f59e0b, #d97706, #f59e0b)';
-
-                document.getElementById('xautBlock').innerHTML = `
-                    <div class="xaut-block" style="border-color: ${isNegative ? 'rgba(239, 68, 68, 0.4)' : 'rgba(245, 158, 11, 0.4)'}">
-                        <div class="gainer-label" style="color: ${labelColor};">🪙 ოქრო 24ს</div>
-                        <div class="gainer-content">
-                            <img src="${goldToken.image}" alt="Gold" class="gainer-icon">
-                            <div class="gainer-info">
-                                <div class="gainer-name">${goldToken.name}</div>
-                                <div class="gainer-price" style="color: ${priceColor};">${formatPrice(goldToken.current_price)}</div>
-                            </div>
-                        </div>
-                        <div class="gainer-gauge">
-                            <div class="gauge-bar">
-                                <div class="gauge-fill" style="width: ${gaugeWidth}%; background: ${gaugeFillColor}; background-size: 200% auto;"></div>
-                            </div>
-                            <div class="gauge-value" style="color: ${valueColor};">${sign}${Math.abs(changePercent).toFixed(1)}%</div>
-                        </div>
-                    </div>
-                `;
-            }
-
-            // Sort and render tokens
-            cryptoData.sort((a, b) => {
-                let aVal, bVal;
-                
-                if (sortColumn === 'name') {
-                    aVal = a.name.toLowerCase();
-                    bVal = b.name.toLowerCase();
-                } else if (sortColumn === 'price') {
-                    aVal = a.current_price || 0;
-                    bVal = b.current_price || 0;
-                } else if (sortColumn === 'change') {
-                    aVal = a.price_change_percentage_24h || 0;
-                    bVal = b.price_change_percentage_24h || 0;
-                }
-
-                if (sortDirection === 'asc') {
-                    return aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
-                } else {
-                    return aVal < bVal ? 1 : aVal > bVal ? -1 : 0;
-                }
-            });
-
-            renderTokenList();
-        }
-
-        function sortBy(column) {
-            if (sortColumn === column) {
-                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-            } else {
-                sortColumn = column;
-                sortDirection = column === 'name' ? 'asc' : 'desc';
-            }
-
-            cryptoData.sort((a, b) => {
-                let aVal, bVal;
-                
-                if (column === 'name') {
-                    aVal = a.name.toLowerCase();
-                    bVal = b.name.toLowerCase();
-                } else if (column === 'price') {
-                    aVal = a.current_price || 0;
-                    bVal = b.current_price || 0;
-                } else if (column === 'change') {
-                    aVal = a.price_change_percentage_24h || 0;
-                    bVal = b.price_change_percentage_24h || 0;
-                }
-
-                if (sortDirection === 'asc') {
-                    return aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
-                } else {
-                    return aVal < bVal ? 1 : aVal > bVal ? -1 : 0;
-                }
-            });
-
-            renderTokenList();
-        }
-
-        function renderTokenList() {
-            // Update sort arrows
-            document.getElementById('sortName').className = 'sort-arrow';
-            document.getElementById('sortPrice').className = 'sort-arrow';
-            document.getElementById('sortChange').className = 'sort-arrow';
+        // Render Market
+        function renderMarket() {
+            const grid = document.getElementById('tokenGrid');
             
-            const activeArrow = document.getElementById('sort' + sortColumn.charAt(0).toUpperCase() + sortColumn.slice(1));
-            if (activeArrow) {
-                activeArrow.className = 'sort-arrow active';
-                activeArrow.textContent = sortDirection === 'asc' ? '▲' : '▼';
+            if (cryptoData.length === 0) {
+                grid.innerHTML = '<div class="loading">No market data available</div>';
+                return;
             }
 
-            // Render tokens
-            const tokenHTML = cryptoData.map(token => {
+            grid.innerHTML = cryptoData.map(token => {
                 const change = token.price_change_percentage_24h || 0;
                 const changeClass = change >= 0 ? 'positive' : 'negative';
                 const changeSymbol = change >= 0 ? '▲' : '▼';
-                
+                const isMooning = change >= 10;
+
+                if (isMooning) {
+                    setTimeout(() => throwConfetti(), 300);
+                }
+
                 return `
-                    <div class="token-card">
+                    <div class="token-card ${isMooning ? 'mooning' : ''}">
                         <img src="${token.image}" alt="${token.name}" class="token-icon">
                         <div class="token-info">
-                            <div class="token-name">${token.name}</div>
-                            <div class="token-symbol">${token.symbol}</div>
+                            <h4>${token.name}</h4>
+                            <p>${token.symbol}</p>
                         </div>
                         <div class="token-price">${formatPrice(token.current_price)}</div>
-                        <div style="text-align: right;">
-                            <div class="token-change ${changeClass}">
-                                ${changeSymbol} ${Math.abs(change).toFixed(1)}%
-                            </div>
+                        <div class="token-change ${changeClass}">
+                            ${changeSymbol} ${Math.abs(change).toFixed(1)}%
                         </div>
                     </div>
                 `;
             }).join('');
-
-            document.getElementById('tokenGrid').innerHTML = tokenHTML || 
-                '<div class="loading">No tokens to display</div>';
         }
 
-        // Initialize
-        async function init() {
-            await loadFirebaseData();
-            await fetchCryptoData();
+        // Portfolio Management
+        async function loadPortfolio() {
+            const snapshot = await db.ref(`portfolios/${currentUser.uid}`).once('value');
+            const holdings = snapshot.val() || {};
+            userHoldings = Object.entries(holdings).map(([id, data]) => ({ id, ...data }));
             
-            // Auto-refresh every 90 seconds
-            setInterval(() => fetchCryptoData(), 90000);
+            renderPortfolio();
+        }
+
+        function renderPortfolio() {
+            const list = document.getElementById('holdingsList');
             
-            // Listen for Firebase changes in real-time
-            db.ref('tokens').on('value', async (snapshot) => {
-                const tokensObj = snapshot.val() || {};
-                tokens = Object.values(tokensObj);
-                console.log('Tokens updated from Firebase:', tokens);
-                await fetchCryptoData();
-            });
+            if (userHoldings.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">💼</div>
+                        <div class="empty-text">Your portfolio is empty. Add your first cryptocurrency!</div>
+                    </div>
+                `;
+                return;
+            }
 
-            db.ref('quotes').on('value', (snapshot) => {
-                const quotesObj = snapshot.val() || {};
-                quotes = Object.values(quotesObj);
-                console.log('Quotes updated from Firebase:', quotes);
-                displayQuote();
-            });
+            let totalValue = 0;
+            let totalCost = 0;
 
-            db.ref('settings').on('value', (snapshot) => {
-                const settings = snapshot.val() || {};
-                if (settings.siteName) {
-                    document.getElementById('siteName').textContent = settings.siteName;
-                    document.getElementById('siteTitle').textContent = settings.siteName;
+            list.innerHTML = userHoldings.map(holding => {
+                const crypto = cryptoData.find(c => c.id === holding.coinId);
+                if (!crypto) return '';
+
+                const currentValue = crypto.current_price * holding.amount;
+                const cost = holding.purchasePrice * holding.amount;
+                const profit = currentValue - cost;
+                const profitPercent = ((profit / cost) * 100).toFixed(2);
+
+                totalValue += currentValue;
+                totalCost += cost;
+
+                return `
+                    <div class="holding-card">
+                        <img src="${crypto.image}" alt="${crypto.name}" class="holding-icon">
+                        <div class="holding-info">
+                            <h4>${crypto.name}</h4>
+                            <p>${holding.amount} ${crypto.symbol.toUpperCase()}</p>
+                        </div>
+                        <div class="holding-value">
+                            <div class="holding-amount">${currentValue.toFixed(2)}</div>
+                            <div class="holding-change ${profit >= 0 ? 'positive' : 'negative'}">
+                                ${profit >= 0 ? '+' : ''}${profit.toFixed(2)} (${profitPercent}%)
+                            </div>
+                        </div>
+                        <button class="icon-btn delete" onclick="deleteHolding('${holding.id}')">🗑️</button>
+                    </div>
+                `;
+            }).join('');
+
+            // Update summary
+            const totalProfit = totalValue - totalCost;
+            const roi = totalCost > 0 ? ((totalProfit / totalCost) * 100).toFixed(2) : 0;
+
+            document.getElementById('totalValue').textContent = `${totalValue.toFixed(2)}`;
+            document.getElementById('profitLoss').textContent = `${totalProfit >= 0 ? '+' : ''}${totalProfit.toFixed(2)}`;
+            document.getElementById('profitLoss').className = `stat-value ${totalProfit >= 0 ? 'positive' : 'negative'}`;
+            document.getElementById('roi').textContent = `${roi}%`;
+            document.getElementById('roi').className = `stat-value ${roi >= 0 ? 'positive' : 'negative'}`;
+        }
+
+        async function addHolding() {
+            const coinId = document.getElementById('holdingCoin').value;
+            const amount = parseFloat(document.getElementById('holdingAmount').value);
+            const price = parseFloat(document.getElementById('holdingPrice').value);
+
+            if (!coinId || !amount || !price) {
+                showNotification('Error', 'Please fill in all fields');
+                return;
+            }
+
+            try {
+                const newRef = db.ref(`portfolios/${currentUser.uid}`).push();
+                await newRef.set({
+                    coinId: coinId,
+                    amount: amount,
+                    purchasePrice: price,
+                    addedAt: Date.now()
+                });
+
+                closeModal('addHoldingModal');
+                showNotification('Success', 'Added to portfolio! 🎉');
+                throwConfetti();
+                loadPortfolio();
+
+                // Clear form
+                document.getElementById('holdingAmount').value = '';
+                document.getElementById('holdingPrice').value = '';
+            } catch (error) {
+                showNotification('Error', error.message);
+            }
+        }
+
+        async function deleteHolding(id) {
+            if (!confirm('Remove this from your portfolio?')) return;
+
+            try {
+                await db.ref(`portfolios/${currentUser.uid}/${id}`).remove();
+                showNotification('Removed', 'Holding removed from portfolio');
+                loadPortfolio();
+            } catch (error) {
+                showNotification('Error', error.message);
+            }
+        }
+
+        // Alerts Management
+        async function loadAlerts() {
+            const snapshot = await db.ref(`alerts/${currentUser.uid}`).once('value');
+            const alerts = snapshot.val() || {};
+            userAlerts = Object.entries(alerts).map(([id, data]) => ({ id, ...data }));
+            
+            renderAlerts();
+            checkAlerts();
+        }
+
+        function renderAlerts() {
+            const list = document.getElementById('alertsList');
+            
+            if (userAlerts.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔔</div>
+                        <div class="empty-text">No price alerts set. Create your first alert!</div>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = userAlerts.map(alert => {
+                const crypto = cryptoData.find(c => c.id === alert.coinId);
+                if (!crypto) return '';
+
+                return `
+                    <div class="alert-card">
+                        <div class="alert-info">
+                            <h4>${crypto.name} ${alert.condition === 'above' ? '>' : '<'} ${alert.targetPrice}</h4>
+                            <p>Current: ${crypto.current_price.toFixed(2)}</p>
+                        </div>
+                        <div class="alert-actions">
+                            <button class="icon-btn delete" onclick="deleteAlert('${alert.id}')">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function addAlert() {
+            const coinId = document.getElementById('alertCoin').value;
+            const condition = document.getElementById('alertCondition').value;
+            const targetPrice = parseFloat(document.getElementById('alertPrice').value);
+
+            if (!coinId || !targetPrice) {
+                showNotification('Error', 'Please fill in all fields');
+                return;
+            }
+
+            try {
+                const newRef = db.ref(`alerts/${currentUser.uid}`).push();
+                await newRef.set({
+                    coinId: coinId,
+                    condition: condition,
+                    targetPrice: targetPrice,
+                    createdAt: Date.now()
+                });
+
+                closeModal('addAlertModal');
+                showNotification('Success', 'Alert created! 🔔');
+                loadAlerts();
+
+                // Clear form
+                document.getElementById('alertPrice').value = '';
+
+                // Request notification permission
+                if ('Notification' in window && Notification.permission === 'default') {
+                    Notification.requestPermission();
                 }
-                if (settings.siteTagline) {
-                    document.getElementById('siteTagline').textContent = settings.siteTagline;
+            } catch (error) {
+                showNotification('Error', error.message);
+            }
+        }
+
+        async function deleteAlert(id) {
+            if (!confirm('Delete this alert?')) return;
+
+            try {
+                await db.ref(`alerts/${currentUser.uid}/${id}`).remove();
+                showNotification('Deleted', 'Alert removed');
+                loadAlerts();
+            } catch (error) {
+                showNotification('Error', error.message);
+            }
+        }
+
+        function checkAlerts() {
+            if (!currentUser || userAlerts.length === 0) return;
+
+            userAlerts.forEach(alert => {
+                const crypto = cryptoData.find(c => c.id === alert.coinId);
+                if (!crypto) return;
+
+                const triggered = 
+                    (alert.condition === 'above' && crypto.current_price >= alert.targetPrice) ||
+                    (alert.condition === 'below' && crypto.current_price <= alert.targetPrice);
+
+                if (triggered) {
+                    showNotification(
+                        `🚨 Price Alert!`,
+                        `${crypto.name} is now ${crypto.current_price.toFixed(2)}`
+                    );
+                    
+                    // Browser notification
+                    if ('Notification' in window && Notification.permission === 'granted') {
+                        new Notification('CCX Price Alert', {
+                            body: `${crypto.name} ${alert.condition === 'above' ? 'above' : 'below'} ${alert.targetPrice}`,
+                            icon: crypto.image
+                        });
+                    }
+
+                    throwConfetti();
                 }
             });
         }
 
-        init();
+        // Helper Functions
+        function populateDropdowns() {
+            const holdingSelect = document.getElementById('holdingCoin');
+            const alertSelect = document.getElementById('alertCoin');
+
+            const options = cryptoData.map(crypto => 
+                `<option value="${crypto.id}">${crypto.name} (${crypto.symbol.toUpperCase()})</option>`
+            ).join('');
+
+            holdingSelect.innerHTML = '<option value="">Select cryptocurrency...</option>' + options;
+            alertSelect.innerHTML = '<option value="">Select cryptocurrency...</option>' + options;
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tab + 'Section').classList.add('active');
+        }
+
+        function formatPrice(price) {
+            if (price >= 1000) return price.toLocaleString('en-US', { maximumFractionDigits: 0 });
+            if (price >= 1) return price.toFixed(2);
+            if (price >= 0.01) return price.toFixed(4);
+            return price.toFixed(6);
+        }
+
+        function showNotification(title, message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <div class="notification-title">${title}</div>
+                <div class="notification-message">${message}</div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
+        }
+
+        function throwConfetti() {
+            const colors = ['#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#3b82f6', '#ef4444'];
+            const confettiCount = 50;
+
+            for (let i = 0; i < confettiCount; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    confetti.style.animationDelay = (Math.random() * 0.5) + 's';
+                    
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 4000);
+                }, i * 30);
+            }
+        }
+
+        // Auto-refresh every 60 seconds
+        setInterval(() => {
+            if (currentUser) {
+                fetchCryptoData();
+                loadPortfolio();
+                checkAlerts();
+            }
+        }, 60000);
+
+        // Initial load
+        loadUserData();
     </script>
 </body>
-</html>
+</html> {
+                showNotification('Error', error.message);
+            }
+        }
+
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                showNotification('Error', 'Please fill in all fields');
+                return;
+            }
+
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                closeModal('loginModal');
+                showNotification('Welcome Back!', 'You are now logged in 🚀');
+            } catch (error)
