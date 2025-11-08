@@ -302,38 +302,32 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
-/* CONFIG */
-const firebaseConfig = {
-  apiKey: "AIzaSyARWG4t3i_pCpu-pOZPqauRufMQhZaI14U",
-  authDomain: "ccx-dashboard.firebaseapp.com",
-  databaseURL: "https://ccx-dashboard-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "ccx-dashboard",
-  storageBucket: "ccx-dashboard.firebasestorage.app",
-  messagingSenderId: "413950601775",
-  appId: "1:413950601775:web:53ca78e202ef7ec884b4da"
-};
+/* ---------- ONLY PUBLIC INFO ---------- */
+const firebaseConfig = { projectId: "ccx-dashboard" };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-const db = firebase.database();
+const functions = firebase.functions();
 
-/* GLOBALS */
-let tokenIds = [], cryptoData = [], globalData = null, fearGreedData = null;
+/* ---------- EMULATOR (optional) ---------- */
+if (location.hostname === "localhost") functions.useFunctionsEmulator("http://localhost:5001");
+
+/* ---------- GLOBALS ---------- */
+let cryptoData = [], prices = {}, globalData = null, fearGreedData = null;
 let sortColumn = 'change', sortDirection = 'desc';
 let currentUser = null;
-let prices = {};
 
-/* HELPERS */
+/* ---------- HELPERS ---------- */
 function $(id){return document.getElementById(id);}
 function formatPrice(p){return p>=1000?p.toLocaleString('en-US',{maximumFractionDigits:0}):p>=1?p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):p>=.01?p.toFixed(4):p.toFixed(6);}
 function formatMarketCap(m){return m>=1e12?`${(m/1e12).toFixed(2)}T`:m>=1e9?`${(m/1e9).toFixed(2)}B`:m>=1e6?`${(m/1e6).toFixed(2)}M`:m.toLocaleString();}
 function updateTime(){$('navTime').textContent=new Date().toLocaleTimeString('en-US',{hour12:false});}
 updateTime();setInterval(updateTime,1000);
 
-/* AUTH */
+/* ---------- AUTH ---------- */
 $('loginBtn').onclick = () => authModal('login');
 $('registerBtn').onclick = () => authModal('register');
 $('logoutBtn').onclick = () => auth.signOut();
@@ -343,8 +337,8 @@ function authModal(mode){
   if(!email) return;
   const password = prompt('Enter password:');
   if(!password) return;
-  if(mode==='login') auth.signInWithEmailAndPassword(email,password).catch(e=>alert(e.message));
-  else auth.createUserWithEmailAndPassword(email,password).catch(e=>alert(e.message));
+  (mode==='login'? auth.signInWithEmailAndPassword : auth.createUserWithEmailAndPassword)(email,password)
+    .catch(e=>alert(e.message));
 }
 
 auth.onAuthStateChanged(user=>{
@@ -355,6 +349,7 @@ auth.onAuthStateChanged(user=>{
     $('userName').textContent = user.email.split('@')[0];
     $('userAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email)}&background=8b5cf6&color=fff&size=64`;
     $('userTabs').style.display='flex';
+    // Admin button only for the email set in the function
     if(user.email === 'testireba5@gmail.com') $('adminControls').classList.add('show');
     loadUserData();
   }else{
@@ -365,220 +360,31 @@ auth.onAuthStateChanged(user=>{
   }
 });
 
-/* ADMIN */
-$('addTokenBtn').onclick = () => $('addTokenModal').classList.add('show');
-$('closeModal').onclick = $('cancelAdd').onclick = () => $('addTokenModal').classList.remove('show');
-$('confirmAdd').onclick = async () => {
-  const id = $('newTokenId').value.trim().toLowerCase();
-  if(!id) return alert('Enter ID');
-  const key = db.ref('tokens').push().key;
-  await db.ref(`tokens/${key}`).set({id});
-  alert(`Added ${id}`);
-  $('newTokenId').value='';
-  $('addTokenModal').classList.remove('show');
-  fetchAll();
-};
-
-/* USER TABS */
+/* ---------- USER TABS ---------- */
 document.querySelectorAll('.user-tab').forEach(tab=>{
   tab.onclick = () => {
-    document.querySelectorAll('.user-tab').forEach(t=>t.classList.remove('active'));
-    document.querySelectorAll('.user-content').forEach(c=>c.classList.remove('active'));
+    document.querySelectorAll('.user-tab,.user-content').forEach(el=>el.classList.remove('active'));
     tab.classList.add('active');
     $(tab.dataset.tab + 'Content').classList.add('active');
   };
 });
 
-/* PORTFOLIO */
-async function loadUserData(){
-  await loadHoldings();
-  await loadAlerts();
-}
-async function loadHoldings(){
-  if(!currentUser) return;
-  const snap = await db.ref(`portfolios/${currentUser.uid}`).once('value');
-  const holdings = snap.val() || {};
-  renderHoldings(holdings);
-}
-function renderHoldings(holdings){
-  const list = $('holdingsList');
-  list.innerHTML = '';
-  let totalValue = 0, totalCost = 0;
-
-  Object.entries(holdings).forEach(([id, h])=>{
-    const token = cryptoData.find(t=>t.id===h.tokenId) || {name: h.tokenId, symbol: '', image: ''};
-    const price = prices[h.tokenId] || 0;
-    const value = h.amount * price;
-    const cost = h.amount * h.buyPrice;
-    totalValue += value;
-    totalCost += cost;
-    const pl = value - cost;
-    const plPct = cost > 0 ? (pl / cost * 100) : 0;
-
-    list.innerHTML += `
-      <div class="holding-row" data-id="${id}">
-        <div class="token-icon-col"><img src="${token.image}" class="token-icon"></div>
-        <div class="holding-name">${token.name} <span class="token-symbol">(${token.symbol.toUpperCase()})</span></div>
-        <div class="editable" data-field="amount" data-value="${h.amount}">${h.amount}</div>
-        <div class="editable" data-field="buyPrice" data-value="${h.buyPrice}">$${formatPrice(h.buyPrice)}</div>
-        <div style="color:${pl>=0?'#10b981':'#ef4444'}">
-          ${pl>=0?'+' : ''}${formatPrice(pl)}<br><small>(${plPct.toFixed(2)}%)</small>
-        </div>
-        <div class="delete-btn" onclick="deleteHolding('${id}')">X</div>
-      </div>`;
-  });
-
-  $('totalValue').textContent = `$${totalValue.toFixed(2)}`;
-  const pl = totalValue - totalCost;
-  $('totalPL').textContent = pl>=0?`+$${pl.toFixed(2)}`:`-$${Math.abs(pl).toFixed(2)}`;
-  $('totalPL').style.color = pl>=0?'#10b981':'#ef4444';
-  $('roi').textContent = totalCost>0?`${((totalValue/totalCost-1)*100).toFixed(2)}%`:'0%';
-
-  document.querySelectorAll('.editable').forEach(el => el.onclick = () => startEdit(el));
-}
-function startEdit(el) {
-  if (el.querySelector('input')) return;
-  const field = el.dataset.field;
-  const value = el.dataset.value;
-  const isPrice = field === 'buyPrice';
-
-  const input = document.createElement('input');
-  input.type = 'number';
-  input.step = 'any';
-  input.value = value;
-  input.style.width = '80px';
-  input.style.padding = '4px 8px';
-  input.style.background = '#0a0a0a';
-  input.style.border = '1px solid #8b5cf6';
-  input.style.borderRadius = '8px';
-  input.style.color = '#fff';
-  input.style.fontSize = '14px';
-
-  const saveBtn = document.createElement('span');
-  saveBtn.textContent = 'Save';
-  saveBtn.style.cursor = 'pointer';
-  saveBtn.style.color = '#10b981';
-  saveBtn.style.marginLeft = '8px';
-  saveBtn.style.fontWeight = '700';
-
-  const cancelBtn = document.createElement('span');
-  cancelBtn.textContent = 'Cancel';
-  cancelBtn.style.cursor = 'pointer';
-  cancelBtn.style.color = '#ef4444';
-  cancelBtn.style.marginLeft = '8px';
-  cancelBtn.style.fontWeight = '700';
-
-  el.innerHTML = '';
-  el.appendChild(input);
-  el.appendChild(saveBtn);
-  el.appendChild(cancelBtn);
-  input.focus();
-
-  const save = async () => {
-    const newVal = parseFloat(input.value);
-    if (isNaN(newVal) || newVal < 0) return alert('Invalid value');
-    const holdingId = el.closest('.holding-row').dataset.id;
-    await db.ref(`portfolios/${currentUser.uid}/${holdingId}`).update({ [field]: newVal });
-    loadHoldings();
-  };
-
-  saveBtn.onclick = save;
-  input.onkeypress = e => e.key === 'Enter' && save();
-  cancelBtn.onclick = () => loadHoldings();
-}
-window.deleteHolding = async (id) => {
-  if(confirm('Delete?')) {
-    await db.ref(`portfolios/${currentUser.uid}/${id}`).remove();
-    loadHoldings();
-  }
-};
-$('addHoldingForm').onsubmit = async e => {
-  e.preventDefault();
-  const tokenId = $('holdingToken').value;
-  const amount = parseFloat($('holdingAmount').value);
-  const buyPrice = parseFloat($('buyPrice').value);
-  if(!tokenId || isNaN(amount) || isNaN(buyPrice)) return;
-  const key = db.ref(`portfolios/${currentUser.uid}`).push().key;
-  await db.ref(`portfolios/${currentUser.uid}/${key}`).set({tokenId, amount, buyPrice});
-  e.target.reset();
-  loadHoldings();
-};
-
-/* ALERTS */
-async function loadAlerts(){
-  if(!currentUser) return;
-  const snap = await db.ref(`alerts/${currentUser.uid}`).once('value');
-  const alerts = snap.val() || {};
-  renderAlerts(alerts);
-}
-function renderAlerts(alerts){
-  const list = $('alertsList');
-  list.innerHTML = '';
-  Object.entries(alerts).forEach(([id, a])=>{
-    const price = prices[a.tokenId] || 0;
-    const triggered = (a.condition === 'above' && price > a.target) || (a.condition === 'below' && price < a.target);
-    list.innerHTML += `<div class="alert-row ${triggered?'triggered':''}">
-      <div class="token-icon-col"><img src="${cryptoData.find(t=>t.id===a.tokenId)?.image||''}" class="token-icon"></div>
-      <div>${cryptoData.find(t=>t.id===a.tokenId)?.name||a.tokenId}</div>
-      <div>${a.condition} $${a.target}</div>
-      <div>${formatPrice(price)}</div>
-      <div class="delete-btn" onclick="deleteAlert('${id}')">X</div>
-    </div>`;
-    if(triggered && !a.notified){
-      confetti({particleCount:100,spread:70,origin:{y:0.6}});
-      new Notification('CCX Alert', {body: `${a.message||''} ${cryptoData.find(t=>t.id===a.tokenId)?.name} is ${a.condition} $${a.target}!`});
-      db.ref(`alerts/${currentUser.uid}/${id}`).update({notified:true});
-    }
-  });
-  populateTokenSelect('alertToken');
-}
-window.deleteAlert = async (id) => {
-  if(confirm('Delete?')) {
-    await db.ref(`alerts/${currentUser.uid}/${id}`).remove();
-    loadAlerts();
-  }
-};
-$('addAlertForm').onsubmit = async e => {
-  e.preventDefault();
-  const tokenId = $('alertToken').value;
-  const condition = $('alertCondition').value;
-  const target = parseFloat($('targetPrice').value);
-  const message = $('alertMessage').value;
-  if(!tokenId || isNaN(target)) return;
-  const key = db.ref(`alerts/${currentUser.uid}`).push().key;
-  await db.ref(`alerts/${currentUser.uid}/${key}`).set({tokenId, condition, target, message, notified:false});
-  e.target.reset();
-  loadAlerts();
-};
-
-/* MARKET */
-async function loadTokenIds(){
-  const snap = await db.ref('tokens').once('value');
-  const obj = snap.val()||{};
-  tokenIds = Object.values(obj).map(t=>t.id||t);
-}
+/* ---------- MARKET ---------- */
 async function fetchAll(){
   const err = $('error'), load = $('loading');
   err.innerHTML=''; load.style.display='block';
   try{
-    await loadTokenIds();
-    if(!tokenIds.length) throw new Error('No tokens');
-    const ids = tokenIds.join(',');
-    const [main,globalRes,fgRes] = await Promise.allSettled([
-      fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&per_page=250&page=1&sparkline=false&price_change_percentage=24h`),
-      fetch('https://api.coingecko.com/api/v3/global'),
-      fetch('https://api.alternative.me/fng/')
-    ]);
-    if(main.status==='fulfilled') cryptoData = await main.value.json();
+    const fn = functions.httpsCallable('getMarketData');
+    const res = await fn();
+    cryptoData = res.data.cryptoData || [];
     cryptoData.forEach(t=>prices[t.id]=t.current_price);
-    if(globalRes.status==='fulfilled'){const g=await globalRes.value.json();globalData=g.data;}
-    if(fgRes.status==='fulfilled'){const f=await fgRes.value.json();fearGreedData=f.data[0];}
+    globalData = res.data.globalData;
+    fearGreedData = res.data.fearGreed;
     renderAll();
     $('contentGrid').style.display='grid';
     $('heroStats').style.display='grid';
-    if(currentUser) { loadHoldings(); loadAlerts(); }
+    if(currentUser){ loadHoldings(); loadAlerts(); }
   }catch(e){
-    console.error(e);
     err.innerHTML=`<div class="error">Warning: ${e.message}</div>`;
   }finally{
     load.style.display='none';
@@ -608,8 +414,7 @@ function renderSidebar(){
   if(top){
     const ch = top.price_change_percentage_24h||0;
     const w = Math.min(Math.abs(ch)*3,100);
-    html+=`<div class="featured-card">
-      <div class="card-badge badge-gainer">Top Gainer 24H</div>
+    html+=`<div class="featured-card"><div class="card-badge badge-gainer">Top Gainer 24H</div>
       <div class="featured-header"><img src="${top.image}" class="featured-icon"><div class="featured-info"><h3>${top.name}</h3><div class="featured-price">${formatPrice(top.current_price)}</div></div></div>
       <div class="progress-section"><div class="progress-label"><span>24h Performance</span><span class="progress-value">+${ch.toFixed(2)}%</span></div>
       <div class="progress-bar"><div class="progress-fill green" style="width:${w}%"></div></div></div></div>`;
@@ -622,8 +427,7 @@ function renderSidebar(){
     const fill = neg?'red':'gold';
     const valCls = neg?'negative':'gold';
     const sign = neg?'':' +';
-    html+=`<div class="featured-card">
-      <div class="card-badge ${badge}">Gold 24H</div>
+    html+=`<div class="featured-card"><div class="card-badge ${badge}">Gold 24H</div>
       <div class="featured-header"><img src="${gold.image}" class="featured-icon"><div class="featured-info"><h3>${gold.name}</h3><div class="featured-price">${formatPrice(gold.current_price)}</div></div></div>
       <div class="progress-section"><div class="progress-label"><span>24h Performance</span><span class="progress-value ${valCls}">${sign}${Math.abs(ch).toFixed(2)}%</span></div>
       <div class="progress-bar"><div class="progress-fill ${fill}" style="width:${w}%"></div></div></div></div>`;
@@ -665,21 +469,170 @@ function renderTokenList(){
   }).join('');
   $('tokensList').innerHTML=html;
 }
+
+/* ---------- PORTFOLIO ---------- */
+async function loadHoldings(){
+  if(!currentUser) return;
+  const fn = functions.httpsCallable('getPortfolio');
+  const res = await fn();
+  renderHoldings(res.data);
+}
+function renderHoldings(holdings){
+  const list = $('holdingsList');
+  list.innerHTML = '';
+  let totalValue = 0, totalCost = 0;
+  Object.entries(holdings).forEach(([id, h])=>{
+    const token = cryptoData.find(t=>t.id===h.tokenId) || {name:h.tokenId,symbol:'',image:''};
+    const price = prices[h.tokenId]||0;
+    const value = h.amount*price;
+    const cost = h.amount*h.buyPrice;
+    totalValue += value; totalCost += cost;
+    const pl = value-cost;
+    const plPct = cost>0?(pl/cost*100):0;
+    list.innerHTML += `
+      <div class="holding-row" data-id="${id}">
+        <div class="token-icon-col"><img src="${token.image}" class="token-icon"></div>
+        <div class="holding-name">${token.name} <span class="token-symbol">(${token.symbol.toUpperCase()})</span></div>
+        <div class="editable" data-field="amount" data-value="${h.amount}">${h.amount}</div>
+        <div class="editable" data-field="buyPrice" data-value="${h.buyPrice}">$${formatPrice(h.buyPrice)}</点赞</div>
+        <div style="color:${pl>=0?'#10b981':'#ef4444'}">
+          ${pl>=0?'+':''}${formatPrice(pl)}<br><small>(${plPct.toFixed(2)}%)</small>
+        </div>
+        <div class="delete-btn" onclick="deleteHolding('${id}')">X</div>
+      </div>`;
+  });
+  $('totalValue').textContent = `$${totalValue.toFixed(2)}`;
+  const pl = totalValue-totalCost;
+  $('totalPL').textContent = pl>=0?`+$${pl.toFixed(2)}`:`-$${Math.abs(pl).toFixed(2)}`;
+  $('totalPL').style.color = pl>=0?'#10b981':'#ef4444';
+  $('roi').textContent = totalCost>0?`${((totalValue/totalCost-1)*100).toFixed(2)}%`:'0%';
+  document.querySelectorAll('.editable').forEach(el=>el.onclick=()=>startEdit(el));
+}
+function startEdit(el){
+  if(el.querySelector('input')) return;
+  const field = el.dataset.field;
+  const value = el.dataset.value;
+  const input = document.createElement('input');
+  input.type='number'; input.step='any'; input.value=value;
+  input.style.width='80px'; input.style.padding='4px 8px';
+  input.style.background='#0a0a0a'; input.style.border='1px solid #8b5cf6';
+  input.style.borderRadius='8px'; input.style.color='#fff'; input.style.fontSize='14px';
+  const saveBtn=document.createElement('span');
+  saveBtn.textContent='Save'; saveBtn.style.cursor='pointer'; saveBtn.style.color='#10b981';
+  saveBtn.style.marginLeft='8px'; saveBtn.style.fontWeight='700';
+  const cancelBtn=document.createElement('span');
+  cancelBtn.textContent='Cancel'; cancelBtn.style.cursor='pointer'; cancelBtn.style.color='#ef4444';
+  cancelBtn.style.marginLeft='8px'; cancelBtn.style.fontWeight='700';
+  el.innerHTML=''; el.appendChild(input); el.appendChild(saveBtn); el.appendChild(cancelBtn);
+  input.focus();
+  const save=async()=>{
+    const newVal=parseFloat(input.value);
+    if(isNaN(newVal)||newVal<0) return alert('Invalid value');
+    const id=el.closest('.holding-row').dataset.id;
+    const fn=functions.httpsCallable('updateHolding');
+    await fn({id, field, value:newVal});
+    loadHoldings();
+  };
+  saveBtn.onclick=save;
+  input.onkeypress=e=>e.key==='Enter'&&save();
+  cancelBtn.onclick=()=>loadHoldings();
+}
+window.deleteHolding=async id=>{
+  if(!confirm('Delete?')) return;
+  const fn=functions.httpsCallable('deleteHolding');
+  await fn({id});
+  loadHoldings();
+};
+$('addHoldingForm').onsubmit=async e=>{
+  e.preventDefault();
+  const tokenId=$('holdingToken').value;
+  const amount=parseFloat($('holdingAmount').value);
+  const buyPrice=parseFloat($('buyPrice').value);
+  if(!tokenId||isNaN(amount)||isNaN(buyPrice)) return;
+  const fn=functions.httpsCallable('addHolding');
+  await fn({holding:{tokenId,amount,buyPrice}});
+  e.target.reset();
+  loadHoldings();
+};
+
+/* ---------- ALERTS ---------- */
+async function loadAlerts(){
+  if(!currentUser) return;
+  const fn=functions.httpsCallable('getAlerts');
+  const res=await fn();
+  renderAlerts(res.data);
+}
+function renderAlerts(alerts){
+  const list=$('alertsList'); list.innerHTML='';
+  Object.entries(alerts).forEach(async ([id,a])=>{
+    const price=prices[a.tokenId]||0;
+    const triggered=(a.condition==='above'&&price>a.target)||(a.condition==='below'&&price<a.target);
+    list.innerHTML+=`<div class="alert-row ${triggered?'triggered':''}">
+      <div class="token-icon-col"><img src="${cryptoData.find(t=>t.id===a.tokenId)?.image||''}" class="token-icon"></div>
+      <div>${cryptoData.find(t=>t.id===a.tokenId)?.name||a.tokenId}</div>
+      <div>${a.condition} $${a.target}</div>
+      <div>${formatPrice(price)}</div>
+      <div class="delete-btn" onclick="deleteAlert('${id}')">X</div>
+    </div>`;
+    if(triggered && !a.notified){
+      confetti({particleCount:100,spread:70,origin:{y:0.6}});
+      new Notification('CCX Alert',{body:`${a.message||''} ${cryptoData.find(t=>t.id===a.tokenId)?.name} is ${a.condition} $${a.target}!`});
+      const fn=functions.httpsCallable('markAlertNotified');
+      await fn({id});
+    }
+  });
+  populateTokenSelect('alertToken');
+}
+window.deleteAlert=async id=>{
+  if(!confirm('Delete?')) return;
+  const fn=functions.httpsCallable('deleteAlert');
+  await fn({id});
+  loadAlerts();
+};
+$('addAlertForm').onsubmit=async e=>{
+  e.preventDefault();
+  const tokenId=$('alertToken').value;
+  const condition=$('alertCondition').value;
+  const target=parseFloat($('targetPrice').value);
+  const message=$('alertMessage').value;
+  if(!tokenId||isNaN(target)) return;
+  const fn=functions.httpsCallable('addAlert');
+  await fn({alert:{tokenId,condition,target,message}});
+  e.target.reset();
+  loadAlerts();
+};
+
+/* ---------- ADMIN ---------- */
+$('addTokenBtn').onclick=()=>$('addTokenModal').classList.add('show');
+$('closeModal').onclick=$('cancelAdd').onclick=()=>$('addTokenModal').classList.remove('show');
+$('confirmAdd').onclick=async()=>{
+  const id=$('newTokenId').value.trim().toLowerCase();
+  if(!id) return alert('Enter ID');
+  const fn=functions.httpsCallable('addToken');
+  await fn({id});
+  alert(`Added ${id}`);
+  $('newTokenId').value='';
+  $('addTokenModal').classList.remove('show');
+  fetchAll();
+};
+
+/* ---------- SELECT POPULATION ---------- */
 function populateTokenSelect(id){
-  const select = $(id);
-  select.innerHTML = '<option value="">Select Token</option>';
+  const sel=$(id);
+  sel.innerHTML='<option value="">Select Token</option>';
   cryptoData.forEach(t=>{
-    const opt = document.createElement('option');
-    opt.value = t.id;
-    opt.textContent = `${t.name} (${t.symbol.toUpperCase()})`;
-    select.appendChild(opt);
+    const opt=document.createElement('option');
+    opt.value=t.id;
+    opt.textContent=`${t.name} (${t.symbol.toUpperCase()})`;
+    sel.appendChild(opt);
   });
 }
 
-/* AUTO REFRESH */
+/* ---------- AUTO REFRESH ---------- */
 fetchAll();
-setInterval(()=>{fetchAll(); if(currentUser){loadHoldings();loadAlerts();}}, 90000);
-if('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+setInterval(()=>{fetchAll(); if(currentUser){loadHoldings();loadAlerts();}},90000);
+if('Notification' in window && Notification.permission==='default') Notification.requestPermission();
 </script>
+
 </body>
 </html>
