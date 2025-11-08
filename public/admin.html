@@ -1,1 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCX Admin - Content Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #050505;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .setup-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 20px;
+        }
+
+        .setup-box {
+            background: rgba(10, 10, 10, 0.95);
+            border: 2px solid #8b5cf6;
+            border-radius: 24px;
+            padding: 48px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(139, 92, 246, 0.3);
+        }
+
+        .setup-logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .setup-logo h1 {
+            font-size: 28px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .setup-logo p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #8b5cf6;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-group input,
+        .input-group textarea {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #333;
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .input-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.5);
+        }
+
+        .btn-secondary {
+            background: #333;
+            margin-top: 12px;
+        }
+
+        .btn-secondary:hover {
+            background: #444;
+        }
+
+        .error-msg {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .success-msg {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid #10b981;
+            color: #6ee7b7;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .admin-panel {
+            display: none;
+        }
+
+        .admin-header {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 2px solid #1a1a1a;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .admin-logo h1 {
+            font-size: 24px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logout-btn {
+            padding: 10px 24px;
+            background: #ef4444;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+            border-bottom: 2px solid #1a1a1a;
+            padding-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #333;
+            border-radius: 12px;
+            color: #888;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border-color: #8b5cf6;
+            color: white;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .card {
+            background: rgba(10, 10, 10, 0.95);
+            border: 2px solid #1a1a1a;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .card h2 {
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: #8b5cf6;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #8b5cf6;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #333;
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #8b5cf6;
+        }
+
+        .btn-primary {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.5);
+        }
+
+        .btn-danger {
+            padding: 8px 16px;
+            background: #ef4444;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .item-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #333;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item-info h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: white;
+        }
+
+        .item-info p {
+            font-size: 14px;
+            color: #888;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        .code-block {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            color: #6ee7b7;
+        }
+    </style>
+</head>
+<body>
+    <!-- Firebase Setup Screen -->
+    <div id="setupScreen" class="setup-screen">
+        <div class="setup-box">
+            <div class="setup-logo">
+                <h1>🔥 Firebase Setup</h1>
+                <p>Configure your Firebase connection</p>
+            </div>
+            <div id="setupMessage"></div>
+            <div class="input-group">
+                <label>Firebase Config (JSON)</label>
+                <textarea id="firebaseConfig" placeholder='Paste your Firebase config here:
+{
+  "apiKey": "your-api-key",
+  "authDomain": "your-app.firebaseapp.com",
+  "databaseURL": "https://your-app.firebaseio.com",
+  "projectId": "your-project-id",
+  "storageBucket": "your-app.appspot.com"
+}'></textarea>
+                <p class="help-text">Get this from Firebase Console → Project Settings → General</p>
+            </div>
+            <div class="input-group">
+                <label>Admin Password</label>
+                <input type="password" id="setupPassword" placeholder="Create admin password">
+            </div>
+            <button class="btn" onclick="saveFirebaseConfig()">Save & Continue</button>
+            <button class="btn btn-secondary" onclick="loadExistingConfig()">I Already Have Config</button>
+        </div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="setup-screen" style="display: none;">
+        <div class="setup-box" style="max-width: 400px;">
+            <div class="setup-logo">
+                <h1>🔐 CCX Admin</h1>
+                <p>Content Management System</p>
+            </div>
+            <div class="input-group">
+                <label>Admin Password</label>
+                <input type="password" id="loginPassword" placeholder="Enter password">
+            </div>
+            <button class="btn" onclick="handleLogin()">Login</button>
+            <div id="loginError"></div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="admin-panel">
+        <header class="admin-header">
+            <div class="admin-logo">
+                <h1>CCX Admin Panel</h1>
+            </div>
+            <button class="logout-btn" onclick="handleLogout()">Logout</button>
+        </header>
+
+        <div class="admin-container">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('tokens')">🪙 Crypto Tokens</div>
+                <div class="tab" onclick="switchTab('quotes')">💬 Quotes</div>
+                <div class="tab" onclick="switchTab('settings')">⚙️ Settings</div>
+            </div>
+
+            <!-- Tokens Section -->
+            <div id="tokensSection" class="section active">
+                <div class="card">
+                    <h2>Add Crypto Token</h2>
+                    <div id="tokensMessage"></div>
+                    <div class="form-group">
+                        <label>Token ID (CoinGecko)</label>
+                        <input type="text" id="newTokenId" placeholder="e.g., bitcoin, ethereum, solana">
+                        <p class="help-text">Find IDs at coingecko.com</p>
+                    </div>
+                    <button class="btn-primary" onclick="addToken()">Add Token</button>
+                </div>
+
+                <div class="card">
+                    <h2>Current Tokens</h2>
+                    <div id="tokensList" class="loading">Loading...</div>
+                </div>
+            </div>
+
+            <!-- Quotes Section -->
+            <div id="quotesSection" class="section">
+                <div class="card">
+                    <h2>Add New Quote</h2>
+                    <div id="quotesMessage"></div>
+                    <div class="form-group">
+                        <label>Quote Text</label>
+                        <textarea id="quoteText" placeholder="Enter inspirational quote..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Author (Optional)</label>
+                        <input type="text" id="quoteAuthor" placeholder="e.g., Warren Buffett">
+                    </div>
+                    <button class="btn-primary" onclick="addQuote()">Add Quote</button>
+                </div>
+
+                <div class="card">
+                    <h2>Existing Quotes</h2>
+                    <div id="quotesList" class="loading">Loading...</div>
+                </div>
+            </div>
+
+            <!-- Settings Section -->
+            <div id="settingsSection" class="section">
+                <div class="card">
+                    <h2>Site Settings</h2>
+                    <div id="settingsMessage"></div>
+                    <div class="form-group">
+                        <label>Site Name</label>
+                        <input type="text" id="siteName" placeholder="CRYPTO COLLECTIVE X">
+                    </div>
+                    <div class="form-group">
+                        <label>Site Tagline</label>
+                        <input type="text" id="siteTagline" placeholder="Your crypto dashboard">
+                    </div>
+                    <div class="form-group">
+                        <label>New Admin Password</label>
+                        <input type="password" id="newAdminPassword" placeholder="Leave empty to keep current">
+                    </div>
+                    <button class="btn-primary" onclick="saveSettings()">Save Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <script>
+        let db = null;
+        let isAuthenticated = false;
+        let firebaseConfig = null;
+
+        // Check if Firebase config exists
+        function loadExistingConfig() {
+            const saved = localStorage.getItem('ccx_firebase_config');
+            if (saved) {
+                try {
+                    firebaseConfig = JSON.parse(saved);
+                    initializeFirebase();
+                    document.getElementById('setupScreen').style.display = 'none';
+                    document.getElementById('loginScreen').style.display = 'flex';
+                } catch (error) {
+                    alert('Error loading config. Please set up again.');
+                }
+            } else {
+                alert('No existing configuration found. Please set up Firebase first.');
+            }
+        }
+
+        // Save Firebase config
+        function saveFirebaseConfig() {
+            const configText = document.getElementById('firebaseConfig').value.trim();
+            const password = document.getElementById('setupPassword').value.trim();
+            const msgEl = document.getElementById('setupMessage');
+
+            if (!configText || !password) {
+                msgEl.innerHTML = '<div class="error-msg">Please fill in all fields</div>';
+                return;
+            }
+
+            try {
+                firebaseConfig = JSON.parse(configText);
+                localStorage.setItem('ccx_firebase_config', JSON.stringify(firebaseConfig));
+                
+                // Initialize Firebase
+                initializeFirebase();
+
+                // Save admin password to Firebase
+                db.ref('settings/adminPassword').set(password).then(() => {
+                    msgEl.innerHTML = '<div class="success-msg">Configuration saved! Redirecting...</div>';
+                    setTimeout(() => {
+                        document.getElementById('setupScreen').style.display = 'none';
+                        document.getElementById('loginScreen').style.display = 'flex';
+                    }, 1500);
+                });
+            } catch (error) {
+                msgEl.innerHTML = '<div class="error-msg">Invalid JSON config. Please check and try again.</div>';
+            }
+        }
+
+        // Initialize Firebase
+        function initializeFirebase() {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            db = firebase.database();
+            console.log('Firebase initialized');
+        }
+
+        // Check for existing config on load
+        window.addEventListener('load', () => {
+            loadExistingConfig();
+        });
+
+        // Authentication
+        async function handleLogin() {
+            const password = document.getElementById('loginPassword').value;
+            const errorEl = document.getElementById('loginError');
+
+            if (!password) {
+                errorEl.innerHTML = '<div class="error-msg">Please enter password</div>';
+                return;
+            }
+
+            try {
+                const snapshot = await db.ref('settings/adminPassword').once('value');
+                const storedPassword = snapshot.val();
+
+                if (password === storedPassword) {
+                    isAuthenticated = true;
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('adminPanel').style.display = 'block';
+                    loadAllData();
+                } else {
+                    errorEl.innerHTML = '<div class="error-msg">Incorrect password</div>';
+                }
+            } catch (error) {
+                errorEl.innerHTML = '<div class="error-msg">Error connecting to database</div>';
+            }
+        }
+
+        function handleLogout() {
+            isAuthenticated = false;
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('loginPassword').value = '';
+        }
+
+        // Tab switching
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tab + 'Section').classList.add('active');
+        }
+
+        // Load all data
+        async function loadAllData() {
+            await loadTokens();
+            await loadQuotes();
+            await loadSettings();
+        }
+
+        // Tokens Management
+        async function loadTokens() {
+            const listEl = document.getElementById('tokensList');
+            try {
+                const snapshot = await db.ref('tokens').once('value');
+                const tokens = snapshot.val() || {};
+                const tokenArray = Object.entries(tokens);
+
+                if (tokenArray.length === 0) {
+                    listEl.innerHTML = '<p>No tokens added yet. Add your first token!</p>';
+                    return;
+                }
+
+                listEl.innerHTML = `<div class="item-list">${tokenArray.map(([key, token]) => `
+                    <div class="item">
+                        <div class="item-info">
+                            <h3>${token}</h3>
+                            <p>CoinGecko ID</p>
+                        </div>
+                        <button class="btn-danger" onclick="removeToken('${key}')">Remove</button>
+                    </div>
+                `).join('')}</div>`;
+            } catch (error) {
+                listEl.innerHTML = '<p class="error-msg">Error loading tokens</p>';
+            }
+        }
+
+        async function addToken() {
+            const tokenId = document.getElementById('newTokenId').value.trim().toLowerCase();
+            const msgEl = document.getElementById('tokensMessage');
+
+            if (!tokenId) {
+                msgEl.innerHTML = '<div class="error-msg">Please enter a token ID</div>';
+                return;
+            }
+
+            try {
+                const newRef = db.ref('tokens').push();
+                await newRef.set(tokenId);
+                
+                msgEl.innerHTML = '<div class="success-msg">Token added successfully!</div>';
+                document.getElementById('newTokenId').value = '';
+                await loadTokens();
+
+                setTimeout(() => msgEl.innerHTML = '', 3000);
+            } catch (error) {
+                msgEl.innerHTML = '<div class="error-msg">Error adding token</div>';
+            }
+        }
+
+        async function removeToken(key) {
+            if (!confirm('Remove this token?')) return;
+
+            try {
+                await db.ref('tokens/' + key).remove();
+                await loadTokens();
+            } catch (error) {
+                alert('Error removing token');
+            }
+        }
+
+        // Quotes Management
+        async function loadQuotes() {
+            const listEl = document.getElementById('quotesList');
+            try {
+                const snapshot = await db.ref('quotes').once('value');
+                const quotes = snapshot.val() || {};
+                const quotesArray = Object.entries(quotes);
+
+                if (quotesArray.length === 0) {
+                    listEl.innerHTML = '<p>No quotes added yet.</p>';
+                    return;
+                }
+
+                listEl.innerHTML = `<div class="item-list">${quotesArray.map(([key, quote]) => `
+                    <div class="item">
+                        <div class="item-info">
+                            <h3>"${quote.text.substring(0, 60)}${quote.text.length > 60 ? '...' : ''}"</h3>
+                            <p>${quote.author || 'Anonymous'}</p>
+                        </div>
+                        <button class="btn-danger" onclick="deleteQuote('${key}')">Delete</button>
+                    </div>
+                `).join('')}</div>`;
+            } catch (error) {
+                listEl.innerHTML = '<p class="error-msg">Error loading quotes</p>';
+            }
+        }
+
+        async function addQuote() {
+            const text = document.getElementById('quoteText').value.trim();
+            const author = document.getElementById('quoteAuthor').value.trim();
+            const msgEl = document.getElementById('quotesMessage');
+
+            if (!text) {
+                msgEl.innerHTML = '<div class="error-msg">Quote text is required</div>';
+                return;
+            }
+
+            try {
+                const newRef = db.ref('quotes').push();
+                await newRef.set({
+                    text: text,
+                    author: author,
+                    createdAt: Date.now()
+                });
+
+                msgEl.innerHTML = '<div class="success-msg">Quote added successfully!</div>';
+                document.getElementById('quoteText').value = '';
+                document.getElementById('quoteAuthor').value = '';
+                await loadQuotes();
+
+                setTimeout(() => msgEl.innerHTML = '', 3000);
+            } catch (error) {
+                msgEl.innerHTML = '<div class="error-msg">Error adding quote</div>';
+            }
+        }
+
+        async function deleteQuote(key) {
+            if (!confirm('Delete this quote?')) return;
+
+            try {
+                await db.ref('quotes/' + key).remove();
+                await loadQuotes();
+            } catch (error) {
+                alert('Error deleting quote');
+            }
+        }
+
+        // Settings Management
+        async function loadSettings() {
+            try {
+                const snapshot = await db.ref('settings').once('value');
+                const settings = snapshot.val() || {};
+
+                document.getElementById('siteName').value = settings.siteName || 'CRYPTO COLLECTIVE X';
+                document.getElementById('siteTagline').value = settings.siteTagline || '';
+            } catch (error) {
+                console.log('Error loading settings');
+            }
+        }
+
+        async function saveSettings() {
+            const siteName = document.getElementById('siteName').value.trim();
+            const siteTagline = document.getElementById('siteTagline').value.trim();
+            const newPassword = document.getElementById('newAdminPassword').value.trim();
+            const msgEl = document.getElementById('settingsMessage');
+
+            try {
+                const updates = {
+                    siteName: siteName || 'CRYPTO COLLECTIVE X',
+                    siteTagline: siteTagline || ''
+                };
+
+                if (newPassword) {
+                    updates.adminPassword = newPassword;
+                }
+
+                await db.ref('settings').update(updates);
+
+                msgEl.innerHTML = '<div class="success-msg">Settings saved successfully!</div>';
+                document.getElementById('newAdminPassword').value = '';
+
+                setTimeout(() => msgEl.innerHTML = '', 3000);
+            } catch (error) {
+                msgEl.innerHTML = '<div class="error-msg">Error saving settings</div>';
+            }
+        }
+    </script>
+</body>
+</html>
