@@ -4,15 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CRYPTO COLLECTIVE X - Desktop Pro</title>
-
-<!-- Inter font (optional but matches the design) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-
 <style>
 /* ──────────────────────────────────────────────────────────────
-   ORIGINAL STYLE – unchanged (kept exactly as you posted)      */
+   ORIGINAL STYLE – 100% PRESERVED */
 * { margin:0; padding:0; box-sizing:border-box; }
 @keyframes gradientFlow {0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
 @keyframes fadeInUp {from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
@@ -29,43 +26,18 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .logo-title{font-size:24px;font-weight:900;letter-spacing:1px;background:linear-gradient(135deg,#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .logo-subtitle{font-size:11px;color:#666;text-transform:uppercase;letter-spacing:2px;font-weight:700}
 .nav-right{display:flex;align-items:center;gap:20px}
-
-/* ────── NEW: Auth buttons (login / register) ────── */
 .auth-buttons{display:flex;gap:12px}
 .auth-btn{padding:8px 20px;background:transparent;border:1px solid rgba(139,92,246,.4);color:#bbb;font-size:13px;font-weight:700;border-radius:12px;cursor:pointer;transition:all .3s}
 .auth-btn:hover{background:rgba(139,92,246,.15);border-color:#8b5cf6;color:#fff}
 .auth-btn.primary{background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;color:#fff}
 .auth-btn.primary:hover{box-shadow:0 4px 16px rgba(139,92,246,.4)}
-
-/* ────── NEW: Logged-in user menu ────── */
 .user-menu{display:flex;align-items:center;gap:12px}
 .user-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #8b5cf6}
 .user-name{font-size:14px;font-weight:600;color:#ddd}
-
-/* ────── NEW: Admin-only controls (hidden until login) ────── */
 .admin-controls{display:none;gap:12px;align-items:center}
 .admin-controls.show{display:flex}
 .admin-btn{padding:6px 16px;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.3);color:#8b5cf6;font-size:12px;font-weight:700;border-radius:12px;cursor:pointer;transition:all .3s}
 .admin-btn:hover{background:rgba(139,92,246,.2);transform:translateY(-2px)}
-
-/* ────── NEW: Modal (Add Token) ────── */
-.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);align-items:center;justify-content:center;z-index:1000}
-.modal.show{display:flex}
-.modal-content{background:#0d0d0d;border:2px solid #1a1a1a;border-radius:20px;padding:32px;width:420px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.6)}
-.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.modal-title{font-size:20px;font-weight:800;background:linear-gradient(135deg,#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.close-modal{cursor:pointer;color:#666;font-size:24px;font-weight:300}
-.modal-input{margin-bottom:16px}
-.modal-input label{display:block;font-size:12px;color:#888;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px}
-.modal-input input{width:100%;padding:12px 16px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:12px;color:#fff;font-size:14px}
-.modal-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:24px}
-.modal-btn{padding:10px 20px;border-radius:12px;font-weight:700;font-size:13px;cursor:pointer}
-.modal-btn.cancel{background:transparent;border:1px solid #666;color:#aaa}
-.modal-btn.cancel:hover{background:rgba(255,255,255,.05)}
-.modal-btn.add{background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;color:#fff}
-.modal-btn.add:hover{box-shadow:0 4px 16px rgba(139,92,246,.4)}
-
-/* ────── Rest of original CSS (unchanged) ────── */
 .live-indicator{display:flex;align-items:center;gap:8px;padding:8px 16px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:20px}
 .live-dot{width:8px;height:8px;background:#10b981;border-radius:50%;box-shadow:0 0 12px #10b981;animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
@@ -121,7 +93,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .token-symbol{font-size:13px;color:#666;font-weight:700;text-transform:uppercase;letter-spacing:1px}
 .token-price-col{font-size:18px;font-weight:800;color:#fff}
 .token-change-col{text-align:right}
-.change-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:12px;font-size:15px;font-weight:900;transition:all .3s}
+.change-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:12px;font-size:15px;font-weight:900;transition:all .3s;position:relative;overflow:hidden}
 .token-row:hover .change-badge{transform:scale(1.1)}
 .change-badge.positive{background:rgba(16,185,129,.15);color:#10b981;border:1px solid rgba(16,185,129,.3)}
 .change-badge.negative{background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.3)}
@@ -131,58 +103,61 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{font-size:16px;color:#666;font-weight:600}
 .error{background:rgba(239,68,68,.1);border:2px solid rgba(239,68,68,.3);color:#ef4444;border-radius:16px;padding:24px;margin:24px 0;font-weight:700;text-align:center}
+
+/* ────── ANIMATED SVG ARROWS ────── */
+.change-arrow{width:18px;height:18px;transition:transform .3s ease,filter .3s ease;animation:arrowPulse 1.5s ease-in-out infinite}
+@keyframes arrowPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.change-badge:hover .change-arrow{transform:translateY(-2px) scale(1.2);filter:drop-shadow(0 0 8px currentColor)}
+.change-value{font-variant-numeric:tabular-nums}
+
+/* ────── USER TABS ────── */
+.user-tabs{display:flex;gap:12px;margin-bottom:24px}
+.user-tab{padding:12px 24px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:12px;color:#888;font-weight:700;cursor:pointer;transition:all .3s}
+.user-tab.active{background:linear-gradient(135deg,#8b5cf6,#ec4899);color:#fff;border:none;box-shadow:0 4px 16px rgba(139,92,246,.3)}
+.user-content{display:none}
+.user-content.active{display:block}
+
+/* ────── PORTFOLIO & ALERTS ────── */
+.portfolio-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:32px}
+.summary-card{background:#0a0a0a;border:1px solid #1a1a1a;border-radius:16px;padding:20px;text-align:center}
+.summary-value{font-size:24px;font-weight:900;margin:8px 0}
+.summary-label{font-size:12px;color:#666;text-transform:uppercase;letter-spacing:1px}
+.holdings-list{display:flex;flex-direction:column;gap:12px}
+.holding-row{display:grid;grid-template-columns:80px 2fr 1fr 1fr 1fr 80px;gap:16px;padding:16px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:12px;align-items:center}
+.holding-row:hover{background:#0f0f0f;border-color:#8b5cf6}
+.delete-btn{color:#ef4444;cursor:pointer;font-weight:900}
+.add-holding-form{display:grid;grid-template-columns:1fr 1fr 1fr 80px;gap:12px;margin-top:24px}
+.add-holding-form input, .add-holding-form select{padding:10px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;color:#fff}
+.add-holding-form button{background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;color:#fff;padding:10px 20px;border-radius:8px;font-weight:700;cursor:pointer}
+
+/* ────── ALERTS ────── */
+.alerts-list{display:flex;flex-direction:column;gap:12px}
+.alert-row{display:grid;grid-template-columns:80px 2fr 1fr 1fr 80px;gap:16px;padding:16px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:12px;align-items:center}
+.alert-row.triggered{background:rgba(16,185,129,.1);border-color:#10b981}
+.add-alert-form{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 80px;gap:12px;margin-top:24px}
+.add-alert-form select, .add-alert-form input{padding:10px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;color:#fff}
+.add-alert-form button{background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;color:#fff;padding:10px 20px;border-radius:8px;font-weight:700;cursor:pointer}
+
+/* ────── MODALS ────── */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);align-items:center;justify-content:center;z-index:1000}
+.modal.show{display:flex}
+.modal-content{background:#0d0d0d;border:2px solid #1a1a1a;border-radius:20px;padding:32px;width:420px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.modal-title{font-size:20px;font-weight:800;background:linear-gradient(135deg,#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.close-modal{cursor:pointer;color:#666;font-size:24px;font-weight:300}
+.modal-input{margin-bottom:16px}
+.modal-input label{display:block;font-size:12px;color:#888;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px}
+.modal-input input{width:100%;padding:12px 16px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:12px;color:#fff;font-size:14px}
+.modal-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:24px}
+.modal-btn{padding:10px 20px;border-radius:12px;font-weight:700;font-size:13px;cursor:pointer}
+.modal-btn.cancel{background:transparent;border:1px solid #666;color:#aaa}
+.modal-btn.cancel:hover{background:rgba(255,255,255,.05)}
+.modal-btn.add{background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;color:#fff}
+.modal-btn.add:hover{box-shadow:0 4px 16px rgba(139,92,246,.4)}
+
 @media(max-width:1600px){.content-grid{grid-template-columns:340px 1fr}}
 @media(max-width:1400px){.content-grid{grid-template-columns:1fr}.hero-section{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:1024px){.navbar{padding:16px 32px}.container{padding:32px}.token-row{grid-template-columns:60px 1.5fr 1fr 1fr}.token-mcap-col{display:none}.table-header{grid-template-columns:60px 1.5fr 1fr 1fr}.table-header-cell:last-child{display:none}}
-/* ────── ANIMATED SVG ARROW ────── */
-.change-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: 12px;
-  font-size: 15px;
-  font-weight: 900;
-  transition: all .3s;
-  position: relative;
-  overflow: hidden;
-}
-
-.change-arrow {
-  width: 18px;
-  height: 18px;
-  transition: transform .3s ease, filter .3s ease;
-}
-
-.change-badge:hover .change-arrow {
-  transform: translateY(-2px) scale(1.2);
-  filter: drop-shadow(0 0 8px currentColor);
-}
-
-/* Pulse animation on load */
-@keyframes arrowPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.15); }
-}
-.change-arrow {
-  animation: arrowPulse 1.5s ease-in-out infinite;
-}
-
-/* Positive / Negative colors (keep your existing) */
-.change-badge.positive { 
-  background: rgba(16, 185, 129, 0.15); 
-  color: #10b981; 
-  border: 1px solid rgba(16, 185, 129, 0.3); 
-}
-.change-badge.negative { 
-  background: rgba(239, 68, 68, 0.15); 
-  color: #ef4444; 
-  border: 1px solid rgba(239, 68, 68, 0.3); 
-}
-
-.change-value {
-  font-variant-numeric: tabular-nums;
-}
 </style>
 </head>
 <body>
@@ -202,7 +177,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
     <div class="live-indicator"><div class="live-dot"></div><div class="live-text">Live</div></div>
     <div class="time-display" id="navTime">--:--:--</div>
 
-    <!-- AUTH UI -->
+    <!-- AUTH -->
     <div id="authContainer">
       <div class="auth-buttons">
         <button class="auth-btn" id="loginBtn">Login</button>
@@ -216,7 +191,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       <button class="auth-btn" id="logoutBtn">Logout</button>
     </div>
 
-    <!-- ADMIN CONTROLS (hidden until login) -->
+    <!-- ADMIN ONLY -->
     <div id="adminControls" class="admin-controls">
       <button class="admin-btn" id="addTokenBtn">Add Token</button>
       <button class="admin-btn" id="refreshBtn">Refresh Now</button>
@@ -234,39 +209,92 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
     <div class="sidebar-section" id="sidebarSection"></div>
 
     <div class="main-section">
-      <div class="section-header">
-        <div class="section-title">Market Overview</div>
-        <div class="filter-tabs">
-          <button class="filter-tab" onclick="sortBy('name')" id="sortName">Name</button>
-          <button class="filter-tab" onclick="sortBy('price')" id="sortPrice">Price</button>
-          <button class="filter-tab active" onclick="sortBy('change')" id="sortChange">24h</button>
-          <button class="filter-tab" onclick="sortBy('mcap')" id="sortMcap">MCap</button>
+      <!-- USER TABS -->
+      <div id="userTabs" class="user-tabs" style="display:none;">
+        <div class="user-tab active" data-tab="market">Market</div>
+        <div class="user-tab" data-tab="portfolio">Portfolio</div>
+        <div class="user-tab" data-tab="alerts">Alerts</div>
+      </div>
+
+      <!-- MARKET TAB -->
+      <div id="marketContent" class="user-content active">
+        <div class="section-header">
+          <div class="section-title">Market Overview</div>
+          <div class="filter-tabs">
+            <button class="filter-tab" onclick="sortBy('name')" id="sortName">Name</button>
+            <button class="filter-tab" onclick="sortBy('price')" id="sortPrice">Price</button>
+            <button class="filter-tab active" onclick="sortBy('change')" id="sortChange">24h</button>
+            <button class="filter-tab" onclick="sortBy('mcap')" id="sortMcap">MCap</button>
+          </div>
         </div>
+
+        <div class="table-header">
+          <div class="table-header-cell">#</div>
+          <div class="table-header-cell">Asset</div>
+          <div class="table-header-cell">Price</div>
+          <div class="table-header-cell">24h Change</div>
+          <div class="table-header-cell">Market Cap</div>
+        </div>
+
+        <div class="tokens-list" id="tokensList"></div>
       </div>
 
-      <div class="table-header">
-        <div class="table-header-cell">#</div>
-        <div class="table-header-cell">Asset</div>
-        <div class="table-header-cell">Price</div>
-        <div class="table-header-cell">24h Change</div>
-        <div class="table-header-cell">Market Cap</div>
+      <!-- PORTFOLIO TAB -->
+      <div id="portfolioContent" class="user-content">
+        <div class="portfolio-summary">
+          <div class="summary-card">
+            <div class="summary-label">Total Value</div>
+            <div class="summary-value" id="totalValue">$0.00</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Total P/L</div>
+            <div class="summary-value" id="totalPL">$0.00</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">ROI</div>
+            <div class="summary-value" id="roi">0%</div>
+          </div>
+        </div>
+
+        <div class="holdings-list" id="holdingsList"></div>
+
+        <form class="add-holding-form" id="addHoldingForm">
+          <select id="holdingToken" required></select>
+          <input type="number" step="0.00000001" placeholder="Amount" id="holdingAmount" required>
+          <input type="number" step="0.01" placeholder="Buy Price" id="buyPrice" required>
+          <button type="submit">Add</button>
+        </form>
       </div>
 
-      <div class="tokens-list" id="tokensList"></div>
+      <!-- ALERTS TAB -->
+      <div id="alertsContent" class="user-content">
+        <div class="alerts-list" id="alertsList"></div>
+
+        <form class="add-alert-form" id="addAlertForm">
+          <select id="alertToken" required></select>
+          <select id="alertCondition" required>
+            <option value="above">Above</option>
+            <option value="below">Below</option>
+          </select>
+          <input type="number" step="0.01" placeholder="Target Price" id="targetPrice" required>
+          <input type="text" placeholder="Message (optional)" id="alertMessage">
+          <button type="submit">Set Alert</button>
+        </form>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ────── MODAL: Add Token ────── -->
+<!-- MODAL: Add Token (Admin) -->
 <div id="addTokenModal" class="modal">
   <div class="modal-content">
     <div class="modal-header">
-      <div class="modal-title">Add New Token</div>
+      <div class="modal-title">Add Global Token</div>
       <span class="close-modal" id="closeModal">x</span>
     </div>
     <div class="modal-input">
       <label>CoinGecko ID</label>
-      <input type="text" id="newTokenId" placeholder="e.g. bitcoin, ethereum, solana">
+      <input type="text" id="newTokenId" placeholder="e.g. bitcoin">
     </div>
     <div class="modal-actions">
       <button class="modal-btn cancel" id="cancelAdd">Cancel</button>
@@ -275,13 +303,13 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   </div>
 </div>
 
-<!-- ────── Firebase SDKs ────── -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
-/* ────── Firebase Config (replace with yours) ────── */
+/* ────── CONFIG ────── */
 const firebaseConfig = {
   apiKey: "AIzaSyARWG4t3i_pCpu-pOZPqauRufMQhZaI14U",
   authDomain: "ccx-dashboard.firebaseapp.com",
@@ -295,86 +323,193 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.database();
 
-/* ────── Global vars ────── */
+/* ────── GLOBALS ────── */
 let tokenIds = [], cryptoData = [], globalData = null, fearGreedData = null;
 let sortColumn = 'change', sortDirection = 'desc';
 let currentUser = null;
+let prices = {}; // id → price
 
-/* ────── Helpers ────── */
+/* ────── HELPERS ────── */
 function $(id){return document.getElementById(id);}
-function formatPrice(p){if(p>=1000)return p.toLocaleString('en-US',{maximumFractionDigits:0});if(p>=1)return p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});if(p>=.01)return p.toFixed(4);return p.toFixed(6);}
-function formatMarketCap(m){if(m>=1e12)return `${(m/1e12).toFixed(2)}T`;if(m>=1e9)return `${(m/1e9).toFixed(2)}B`;if(m>=1e6)return `${(m/1e6).toFixed(2)}M`;return m.toLocaleString('en-US',{maximumFractionDigits:0});}
+function formatPrice(p){return p>=1000?p.toLocaleString('en-US',{maximumFractionDigits:0}):p>=1?p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):p>=.01?p.toFixed(4):p.toFixed(6);}
+function formatMarketCap(m){return m>=1e12?`${(m/1e12).toFixed(2)}T`:m>=1e9?`${(m/1e9).toFixed(2)}B`:m>=1e6?`${(m/1e6).toFixed(2)}M`:m.toLocaleString();}
 function updateTime(){$('navTime').textContent=new Date().toLocaleTimeString('en-US',{hour12:false});}
 updateTime();setInterval(updateTime,1000);
 
-/* ────── AUTH UI HANDLERS ────── */
-$('loginBtn').onclick = () => showAuthModal('login');
-$('registerBtn').onclick = () => showAuthModal('register');
+/* ────── AUTH ────── */
+$('loginBtn').onclick = () => authModal('login');
+$('registerBtn').onclick = () => authModal('register');
 $('logoutBtn').onclick = () => auth.signOut();
 
-function showAuthModal(mode){
-  const email = prompt(`Enter your ${mode === 'login' ? 'email' : 'email (for registration)'}:`);
+function authModal(mode){
+  const email = prompt(`Enter email:`);
   if(!email) return;
   const password = prompt('Enter password:');
   if(!password) return;
-
-  if(mode==='login'){
-    auth.signInWithEmailAndPassword(email,password).catch(err=>alert(err.message));
-  }else{
-    auth.createUserWithEmailAndPassword(email,password).catch(err=>alert(err.message));
-  }
+  if(mode==='login') auth.signInWithEmailAndPassword(email,password).catch(e=>alert(e.message));
+  else auth.createUserWithEmailAndPassword(email,password).catch(e=>alert(e.message));
 }
 
-/* ────── Auth state listener ────── */
 auth.onAuthStateChanged(user=>{
   currentUser = user;
   if(user){
-    // LOGGED IN
     $('authContainer').style.display='none';
     $('userContainer').style.display='flex';
     $('userName').textContent = user.email.split('@')[0];
-    // use a placeholder avatar (you can upload real ones later)
     $('userAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email)}&background=8b5cf6&color=fff&size=64`;
-    $('adminControls').classList.add('show');
+    $('userTabs').style.display='flex';
+    if(user.email === 'admin@ccx.com'){ // CHANGE THIS TO YOUR ADMIN EMAIL
+      $('adminControls').classList.add('show');
+    }
+    loadUserData();
   }else{
-    // LOGGED OUT
     $('authContainer').style.display='flex';
     $('userContainer').style.display='none';
+    $('userTabs').style.display='none';
     $('adminControls').classList.remove('show');
   }
 });
 
-/* ────── ADMIN: Add Token Modal ────── */
+/* ────── ADMIN: Add Token ────── */
 $('addTokenBtn').onclick = () => $('addTokenModal').classList.add('show');
 $('closeModal').onclick = $('cancelAdd').onclick = () => $('addTokenModal').classList.remove('show');
 $('confirmAdd').onclick = async () => {
   const id = $('newTokenId').value.trim().toLowerCase();
-  if(!id){alert('Enter a CoinGecko ID');return;}
-  const newKey = db.ref('tokens').push().key;
-  await db.ref(`tokens/${newKey}`).set({id});
-  alert(`Token "${id}" added!`);
+  if(!id) return alert('Enter ID');
+  const key = db.ref('tokens').push().key;
+  await db.ref(`tokens/${key}`).set({id});
+  alert(`Added ${id}`);
   $('newTokenId').value='';
   $('addTokenModal').classList.remove('show');
-  fetchAll(); // refresh immediately
+  fetchAll();
 };
 
-/* ────── ADMIN: Force refresh ────── */
-$('refreshBtn').onclick = () => fetchAll();
+/* ────── USER TABS ────── */
+document.querySelectorAll('.user-tab').forEach(tab=>{
+  tab.onclick = () => {
+    document.querySelectorAll('.user-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.user-content').forEach(c=>c.classList.remove('active'));
+    tab.classList.add('active');
+    $(tab.dataset.tab + 'Content').classList.add('active');
+  };
+});
 
-/* ────── Load token IDs from Firebase ────── */
+/* ────── PORTFOLIO ────── */
+async function loadUserData(){
+  await loadHoldings();
+  await loadAlerts();
+}
+async function loadHoldings(){
+  if(!currentUser) return;
+  const snap = await db.ref(`portfolios/${currentUser.uid}`).once('value');
+  const holdings = snap.val() || {};
+  renderHoldings(holdings);
+}
+function renderHoldings(holdings){
+  const list = $('holdingsList');
+  list.innerHTML = '';
+  let totalValue = 0, totalCost = 0;
+  Object.entries(holdings).forEach(([id, h])=>{
+    const price = prices[h.tokenId] || 0;
+    const value = h.amount * price;
+    const cost = h.amount * h.buyPrice;
+    totalValue += value;
+    totalCost += cost;
+    const pl = value - cost;
+    const plPct = cost > 0 ? (pl / cost * 100) : 0;
+    list.innerHTML += `<div class="holding-row">
+      <div class="token-icon-col"><img src="${cryptoData.find(t=>t.id===h.tokenId)?.image||''}" class="token-icon"></div>
+      <div>${cryptoData.find(t=>t.id===h.tokenId)?.name||h.tokenId}</div>
+      <div>${h.amount}</div>
+      <div>${formatPrice(price)}</div>
+      <div style="color:${pl>=0?'#10b981':'#ef4444'}">${pl>=0?'+' : ''}${formatPrice(pl)} (${plPct.toFixed(2)}%)</div>
+      <div class="delete-btn" onclick="deleteHolding('${id}')">X</div>
+    </div>`;
+  });
+  $('totalValue').textContent = `$${totalValue.toFixed(2)}`;
+  const pl = totalValue - totalCost;
+  $('totalPL').textContent = pl>=0?`+$${pl.toFixed(2)}`:`-$${Math.abs(pl).toFixed(2)}`;
+  $('totalPL').style.color = pl>=0?'#10b981':'#ef4444';
+  $('roi').textContent = totalCost>0?`${((totalValue/totalCost-1)*100).toFixed(2)}%`:'0%';
+  populateTokenSelect('holdingToken');
+}
+window.deleteHolding = async (id) => {
+  if(confirm('Delete?')) {
+    await db.ref(`portfolios/${currentUser.uid}/${id}`).remove();
+    loadHoldings();
+  }
+};
+$('addHoldingForm').onsubmit = async e => {
+  e.preventDefault();
+  const tokenId = $('holdingToken').value;
+  const amount = parseFloat($('holdingAmount').value);
+  const buyPrice = parseFloat($('buyPrice').value);
+  if(!tokenId || isNaN(amount) || isNaN(buyPrice)) return;
+  const key = db.ref(`portfolios/${currentUser.uid}`).push().key;
+  await db.ref(`portfolios/${currentUser.uid}/${key}`).set({tokenId, amount, buyPrice});
+  e.target.reset();
+  loadHoldings();
+};
+
+/* ────── ALERTS ────── */
+async function loadAlerts(){
+  if(!currentUser) return;
+  const snap = await db.ref(`alerts/${currentUser.uid}`).once('value');
+  const alerts = snap.val() || {};
+  renderAlerts(alerts);
+}
+function renderAlerts(alerts){
+  const list = $('alertsList');
+  list.innerHTML = '';
+  Object.entries(alerts).forEach(([id, a])=>{
+    const price = prices[a.tokenId] || 0;
+    const triggered = (a.condition === 'above' && price > a.target) || (a.condition === 'below' && price < a.target);
+    list.innerHTML += `<div class="alert-row ${triggered?'triggered':''}">
+      <div class="token-icon-col"><img src="${cryptoData.find(t=>t.id===a.tokenId)?.image||''}" class="token-icon"></div>
+      <div>${cryptoData.find(t=>t.id===a.tokenId)?.name||a.tokenId}</div>
+      <div>${a.condition} $${a.target}</div>
+      <div>${formatPrice(price)}</div>
+      <div class="delete-btn" onclick="deleteAlert('${id}')">X</div>
+    </div>`;
+    if(triggered && !a.notified){
+      confetti({particleCount:100,spread:70,origin:{y:0.6}});
+      new Notification('CCX Alert', {body: `${a.message||''} ${cryptoData.find(t=>t.id===a.tokenId)?.name} is ${a.condition} $${a.target}!`});
+      db.ref(`alerts/${currentUser.uid}/${id}`).update({notified:true});
+    }
+  });
+  populateTokenSelect('alertToken');
+}
+window.deleteAlert = async (id) => {
+  if(confirm('Delete alert?')) {
+    await db.ref(`alerts/${currentUser.uid}/${id}`).remove();
+    loadAlerts();
+  }
+};
+$('addAlertForm').onsubmit = async e => {
+  e.preventDefault();
+  const tokenId = $('alertToken').value;
+  const condition = $('alertCondition').value;
+  const target = parseFloat($('targetPrice').value);
+  const message = $('alertMessage').value;
+  if(!tokenId || isNaN(target)) return;
+  const key = db.ref(`alerts/${currentUser.uid}`).push().key;
+  await db.ref(`alerts/${currentUser.uid}/${key}`).set({tokenId, condition, target, message, notified:false});
+  e.target.reset();
+  loadAlerts();
+};
+
+/* ────── MARKET DATA ────── */
 async function loadTokenIds(){
   const snap = await db.ref('tokens').once('value');
   const obj = snap.val()||{};
   tokenIds = Object.values(obj).map(t=>t.id||t);
 }
-
-/* ────── Fetch everything ────── */
 async function fetchAll(){
   const err = $('error'), load = $('loading');
   err.innerHTML=''; load.style.display='block';
   try{
     await loadTokenIds();
-    if(!tokenIds.length){throw new Error('No tokens in DB');}
+    if(!tokenIds.length) throw new Error('No tokens');
     const ids = tokenIds.join(',');
     const [main,globalRes,fgRes] = await Promise.allSettled([
       fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&per_page=250&page=1&sparkline=false&price_change_percentage=24h`),
@@ -382,20 +517,20 @@ async function fetchAll(){
       fetch('https://api.alternative.me/fng/')
     ]);
     if(main.status==='fulfilled') cryptoData = await main.value.json();
+    cryptoData.forEach(t=>prices[t.id]=t.current_price);
     if(globalRes.status==='fulfilled'){const g=await globalRes.value.json();globalData=g.data;}
     if(fgRes.status==='fulfilled'){const f=await fgRes.value.json();fearGreedData=f.data[0];}
     renderAll();
     $('contentGrid').style.display='grid';
     $('heroStats').style.display='grid';
+    if(currentUser) { loadHoldings(); loadAlerts(); }
   }catch(e){
     console.error(e);
-    err.innerHTML=`<div class="error">Warning: ${e.message||'Network error'}</div>`;
+    err.innerHTML=`<div class="error">Warning: ${e.message}</div>`;
   }finally{
     load.style.display='none';
   }
 }
-
-/* ────── Render ────── */
 function renderAll(){renderHero();renderSidebar();sortData();}
 function renderHero(){
   let html='';
@@ -442,8 +577,6 @@ function renderSidebar(){
   }
   $('sidebarSection').innerHTML=html;
 }
-
-/* ────── Sorting ────── */
 function sortBy(col){
   if(sortColumn===col) sortDirection=sortDirection==='asc'?'desc':'asc';
   else{sortColumn=col;sortDirection=col==='name'?'asc':'desc';}
@@ -465,38 +598,35 @@ function sortData(){
 function renderTokenList(){
   const html = cryptoData.map((t,i)=>{
     const ch = t.price_change_percentage_24h||0;
-    const isPositive = ch >= 0;
-    const cls = isPositive ? 'positive' : 'negative';
-    const absChange = Math.abs(ch).toFixed(2);
-
-    // Animated SVG Arrow (inline)
-    const arrowSvg = isPositive 
-      ? `<svg class="change-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-           <path d="M12 19V5M5 12l7-7 7 7"/>
-         </svg>`
-      : `<svg class="change-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-           <path d="M12 5v14M19 12l-7 7-7-7"/>
-         </svg>`;
-
+    const cls = ch>=0?'positive':'negative';
+    const arrowSvg = ch>=0
+      ? `<svg class="change-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg>`
+      : `<svg class="change-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>`;
     return `<div class="token-row" style="--index:${i}">
       <div class="token-icon-col"><img src="${t.image}" class="token-icon"></div>
       <div class="token-name-col"><h3>${t.name}</h3><div class="token-symbol">${t.symbol.toUpperCase()}</div></div>
       <div class="token-price-col">${formatPrice(t.current_price)}</div>
-      <div class="token-change-col">
-        <span class="change-badge ${cls}">
-          ${arrowSvg}
-          <span class="change-value">${absChange}%</span>
-        </span>
-      </div>
+      <div class="token-change-col"><span class="change-badge ${cls}">${arrowSvg}<span class="change-value">${Math.abs(ch).toFixed(2)}%</span></span></div>
       <div class="token-mcap-col">${formatMarketCap(t.market_cap||0)}</div>
     </div>`;
   }).join('');
-  document.getElementById('tokensList').innerHTML=html;
+  $('tokensList').innerHTML=html;
+}
+function populateTokenSelect(id){
+  const select = $(id);
+  select.innerHTML = '<option value="">Select Token</option>';
+  cryptoData.forEach(t=>{
+    const opt = document.createElement('option');
+    opt.value = t.id;
+    opt.textContent = `${t.name} (${t.symbol.toUpperCase()})`;
+    select.appendChild(opt);
+  });
 }
 
-/* ────── Auto-refresh (90 s) ────── */
+/* ────── AUTO REFRESH ────── */
 fetchAll();
-setInterval(fetchAll,90000);
+setInterval(()=>{fetchAll(); if(currentUser){loadHoldings();loadAlerts();}}, 90000);
+if('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
 </script>
 </body>
 </html>
