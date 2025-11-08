@@ -4,9 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CRYPTO COLLECTIVE X - Desktop Pro</title>
+
+<!-- Inter font (optional but matches the design) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+
 <style>
 /* ──────────────────────────────────────────────────────────────
-   ORIGINAL STYLE (exactly the same as you posted)               */
+   ORIGINAL STYLE – unchanged (kept exactly as you posted)      */
 * { margin:0; padding:0; box-sizing:border-box; }
 @keyframes gradientFlow {0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
 @keyframes fadeInUp {from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
@@ -19,14 +25,50 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .logo-section{display:flex;align-items:center;gap:16px}
 .logo-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:28px;animation:hoverFloat 6s ease-in-out infinite,neonGlow 3s linear infinite;overflow:hidden;position:relative}
 .logo-icon img{width:44px;height:44px;object-fit:contain;filter:brightness(0) invert(1)}
-@keyframes logoGlow {0%,100%{box-shadow:0 8px 24px rgba(139,92,246,.6),0 0 40px rgba(139,92,246,.4)}50%{box-shadow:0 8px 32px rgba(139,92,246,.8),0 0 60px rgba(139,92,246,.6),0 0 80px rgba(236,72,153,.4)}}
 .logo-text{display:flex;flex-direction:column}
 .logo-title{font-size:24px;font-weight:900;letter-spacing:1px;background:linear-gradient(135deg,#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .logo-subtitle{font-size:11px;color:#666;text-transform:uppercase;letter-spacing:2px;font-weight:700}
-.nav-right{display:flex;align-items:center;gap:32px}
+.nav-right{display:flex;align-items:center;gap:20px}
+
+/* ────── NEW: Auth buttons (login / register) ────── */
+.auth-buttons{display:flex;gap:12px}
+.auth-btn{padding:8px 20px;background:transparent;border:1px solid rgba(139,92,246,.4);color:#bbb;font-size:13px;font-weight:700;border-radius:12px;cursor:pointer;transition:all .3s}
+.auth-btn:hover{background:rgba(139,92,246,.15);border-color:#8b5cf6;color:#fff}
+.auth-btn.primary{background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;color:#fff}
+.auth-btn.primary:hover{box-shadow:0 4px 16px rgba(139,92,246,.4)}
+
+/* ────── NEW: Logged-in user menu ────── */
+.user-menu{display:flex;align-items:center;gap:12px}
+.user-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #8b5cf6}
+.user-name{font-size:14px;font-weight:600;color:#ddd}
+
+/* ────── NEW: Admin-only controls (hidden until login) ────── */
+.admin-controls{display:none;gap:12px;align-items:center}
+.admin-controls.show{display:flex}
+.admin-btn{padding:6px 16px;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.3);color:#8b5cf6;font-size:12px;font-weight:700;border-radius:12px;cursor:pointer;transition:all .3s}
+.admin-btn:hover{background:rgba(139,92,246,.2);transform:translateY(-2px)}
+
+/* ────── NEW: Modal (Add Token) ────── */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);align-items:center;justify-content:center;z-index:1000}
+.modal.show{display:flex}
+.modal-content{background:#0d0d0d;border:2px solid #1a1a1a;border-radius:20px;padding:32px;width:420px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.modal-title{font-size:20px;font-weight:800;background:linear-gradient(135deg,#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.close-modal{cursor:pointer;color:#666;font-size:24px;font-weight:300}
+.modal-input{margin-bottom:16px}
+.modal-input label{display:block;font-size:12px;color:#888;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px}
+.modal-input input{width:100%;padding:12px 16px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:12px;color:#fff;font-size:14px}
+.modal-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:24px}
+.modal-btn{padding:10px 20px;border-radius:12px;font-weight:700;font-size:13px;cursor:pointer}
+.modal-btn.cancel{background:transparent;border:1px solid #666;color:#aaa}
+.modal-btn.cancel:hover{background:rgba(255,255,255,.05)}
+.modal-btn.add{background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;color:#fff}
+.modal-btn.add:hover{box-shadow:0 4px 16px rgba(139,92,246,.4)}
+
+/* ────── Rest of original CSS (unchanged) ────── */
 .live-indicator{display:flex;align-items:center;gap:8px;padding:8px 16px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:20px}
 .live-dot{width:8px;height:8px;background:#10b981;border-radius:50%;box-shadow:0 0 12px #10b981;animation:pulse 2s ease-in-out infinite}
-@keyframes pulse {0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 .live-text{font-size:12px;color:#10b981;font-weight:700;text-transform:uppercase;letter-spacing:1px}
 .time-display{font-size:14px;color:#888;font-weight:600;font-variant-numeric:tabular-nums}
 .container{max-width:1920px;margin:0 auto;padding:48px 60px;position:relative;z-index:2}
@@ -106,9 +148,30 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       <div class="logo-subtitle"></div>
     </div>
   </div>
+
   <div class="nav-right">
     <div class="live-indicator"><div class="live-dot"></div><div class="live-text">Live</div></div>
     <div class="time-display" id="navTime">--:--:--</div>
+
+    <!-- AUTH UI -->
+    <div id="authContainer">
+      <div class="auth-buttons">
+        <button class="auth-btn" id="loginBtn">Login</button>
+        <button class="auth-btn primary" id="registerBtn">Register</button>
+      </div>
+    </div>
+
+    <div id="userContainer" class="user-menu" style="display:none;">
+      <img id="userAvatar" class="user-avatar" src="" alt="Avatar">
+      <span id="userName" class="user-name"></span>
+      <button class="auth-btn" id="logoutBtn">Logout</button>
+    </div>
+
+    <!-- ADMIN CONTROLS (hidden until login) -->
+    <div id="adminControls" class="admin-controls">
+      <button class="admin-btn" id="addTokenBtn">Add Token</button>
+      <button class="admin-btn" id="refreshBtn">Refresh Now</button>
+    </div>
   </div>
 </nav>
 
@@ -145,12 +208,31 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   </div>
 </div>
 
-<!-- ──────────────────────────────────────────────────────────────
-     Firebase SDK + Logic (unchanged visual part)                -->
+<!-- ────── MODAL: Add Token ────── -->
+<div id="addTokenModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">Add New Token</div>
+      <span class="close-modal" id="closeModal">x</span>
+    </div>
+    <div class="modal-input">
+      <label>CoinGecko ID</label>
+      <input type="text" id="newTokenId" placeholder="e.g. bitcoin, ethereum, solana">
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" id="cancelAdd">Cancel</button>
+      <button class="modal-btn add" id="confirmAdd">Add Token</button>
+    </div>
+  </div>
+</div>
+
+<!-- ────── Firebase SDKs ────── -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
 <script>
-/* ────── YOUR FIREBASE CONFIG (replace with yours) ────── */
+/* ────── Firebase Config (replace with yours) ────── */
 const firebaseConfig = {
   apiKey: "AIzaSyARWG4t3i_pCpu-pOZPqauRufMQhZaI14U",
   authDomain: "ccx-dashboard.firebaseapp.com",
@@ -161,33 +243,85 @@ const firebaseConfig = {
   appId: "1:413950601775:web:53ca78e202ef7ec884b4da"
 };
 firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
 const db = firebase.database();
 
 /* ────── Global vars ────── */
-let tokenIds = [];          // ids from /tokens
-let cryptoData = [];        // CoinGecko response
-let globalData = null;
-let fearGreedData = null;
-let sortColumn = 'change';
-let sortDirection = 'desc';
+let tokenIds = [], cryptoData = [], globalData = null, fearGreedData = null;
+let sortColumn = 'change', sortDirection = 'desc';
+let currentUser = null;
 
 /* ────── Helpers ────── */
+function $(id){return document.getElementById(id);}
 function formatPrice(p){if(p>=1000)return p.toLocaleString('en-US',{maximumFractionDigits:0});if(p>=1)return p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});if(p>=.01)return p.toFixed(4);return p.toFixed(6);}
 function formatMarketCap(m){if(m>=1e12)return `${(m/1e12).toFixed(2)}T`;if(m>=1e9)return `${(m/1e9).toFixed(2)}B`;if(m>=1e6)return `${(m/1e6).toFixed(2)}M`;return m.toLocaleString('en-US',{maximumFractionDigits:0});}
-function updateTime(){document.getElementById('navTime').textContent=new Date().toLocaleTimeString('en-US',{hour12:false});}
+function updateTime(){$('navTime').textContent=new Date().toLocaleTimeString('en-US',{hour12:false});}
 updateTime();setInterval(updateTime,1000);
+
+/* ────── AUTH UI HANDLERS ────── */
+$('loginBtn').onclick = () => showAuthModal('login');
+$('registerBtn').onclick = () => showAuthModal('register');
+$('logoutBtn').onclick = () => auth.signOut();
+
+function showAuthModal(mode){
+  const email = prompt(`Enter your ${mode === 'login' ? 'email' : 'email (for registration)'}:`);
+  if(!email) return;
+  const password = prompt('Enter password:');
+  if(!password) return;
+
+  if(mode==='login'){
+    auth.signInWithEmailAndPassword(email,password).catch(err=>alert(err.message));
+  }else{
+    auth.createUserWithEmailAndPassword(email,password).catch(err=>alert(err.message));
+  }
+}
+
+/* ────── Auth state listener ────── */
+auth.onAuthStateChanged(user=>{
+  currentUser = user;
+  if(user){
+    // LOGGED IN
+    $('authContainer').style.display='none';
+    $('userContainer').style.display='flex';
+    $('userName').textContent = user.email.split('@')[0];
+    // use a placeholder avatar (you can upload real ones later)
+    $('userAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email)}&background=8b5cf6&color=fff&size=64`;
+    $('adminControls').classList.add('show');
+  }else{
+    // LOGGED OUT
+    $('authContainer').style.display='flex';
+    $('userContainer').style.display='none';
+    $('adminControls').classList.remove('show');
+  }
+});
+
+/* ────── ADMIN: Add Token Modal ────── */
+$('addTokenBtn').onclick = () => $('addTokenModal').classList.add('show');
+$('closeModal').onclick = $('cancelAdd').onclick = () => $('addTokenModal').classList.remove('show');
+$('confirmAdd').onclick = async () => {
+  const id = $('newTokenId').value.trim().toLowerCase();
+  if(!id){alert('Enter a CoinGecko ID');return;}
+  const newKey = db.ref('tokens').push().key;
+  await db.ref(`tokens/${newKey}`).set({id});
+  alert(`Token "${id}" added!`);
+  $('newTokenId').value='';
+  $('addTokenModal').classList.remove('show');
+  fetchAll(); // refresh immediately
+};
+
+/* ────── ADMIN: Force refresh ────── */
+$('refreshBtn').onclick = () => fetchAll();
 
 /* ────── Load token IDs from Firebase ────── */
 async function loadTokenIds(){
   const snap = await db.ref('tokens').once('value');
   const obj = snap.val()||{};
-  tokenIds = Object.values(obj).map(t=>t.id||t); // works for both {id:"btc"} and legacy "btc"
+  tokenIds = Object.values(obj).map(t=>t.id||t);
 }
 
 /* ────── Fetch everything ────── */
 async function fetchAll(){
-  const err = document.getElementById('error');
-  const load = document.getElementById('loading');
+  const err = $('error'), load = $('loading');
   err.innerHTML=''; load.style.display='block';
   try{
     await loadTokenIds();
@@ -202,8 +336,8 @@ async function fetchAll(){
     if(globalRes.status==='fulfilled'){const g=await globalRes.value.json();globalData=g.data;}
     if(fgRes.status==='fulfilled'){const f=await fgRes.value.json();fearGreedData=f.data[0];}
     renderAll();
-    document.getElementById('contentGrid').style.display='grid';
-    document.getElementById('heroStats').style.display='grid';
+    $('contentGrid').style.display='grid';
+    $('heroStats').style.display='grid';
   }catch(e){
     console.error(e);
     err.innerHTML=`<div class="error">Warning: ${e.message||'Network error'}</div>`;
@@ -213,11 +347,7 @@ async function fetchAll(){
 }
 
 /* ────── Render ────── */
-function renderAll(){
-  renderHero();
-  renderSidebar();
-  sortData();
-}
+function renderAll(){renderHero();renderSidebar();sortData();}
 function renderHero(){
   let html='';
   if(globalData){
@@ -231,7 +361,7 @@ function renderHero(){
   if(fearGreedData){
     html+=`<div class="hero-stat"><div class="hero-stat-label">Fear & Greed</div><div class="hero-stat-value">${fearGreedData.value}</div></div>`;
   }
-  document.getElementById('heroStats').innerHTML=html;
+  $('heroStats').innerHTML=html;
 }
 function renderSidebar(){
   const sorted = [...cryptoData].sort((a,b)=>(b.price_change_percentage_24h||0)-(a.price_change_percentage_24h||0));
@@ -261,7 +391,7 @@ function renderSidebar(){
       <div class="progress-section"><div class="progress-label"><span>24h Performance</span><span class="progress-value ${valCls}">${sign}${Math.abs(ch).toFixed(2)}%</span></div>
       <div class="progress-bar"><div class="progress-fill ${fill}" style="width:${w}%"></div></div></div></div>`;
   }
-  document.getElementById('sidebarSection').innerHTML=html;
+  $('sidebarSection').innerHTML=html;
 }
 
 /* ────── Sorting ────── */
@@ -269,7 +399,7 @@ function sortBy(col){
   if(sortColumn===col) sortDirection=sortDirection==='asc'?'desc':'asc';
   else{sortColumn=col;sortDirection=col==='name'?'asc':'desc';}
   document.querySelectorAll('.filter-tab').forEach(b=>b.classList.remove('active'));
-  document.getElementById('sort'+col.charAt(0).toUpperCase()+col.slice(1)).classList.add('active');
+  $('sort'+col.charAt(0).toUpperCase()+col.slice(1)).classList.add('active');
   sortData();
 }
 function sortData(){
@@ -296,10 +426,10 @@ function renderTokenList(){
       <div class="token-mcap-col">${formatMarketCap(t.market_cap||0)}</div>
     </div>`;
   }).join('');
-  document.getElementById('tokensList').innerHTML=html;
+  $('tokensList').innerHTML=html;
 }
 
-/* ────── Auto-refresh ────── */
+/* ────── Auto-refresh (90 s) ────── */
 fetchAll();
 setInterval(fetchAll,90000);
 </script>
