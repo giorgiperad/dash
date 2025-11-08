@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
 /* ──────────────────────────────────────────────────────────────
-   ORIGINAL STYLE – 100% PRESERVED */
+   FULL "DESKTOP PRO" STYLE – 100% PRESERVED */
 * { margin:0; padding:0; box-sizing:border-box; }
 @keyframes gradientFlow {0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
 @keyframes fadeInUp {from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
@@ -104,41 +104,45 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .loading-text{font-size:16px;color:#666;font-weight:600}
 .error{background:rgba(239,68,68,.1);border:2px solid rgba(239,68,68,.3);color:#ef4444;border-radius:16px;padding:24px;margin:24px 0;font-weight:700;text-align:center}
 
-/* ────── ANIMATED SVG ARROWS ────── */
+/* ANIMATED SVG ARROWS */
 .change-arrow{width:18px;height:18px;transition:transform .3s ease,filter .3s ease;animation:arrowPulse 1.5s ease-in-out infinite}
 @keyframes arrowPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
 .change-badge:hover .change-arrow{transform:translateY(-2px) scale(1.2);filter:drop-shadow(0 0 8px currentColor)}
 .change-value{font-variant-numeric:tabular-nums}
 
-/* ────── USER TABS ────── */
+/* USER TABS */
 .user-tabs{display:flex;gap:12px;margin-bottom:24px}
 .user-tab{padding:12px 24px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:12px;color:#888;font-weight:700;cursor:pointer;transition:all .3s}
 .user-tab.active{background:linear-gradient(135deg,#8b5cf6,#ec4899);color:#fff;border:none;box-shadow:0 4px 16px rgba(139,92,246,.3)}
 .user-content{display:none}
 .user-content.active{display:block}
 
-/* ────── PORTFOLIO & ALERTS ────── */
+/* PORTFOLIO */
 .portfolio-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:32px}
 .summary-card{background:#0a0a0a;border:1px solid #1a1a1a;border-radius:16px;padding:20px;text-align:center}
 .summary-value{font-size:24px;font-weight:900;margin:8px 0}
 .summary-label{font-size:12px;color:#666;text-transform:uppercase;letter-spacing:1px}
 .holdings-list{display:flex;flex-direction:column;gap:12px}
-.holding-row{display:grid;grid-template-columns:80px 2fr 1fr 1fr 1fr 80px;gap:16px;padding:16px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:12px;align-items:center}
-.holding-row:hover{background:#0f0f0f;border-color:#8b5cf6}
+.holding-row{display:grid;grid-template-columns:80px 2fr 1fr 1fr 1fr 80px;gap:16px;padding:16px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:12px;align-items:center;position:relative;transition:all .3s}
+.holding-row:hover{background:#0f0f0f;border-color:#8b5cf6;box-shadow:0 4px 16px rgba(139,92,246,.2)}
+.holding-name{font-weight:600}
+.token-symbol{color:#666;font-size:12px}
+.editable{cursor:pointer;padding:4px 8px;border-radius:6px;transition:all .2s}
+.editable:hover{background:rgba(139,92,246,.1);border:1px dashed #8b5cf6}
 .delete-btn{color:#ef4444;cursor:pointer;font-weight:900}
 .add-holding-form{display:grid;grid-template-columns:1fr 1fr 1fr 80px;gap:12px;margin-top:24px}
-.add-holding-form input, .add-holding-form select{padding:10px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;color:#fff}
+.add-holding-form input,.add-holding-form select{padding:10px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;color:#fff}
 .add-holding-form button{background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;color:#fff;padding:10px 20px;border-radius:8px;font-weight:700;cursor:pointer}
 
-/* ────── ALERTS ────── */
+/* ALERTS */
 .alerts-list{display:flex;flex-direction:column;gap:12px}
 .alert-row{display:grid;grid-template-columns:80px 2fr 1fr 1fr 80px;gap:16px;padding:16px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:12px;align-items:center}
 .alert-row.triggered{background:rgba(16,185,129,.1);border-color:#10b981}
 .add-alert-form{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 80px;gap:12px;margin-top:24px}
-.add-alert-form select, .add-alert-form input{padding:10px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;color:#fff}
+.add-alert-form select,.add-alert-form input{padding:10px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;color:#fff}
 .add-alert-form button{background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;color:#fff;padding:10px 20px;border-radius:8px;font-weight:700;cursor:pointer}
 
-/* ────── MODALS ────── */
+/* MODALS */
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);align-items:center;justify-content:center;z-index:1000}
 .modal.show{display:flex}
 .modal-content{background:#0d0d0d;border:2px solid #1a1a1a;border-radius:20px;padding:32px;width:420px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.6)}
@@ -177,7 +181,6 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
     <div class="live-indicator"><div class="live-dot"></div><div class="live-text">Live</div></div>
     <div class="time-display" id="navTime">--:--:--</div>
 
-    <!-- AUTH -->
     <div id="authContainer">
       <div class="auth-buttons">
         <button class="auth-btn" id="loginBtn">Login</button>
@@ -191,7 +194,6 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       <button class="auth-btn" id="logoutBtn">Logout</button>
     </div>
 
-    <!-- ADMIN ONLY -->
     <div id="adminControls" class="admin-controls">
       <button class="admin-btn" id="addTokenBtn">Add Token</button>
       <button class="admin-btn" id="refreshBtn">Refresh Now</button>
@@ -209,14 +211,12 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
     <div class="sidebar-section" id="sidebarSection"></div>
 
     <div class="main-section">
-      <!-- USER TABS -->
       <div id="userTabs" class="user-tabs" style="display:none;">
         <div class="user-tab active" data-tab="market">Market</div>
         <div class="user-tab" data-tab="portfolio">Portfolio</div>
         <div class="user-tab" data-tab="alerts">Alerts</div>
       </div>
 
-      <!-- MARKET TAB -->
       <div id="marketContent" class="user-content active">
         <div class="section-header">
           <div class="section-title">Market Overview</div>
@@ -239,7 +239,6 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
         <div class="tokens-list" id="tokensList"></div>
       </div>
 
-      <!-- PORTFOLIO TAB -->
       <div id="portfolioContent" class="user-content">
         <div class="portfolio-summary">
           <div class="summary-card">
@@ -266,7 +265,6 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
         </form>
       </div>
 
-      <!-- ALERTS TAB -->
       <div id="alertsContent" class="user-content">
         <div class="alerts-list" id="alertsList"></div>
 
@@ -276,7 +274,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
             <option value="above">Above</option>
             <option value="below">Below</option>
           </select>
-          <input type="number" step="0.01" placeholder="Target Price" id="targetPrice" required>
+          <input type="number" step="any" placeholder="Target Price" id="targetPrice" required>
           <input type="text" placeholder="Message (optional)" id="alertMessage">
           <button type="submit">Set Alert</button>
         </form>
@@ -285,7 +283,6 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   </div>
 </div>
 
-<!-- MODAL: Add Token (Admin) -->
 <div id="addTokenModal" class="modal">
   <div class="modal-content">
     <div class="modal-header">
@@ -309,7 +306,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
-/* ────── CONFIG ────── */
+/* CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyARWG4t3i_pCpu-pOZPqauRufMQhZaI14U",
   authDomain: "ccx-dashboard.firebaseapp.com",
@@ -323,20 +320,20 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.database();
 
-/* ────── GLOBALS ────── */
+/* GLOBALS */
 let tokenIds = [], cryptoData = [], globalData = null, fearGreedData = null;
 let sortColumn = 'change', sortDirection = 'desc';
 let currentUser = null;
-let prices = {}; // id → price
+let prices = {};
 
-/* ────── HELPERS ────── */
+/* HELPERS */
 function $(id){return document.getElementById(id);}
 function formatPrice(p){return p>=1000?p.toLocaleString('en-US',{maximumFractionDigits:0}):p>=1?p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):p>=.01?p.toFixed(4):p.toFixed(6);}
 function formatMarketCap(m){return m>=1e12?`${(m/1e12).toFixed(2)}T`:m>=1e9?`${(m/1e9).toFixed(2)}B`:m>=1e6?`${(m/1e6).toFixed(2)}M`:m.toLocaleString();}
 function updateTime(){$('navTime').textContent=new Date().toLocaleTimeString('en-US',{hour12:false});}
 updateTime();setInterval(updateTime,1000);
 
-/* ────── AUTH ────── */
+/* AUTH */
 $('loginBtn').onclick = () => authModal('login');
 $('registerBtn').onclick = () => authModal('register');
 $('logoutBtn').onclick = () => auth.signOut();
@@ -358,9 +355,7 @@ auth.onAuthStateChanged(user=>{
     $('userName').textContent = user.email.split('@')[0];
     $('userAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email)}&background=8b5cf6&color=fff&size=64`;
     $('userTabs').style.display='flex';
-    if(user.email === 'admin@ccx.com'){ // CHANGE THIS TO YOUR ADMIN EMAIL
-      $('adminControls').classList.add('show');
-    }
+    if(user.email === 'testireba5@gmail.com') $('adminControls').classList.add('show');
     loadUserData();
   }else{
     $('authContainer').style.display='flex';
@@ -370,7 +365,7 @@ auth.onAuthStateChanged(user=>{
   }
 });
 
-/* ────── ADMIN: Add Token ────── */
+/* ADMIN */
 $('addTokenBtn').onclick = () => $('addTokenModal').classList.add('show');
 $('closeModal').onclick = $('cancelAdd').onclick = () => $('addTokenModal').classList.remove('show');
 $('confirmAdd').onclick = async () => {
@@ -384,7 +379,7 @@ $('confirmAdd').onclick = async () => {
   fetchAll();
 };
 
-/* ────── USER TABS ────── */
+/* USER TABS */
 document.querySelectorAll('.user-tab').forEach(tab=>{
   tab.onclick = () => {
     document.querySelectorAll('.user-tab').forEach(t=>t.classList.remove('active'));
@@ -394,7 +389,7 @@ document.querySelectorAll('.user-tab').forEach(tab=>{
   };
 });
 
-/* ────── PORTFOLIO ────── */
+/* PORTFOLIO */
 async function loadUserData(){
   await loadHoldings();
   await loadAlerts();
@@ -409,7 +404,9 @@ function renderHoldings(holdings){
   const list = $('holdingsList');
   list.innerHTML = '';
   let totalValue = 0, totalCost = 0;
+
   Object.entries(holdings).forEach(([id, h])=>{
+    const token = cryptoData.find(t=>t.id===h.tokenId) || {name: h.tokenId, symbol: '', image: ''};
     const price = prices[h.tokenId] || 0;
     const value = h.amount * price;
     const cost = h.amount * h.buyPrice;
@@ -417,21 +414,77 @@ function renderHoldings(holdings){
     totalCost += cost;
     const pl = value - cost;
     const plPct = cost > 0 ? (pl / cost * 100) : 0;
-    list.innerHTML += `<div class="holding-row">
-      <div class="token-icon-col"><img src="${cryptoData.find(t=>t.id===h.tokenId)?.image||''}" class="token-icon"></div>
-      <div>${cryptoData.find(t=>t.id===h.tokenId)?.name||h.tokenId}</div>
-      <div>${h.amount}</div>
-      <div>${formatPrice(price)}</div>
-      <div style="color:${pl>=0?'#10b981':'#ef4444'}">${pl>=0?'+' : ''}${formatPrice(pl)} (${plPct.toFixed(2)}%)</div>
-      <div class="delete-btn" onclick="deleteHolding('${id}')">X</div>
-    </div>`;
+
+    list.innerHTML += `
+      <div class="holding-row" data-id="${id}">
+        <div class="token-icon-col"><img src="${token.image}" class="token-icon"></div>
+        <div class="holding-name">${token.name} <span class="token-symbol">(${token.symbol.toUpperCase()})</span></div>
+        <div class="editable" data-field="amount" data-value="${h.amount}">${h.amount}</div>
+        <div class="editable" data-field="buyPrice" data-value="${h.buyPrice}">$${formatPrice(h.buyPrice)}</div>
+        <div style="color:${pl>=0?'#10b981':'#ef4444'}">
+          ${pl>=0?'+' : ''}${formatPrice(pl)}<br><small>(${plPct.toFixed(2)}%)</small>
+        </div>
+        <div class="delete-btn" onclick="deleteHolding('${id}')">X</div>
+      </div>`;
   });
+
   $('totalValue').textContent = `$${totalValue.toFixed(2)}`;
   const pl = totalValue - totalCost;
   $('totalPL').textContent = pl>=0?`+$${pl.toFixed(2)}`:`-$${Math.abs(pl).toFixed(2)}`;
   $('totalPL').style.color = pl>=0?'#10b981':'#ef4444';
   $('roi').textContent = totalCost>0?`${((totalValue/totalCost-1)*100).toFixed(2)}%`:'0%';
-  populateTokenSelect('holdingToken');
+
+  document.querySelectorAll('.editable').forEach(el => el.onclick = () => startEdit(el));
+}
+function startEdit(el) {
+  if (el.querySelector('input')) return;
+  const field = el.dataset.field;
+  const value = el.dataset.value;
+  const isPrice = field === 'buyPrice';
+
+  const input = document.createElement('input');
+  input.type = 'number';
+  input.step = 'any';
+  input.value = value;
+  input.style.width = '80px';
+  input.style.padding = '4px 8px';
+  input.style.background = '#0a0a0a';
+  input.style.border = '1px solid #8b5cf6';
+  input.style.borderRadius = '8px';
+  input.style.color = '#fff';
+  input.style.fontSize = '14px';
+
+  const saveBtn = document.createElement('span');
+  saveBtn.textContent = 'Save';
+  saveBtn.style.cursor = 'pointer';
+  saveBtn.style.color = '#10b981';
+  saveBtn.style.marginLeft = '8px';
+  saveBtn.style.fontWeight = '700';
+
+  const cancelBtn = document.createElement('span');
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.style.cursor = 'pointer';
+  cancelBtn.style.color = '#ef4444';
+  cancelBtn.style.marginLeft = '8px';
+  cancelBtn.style.fontWeight = '700';
+
+  el.innerHTML = '';
+  el.appendChild(input);
+  el.appendChild(saveBtn);
+  el.appendChild(cancelBtn);
+  input.focus();
+
+  const save = async () => {
+    const newVal = parseFloat(input.value);
+    if (isNaN(newVal) || newVal < 0) return alert('Invalid value');
+    const holdingId = el.closest('.holding-row').dataset.id;
+    await db.ref(`portfolios/${currentUser.uid}/${holdingId}`).update({ [field]: newVal });
+    loadHoldings();
+  };
+
+  saveBtn.onclick = save;
+  input.onkeypress = e => e.key === 'Enter' && save();
+  cancelBtn.onclick = () => loadHoldings();
 }
 window.deleteHolding = async (id) => {
   if(confirm('Delete?')) {
@@ -451,7 +504,7 @@ $('addHoldingForm').onsubmit = async e => {
   loadHoldings();
 };
 
-/* ────── ALERTS ────── */
+/* ALERTS */
 async function loadAlerts(){
   if(!currentUser) return;
   const snap = await db.ref(`alerts/${currentUser.uid}`).once('value');
@@ -480,7 +533,7 @@ function renderAlerts(alerts){
   populateTokenSelect('alertToken');
 }
 window.deleteAlert = async (id) => {
-  if(confirm('Delete alert?')) {
+  if(confirm('Delete?')) {
     await db.ref(`alerts/${currentUser.uid}/${id}`).remove();
     loadAlerts();
   }
@@ -498,7 +551,7 @@ $('addAlertForm').onsubmit = async e => {
   loadAlerts();
 };
 
-/* ────── MARKET DATA ────── */
+/* MARKET */
 async function loadTokenIds(){
   const snap = await db.ref('tokens').once('value');
   const obj = snap.val()||{};
@@ -623,7 +676,7 @@ function populateTokenSelect(id){
   });
 }
 
-/* ────── AUTO REFRESH ────── */
+/* AUTO REFRESH */
 fetchAll();
 setInterval(()=>{fetchAll(); if(currentUser){loadHoldings();loadAlerts();}}, 90000);
 if('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
