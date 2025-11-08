@@ -1,5 +1,5 @@
-// api/portfolio.js – COMMONJS
-const admin = require('firebase-admin');
+// api/portfolio.mjs – ES MODULES
+import admin from 'firebase-admin';
 
 if (!admin.apps.length) {
   console.log('Initializing Firebase Admin...');
@@ -15,7 +15,7 @@ if (!admin.apps.length) {
 
 const db = admin.database();
 
-module.exports = async (req, res) => {
+export default async (req, res) => {
   console.log('API called:', req.method);
   
   if (req.method !== 'GET') {
