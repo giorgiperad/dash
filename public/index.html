@@ -3,175 +3,273 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CCX Admin - Content Management</title>
+    <title>CRYPTO COLLECTIVE X</title>
+    <meta name="theme-color" content="#8b5cf6">
     <style>
-        /* Your full CSS from before - keeping it intact for style */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #050505; color: #ffffff; min-height: 100vh; }
-        .setup-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 20px; }
-        .setup-box { background: rgba(10, 10, 10, 0.95); border: 2px solid #8b5cf6; border-radius: 24px; padding: 48px; max-width: 600px; width: 100%; box-shadow: 0 20px 60px rgba(139, 92, 246, 0.3); }
-        .setup-logo { text-align: center; margin-bottom: 32px; }
-        .setup-logo h1 { font-size: 28px; background: linear-gradient(135deg, #8b5cf6, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
-        .setup-logo p { color: #666; font-size: 14px; }
-        .input-group { margin-bottom: 24px; }
-        .input-group label { display: block; color: #8b5cf6; font-size: 12px; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
-        .input-group input, .input-group textarea { width: 100%; padding: 14px; background: rgba(255, 255, 255, 0.05); border: 2px solid #333; border-radius: 12px; color: white; font-size: 14px; font-family: inherit; }
-        .input-group textarea { min-height: 100px; resize: vertical; }
-        .input-group input:focus, .input-group textarea:focus { outline: none; border-color: #8b5cf6; box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
-        .btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #8b5cf6, #ec4899); border: none; border-radius: 12px; color: white; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.3s; }
+        @keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-20px); } 60% { transform: translateY(-10px); } }
+        @keyframes confetti-fall { 0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #050505; color: #ffffff; min-height: 100vh; overflow-x: hidden; }
+        .confetti { position: fixed; width: 10px; height: 10px; z-index: 9999; pointer-events: none; animation: confetti-fall 3s linear forwards; }
+        .navbar { background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(20px); border-bottom: 2px solid #1a1a1a; padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .logo-section { display: flex; align-items: center; gap: 12px; }
+        .logo-icon { width: 40px; height: 40px; border-radius: 12px; animation: float 3s ease-in-out infinite; }
+        .logo-icon img { width: 40px; height: 40px; object-fit: contain; }
+        .logo-title { font-size: 16px; font-weight: 900; background: linear-gradient(135deg, #8b5cf6, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-right { display: flex; align-items: center; gap: 16px; }
+        .nav-btn { padding: 8px 16px; border: 2px solid #8b5cf6; background: transparent; color: #8b5cf6; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 12px; }
+        .nav-btn:hover { background: #8b5cf6; color: white; }
+        .nav-btn.primary { background: linear-gradient(135deg, #8b5cf6, #ec4899); color: white; border: none; }
+        .user-info { display: flex; align-items: center; gap: 12px; padding: 8px 16px; background: rgba(139, 92, 246, 0.1); border-radius: 12px; }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #ec4899); display: flex; align-items: center; justify-content: center; font-weight: 700; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 1000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: #0d0d0d; border: 2px solid #8b5cf6; border-radius: 24px; padding: 32px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; animation: slideInRight 0.3s ease-out; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .modal-title { font-size: 24px; font-weight: 800; background: linear-gradient(135deg, #8b5cf6, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .close-btn { background: none; border: none; color: #888; font-size: 28px; cursor: pointer; line-height: 1; }
+        .close-btn:hover { color: #fff; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; color: #8b5cf6; font-size: 12px; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.05); border: 2px solid #333; border-radius: 12px; color: white; font-size: 14px; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #8b5cf6; }
+        .btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #8b5cf6, #ec4899); border: none; border-radius: 12px; color: white; font-weight: 700; cursor: pointer; transition: all 0.3s; }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(139, 92, 246, 0.5); }
-        .btn-secondary { background: #333; margin-top: 12px; }
+        .btn-secondary { background: #333; margin-top: 8px; }
         .btn-secondary:hover { background: #444; }
-        .error-msg { background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; padding: 12px; border-radius: 8px; margin-top: 16px; font-size: 14px; text-align: center; }
-        .success-msg { background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #6ee7b7; padding: 12px; border-radius: 8px; margin-bottom: 16px; text-align: center; }
-        .admin-panel { display: none; }
-        .admin-header { background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(20px); border-bottom: 2px solid #1a1a1a; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-        .admin-logo h1 { font-size: 24px; background: linear-gradient(135deg, #8b5cf6, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .logout-btn { padding: 10px 24px; background: #ef4444; border: none; border-radius: 8px; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s; }
-        .logout-btn:hover { background: #dc2626; }
-        .admin-container { max-width: 1400px; margin: 0 auto; padding: 40px; }
-        .tabs { display: flex; gap: 16px; margin-bottom: 32px; border-bottom: 2px solid #1a1a1a; padding-bottom: 16px; flex-wrap: wrap; }
-        .tab { padding: 12px 24px; background: rgba(255, 255, 255, 0.05); border: 2px solid #333; border-radius: 12px; color: #888; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 24px 20px; }
+        .tabs { display: flex; gap: 8px; margin-bottom: 24px; overflow-x: auto; padding-bottom: 8px; }
+        .tab { padding: 10px 20px; background: rgba(255, 255, 255, 0.05); border: 2px solid #333; border-radius: 12px; color: #888; font-weight: 600; cursor: pointer; white-space: nowrap; font-size: 14px; }
         .tab.active { background: linear-gradient(135deg, #8b5cf6, #ec4899); border-color: #8b5cf6; color: white; }
         .section { display: none; }
         .section.active { display: block; }
-        .card { background: rgba(10, 10, 10, 0.95); border: 2px solid #1a1a1a; border-radius: 20px; padding: 32px; margin-bottom: 24px; }
-        .card h2 { font-size: 24px; margin-bottom: 24px; color: #8b5cf6; }
-        .form-group { margin-bottom: 24px; }
-        .form-group label { display: block; color: #8b5cf6; font-size: 12px; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
-        .form-group input, .form-group textarea { width: 100%; padding: 14px; background: rgba(255, 255, 255, 0.05); border: 2px solid #333; border-radius: 12px; color: white; font-size: 14px; font-family: inherit; }
-        .form-group textarea { min-height: 120px; resize: vertical; }
-        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: #8b5cf6; }
-        .btn-primary { padding: 12px 24px; background: linear-gradient(135deg, #8b5cf6, #ec4899); border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 14px; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(139, 92, 246, 0.5); }
-        .btn-danger { padding: 8px 16px; background: #ef4444; border: none; border-radius: 8px; color: white; font-weight: 600; cursor: pointer; font-size: 12px; }
-        .btn-danger:hover { background: #dc2626; }
-        .item-list { display: grid; gap: 16px; }
-        .item { background: rgba(255, 255, 255, 0.05); border: 2px solid #333; border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .item-info h3 { font-size: 18px; margin-bottom: 8px; color: white; }
-        .item-info p { font-size: 14px; color: #888; }
+        .portfolio-summary { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border: 2px solid #8b5cf6; border-radius: 20px; padding: 24px; margin-bottom: 24px; }
+        .portfolio-value { text-align: center; margin-bottom: 20px; }
+        .portfolio-label { font-size: 12px; color: #888; text-transform: uppercase; margin-bottom: 8px; }
+        .portfolio-amount { font-size: 48px; font-weight: 900; background: linear-gradient(135deg, #8b5cf6, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .portfolio-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .stat-box { background: rgba(0, 0, 0, 0.3); padding: 16px; border-radius: 12px; text-align: center; }
+        .stat-label { font-size: 11px; color: #666; margin-bottom: 8px; }
+        .stat-value { font-size: 20px; font-weight: 800; }
+        .stat-value.positive { color: #10b981; }
+        .stat-value.negative { color: #ef4444; }
+        .holdings-list { display: grid; gap: 12px; }
+        .holding-card { background: #0d0d0d; border: 2px solid #1a1a1a; border-radius: 16px; padding: 16px; display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: center; transition: all 0.3s; }
+        .holding-card:hover { border-color: #8b5cf6; transform: translateY(-2px); }
+        .holding-icon { width: 40px; height: 40px; border-radius: 50%; background: rgba(139, 92, 246, 0.2); }
+        .holding-info h4 { font-size: 14px; margin-bottom: 4px; }
+        .holding-info p { font-size: 12px; color: #888; }
+        .holding-value { text-align: right; }
+        .holding-amount { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+        .holding-change { font-size: 12px; font-weight: 600; }
+        .alert-card { background: #0d0d0d; border: 2px solid #1a1a1a; border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .alert-info h4 { font-size: 14px; margin-bottom: 4px; }
+        .alert-info p { font-size: 12px; color: #888; }
+        .alert-actions { display: flex; gap: 8px; }
+        .icon-btn { padding: 8px; background: rgba(255, 255, 255, 0.05); border: 1px solid #333; border-radius: 8px; color: white; cursor: pointer; font-size: 16px; }
+        .icon-btn:hover { background: rgba(139, 92, 246, 0.2); border-color: #8b5cf6; }
+        .icon-btn.delete:hover { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; }
+        .token-grid { display: grid; gap: 12px; }
+        .token-card { background: #0d0d0d; border: 2px solid #1a1a1a; border-radius: 16px; padding: 16px; display: grid; grid-template-columns: 40px 1fr 80px 80px; gap: 12px; align-items: center; transition: all 0.3s; }
+        .token-card:hover { border-color: #8b5cf6; transform: translateY(-2px); }
+        .token-card.mooning { animation: bounce 1s ease-in-out; border-color: #10b981; box-shadow: 0 0 30px rgba(16, 185, 129, 0.5); }
+        .token-icon { width: 40px; height: 40px; border-radius: 50%; }
+        .token-info h4 { font-size: 14px; margin-bottom: 2px; }
+        .token-info p { font-size: 11px; color: #888; text-transform: uppercase; }
+        .token-price { font-size: 14px; font-weight: 700; text-align: right; }
+        .token-change { font-size: 13px; font-weight: 800; padding: 6px 10px; border-radius: 8px; text-align: center; }
+        .positive { color: #10b981; background: rgba(16, 185, 129, 0.1); }
+        .negative { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+        .notification { position: fixed; top: 80px; right: 20px; background: #0d0d0d; border: 2px solid #8b5cf6; border-radius: 16px; padding: 16px 20px; min-width: 300px; z-index: 999; animation: slideInRight 0.3s ease-out; box-shadow: 0 10px 40px rgba(139, 92, 246, 0.3); }
+        .notification-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+        .notification-message { font-size: 12px; color: #888; }
         .loading { text-align: center; padding: 40px; color: #888; }
         .spinner { border: 3px solid #1a1a1a; border-top: 3px solid #8b5cf6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 16px; }
-        .help-text { font-size: 12px; color: #666; margin-top: 8px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .empty-state { text-align: center; padding: 60px 20px; }
+        .empty-icon { font-size: 64px; margin-bottom: 16px; opacity: 0.3; }
+        .empty-text { font-size: 18px; color: #666; margin-bottom: 24px; }
+        @media (max-width: 768px) {
+            .navbar { padding: 12px 16px; }
+            .nav-right { gap: 8px; }
+            .nav-btn { padding: 6px 12px; font-size: 11px; }
+            .container { padding: 16px 12px; }
+            .portfolio-amount { font-size: 32px; }
+            .token-card { grid-template-columns: 36px 1fr 70px 70px; gap: 8px; padding: 12px; }
+            .holding-card { grid-template-columns: 36px 1fr auto; }
+            .notification { right: 12px; left: 12px; min-width: auto; }
+        }
     </style>
 </head>
 <body>
-    <!-- Setup Screen -->
-    <div id="setupScreen" class="setup-screen">
-        <div class="setup-box">
-            <div class="setup-logo">
-                <h1>🔥 Firebase Setup</h1>
-                <p>Configure your Firebase connection</p>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo-section">
+            <div class="logo-icon">
+                <img src="https://ta3bviqjtxy1kv7x.public.blob.vercel-storage.com/sticker.webp" alt="Logo">
             </div>
-            <div id="setupMessage"></div>
-            <div class="input-group">
-                <label>Firebase Config (JSON)</label>
-                <textarea id="firebaseConfig" placeholder='Paste your config here...'></textarea>
-                <p class="help-text">From Firebase Console → Project Settings → General</p>
+            <div class="logo-title" id="siteName">CRYPTO COLLECTIVE X</div>
+        </div>
+        <div class="nav-right" id="navRight">
+            <button class="nav-btn" onclick="openModal('loginModal')">Login</button>
+            <button class="nav-btn primary" onclick="openModal('registerModal')">Register</button>
+        </div>
+    </nav>
+
+    <!-- Modals (Login, Register, Add Holding, Add Alert) -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Login</h2>
+                <button class="close-btn" onclick="closeModal('loginModal')">&times;</button>
             </div>
-            <div class="input-group">
-                <label>Admin Password</label>
-                <input type="password" id="setupPassword" placeholder="Create password">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="loginEmail" placeholder="your@email.com">
             </div>
-            <button class="btn" id="saveBtn">Save & Continue</button>
-            <button class="btn btn-secondary" id="loadBtn">I Already Have Config</button>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="loginPassword" placeholder="••••••••">
+            </div>
+            <button class="btn" onclick="login()">Login</button>
+            <button class="btn btn-secondary" onclick="closeModal('loginModal'); openModal('registerModal')">Don't have an account? Register</button>
+        </div>
+    </div>
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Register</h2>
+                <button class="close-btn" onclick="closeModal('registerModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" id="registerName" placeholder="Your Name">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="registerEmail" placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="registerPassword" placeholder="••••••••">
+            </div>
+            <button class="btn" onclick="register()">Create Account</button>
+            <button class="btn btn-secondary" onclick="closeModal('registerModal'); openModal('loginModal')">Already have an account? Login</button>
+        </div>
+    </div>
+    <div id="addHoldingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add to Portfolio</h2>
+                <button class="close-btn" onclick="closeModal('addHoldingModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Select Cryptocurrency</label>
+                <select id="holdingCoin"><option value="">Loading...</option></select>
+            </div>
+            <div class="form-group">
+                <label>Amount You Own</label>
+                <input type="number" step="0.00000001" id="holdingAmount" placeholder="0.00">
+            </div>
+            <div class="form-group">
+                <label>Purchase Price (USD)</label>
+                <input type="number" step="0.01" id="holdingPrice" placeholder="0.00">
+            </div>
+            <button class="btn" onclick="addHolding()">Add to Portfolio</button>
+        </div>
+    </div>
+    <div id="addAlertModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Create Price Alert</h2>
+                <button class="close-btn" onclick="closeModal('addAlertModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Select Cryptocurrency</label>
+                <select id="alertCoin"><option value="">Loading...</option></select>
+            </div>
+            <div class="form-group">
+                <label>Alert When Price</label>
+                <select id="alertCondition">
+                    <option value="above">Goes Above</option>
+                    <option value="below">Goes Below</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Target Price (USD)</label>
+                <input type="number" step="0.01" id="alertPrice" placeholder="50000.00">
+            </div>
+            <button class="btn" onclick="addAlert()">Create Alert</button>
         </div>
     </div>
 
-    <!-- Login Screen -->
-    <div id="loginScreen" class="setup-screen" style="display: none;">
-        <div class="setup-box" style="max-width: 400px;">
-            <div class="setup-logo">
-                <h1>🔐 CCX Admin</h1>
-                <p>Content Management System</p>
+    <!-- Main Container -->
+    <div class="container">
+        <div id="guestView">
+            <div class="empty-state">
+                <div class="empty-icon">🔐</div>
+                <div class="empty-text">Please login or register to access portfolio features</div>
+                <button class="btn" style="max-width: 200px; margin: 0 auto;" onclick="openModal('loginModal')">Login Now</button>
             </div>
-            <div class="input-group">
-                <label>Admin Password</label>
-                <input type="password" id="loginPassword" placeholder="Enter password">
-            </div>
-            <button class="btn" id="loginBtn">Login</button>
-            <div id="loginError"></div>
         </div>
-    </div>
-
-    <!-- Admin Panel -->
-    <div id="adminPanel" class="admin-panel">
-        <header class="admin-header">
-            <div class="admin-logo"><h1>CCX Admin Panel</h1></div>
-            <button class="logout-btn" id="logoutBtn">Logout</button>
-        </header>
-        <div class="admin-container">
+        <div id="userView" style="display: none;">
+            <!-- Tabs -->
             <div class="tabs">
-                <div class="tab active" data-tab="tokens">🪙 Crypto Tokens</div>
-                <div class="tab" data-tab="quotes">💬 Quotes</div>
-                <div class="tab" data-tab="settings">⚙️ Settings</div>
+                <div class="tab active" onclick="switchTab('market')">📊 Market</div>
+                <div class="tab" onclick="switchTab('portfolio')">💼 Portfolio</div>
+                <div class="tab" onclick="switchTab('alerts')">🔔 Alerts</div>
             </div>
-
-            <!-- Tokens Section -->
-            <div id="tokensSection" class="section active">
-                <div class="card">
-                    <h2>Add Crypto Token</h2>
-                    <div id="tokensMessage"></div>
-                    <div class="form-group">
-                        <label>Search Coin (Name or Symbol)</label>
-                        <input type="text" id="tokenSearch" placeholder="bitcoin, BTC, sol..." list="coinList">
-                        <datalist id="coinList"></datalist>
-                        <p class="help-text">Type to search 10,000+ coins</p>
-                    </div>
-                    <button class="btn-primary" id="addTokenBtn">Add Token</button>
-                </div>
-                <div class="card">
-                    <h2>Current Tokens</h2>
-                    <div id="tokensList" class="loading">
+            <!-- Market Section -->
+            <div id="marketSection" class="section active">
+                <div id="tokenGrid" class="token-grid">
+                    <div class="loading">
                         <div class="spinner"></div>
-                        <div>Loading tokens...</div>
+                        <div>Loading market data...</div>
                     </div>
                 </div>
             </div>
-
-            <!-- Quotes Section -->
-            <div id="quotesSection" class="section">
-                <div class="card">
-                    <h2>Add New Quote</h2>
-                    <div id="quotesMessage"></div>
-                    <div class="form-group">
-                        <label>Quote Text</label>
-                        <textarea id="quoteText" placeholder="Enter inspirational quote..."></textarea>
+            <!-- Portfolio Section -->
+            <div id="portfolioSection" class="section">
+                <div class="portfolio-summary">
+                    <div class="portfolio-value">
+                        <div class="portfolio-label">Total Portfolio Value</div>
+                        <div class="portfolio-amount" id="totalValue">$0.00</div>
                     </div>
-                    <div class="form-group">
-                        <label>Author (Optional)</label>
-                        <input type="text" id="quoteAuthor" placeholder="e.g., Warren Buffett">
+                    <div class="portfolio-stats">
+                        <div class="stat-box">
+                            <div class="stat-label">24h Profit/Loss</div>
+                            <div class="stat-value positive" id="profitLoss">$0.00</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">ROI</div>
+                            <div class="stat-value positive" id="roi">0.00%</div>
+                        </div>
                     </div>
-                    <button class="btn-primary" id="addQuoteBtn">Add Quote</button>
                 </div>
-                <div class="card">
-                    <h2>Existing Quotes</h2>
-                    <div id="quotesList" class="loading">
-                        <div class="spinner"></div>
-                        <div>Loading quotes...</div>
+                <div style="margin-bottom: 16px;">
+                    <button class="btn" onclick="openModal('addHoldingModal')">+ Add Cryptocurrency</button>
+                </div>
+                <div id="holdingsList" class="holdings-list">
+                    <div class="empty-state">
+                        <div class="empty-icon">💼</div>
+                        <div class="empty-text">Your portfolio is empty. Add your first cryptocurrency!</div>
                     </div>
                 </div>
             </div>
-
-            <!-- Settings Section -->
-            <div id="settingsSection" class="section">
-                <div class="card">
-                    <h2>Site Settings</h2>
-                    <div id="settingsMessage"></div>
-                    <div class="form-group">
-                        <label>Site Name</label>
-                        <input type="text" id="siteName" placeholder="CRYPTO COLLECTIVE X">
+            <!-- Alerts Section -->
+            <div id="alertsSection" class="section">
+                <div style="margin-bottom: 16px;">
+                    <button class="btn" onclick="openModal('addAlertModal')">+ Create Alert</button>
+                </div>
+                <div id="alertsList">
+                    <div class="empty-state">
+                        <div class="empty-icon">🔔</div>
+                        <div class="empty-text">No price alerts set. Create your first alert!</div>
                     </div>
-                    <div class="form-group">
-                        <label>Site Tagline</label>
-                        <input type="text" id="siteTagline" placeholder="Your crypto dashboard">
-                    </div>
-                    <div class="form-group">
-                        <label>New Admin Password</label>
-                        <input type="password" id="newAdminPassword" placeholder="Leave empty to keep current">
-                    </div>
-                    <button class="btn-primary" id="saveSettingsBtn">Save Settings</button>
                 </div>
             </div>
         </div>
@@ -180,236 +278,368 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script>
-        let db = null;
-        let firebaseConfig = null;
-        let coinList = [];
+        // Firebase Config (Your config)
+        const firebaseConfig = {
+            apiKey: "AIzaSyARWG4t3i_pCpu-pOZPqauRufMQhZaI14U",
+            authDomain: "ccx-dashboard.firebaseapp.com",
+            databaseURL: "https://ccx-dashboard-default-rtdb.europe-west1.firebasedatabase.app/",
+            projectId: "ccx-dashboard",
+            storageBucket: "ccx-dashboard.firebasestorage.app",
+            messagingSenderId: "413950601775",
+            appId: "1:413950601775:web:53ca78e202ef7ec884b4da"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const auth = firebase.auth();
+        let currentUser = null;
+        let cryptoData = [];
+        let userHoldings = [];
+        let userAlerts = [];
+        let tokens = [];
 
-        // DOM Ready
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('saveBtn').onclick = saveFirebaseConfig;
-            document.getElementById('loadBtn').onclick = loadExistingConfig;
-            document.getElementById('loginBtn').onclick = handleLogin;
-            document.getElementById('logoutBtn').onclick = handleLogout;
-            document.getElementById('addTokenBtn').onclick = addToken;
-            document.getElementById('addQuoteBtn').onclick = addQuote;
-            document.getElementById('saveSettingsBtn').onclick = saveSettings;
-            document.querySelectorAll('.tab').forEach(tab => tab.onclick = () => switchTab(tab.dataset.tab));
-            loadExistingConfig();
+        // Auth State
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user;
+                showUserView();
+                loadUserData();
+            } else {
+                currentUser = null;
+                showGuestView();
+            }
         });
 
-        function loadExistingConfig() {
-            const saved = localStorage.getItem('ccx_firebase_config');
-            if (saved) {
-                try {
-                    firebaseConfig = JSON.parse(saved);
-                    initializeFirebase();
-                    document.getElementById('setupScreen').style.display = 'none';
-                    document.getElementById('loginScreen').style.display = 'flex';
-                } catch (e) { alert('Invalid config. Setup again.'); }
+        function showUserView() {
+            document.getElementById('guestView').style.display = 'none';
+            document.getElementById('userView').style.display = 'block';
+            const navRight = document.getElementById('navRight');
+            navRight.innerHTML = `
+                <div class="user-info">
+                    <div class="user-avatar">${currentUser.email[0].toUpperCase()}</div>
+                    <span style="font-size: 12px; font-weight: 600;">${currentUser.email}</span>
+                </div>
+                <button class="nav-btn" onclick="logout()">Logout</button>
+            `;
+        }
+
+        function showGuestView() {
+            document.getElementById('guestView').style.display = 'block';
+            document.getElementById('userView').style.display = 'none';
+            const navRight = document.getElementById('navRight');
+            navRight.innerHTML = `
+                <button class="nav-btn" onclick="openModal('loginModal')">Login</button>
+                <button class="nav-btn primary" onclick="openModal('registerModal')">Register</button>
+            `;
+        }
+
+        // Modals
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        // Auth Functions
+        async function register() {
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            if (!name || !email || !password) { showNotification('Error', 'Fill all fields'); return; }
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                await userCredential.user.updateProfile({ displayName: name });
+                await db.ref(`users/${userCredential.user.uid}`).set({ name, email, createdAt: Date.now() });
+                closeModal('registerModal');
+                showNotification('Success', 'Account created! 🎉');
+                throwConfetti();
+            } catch (error) { showNotification('Error', error.message); }
+        }
+
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            if (!email || !password) { showNotification('Error', 'Fill all fields'); return; }
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                closeModal('loginModal');
+                showNotification('Welcome Back!', 'You are now logged in 🚀');
+            } catch (error) { showNotification('Error', error.message); }
+        }
+
+        function logout() {
+            auth.signOut();
+            showNotification('Logged Out', 'See you soon! 👋');
+        }
+
+        // Load User Data
+        async function loadUserData() {
+            if (!currentUser) return;
+            const tokensSnapshot = await db.ref('tokens').once('value');
+            const tokensObj = tokensSnapshot.val() || {};
+            tokens = Object.values(tokensObj).map(t => t.id); // Extract IDs from new structure
+            await fetchCryptoData();
+            loadPortfolio();
+            loadAlerts();
+            populateDropdowns();
+        }
+
+        async function fetchCryptoData() {
+            if (tokens.length === 0) return;
+            try {
+                const idsParam = tokens.join(',');
+                const response = await fetch(
+                    `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${idsParam}&order=market_cap_desc&per_page=250&page=1&sparkline=false&price_change_percentage=24h`
+                );
+                cryptoData = await response.json();
+                renderMarket();
+            } catch (error) { console.error('Error fetching crypto data:', error); }
+        }
+
+        function renderMarket() {
+            const grid = document.getElementById('tokenGrid');
+            if (cryptoData.length === 0) {
+                grid.innerHTML = '<div class="loading">No market data available</div>';
+                return;
             }
+            grid.innerHTML = cryptoData.map(token => {
+                const change = token.price_change_percentage_24h || 0;
+                const changeClass = change >= 0 ? 'positive' : 'negative';
+                const changeSymbol = change >= 0 ? '▲' : '▼';
+                const isMooning = change >= 10;
+                if (isMooning) setTimeout(() => throwConfetti(), 300);
+                return `
+                    <div class="token-card ${isMooning ? 'mooning' : ''}">
+                        <img src="${token.image}" alt="${token.name}" class="token-icon">
+                        <div class="token-info">
+                            <h4>${token.name}</h4>
+                            <p>${token.symbol.toUpperCase()}</p>
+                        </div>
+                        <div class="token-price">$${formatPrice(token.current_price)}</div>
+                        <div class="token-change ${changeClass}">
+                            ${changeSymbol} ${Math.abs(change).toFixed(1)}%
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
-        function saveFirebaseConfig() {
-            const configText = document.getElementById('firebaseConfig').value.trim();
-            const password = document.getElementById('setupPassword').value.trim();
-            const msg = document.getElementById('setupMessage');
-            if (!configText || !password) { msg.innerHTML = '<div class="error-msg">Fill all fields</div>'; return; }
+        // Portfolio Functions (loadPortfolio, renderPortfolio, addHolding, deleteHolding)
+        async function loadPortfolio() {
+            const snapshot = await db.ref(`portfolios/${currentUser.uid}`).once('value');
+            const holdings = snapshot.val() || {};
+            userHoldings = Object.entries(holdings).map(([id, data]) => ({ id, ...data }));
+            renderPortfolio();
+        }
+
+        function renderPortfolio() {
+            const list = document.getElementById('holdingsList');
+            if (userHoldings.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">💼</div>
+                        <div class="empty-text">Your portfolio is empty. Add your first cryptocurrency!</div>
+                    </div>
+                `;
+                return;
+            }
+            let totalValue = 0;
+            let totalCost = 0;
+            list.innerHTML = userHoldings.map(holding => {
+                const crypto = cryptoData.find(c => c.id === holding.coinId);
+                if (!crypto) return '';
+                const currentValue = crypto.current_price * holding.amount;
+                const cost = holding.purchasePrice * holding.amount;
+                const profit = currentValue - cost;
+                const profitPercent = ((profit / cost) * 100).toFixed(2);
+                totalValue += currentValue;
+                totalCost += cost;
+                return `
+                    <div class="holding-card">
+                        <img src="${crypto.image}" alt="${crypto.name}" class="holding-icon">
+                        <div class="holding-info">
+                            <h4>${crypto.name}</h4>
+                            <p>${holding.amount} ${crypto.symbol.toUpperCase()}</p>
+                        </div>
+                        <div class="holding-value">
+                            <div class="holding-amount">$${currentValue.toFixed(2)}</div>
+                            <div class="holding-change ${profit >= 0 ? 'positive' : 'negative'}">
+                                ${profit >= 0 ? '+' : ''}$${profit.toFixed(2)} (${profitPercent}%)
+                            </div>
+                        </div>
+                        <button class="icon-btn delete" onclick="deleteHolding('${holding.id}')">🗑️</button>
+                    </div>
+                `;
+            }).join('');
+            const totalProfit = totalValue - totalCost;
+            const roi = totalCost > 0 ? ((totalProfit / totalCost) * 100).toFixed(2) : 0;
+            document.getElementById('totalValue').textContent = `$${totalValue.toFixed(2)}`;
+            document.getElementById('profitLoss').textContent = `${totalProfit >= 0 ? '+' : ''}$${totalProfit.toFixed(2)}`;
+            document.getElementById('profitLoss').className = `stat-value ${totalProfit >= 0 ? 'positive' : 'negative'}`;
+            document.getElementById('roi').textContent = `${roi}%`;
+            document.getElementById('roi').className = `stat-value ${roi >= 0 ? 'positive' : 'negative'}`;
+        }
+
+        async function addHolding() {
+            const coinId = document.getElementById('holdingCoin').value;
+            const amount = parseFloat(document.getElementById('holdingAmount').value);
+            const price = parseFloat(document.getElementById('holdingPrice').value);
+            if (!coinId || !amount || !price) { showNotification('Error', 'Fill all fields'); return; }
             try {
-                firebaseConfig = JSON.parse(configText);
-                localStorage.setItem('ccx_firebase_config', JSON.stringify(firebaseConfig));
-                initializeFirebase();
-                db.ref('settings/adminPassword').set(password).then(() => {
-                    msg.innerHTML = '<div class="success-msg">Saved! Redirecting...</div>';
-                    setTimeout(() => {
-                        document.getElementById('setupScreen').style.display = 'none';
-                        document.getElementById('loginScreen').style.display = 'flex';
-                    }, 1500);
-                }).catch(e => msg.innerHTML = '<div class="error-msg">Save failed: ' + e.message + '</div>');
-            } catch (e) { msg.innerHTML = '<div class="error-msg">Invalid JSON</div>'; }
+                const newRef = db.ref(`portfolios/${currentUser.uid}`).push();
+                await newRef.set({ coinId, amount, purchasePrice: price, addedAt: Date.now() });
+                closeModal('addHoldingModal');
+                showNotification('Success', 'Added to portfolio! 🎉');
+                throwConfetti();
+                loadPortfolio();
+                document.getElementById('holdingAmount').value = '';
+                document.getElementById('holdingPrice').value = '';
+            } catch (error) { showNotification('Error', error.message); }
         }
 
-        function initializeFirebase() {
-            if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-            db = firebase.database();
-        }
-
-        async function handleLogin() {
-            const pw = document.getElementById('loginPassword').value;
-            const err = document.getElementById('loginError');
-            if (!pw) { err.innerHTML = '<div class="error-msg">Enter password</div>'; return; }
+        async function deleteHolding(id) {
+            if (!confirm('Remove from portfolio?')) return;
             try {
-                const snap = await db.ref('settings/adminPassword').once('value');
-                if (pw === snap.val()) {
-                    document.getElementById('loginScreen').style.display = 'none';
-                    document.getElementById('adminPanel').style.display = 'block';
-                    loadAllData();
-                    loadCoinList();
-                } else { err.innerHTML = '<div class="error-msg">Wrong password</div>'; }
-            } catch (e) { err.innerHTML = '<div class="error-msg">Connection error</div>'; }
+                await db.ref(`portfolios/${currentUser.uid}/${id}`).remove();
+                showNotification('Removed', 'Holding removed');
+                loadPortfolio();
+            } catch (error) { showNotification('Error', error.message); }
         }
 
-        function handleLogout() {
-            document.getElementById('loginScreen').style.display = 'flex';
-            document.getElementById('adminPanel').style.display = 'none';
-            document.getElementById('loginPassword').value = '';
+        // Alerts Functions (loadAlerts, renderAlerts, addAlert, deleteAlert, checkAlerts)
+        async function loadAlerts() {
+            const snapshot = await db.ref(`alerts/${currentUser.uid}`).once('value');
+            const alerts = snapshot.val() || {};
+            userAlerts = Object.entries(alerts).map(([id, data]) => ({ id, ...data }));
+            renderAlerts();
+            checkAlerts();
+        }
+
+        function renderAlerts() {
+            const list = document.getElementById('alertsList');
+            if (userAlerts.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔔</div>
+                        <div class="empty-text">No price alerts set. Create your first alert!</div>
+                    </div>
+                `;
+                return;
+            }
+            list.innerHTML = userAlerts.map(alert => {
+                const crypto = cryptoData.find(c => c.id === alert.coinId);
+                if (!crypto) return '';
+                return `
+                    <div class="alert-card">
+                        <div class="alert-info">
+                            <h4>${crypto.name} ${alert.condition === 'above' ? '>' : '<'} $${alert.targetPrice}</h4>
+                            <p>Current: $${crypto.current_price.toFixed(2)}</p>
+                        </div>
+                        <div class="alert-actions">
+                            <button class="icon-btn delete" onclick="deleteAlert('${alert.id}')">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function addAlert() {
+            const coinId = document.getElementById('alertCoin').value;
+            const condition = document.getElementById('alertCondition').value;
+            const targetPrice = parseFloat(document.getElementById('alertPrice').value);
+            if (!coinId || !targetPrice) { showNotification('Error', 'Fill all fields'); return; }
+            try {
+                const newRef = db.ref(`alerts/${currentUser.uid}`).push();
+                await newRef.set({ coinId, condition, targetPrice, createdAt: Date.now() });
+                closeModal('addAlertModal');
+                showNotification('Success', 'Alert created! 🔔');
+                loadAlerts();
+                document.getElementById('alertPrice').value = '';
+                if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+            } catch (error) { showNotification('Error', error.message); }
+        }
+
+        async function deleteAlert(id) {
+            if (!confirm('Delete alert?')) return;
+            try {
+                await db.ref(`alerts/${currentUser.uid}/${id}`).remove();
+                showNotification('Deleted', 'Alert removed');
+                loadAlerts();
+            } catch (error) { showNotification('Error', error.message); }
+        }
+
+        function checkAlerts() {
+            if (!currentUser || userAlerts.length === 0) return;
+            userAlerts.forEach(alert => {
+                const crypto = cryptoData.find(c => c.id === alert.coinId);
+                if (!crypto) return;
+                const triggered = (alert.condition === 'above' && crypto.current_price >= alert.targetPrice) || (alert.condition === 'below' && crypto.current_price <= alert.targetPrice);
+                if (triggered) {
+                    showNotification('🚨 Price Alert!', `${crypto.name} is now $${crypto.current_price.toFixed(2)}`);
+                    if ('Notification' in window && Notification.permission === 'granted') {
+                        new Notification('CCX Price Alert', { body: `${crypto.name} ${alert.condition === 'above' ? 'above' : 'below'} $${alert.targetPrice}`, icon: crypto.image });
+                    }
+                    throwConfetti();
+                }
+            });
+        }
+
+        // Helpers
+        function populateDropdowns() {
+            const holdingSelect = document.getElementById('holdingCoin');
+            const alertSelect = document.getElementById('alertCoin');
+            const options = cryptoData.map(crypto => `<option value="${crypto.id}">${crypto.name} (${crypto.symbol.toUpperCase()})</option>`).join('');
+            holdingSelect.innerHTML = '<option value="">Select...</option>' + options;
+            alertSelect.innerHTML = '<option value="">Select...</option>' + options;
         }
 
         function switchTab(tab) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelector(`.tab[data-tab="${tab}"]`).classList.add('active');
+            event.target.classList.add('active');
             document.getElementById(tab + 'Section').classList.add('active');
         }
 
-        async function loadAllData() {
-            await loadTokens();
-            await loadQuotes();
-            await loadSettings();
+        function formatPrice(price) {
+            if (price >= 1000) return price.toLocaleString('en-US', { maximumFractionDigits: 0 });
+            if (price >= 1) return price.toFixed(2);
+            if (price >= 0.01) return price.toFixed(4);
+            return price.toFixed(6);
         }
 
-        async function loadCoinList() {
-            if (coinList.length) return;
-            try {
-                const res = await fetch('https://api.coingecko.com/api/v3/coins/list');
-                coinList = await res.json();
-                const datalist = document.getElementById('coinList');
-                datalist.innerHTML = coinList.slice(0, 1000).map(c => `<option value="${c.id}">${c.name} (${c.symbol.toUpperCase()})</option>`).join('');
-            } catch (e) { console.error('Coin list error:', e); }
+        function showNotification(title, message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `<div class="notification-title">${title}</div><div class="notification-message">${message}</div>`;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 4000);
         }
 
-        async function addToken() {
-            const input = document.getElementById('tokenSearch').value.trim().toLowerCase();
-            const msg = document.getElementById('tokensMessage');
-            if (!input) { msg.innerHTML = '<div class="error-msg">Enter a coin</div>'; return; }
-            const coin = coinList.find(c => c.id === input || c.symbol.toLowerCase() === input);
-            if (!coin) { msg.innerHTML = '<div class="error-msg">Coin not found. Try "bitcoin"</div>'; setTimeout(() => msg.innerHTML = '', 3000); return; }
-            try {
-                await db.ref('tokens/' + coin.id).set({ id: coin.id, name: coin.name, symbol: coin.symbol.toUpperCase() });
-                msg.innerHTML = `<div class="success-msg">${coin.name} added!</div>`;
-                document.getElementById('tokenSearch').value = '';
-                loadTokens();
-                setTimeout(() => msg.innerHTML = '', 3000);
-            } catch (e) { msg.innerHTML = '<div class="error-msg">Add error: ' + e.message + '</div>'; }
-        }
-
-        async function loadTokens() {
-            const el = document.getElementById('tokensList');
-            try {
-                el.innerHTML = '<div class="loading"><div class="spinner"></div>Loading tokens...</div>';
-                const snap = await db.ref('tokens').once('value');
-                const data = snap.val() || {};
-                const arr = Object.entries(data);
-                if (arr.length === 0) {
-                    el.innerHTML = '<p>No tokens added yet. Add your first!</p>';
-                    return;
-                }
-                el.innerHTML = `<div class="item-list">${arr.map(([key, token]) => {
-                    const name = token.name || key; // Fix undefined name
-                    const symbol = token.symbol || 'N/A'; // Fix undefined symbol
-                    return `
-                        <div class="item">
-                            <div class="item-info">
-                                <h3>${name}</h3>
-                                <p>${symbol} • ID: ${key}</p>
-                            </div>
-                            <button class="btn-danger" onclick="removeToken('${key}')">Remove</button>
-                        </div>
-                    `;
-                }).join('')}</div>`;
-            } catch (e) {
-                el.innerHTML = '<p class="error-msg">Load error: ' + e.message + '</p>';
-                console.error('Tokens load error:', e);
+        function throwConfetti() {
+            const colors = ['#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#3b82f6', '#ef4444'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    confetti.style.animationDelay = (Math.random() * 0.5) + 's';
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 4000);
+                }, i * 30);
             }
         }
 
-        window.removeToken = async (key) => {
-            if (confirm('Remove token?')) {
-                try {
-                    await db.ref('tokens/' + key).remove();
-                    loadTokens();
-                } catch (e) { alert('Remove error: ' + e.message); }
+        // Auto-refresh
+        setInterval(() => {
+            if (currentUser) {
+                fetchCryptoData();
+                loadPortfolio();
+                checkAlerts();
             }
-        };
+        }, 30000);
 
-        async function loadQuotes() {
-            const el = document.getElementById('quotesList');
-            try {
-                el.innerHTML = '<div class="loading"><div class="spinner"></div>Loading quotes...</div>';
-                const snap = await db.ref('quotes').once('value');
-                const data = snap.val() || {};
-                const arr = Object.entries(data);
-                if (arr.length === 0) {
-                    el.innerHTML = '<p>No quotes added yet.</p>';
-                    return;
-                }
-                el.innerHTML = `<div class="item-list">${arr.map(([key, quote]) => {
-                    const text = quote.text || 'No text'; // Fix undefined text
-                    const author = quote.author || 'Anonymous'; // Fix undefined author
-                    return `
-                        <div class="item">
-                            <div class="item-info">
-                                <h3>"${text.substring(0, 60)}${text.length > 60 ? '...' : ''}"</h3>
-                                <p>${author}</p>
-                            </div>
-                            <button class="btn-danger" onclick="deleteQuote('${key}')">Delete</button>
-                        </div>
-                    `;
-                }).join('')}</div>`;
-            } catch (e) {
-                el.innerHTML = '<p class="error-msg">Quotes load error: ' + e.message + '</p>';
-                console.error('Quotes load error:', e);
-            }
-        }
-
-        async function addQuote() {
-            const text = document.getElementById('quoteText').value.trim();
-            const author = document.getElementById('quoteAuthor').value.trim();
-            const msg = document.getElementById('quotesMessage');
-            if (!text) { msg.innerHTML = '<div class="error-msg">Quote text required</div>'; return; }
-            try {
-                const newRef = db.ref('quotes').push();
-                await newRef.set({ text, author: author || 'Anonymous', createdAt: Date.now() });
-                msg.innerHTML = '<div class="success-msg">Quote added!</div>';
-                document.getElementById('quoteText').value = '';
-                document.getElementById('quoteAuthor').value = '';
-                loadQuotes();
-                setTimeout(() => msg.innerHTML = '', 3000);
-            } catch (e) { msg.innerHTML = '<div class="error-msg">Add error: ' + e.message + '</div>'; }
-        }
-
-        window.deleteQuote = async (key) => {
-            if (confirm('Delete quote?')) {
-                try {
-                    await db.ref('quotes/' + key).remove();
-                    loadQuotes();
-                } catch (e) { alert('Delete error: ' + e.message); }
-            }
-        };
-
-        async function loadSettings() {
-            try {
-                const snap = await db.ref('settings').once('value');
-                const settings = snap.val() || {};
-                document.getElementById('siteName').value = settings.siteName || 'CRYPTO COLLECTIVE X'; // Fix undefined
-                document.getElementById('siteTagline').value = settings.siteTagline || ''; // Fix undefined
-            } catch (e) { console.error('Settings load error:', e); }
-        }
-
-        async function saveSettings() {
-            const siteName = document.getElementById('siteName').value.trim();
-            const siteTagline = document.getElementById('siteTagline').value.trim();
-            const newPassword = document.getElementById('newAdminPassword').value.trim();
-            const msg = document.getElementById('settingsMessage');
-            try {
-                const updates = { siteName: siteName || 'CRYPTO COLLECTIVE X', siteTagline: siteTagline || '' };
-                if (newPassword) updates.adminPassword = newPassword;
-                await db.ref('settings').update(updates);
-                msg.innerHTML = '<div class="success-msg">Settings saved!</div>';
-                document.getElementById('newAdminPassword').value = '';
-                setTimeout(() => msg.innerHTML = '', 3000);
-            } catch (e) { msg.innerHTML = '<div class="error-msg">Save error: ' + e.message + '</div>'; }
-        }
+        // Initial Load
+        loadUserData();
     </script>
 </body>
 </html>
