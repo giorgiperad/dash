@@ -1,15 +1,17 @@
 {
   "functions": {
     "api/*.js": {
-      "maxDuration": 10
+      "runtime": "nodejs18.x"
     }
   },
-  "headers": [
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
     {
       "source": "/(.*)",
-      "headers": [
-        {"key": "Access-Control-Allow-Origin", "value": "*"}
-      ]
+      "destination": "/index.html"
     }
   ]
 }
