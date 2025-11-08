@@ -302,18 +302,11 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
-/* ---------- ONLY PUBLIC INFO ---------- */
 const firebaseConfig = { projectId: "ccx-dashboard" };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-const functions = firebase.functions();
-
-/* ---------- EMULATOR (optional) ---------- */
-if (location.hostname === "localhost") functions.useFunctionsEmulator("http://localhost:5001");
 
 /* ---------- GLOBALS ---------- */
 let cryptoData = [], prices = {}, globalData = null, fearGreedData = null;
@@ -327,7 +320,7 @@ function formatMarketCap(m){return m>=1e12?`${(m/1e12).toFixed(2)}T`:m>=1e9?`${(
 function updateTime(){$('navTime').textContent=new Date().toLocaleTimeString('en-US',{hour12:false});}
 updateTime();setInterval(updateTime,1000);
 
-/* ---------- AUTH ---------- */
+/* ---------- AUTH (same as before) ---------- */
 $('loginBtn').onclick = () => authModal('login');
 $('registerBtn').onclick = () => authModal('register');
 $('logoutBtn').onclick = () => auth.signOut();
@@ -349,18 +342,17 @@ auth.onAuthStateChanged(user=>{
     $('userName').textContent = user.email.split('@')[0];
     $('userAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email)}&background=8b5cf6&color=fff&size=64`;
     $('userTabs').style.display='flex';
-    // Admin button only for the email set in the function
-    if(user.email === 'testireba5@gmail.com') $('adminControls').classList.add('show');
+    if(user.email === 'testireba5@gmail.com') $('adminControls').style.display='flex';
     loadUserData();
   }else{
     $('authContainer').style.display='flex';
     $('userContainer').style.display='none';
     $('userTabs').style.display='none';
-    $('adminControls').classList.remove('show');
+    $('adminControls').style.display='none';
   }
 });
 
-/* ---------- USER TABS ---------- */
+/* ---------- USER TABS (same as before) ---------- */
 document.querySelectorAll('.user-tab').forEach(tab=>{
   tab.onclick = () => {
     document.querySelectorAll('.user-tab,.user-content').forEach(el=>el.classList.remove('active'));
@@ -369,270 +361,317 @@ document.querySelectorAll('.user-tab').forEach(tab=>{
   };
 });
 
-/* ---------- MARKET ---------- */
+/* ---------- FETCH MARKET DATA (via Vercel API) ---------- */
 async function fetchAll(){
   const err = $('error'), load = $('loading');
-  err.innerHTML=''; load.style.display='block';
-  try{
-    const fn = functions.httpsCallable('getMarketData');
-    const res = await fn();
-    cryptoData = res.data.cryptoData || [];
-    cryptoData.forEach(t=>prices[t.id]=t.current_price);
-    globalData = res.data.globalData;
-    fearGreedData = res.data.fearGreed;
+  err.innerHTML = ''; load.style.display = 'block';
+  try {
+    const res = await fetch('/api/portfolio');
+    const data = await res.json();
+    if (res.status !== 200) throw new Error(data.error || 'Network error');
+    cryptoData = data.cryptoData || [];
+    cryptoData.forEach(t => prices[t.id] = t.current_price);
+    globalData = data.globalData;
+    fearGreedData = data.fearGreed;
     renderAll();
-    $('contentGrid').style.display='grid';
-    $('heroStats').style.display='grid';
-    if(currentUser){ loadHoldings(); loadAlerts(); }
-  }catch(e){
-    err.innerHTML=`<div class="error">Warning: ${e.message}</div>`;
-  }finally{
-    load.style.display='none';
+    $('contentGrid').style.display = 'grid';
+    $('heroStats').style.display = 'grid';
+    if(currentUser) { loadPortfolio(); loadAlerts(); }
+  } catch (e) {
+    err.innerHTML = `<div class="error">Warning: ${e.message}</div>`;
+  } finally {
+    load.style.display = 'none';
   }
-}
-function renderAll(){renderHero();renderSidebar();sortData();}
-function renderHero(){
-  let html='';
-  if(globalData){
-    const mc = (globalData.total_market_cap.usd/1e12).toFixed(2);
-    const vol = (globalData.total_volume.usd/1e9).toFixed(1);
-    const btcDom = globalData.market_cap_percentage.btc.toFixed(1);
-    html+=`<div class="hero-stat"><div class="hero-stat-label">Market Cap</div><div class="hero-stat-value">${mc}T</div></div>
-           <div class="hero-stat"><div class="hero-stat-label">24h Volume</div><div class="hero-stat-value">${vol}B</div></div>
-           <div class="hero-stat"><div class="hero-stat-label">BTC Dominance</div><div class="hero-stat-value">${btcDom}%</div></div>`;
-  }
-  if(fearGreedData){
-    html+=`<div class="hero-stat"><div class="hero-stat-label">Fear & Greed</div><div class="hero-stat-value">${fearGreedData.value}</div></div>`;
-  }
-  $('heroStats').innerHTML=html;
-}
-function renderSidebar(){
-  const sorted = [...cryptoData].sort((a,b)=>(b.price_change_percentage_24h||0)-(a.price_change_percentage_24h||0));
-  const top = sorted[0];
-  const gold = cryptoData.find(t=>t.id==='tether-gold');
-  let html='';
-  if(top){
-    const ch = top.price_change_percentage_24h||0;
-    const w = Math.min(Math.abs(ch)*3,100);
-    html+=`<div class="featured-card"><div class="card-badge badge-gainer">Top Gainer 24H</div>
-      <div class="featured-header"><img src="${top.image}" class="featured-icon"><div class="featured-info"><h3>${top.name}</h3><div class="featured-price">${formatPrice(top.current_price)}</div></div></div>
-      <div class="progress-section"><div class="progress-label"><span>24h Performance</span><span class="progress-value">+${ch.toFixed(2)}%</span></div>
-      <div class="progress-bar"><div class="progress-fill green" style="width:${w}%"></div></div></div></div>`;
-  }
-  if(gold){
-    const ch = gold.price_change_percentage_24h||0;
-    const neg = ch<0;
-    const w = Math.min(Math.abs(ch)*10,100);
-    const badge = neg?'badge-loss':'badge-gold';
-    const fill = neg?'red':'gold';
-    const valCls = neg?'negative':'gold';
-    const sign = neg?'':' +';
-    html+=`<div class="featured-card"><div class="card-badge ${badge}">Gold 24H</div>
-      <div class="featured-header"><img src="${gold.image}" class="featured-icon"><div class="featured-info"><h3>${gold.name}</h3><div class="featured-price">${formatPrice(gold.current_price)}</div></div></div>
-      <div class="progress-section"><div class="progress-label"><span>24h Performance</span><span class="progress-value ${valCls}">${sign}${Math.abs(ch).toFixed(2)}%</span></div>
-      <div class="progress-bar"><div class="progress-fill ${fill}" style="width:${w}%"></div></div></div></div>`;
-  }
-  $('sidebarSection').innerHTML=html;
-}
-function sortBy(col){
-  if(sortColumn===col) sortDirection=sortDirection==='asc'?'desc':'asc';
-  else{sortColumn=col;sortDirection=col==='name'?'asc':'desc';}
-  document.querySelectorAll('.filter-tab').forEach(b=>b.classList.remove('active'));
-  $('sort'+col.charAt(0).toUpperCase()+col.slice(1)).classList.add('active');
-  sortData();
-}
-function sortData(){
-  cryptoData.sort((a,b)=>{
-    let av,bv;
-    if(sortColumn==='name'){av=a.name.toLowerCase();bv=b.name.toLowerCase();}
-    else if(sortColumn==='price'){av=a.current_price||0;bv=b.current_price||0;}
-    else if(sortColumn==='change'){av=a.price_change_percentage_24h||0;bv=b.price_change_percentage_24h||0;}
-    else if(sortColumn==='mcap'){av=a.market_cap||0;bv=b.market_cap||0;}
-    return sortDirection==='asc'?(av>bv?1:av<bv?-1:0):(av<bv?1:av>bv?-1:0);
-  });
-  renderTokenList();
-}
-function renderTokenList(){
-  const html = cryptoData.map((t,i)=>{
-    const ch = t.price_change_percentage_24h||0;
-    const cls = ch>=0?'positive':'negative';
-    const arrowSvg = ch>=0
-      ? `<svg class="change-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg>`
-      : `<svg class="change-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>`;
-    return `<div class="token-row" style="--index:${i}">
-      <div class="token-icon-col"><img src="${t.image}" class="token-icon"></div>
-      <div class="token-name-col"><h3>${t.name}</h3><div class="token-symbol">${t.symbol.toUpperCase()}</div></div>
-      <div class="token-price-col">${formatPrice(t.current_price)}</div>
-      <div class="token-change-col"><span class="change-badge ${cls}">${arrowSvg}<span class="change-value">${Math.abs(ch).toFixed(2)}%</span></span></div>
-      <div class="token-mcap-col">${formatMarketCap(t.market_cap||0)}</div>
-    </div>`;
-  }).join('');
-  $('tokensList').innerHTML=html;
 }
 
-/* ---------- PORTFOLIO ---------- */
-async function loadHoldings(){
+/* ---------- PORTFOLIO (via Vercel API) ---------- */
+async function loadPortfolio(){
   if(!currentUser) return;
-  const fn = functions.httpsCallable('getPortfolio');
-  const res = await fn();
-  renderHoldings(res.data);
+  try {
+    const res = await fetch('/api/portfolio', {
+      headers: { Authorization: `Bearer ${await currentUser.getIdToken()}` }
+    });
+    const data = await res.json();
+    if (res.status !== 200) throw new Error(data.error);
+    renderPortfolio(data);
+  } catch (e) {
+    alert('Load portfolio error: ' + e.message);
+  }
 }
-function renderHoldings(holdings){
+
+async function updateHolding(id, field, value) {
+  try {
+    const token = await currentUser.getIdToken();
+    const res = await fetch('/api/portfolio', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ id, field, value })
+    });
+    if (res.status !== 200) throw new Error('Update failed');
+    loadPortfolio();
+  } catch (e) {
+    alert('Update error: ' + e.message);
+  }
+}
+
+window.deleteHolding = async (id) => {
+  if(!confirm('Delete?')) return;
+  try {
+    const token = await currentUser.getIdToken();
+    const res = await fetch('/api/portfolio', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ id })
+    });
+    if (res.status !== 200) throw new Error('Delete failed');
+    loadPortfolio();
+  } catch (e) {
+    alert('Delete error: ' + e.message);
+  }
+};
+
+$('addHoldingForm').onsubmit = async e => {
+  e.preventDefault();
+  const tokenId = $('holdingToken').value;
+  const amount = parseFloat($('holdingAmount').value);
+  const buyPrice = parseFloat($('buyPrice').value);
+  if(!tokenId || isNaN(amount) || isNaN(buyPrice)) return alert('Fill all fields');
+  try {
+    const token = await currentUser.getIdToken();
+    const res = await fetch('/api/portfolio', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ holding: { tokenId, amount, buyPrice } })
+    });
+    if (res.status !== 200) throw new Error('Add failed');
+    e.target.reset();
+    loadPortfolio();
+  } catch (e) {
+    alert('Add error: ' + e.message);
+  }
+};
+
+/* ---------- ALERTS (via Vercel API) ---------- */
+async function loadAlerts(){
+  if(!currentUser) return;
+  try {
+    const token = await currentUser.getIdToken();
+    const res = await fetch('/api/alerts', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const data = await res.json();
+    if (res.status !== 200) throw new Error(data.error);
+    renderAlerts(data);
+  } catch (e) {
+    alert('Load alerts error: ' + e.message);
+  }
+}
+
+async function addAlert(alert) {
+  try {
+    const token = await currentUser.getIdToken();
+    const res = await fetch('/api/alerts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ alert })
+    });
+    if (res.status !== 200) throw new Error('Add failed');
+    loadAlerts();
+  } catch (e) {
+    alert('Add error: ' + e.message);
+  }
+}
+
+window.deleteAlert = async (id) => {
+  if(!confirm('Delete?')) return;
+  try {
+    const token = await currentUser.getIdToken();
+    const res = await fetch(`/api/alerts/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (res.status !== 200) throw new Error('Delete failed');
+    loadAlerts();
+  } catch (e) {
+    alert('Delete error: ' + e.message);
+  }
+};
+
+$('addAlertForm').onsubmit = async e => {
+  e.preventDefault();
+  const tokenId = $('alertToken').value;
+  const condition = $('alertCondition').value;
+  const target = parseFloat($('targetPrice').value);
+  const message = $('alertMessage').value;
+  if(!tokenId || isNaN(target)) return alert('Fill all fields');
+  await addAlert({ tokenId, condition, target, message });
+  e.target.reset();
+};
+
+/* ---------- ADMIN ADD TOKEN (via Vercel API) ---------- */
+$('confirmAdd').onclick = async () => {
+  const id = $('newTokenId').value.trim().toLowerCase();
+  if(!id) return alert('Enter ID');
+  try {
+    const token = await currentUser.getIdToken();
+    const res = await fetch('/api/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ id })
+    });
+    if (res.status !== 200) throw new Error('Add failed');
+    alert(`Added ${id}`);
+    $('newTokenId').value = '';
+    $('addTokenModal').classList.remove('show');
+    fetchAll();
+  } catch (e) {
+    alert('Add error: ' + e.message);
+  }
+};
+
+/* ---------- RENDER FUNCTIONS (same as before) ---------- */
+function renderPortfolio(holdings) {
   const list = $('holdingsList');
   list.innerHTML = '';
   let totalValue = 0, totalCost = 0;
-  Object.entries(holdings).forEach(([id, h])=>{
-    const token = cryptoData.find(t=>t.id===h.tokenId) || {name:h.tokenId,symbol:'',image:''};
-    const price = prices[h.tokenId]||0;
-    const value = h.amount*price;
-    const cost = h.amount*h.buyPrice;
-    totalValue += value; totalCost += cost;
-    const pl = value-cost;
-    const plPct = cost>0?(pl/cost*100):0;
+  Object.entries(holdings || {}).forEach(([id, h]) => {
+    const token = cryptoData.find(t => t.id === h.tokenId) || { name: h.tokenId, symbol: '', image: '' };
+    const price = prices[h.tokenId] || 0;
+    const value = h.amount * price;
+    const cost = h.amount * h.buyPrice;
+    totalValue += value;
+    totalCost += cost;
+    const pl = value - cost;
+    const plPct = cost > 0 ? (pl / cost * 100) : 0;
     list.innerHTML += `
       <div class="holding-row" data-id="${id}">
         <div class="token-icon-col"><img src="${token.image}" class="token-icon"></div>
         <div class="holding-name">${token.name} <span class="token-symbol">(${token.symbol.toUpperCase()})</span></div>
         <div class="editable" data-field="amount" data-value="${h.amount}">${h.amount}</div>
-        <div class="editable" data-field="buyPrice" data-value="${h.buyPrice}">$${formatPrice(h.buyPrice)}</点赞</div>
-        <div style="color:${pl>=0?'#10b981':'#ef4444'}">
-          ${pl>=0?'+':''}${formatPrice(pl)}<br><small>(${plPct.toFixed(2)}%)</small>
+        <div class="editable" data-field="buyPrice" data-value="${h.buyPrice}">$${formatPrice(h.buyPrice)}</div>
+        <div style="color:${pl >= 0 ? '#10b981' : '#ef4444'}">
+          ${pl >= 0 ? '+' : ''}${formatPrice(pl)}<br><small>(${plPct.toFixed(2)}%)</small>
         </div>
         <div class="delete-btn" onclick="deleteHolding('${id}')">X</div>
       </div>`;
   });
   $('totalValue').textContent = `$${totalValue.toFixed(2)}`;
-  const pl = totalValue-totalCost;
-  $('totalPL').textContent = pl>=0?`+$${pl.toFixed(2)}`:`-$${Math.abs(pl).toFixed(2)}`;
-  $('totalPL').style.color = pl>=0?'#10b981':'#ef4444';
-  $('roi').textContent = totalCost>0?`${((totalValue/totalCost-1)*100).toFixed(2)}%`:'0%';
-  document.querySelectorAll('.editable').forEach(el=>el.onclick=()=>startEdit(el));
+  const pl = totalValue - totalCost;
+  $('totalPL').textContent = pl >= 0 ? `+$${pl.toFixed(2)}` : `-$${Math.abs(pl).toFixed(2)}`;
+  $('totalPL').style.color = pl >= 0 ? '#10b981' : '#ef4444';
+  $('roi').textContent = totalCost > 0 ? `${((totalValue / totalCost - 1) * 100).toFixed(2)}%` : '0%';
+  document.querySelectorAll('.editable').forEach(el => el.onclick = () => startEdit(el));
 }
-function startEdit(el){
-  if(el.querySelector('input')) return;
+
+function startEdit(el) {
+  if (el.querySelector('input')) return;
   const field = el.dataset.field;
   const value = el.dataset.value;
   const input = document.createElement('input');
-  input.type='number'; input.step='any'; input.value=value;
-  input.style.width='80px'; input.style.padding='4px 8px';
-  input.style.background='#0a0a0a'; input.style.border='1px solid #8b5cf6';
-  input.style.borderRadius='8px'; input.style.color='#fff'; input.style.fontSize='14px';
-  const saveBtn=document.createElement('span');
-  saveBtn.textContent='Save'; saveBtn.style.cursor='pointer'; saveBtn.style.color='#10b981';
-  saveBtn.style.marginLeft='8px'; saveBtn.style.fontWeight='700';
-  const cancelBtn=document.createElement('span');
-  cancelBtn.textContent='Cancel'; cancelBtn.style.cursor='pointer'; cancelBtn.style.color='#ef4444';
-  cancelBtn.style.marginLeft='8px'; cancelBtn.style.fontWeight='700';
-  el.innerHTML=''; el.appendChild(input); el.appendChild(saveBtn); el.appendChild(cancelBtn);
+  input.type = 'number';
+  input.step = 'any';
+  input.value = value;
+  input.style.width = '80px';
+  input.style.padding = '4px 8px';
+  input.style.background = '#0a0a0a';
+  input.style.border = '1px solid #8b5cf6';
+  input.style.borderRadius = '8px';
+  input.style.color = '#fff';
+  input.style.fontSize = '14px';
+  const saveBtn = document.createElement('span');
+  saveBtn.textContent = 'Save';
+  saveBtn.style.cursor = 'pointer';
+  saveBtn.style.color = '#10b981';
+  saveBtn.style.marginLeft = '8px';
+  saveBtn.style.fontWeight = '700';
+  const cancelBtn = document.createElement('span');
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.style.cursor = 'pointer';
+  cancelBtn.style.color = '#ef4444';
+  cancelBtn.style.marginLeft = '8px';
+  cancelBtn.style.fontWeight = '700';
+  el.innerHTML = '';
+  el.appendChild(input);
+  el.appendChild(saveBtn);
+  el.appendChild(cancelBtn);
   input.focus();
-  const save=async()=>{
-    const newVal=parseFloat(input.value);
-    if(isNaN(newVal)||newVal<0) return alert('Invalid value');
-    const id=el.closest('.holding-row').dataset.id;
-    const fn=functions.httpsCallable('updateHolding');
-    await fn({id, field, value:newVal});
-    loadHoldings();
+  const save = async () => {
+    const newVal = parseFloat(input.value);
+    if (isNaN(newVal) || newVal < 0) return alert('Invalid value');
+    const holdingId = el.closest('.holding-row').dataset.id;
+    await updateHolding(holdingId, field, newVal);
   };
-  saveBtn.onclick=save;
-  input.onkeypress=e=>e.key==='Enter'&&save();
-  cancelBtn.onclick=()=>loadHoldings();
+  saveBtn.onclick = save;
+  input.onkeypress = e => e.key === 'Enter' && save();
+  cancelBtn.onclick = () => loadPortfolio();
 }
-window.deleteHolding=async id=>{
-  if(!confirm('Delete?')) return;
-  const fn=functions.httpsCallable('deleteHolding');
-  await fn({id});
-  loadHoldings();
-};
-$('addHoldingForm').onsubmit=async e=>{
-  e.preventDefault();
-  const tokenId=$('holdingToken').value;
-  const amount=parseFloat($('holdingAmount').value);
-  const buyPrice=parseFloat($('buyPrice').value);
-  if(!tokenId||isNaN(amount)||isNaN(buyPrice)) return;
-  const fn=functions.httpsCallable('addHolding');
-  await fn({holding:{tokenId,amount,buyPrice}});
-  e.target.reset();
-  loadHoldings();
-};
 
-/* ---------- ALERTS ---------- */
-async function loadAlerts(){
-  if(!currentUser) return;
-  const fn=functions.httpsCallable('getAlerts');
-  const res=await fn();
-  renderAlerts(res.data);
-}
-function renderAlerts(alerts){
-  const list=$('alertsList'); list.innerHTML='';
-  Object.entries(alerts).forEach(async ([id,a])=>{
-    const price=prices[a.tokenId]||0;
-    const triggered=(a.condition==='above'&&price>a.target)||(a.condition==='below'&&price<a.target);
-    list.innerHTML+=`<div class="alert-row ${triggered?'triggered':''}">
-      <div class="token-icon-col"><img src="${cryptoData.find(t=>t.id===a.tokenId)?.image||''}" class="token-icon"></div>
-      <div>${cryptoData.find(t=>t.id===a.tokenId)?.name||a.tokenId}</div>
-      <div>${a.condition} $${a.target}</div>
-      <div>${formatPrice(price)}</div>
-      <div class="delete-btn" onclick="deleteAlert('${id}')">X</div>
-    </div>`;
-    if(triggered && !a.notified){
-      confetti({particleCount:100,spread:70,origin:{y:0.6}});
-      new Notification('CCX Alert',{body:`${a.message||''} ${cryptoData.find(t=>t.id===a.tokenId)?.name} is ${a.condition} $${a.target}!`});
-      const fn=functions.httpsCallable('markAlertNotified');
-      await fn({id});
+function renderAlerts(alerts) {
+  const list = $('alertsList');
+  list.innerHTML = '';
+  Object.entries(alerts || {}).forEach(([id, a]) => {
+    const price = prices[a.tokenId] || 0;
+    const triggered = (a.condition === 'above' && price >= a.target) || (a.condition === 'below' && price <= a.target);
+    list.innerHTML += `
+      <div class="alert-row ${triggered ? 'triggered' : ''}">
+        <div class="token-icon-col"><img src="${cryptoData.find(t => t.id === a.tokenId)?.image || ''}" class="token-icon"></div>
+        <div>${cryptoData.find(t => t.id === a.tokenId)?.name || a.tokenId}</div>
+        <div>${a.condition === 'above' ? '>' : '<'} $${a.target}</div>
+        <div>${formatPrice(price)}</div>
+        <div class="delete-btn" onclick="deleteAlert('${id}')">X</div>
+      </div>`;
+    if (triggered && !a.notified) {
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      new Notification('CCX Alert', { body: `${a.message || ''} ${cryptoData.find(t => t.id === a.tokenId)?.name} is ${a.condition} $${a.target}!` });
     }
   });
   populateTokenSelect('alertToken');
 }
-window.deleteAlert=async id=>{
-  if(!confirm('Delete?')) return;
-  const fn=functions.httpsCallable('deleteAlert');
-  await fn({id});
-  loadAlerts();
-};
-$('addAlertForm').onsubmit=async e=>{
-  e.preventDefault();
-  const tokenId=$('alertToken').value;
-  const condition=$('alertCondition').value;
-  const target=parseFloat($('targetPrice').value);
-  const message=$('alertMessage').value;
-  if(!tokenId||isNaN(target)) return;
-  const fn=functions.httpsCallable('addAlert');
-  await fn({alert:{tokenId,condition,target,message}});
-  e.target.reset();
-  loadAlerts();
+
+/* ---------- ADMIN ADD TOKEN ---------- */
+$('confirmAdd').onclick = async () => {
+  const id = $('newTokenId').value.trim().toLowerCase();
+  if (!id) return alert('Enter ID');
+  try {
+    const token = await currentUser.getIdToken();
+    const res = await fetch('/api/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ id })
+    });
+    if (res.status !== 200) throw new Error('Add failed');
+    alert(`Added ${id}`);
+    $('newTokenId').value = '';
+    $('addTokenModal').classList.remove('show');
+    fetchAll();
+  } catch (e) {
+    alert('Add error: ' + e.message);
+  }
 };
 
-/* ---------- ADMIN ---------- */
-$('addTokenBtn').onclick=()=>$('addTokenModal').classList.add('show');
-$('closeModal').onclick=$('cancelAdd').onclick=()=>$('addTokenModal').classList.remove('show');
-$('confirmAdd').onclick=async()=>{
-  const id=$('newTokenId').value.trim().toLowerCase();
-  if(!id) return alert('Enter ID');
-  const fn=functions.httpsCallable('addToken');
-  await fn({id});
-  alert(`Added ${id}`);
-  $('newTokenId').value='';
-  $('addTokenModal').classList.remove('show');
-  fetchAll();
-};
-
-/* ---------- SELECT POPULATION ---------- */
-function populateTokenSelect(id){
-  const sel=$(id);
-  sel.innerHTML='<option value="">Select Token</option>';
-  cryptoData.forEach(t=>{
-    const opt=document.createElement('option');
-    opt.value=t.id;
-    opt.textContent=`${t.name} (${t.symbol.toUpperCase()})`;
+/* ---------- POPULATE SELECTS ---------- */
+function populateTokenSelect(id) {
+  const sel = $(id);
+  sel.innerHTML = '<option value="">Select Token</option>';
+  cryptoData.forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t.id;
+    opt.textContent = `${t.name} (${t.symbol.toUpperCase()})`;
     sel.appendChild(opt);
   });
 }
 
 /* ---------- AUTO REFRESH ---------- */
 fetchAll();
-setInterval(()=>{fetchAll(); if(currentUser){loadHoldings();loadAlerts();}},90000);
-if('Notification' in window && Notification.permission==='default') Notification.requestPermission();
-</script>
+setInterval(() => {
+  fetchAll();
+  if (currentUser) {
+    loadPortfolio();
+    loadAlerts();
+  }
+}, 90000);
 
+if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+</script>
 </body>
 </html>
