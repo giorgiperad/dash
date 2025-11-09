@@ -1,5 +1,15 @@
+# Ignore Firebase Functions directory
 functions/
+functions/**
+functions/*
+
+# Ignore other files
 node_modules/
 .env
 .env.local
+*.log
+
+# Explicitly ignore Firebase Functions files
+**/functions/index.js
+**/functions/**/*.js
 
