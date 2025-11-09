@@ -437,6 +437,19 @@ body{
     <button class="carousel-nav carousel-nav-right" id="carouselNext" aria-label="Next cards">→</button>
   </div>
 
+  <!-- Quotes Section -->
+  <div id="quotesSection" style="display:none;margin-bottom:32px;background:rgba(18,18,23,.85);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:20px;position:relative;overflow:hidden;" role="region" aria-label="Quotes">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div style="font-size:10px;color:#8b8b95;text-transform:uppercase;letter-spacing:1.2px;font-weight:700;">💬 ციტატა</div>
+      <button id="refreshQuote" style="background:transparent;border:1px solid rgba(255,255,255,.1);color:#8b8b95;padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='rgba(255,255,255,.2)';this.style.color='#ffffff';" onmouseout="this.style.borderColor='rgba(255,255,255,.1)';this.style.color='#8b8b95';">🔄</button>
+    </div>
+    <div id="quoteContent" style="font-size:15px;color:#ffffff;font-weight:500;line-height:1.6;font-style:italic;">
+      <div style="color:#6b7280;font-size:13px;">ციტატების ჩატვირთვა...</div>
+    </div>
+    <div id="quoteAuthor" style="margin-top:12px;font-size:12px;color:#8b8b95;text-align:right;font-weight:500;">
+    </div>
+  </div>
+
   <!-- Token of the Day Section -->
   <div id="tokenOfTheDay" style="display:none;margin-bottom:32px;background:rgba(20,20,30,.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:24px;position:relative;overflow:hidden;" role="region" aria-label="Token of the day">
     <div style="position:absolute;top:0;right:0;width:200px;height:200px;background:radial-gradient(circle,rgba(99,102,241,.1) 0%,transparent 70%);pointer-events:none;"></div>
@@ -1022,6 +1035,31 @@ function renderHeroStats() {
     return '#22c55e';
   };
   
+  // Altcoin Season Index calculation
+  const calculateAltcoinSeason = (btcDominance) => {
+    // Altcoin season index: 0-100
+    // Lower BTC dominance = higher altcoin season (more altcoins performing)
+    // Formula: 100 - (BTC dominance * 1.5), capped between 0-100
+    const index = Math.max(0, Math.min(100, Math.round(100 - (btcDominance * 1.5))));
+    return index;
+  };
+  
+  const getAltcoinSeasonColor = (btcDominance) => {
+    const index = calculateAltcoinSeason(btcDominance);
+    if (index >= 75) return '#22c55e'; // Strong altcoin season
+    if (index >= 50) return '#84cc16'; // Moderate altcoin season
+    if (index >= 25) return '#f59e0b'; // Weak altcoin season
+    return '#ef4444'; // BTC season
+  };
+  
+  const getAltcoinSeasonLabel = (btcDominance) => {
+    const index = calculateAltcoinSeason(btcDominance);
+    if (index >= 75) return 'ძლიერი ალტ-სეზონი';
+    if (index >= 50) return 'საშუალო ალტ-სეზონი';
+    if (index >= 25) return 'სუსტი ალტ-სეზონი';
+    return 'BTC სეზონი';
+  };
+  
   carousel.innerHTML = `
     <div class="carousel-card">
       <div class="carousel-card-header">
@@ -1067,11 +1105,13 @@ function renderHeroStats() {
     
     <div class="carousel-card">
       <div class="carousel-card-header">
-        <div class="carousel-card-title">აქტივური კრიპტო</div>
+        <div class="carousel-card-title">ალტ-სეზონის ინდექსი</div>
         <span class="carousel-card-arrow">→</span>
       </div>
-      <div class="carousel-card-value">${(globalData.active_cryptocurrencies || 0).toLocaleString()}</div>
-      <div class="carousel-card-subtitle">ბაზრები: ${(globalData.markets || 0).toLocaleString()}</div>
+      <div class="carousel-card-value" style="color:${getAltcoinSeasonColor(btcDominance)};">${calculateAltcoinSeason(btcDominance)}</div>
+      <div class="carousel-card-subtitle" style="color:${getAltcoinSeasonColor(btcDominance)};">
+        ${getAltcoinSeasonLabel(btcDominance)}
+      </div>
     </div>
   `;
   
@@ -2374,9 +2414,71 @@ function startAutoRefresh() {
   }, refreshIntervalMs);
 }
 
+// Load quotes function
+let quotesData = [];
+function loadQuotes() {
+  if (!db) return;
+  
+  db.ref('quotes').once('value').then(snapshot => {
+    const quotes = snapshot.val() || {};
+    quotesData = Object.values(quotes).filter(q => q && q.text);
+    
+    if (quotesData.length > 0) {
+      displayRandomQuote();
+      $('quotesSection').style.display = 'block';
+    } else {
+      $('quotesSection').style.display = 'none';
+    }
+  }).catch(error => {
+    console.error('Error loading quotes:', error);
+    $('quotesSection').style.display = 'none';
+  });
+}
+
+function displayRandomQuote() {
+  if (!quotesData || quotesData.length === 0) {
+    $('quoteContent').innerHTML = '<div style="color:#6b7280;font-size:13px;">ციტატები არ მოიძებნა</div>';
+    $('quoteAuthor').textContent = '';
+    return;
+  }
+  
+  const randomQuote = quotesData[Math.floor(Math.random() * quotesData.length)];
+  $('quoteContent').innerHTML = `"${randomQuote.text}"`;
+  $('quoteAuthor').textContent = randomQuote.author ? `— ${randomQuote.author}` : '';
+}
+
+// Setup refresh quote button
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    const refreshBtn = $('refreshQuote');
+    if (refreshBtn) {
+      refreshBtn.onclick = displayRandomQuote;
+    }
+  });
+} else {
+  const refreshBtn = $('refreshQuote');
+  if (refreshBtn) {
+    refreshBtn.onclick = displayRandomQuote;
+  }
+}
+
 // Load settings and start auto-refresh
 fetchAll();
 startAutoRefresh();
+
+// Load quotes after Firebase is initialized
+if (typeof firebase !== 'undefined' && firebase.database) {
+  // Wait for Firebase to be ready
+  setTimeout(() => {
+    if (db) {
+      loadQuotes();
+      // Listen for new quotes
+      db.ref('quotes').on('value', () => {
+        loadQuotes();
+      });
+    }
+  }, 1000);
+}
 
 // Settings handler - ensure it's attached after DOM is ready
 function initSettings() {
