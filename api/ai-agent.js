@@ -30,9 +30,8 @@ module.exports = async (req, res) => {
 
     // ASI:One API endpoint (OpenAI-compatible)
     // Base URL: https://api.asi1.ai/v1
-    // For custom agents, might need different endpoint
+    // Standard endpoint works for all models including custom agents
     const apiUrl = 'https://api.asi1.ai/v1/chat/completions';
-    const customAgentUrl = 'https://api.asi1.ai/v1/agents/chat'; // Alternative endpoint for custom agents
     
     // For custom agents, system prompt may be defined in the agent itself
     // But we can still provide context to enhance responses
@@ -55,15 +54,15 @@ module.exports = async (req, res) => {
     }
 
     // Use custom agent: agent1q0jl046j3gphuf3py5fmjq0umpggej9eduy4srsrnn2337zxh7tuyurzq4z
-    // This is the Fetch.ai agent address for your custom agent
+    // This is the Fetch.ai agent address for your custom agent from https://asi1.ai/ai/ccx
+    // According to docs, agentic models can discover agents from Agentverse
+    // Try using agentic model which will discover your custom agent, or use agent address directly
     const customAgentId = 'agent1q0jl046j3gphuf3py5fmjq0umpggej9eduy4srsrnn2337zxh7tuyurzq4z';
     const models = [
-      customAgentId, // Try custom agent first (Fetch.ai agent address)
-      'ai/ccx', // Alternative format from URL
-      'ccx', // Short ID format
-      'asi1-fast-agentic', // Fallback to generic models
-      'asi1-agentic',
-      'asi1-extended-agentic'
+      customAgentId, // Try custom agent address directly
+      'asi1-fast-agentic', // Agentic model that can discover your agent from Agentverse
+      'asi1-agentic', // Alternative agentic model
+      'asi1-extended-agentic' // Extended agentic model
     ];
     let lastError;
     let data;
@@ -76,24 +75,16 @@ module.exports = async (req, res) => {
     
     for (const model of models) {
       try {
-        // Build request body
-        // For custom agents, we'll send user message only (agent has its own system prompt)
-        // For generic models, include system prompt
-        const isCustomAgent = model === customAgentId || model === 'ai/ccx' || model === 'ccx' || model.startsWith('agent1');
+        // Build request body per ASI:One documentation
+        // For agentic models, just send user messages (they handle agent discovery)
+        // For custom agent addresses, try as model name
+        const isAgenticModel = model.startsWith('asi1-') && model.includes('agentic');
+        const isCustomAgent = model === customAgentId || model.startsWith('agent1');
+        
         const requestBody = {
           model: model,
-          messages: isCustomAgent ? [
-            // Custom agents typically have their own system prompt defined
-            {
-              role: 'user',
-              content: userMessage
-            }
-          ] : [
-            // Generic models need system prompt
-            {
-              role: 'system',
-              content: systemPrompt || 'You are a helpful AI assistant specializing in cryptocurrency market analysis.'
-            },
+          messages: [
+            // Always include user message
             {
               role: 'user',
               content: userMessage
@@ -102,6 +93,14 @@ module.exports = async (req, res) => {
           temperature: 0.7,
           max_tokens: 2000
         };
+        
+        // Add system prompt only for non-agentic, non-custom models
+        if (!isAgenticModel && !isCustomAgent) {
+          requestBody.messages.unshift({
+            role: 'system',
+            content: systemPrompt || 'You are a helpful AI assistant specializing in cryptocurrency market analysis.'
+          });
+        }
 
         console.log(`\n=== Trying model: ${model} ===`);
         console.log('API URL:', apiUrl);
@@ -117,54 +116,15 @@ module.exports = async (req, res) => {
           'x-session-id': sessionId // Include for all agentic models
         };
         
-        // Try both endpoints - standard chat/completions should work for all models
-        // But try alternative endpoint if agent address fails
-        let endpoint = apiUrl;
-        let response;
-        let lastFetchError;
+        // Use standard endpoint - works for all models per documentation
+        console.log('Using endpoint:', apiUrl);
         
-        // First try standard endpoint
-        try {
-          console.log('Using endpoint:', endpoint);
-          response = await fetch(endpoint, {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify(requestBody),
-            signal: AbortSignal.timeout(60000) // 60 seconds
-          });
-          
-          // If 404 and it's an agent address, try alternative endpoint
-          if (!response.ok && response.status === 404 && model.startsWith('agent1')) {
-            console.log('Trying alternative endpoint for agent address...');
-            endpoint = customAgentUrl;
-            response = await fetch(endpoint, {
-              method: 'POST',
-              headers: headers,
-              body: JSON.stringify(requestBody),
-              signal: AbortSignal.timeout(60000) // 60 seconds - reduced for faster feedback
-            });
-          }
-        } catch (fetchError) {
-          lastFetchError = fetchError;
-          console.error('Fetch error:', fetchError.message);
-          // If network error, try alternative endpoint for agent addresses
-          if (model.startsWith('agent1')) {
-            try {
-              console.log('Retrying with alternative endpoint due to network error...');
-              endpoint = customAgentUrl;
-              response = await fetch(endpoint, {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify(requestBody),
-                signal: AbortSignal.timeout(60000) // 60 seconds
-              });
-            } catch (retryError) {
-              throw fetchError; // Throw original error
-            }
-          } else {
-            throw fetchError;
-          }
-        }
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify(requestBody),
+          signal: AbortSignal.timeout(60000) // 60 seconds per documentation
+        });
 
         console.log('ASI:One API response status:', response.status, response.statusText);
 
