@@ -2170,8 +2170,13 @@ async function loadPortfolio(){
     
     holdingsRef.once('value', (snapshot) => {
       const holdings = snapshot.val() || {};
+      portfolioHoldings = holdings; // Store globally for targets calculation
       console.log('Portfolio holdings loaded:', Object.keys(holdings).length, 'items');
       renderPortfolio(holdings);
+      // Refresh targets display with updated buy prices
+      if (Object.keys(sellTargets).length > 0) {
+        renderTargets();
+      }
     }, (error) => {
       console.error('Database read error:', error);
       // Only show alert if it's a real error, not just empty data
@@ -2658,6 +2663,7 @@ $('changePasswordForm').onsubmit = async (e) => {
 
 /* ---------- SELL TARGETS MANAGEMENT ---------- */
 let sellTargets = {};
+let portfolioHoldings = {}; // Store portfolio holdings for buy price calculation
 
 async function loadTargets() {
   if (!currentUser) return;
@@ -2710,6 +2716,13 @@ function renderTargets() {
     const tokenSymbol = token?.symbol?.toUpperCase() || tokenId.toUpperCase();
     const tokenImage = token?.image || '';
     
+    // Find buy price from portfolio holdings
+    let buyPrice = 0;
+    const holding = Object.values(portfolioHoldings).find(h => h.tokenId === tokenId);
+    if (holding && holding.buyPrice) {
+      buyPrice = parseFloat(holding.buyPrice);
+    }
+    
     targets.sort((a, b) => a.targetPrice - b.targetPrice);
     
     html += `
@@ -2720,16 +2733,26 @@ function renderTargets() {
             <div style="font-weight:600;font-size:14px;color:#fafafa;">${tokenName}</div>
             <div style="font-size:11px;color:#71717a;margin-top:2px;">${tokenSymbol}</div>
           </div>
-          <div style="margin-left:auto;text-align:right;">
-            <div style="font-size:11px;color:#9aa0a6;margin-bottom:4px;">მიმდინარე ფასი</div>
-            <div style="font-weight:600;font-size:16px;color:#fafafa;">$${formatPrice(currentPrice)}</div>
+          <div style="margin-left:auto;display:flex;gap:20px;text-align:right;">
+            ${buyPrice > 0 ? `
+              <div>
+                <div style="font-size:11px;color:#9aa0a6;margin-bottom:4px;">შესყიდვის ფასი</div>
+                <div style="font-weight:600;font-size:14px;color:#fafafa;">$${formatPrice(buyPrice)}</div>
+              </div>
+            ` : ''}
+            <div>
+              <div style="font-size:11px;color:#9aa0a6;margin-bottom:4px;">მიმდინარე ფასი</div>
+              <div style="font-weight:600;font-size:16px;color:#fafafa;">$${formatPrice(currentPrice)}</div>
+            </div>
           </div>
         </div>
         <div style="display:flex;flex-direction:column;gap:8px;">
     `;
     
     targets.forEach(target => {
-      const distance = currentPrice > 0 ? ((target.targetPrice - currentPrice) / currentPrice * 100) : 0;
+      // Calculate distance from buy price (if available) or current price
+      const basePrice = buyPrice > 0 ? buyPrice : currentPrice;
+      const distance = basePrice > 0 ? ((target.targetPrice - basePrice) / basePrice * 100) : 0;
       const distanceColor = distance >= 0 ? '#22c55e' : '#ef4444';
       const distanceText = distance >= 0 ? `+${distance.toFixed(2)}%` : `${distance.toFixed(2)}%`;
       const isReached = currentPrice >= target.targetPrice;
