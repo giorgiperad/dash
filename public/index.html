@@ -558,8 +558,8 @@ body{overflow-x:hidden}
 
   <!-- Quotes Section -->
   <div id="quotesSection" style="display:none;margin-bottom:32px;background:rgba(18,18,23,.85);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:20px;position:relative;overflow:hidden;" role="region" aria-label="Quotes">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-      <div style="font-size:10px;color:#8b8b95;text-transform:uppercase;letter-spacing:1.2px;font-weight:700;">💬 ციტატა</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div class="carousel-card-title" style="margin:0;">💬 ციტატა</div>
       <button id="refreshQuote" style="background:transparent;border:1px solid rgba(255,255,255,.1);color:#8b8b95;padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='rgba(255,255,255,.2)';this.style.color='#ffffff';" onmouseout="this.style.borderColor='rgba(255,255,255,.1)';this.style.color='#8b8b95';">🔄</button>
     </div>
     <div id="quoteContent" style="font-size:15px;color:#ffffff;font-weight:500;line-height:1.6;font-style:italic;">
@@ -571,18 +571,17 @@ body{overflow-x:hidden}
 
   <!-- Crypto ETF Data - Full Width Detailed Section -->
   <div id="etfDataMain" style="display:none;margin-bottom:32px;width:100%;">
-    <div id="etfDataMainContent" style="background:rgba(18,18,23,.85);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:32px;width:100%;">
+    <div id="etfDataMainContent" style="width:100%;">
       <!-- ETF data will be rendered here -->
     </div>
   </div>
     
   <!-- Recent Activity Carousel -->
-    <div class="hero-carousel-wrapper">
-      <div class="carousel" id="activityCarousel">
-        <!-- Activity cards will be rendered here -->
-      </div>
-      <button class="carousel-nav carousel-nav-right" id="activityCarouselNext" aria-label="Next cards">→</button>
+  <div class="hero-carousel-wrapper" id="activityCarouselWrapper" style="display:none;margin-bottom:32px;">
+    <div class="carousel" id="activityCarousel">
+      <!-- Activity cards will be rendered here -->
     </div>
+    <button class="carousel-nav carousel-nav-right" id="activityCarouselNext" aria-label="Next cards">→</button>
   </div>
 
   <div class="content-grid" id="contentGrid" style="display:none;">
@@ -1990,11 +1989,12 @@ function renderETFDataMain(etfData) {
   if (!container) return;
   
   const formatFlow = (value) => {
-    if (value === null || value === undefined || isNaN(value)) return 'N/A';
+    if (value === null || value === undefined || isNaN(value)) return '$0';
     const abs = Math.abs(value);
-    if (abs >= 1000000000) return `${(value / 1000000000).toFixed(2)}B`;
-    if (abs >= 1000000) return `${(value / 1000000).toFixed(2)}M`;
-    return `${value.toFixed(0)}`;
+    const sign = value >= 0 ? '+' : '-';
+    if (abs >= 1000000000) return `${sign}$${(abs / 1000000000).toFixed(2)}B`;
+    if (abs >= 1000000) return `${sign}$${(abs / 1000000).toFixed(2)}M`;
+    return `${sign}$${abs.toFixed(2)}`;
   };
   
   const formatAUM = (value) => {
@@ -2026,7 +2026,7 @@ function renderETFDataMain(etfData) {
     const flowColor = dailyNetInflow >= 0 ? '#22c55e' : '#ef4444';
     
     return `
-      <div class="carousel-card" style="flex:1;min-width:0;">
+      <div class="carousel-card" style="flex:1;min-width:280px;">
         <div class="carousel-card-header">
           <div class="carousel-card-title">${symbol} ${name} ETF</div>
           <span class="carousel-card-arrow">→</span>
@@ -2052,32 +2052,43 @@ function renderETFDataMain(etfData) {
     `;
   };
   
-  let html = '<div style="margin-bottom:20px;"><h2 style="font-size:22px;font-weight:600;color:#fafafa;margin-bottom:4px;">კრიპტო ETF მონაცემები</h2></div>';
+  // Create a clean, symmetrical carousel layout
+  const allETFs = [];
+  if (etfData.btc) allETFs.push(renderETFDetails(etfData.btc, 'Bitcoin', '₿', '#f7931a'));
+  if (etfData.eth) allETFs.push(renderETFDetails(etfData.eth, 'Ethereum', 'Ξ', '#627eea'));
+  if (etfData.sol) allETFs.push(renderETFDetails(etfData.sol, 'Solana', '◎', '#9945ff'));
+  if (etfData.hbar) allETFs.push(renderETFDetails(etfData.hbar, 'HBAR', '⚡', '#0080ff'));
+  if (etfData.ltc) allETFs.push(renderETFDetails(etfData.ltc, 'Litecoin', 'Ł', '#345d9d'));
   
-  // Render BTC and ETH side by side in two columns
-  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">';
-  html += renderETFDetails(etfData.btc, 'Bitcoin', '₿', '#f7931a');
-  html += renderETFDetails(etfData.eth, 'Ethereum', 'Ξ', '#627eea');
-  html += '</div>';
-  
-  // Render other ETFs in a row if available
-  const otherETFs = [];
-  if (etfData.sol) otherETFs.push(renderETFDetails(etfData.sol, 'Solana', '◎', '#9945ff'));
-  if (etfData.hbar) otherETFs.push(renderETFDetails(etfData.hbar, 'HBAR', '⚡', '#0080ff'));
-  if (etfData.ltc) otherETFs.push(renderETFDetails(etfData.ltc, 'Litecoin', 'Ł', '#345d9d'));
-  
-  if (otherETFs.length > 0) {
-    html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;">';
-    html += otherETFs.join('');
-    html += '</div>';
-  }
-  
-  if (html === '<div style="margin-bottom:20px;"><h2 style="font-size:22px;font-weight:600;color:#fafafa;margin-bottom:4px;">კრიპტო ETF მონაცემები</h2></div>') {
+  if (allETFs.length === 0) {
     container.innerHTML = '<div style="padding:40px;text-align:center;color:#9aa0a6;font-size:13px;">ETF მონაცემები არ არის ხელმისაწვდომი<br><small style="font-size:11px;color:#71717a;margin-top:8px;display:block;">გთხოვთ შეამოწმოთ API გასაღები Vercel-ის გარემოს ცვლადებში</small></div>';
     return;
   }
   
+  // Use hero carousel wrapper for consistent styling
+  let html = '<div class="hero-carousel-wrapper" style="margin:0;">';
+  html += '<div class="carousel" id="etfCarousel" style="display:flex;gap:20px;overflow-x:auto;padding:0;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent;">';
+  html += allETFs.join('');
+  html += '</div>';
+  html += '</div>';
+  
   container.innerHTML = html;
+  
+  // Setup carousel navigation if needed
+  setTimeout(() => {
+    const etfCarousel = container.querySelector('#etfCarousel');
+    if (etfCarousel && etfCarousel.scrollWidth > etfCarousel.clientWidth) {
+      const wrapper = container.querySelector('.hero-carousel-wrapper');
+      const navBtn = document.createElement('button');
+      navBtn.className = 'carousel-nav carousel-nav-right';
+      navBtn.setAttribute('aria-label', 'Next cards');
+      navBtn.innerHTML = '→';
+      navBtn.onclick = () => {
+        etfCarousel.scrollBy({ left: 300, behavior: 'smooth' });
+      };
+      wrapper.appendChild(navBtn);
+    }
+  }, 100);
 }
 
 /* ---------- TOP GAINER OF DAY (Sidebar) ---------- */
