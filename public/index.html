@@ -342,7 +342,7 @@ auth.onAuthStateChanged(user=>{
     $('userName').textContent = user.email.split('@')[0];
     $('userAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email)}&background=8b5cf6&color=fff&size=64`;
     $('userTabs').style.display='flex';
-    if(user.email === 'vasokima@gmail.com') $('adminControls').classList.add('show');
+    if(user.email === 'testireba5@gmail.com') $('adminControls').classList.add('show');
   }else{
     $('authContainer').style.display='flex';
     $('userContainer').style.display='none';
