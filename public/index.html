@@ -1035,6 +1035,18 @@ function renderHeroStats() {
     return '#22c55e';
   };
   
+  // Translate Fear & Greed classification to Georgian
+  const translateFearGreed = (classification) => {
+    const translations = {
+      'Extreme Fear': 'ექსტრემალური შიში',
+      'Fear': 'შიში',
+      'Neutral': 'ნეიტრალური',
+      'Greed': 'სიხარბე',
+      'Extreme Greed': 'ექსტრემალური სიხარბე'
+    };
+    return translations[classification] || classification;
+  };
+  
   // Altcoin Season Index calculation
   const calculateAltcoinSeason = (btcDominance) => {
     // Altcoin season index: 0-100
@@ -1085,7 +1097,7 @@ function renderHeroStats() {
     
     <div class="carousel-card">
       <div class="carousel-card-header">
-        <div class="carousel-card-title">BTC დომინანტობა</div>
+        <div class="carousel-card-title">BTC დომინაცია</div>
         <span class="carousel-card-arrow">→</span>
       </div>
       <div class="carousel-card-value">${btcDominance.toFixed(1)}%</div>
@@ -1098,8 +1110,8 @@ function renderHeroStats() {
         <span class="carousel-card-arrow">→</span>
       </div>
       <div class="carousel-card-value" style="color:${getFearGreedColor(parseInt(fearGreedValue) || 50)};">${fearGreedValue}</div>
-      <div class="carousel-card-subtitle" style="text-transform:capitalize;color:${getFearGreedColor(parseInt(fearGreedValue) || 50)};">
-        ${fearGreedClassification}
+      <div class="carousel-card-subtitle" style="color:${getFearGreedColor(parseInt(fearGreedValue) || 50)};">
+        ${translateFearGreed(fearGreedClassification)}
       </div>
     </div>
     
