@@ -1699,12 +1699,18 @@ async function loadETFDataMain() {
     if (!res.ok || !data.success) {
       mainContainer.style.display = 'block';
       const carousel = $('etfCarousel');
-      if (carousel) carousel.innerHTML = '<div style="padding:40px;text-align:center;color:#9aa0a6;font-size:13px;">ETF მონაცემები მიუწვდომელია</div>';
+      if (carousel) {
+        const errorMsg = data.message || data.error || 'ETF მონაცემები მიუწვდომელია';
+        carousel.innerHTML = `<div style="padding:40px;text-align:center;color:#9aa0a6;font-size:13px;">${errorMsg}</div>`;
+      }
+      console.error('ETF API error:', data);
       return;
     }
     
     mainContainer.style.display = 'block';
-    renderETFDataMain(data.etfData || {});
+    // Try both etfData and data properties
+    const etfData = data.etfData || data.data || { btc: data.btc, eth: data.eth };
+    renderETFDataMain(etfData);
   } catch (error) {
     console.error('ETF data load error:', error);
     const mainContainer = $('etfDataMain');
@@ -1796,7 +1802,7 @@ function renderETFDataMain(etfData) {
   }
   
   if (!html) {
-    carousel.innerHTML = '<div style="padding:40px;text-align:center;color:#9aa0a6;font-size:13px;">ETF მონაცემები არ არის ხელმისაწვდომი</div>';
+    carousel.innerHTML = '<div style="padding:40px;text-align:center;color:#9aa0a6;font-size:13px;">ETF მონაცემები არ არის ხელმისაწვდომი<br><small style="font-size:11px;color:#71717a;margin-top:8px;display:block;">გთხოვთ შეამოწმოთ API გასაღები Vercel-ის გარემოს ცვლადებში</small></div>';
     return;
   }
   

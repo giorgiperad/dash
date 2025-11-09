@@ -86,6 +86,10 @@ module.exports = async (req, res) => {
     if (btcData || ethData) {
       return res.status(200).json({
         success: true,
+        etfData: {
+          btc: btcData,
+          eth: ethData
+        },
         data: {
           btc: btcData,
           eth: ethData
@@ -96,9 +100,11 @@ module.exports = async (req, res) => {
       });
     }
     
-    // If all attempts failed, return error
+    // If all attempts failed, return error with more details
+    console.error('ETF data fetch failed - No data received from API');
     return res.status(200).json({
       success: false,
+      etfData: null,
       data: null,
       message: 'ETF data temporarily unavailable. Please verify API key and endpoint configuration.',
       error: 'Failed to fetch ETF data from SoSoValue API',
