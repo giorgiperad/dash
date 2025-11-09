@@ -747,27 +747,6 @@ function renderAlerts(alerts) {
   populateTokenSelect('alertToken');
 }
 
-/* ---------- ADMIN ADD TOKEN ---------- */
-$('confirmAdd').onclick = async () => {
-  const id = $('newTokenId').value.trim().toLowerCase();
-  if (!id) return alert('Enter ID');
-  try {
-    const token = await currentUser.getIdToken();
-    const res = await fetch('/api/token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ id })
-    });
-    if (res.status !== 200) throw new Error('Add failed');
-    alert(`Added ${id}`);
-    $('newTokenId').value = '';
-    $('addTokenModal').classList.remove('show');
-    fetchAll();
-  } catch (e) {
-    alert('Add error: ' + e.message);
-  }
-};
-
 /* ---------- POPULATE SELECTS ---------- */
 function populateTokenSelect(id) {
   const sel = $(id);
@@ -779,6 +758,12 @@ function populateTokenSelect(id) {
     sel.appendChild(opt);
   });
 }
+
+/* ---------- MODAL HANDLERS ---------- */
+$('addTokenBtn').onclick = () => $('addTokenModal').classList.add('show');
+$('closeModal').onclick = () => $('addTokenModal').classList.remove('show');
+$('cancelAdd').onclick = () => $('addTokenModal').classList.remove('show');
+$('refreshBtn').onclick = () => fetchAll();
 
 /* ---------- AUTO REFRESH ---------- */
 fetchAll();
