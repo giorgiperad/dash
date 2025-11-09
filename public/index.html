@@ -411,7 +411,7 @@ body{
     <div style="position:absolute;top:0;right:0;width:200px;height:200px;background:radial-gradient(circle,rgba(99,102,241,.1) 0%,transparent 70%);pointer-events:none;"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;position:relative;z-index:1;">
       <div>
-        <div style="font-size:11px;color:#6366f1;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:4px;">⭐ Token of the Day</div>
+        <div style="font-size:11px;color:#6366f1;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:4px;">⭐ Top Gainer Today</div>
         <h3 id="todTokenName" style="font-size:20px;font-weight:600;color:#fafafa;letter-spacing:-0.3px;">-</h3>
         <div id="todTokenSymbol" style="font-size:13px;color:#71717a;margin-top:4px;">-</div>
       </div>
@@ -1165,14 +1165,18 @@ if ($('toggleVisibility')) {
 function renderTokenOfTheDay() {
   if (!cryptoData || cryptoData.length === 0) return;
   
-  // Select token with highest 24h volume or biggest gainer
+  // Select token with highest 24h gain % from tracked tokens
   const token = [...cryptoData]
-    .filter(t => t.market_cap && t.market_cap > 1000000) // Filter out very small tokens
+    .filter(t => {
+      // Only include tokens with valid price change data
+      const change = t.price_change_percentage_24h || 0;
+      return !isNaN(change) && isFinite(change);
+    })
     .sort((a, b) => {
-      // Prioritize by volume, then by positive change
-      const scoreA = (a.total_volume || 0) + ((a.price_change_percentage_24h || 0) > 0 ? 1000000 : 0);
-      const scoreB = (b.total_volume || 0) + ((b.price_change_percentage_24h || 0) > 0 ? 1000000 : 0);
-      return scoreB - scoreA;
+      // Sort by highest 24h gain percentage (descending)
+      const changeA = a.price_change_percentage_24h || 0;
+      const changeB = b.price_change_percentage_24h || 0;
+      return changeB - changeA;
     })[0];
   
   if (!token) return;
