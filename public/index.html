@@ -1596,8 +1596,37 @@ function renderPortfolio(holdings) {
     if ($('totalPL')) {
       $('totalPL').textContent = '$0.00';
       $('totalPL').style.color = '#9aa0a6';
+      // Reset card colors to default
+      const plCard = $('totalPL').closest('.summary-card');
+      if (plCard) {
+        plCard.style.borderColor = 'rgba(139,92,246,.15)';
+        plCard.style.background = 'linear-gradient(135deg,rgba(10,14,26,.6) 0%,rgba(26,10,46,.6) 100%)';
+        const valueEl = plCard.querySelector('.summary-value');
+        if (valueEl) {
+          valueEl.style.background = 'linear-gradient(135deg,#ffffff 0%,#e9d5ff 100%)';
+          valueEl.style.webkitBackgroundClip = 'text';
+          valueEl.style.backgroundClip = 'text';
+          valueEl.style.webkitTextFillColor = 'transparent';
+        }
+      }
     }
-    if ($('roi')) $('roi').textContent = '0%';
+    if ($('roi')) {
+      $('roi').textContent = '0%';
+      $('roi').style.color = '#9aa0a6';
+      // Reset card colors to default
+      const roiCard = $('roi').closest('.summary-card');
+      if (roiCard) {
+        roiCard.style.borderColor = 'rgba(139,92,246,.15)';
+        roiCard.style.background = 'linear-gradient(135deg,rgba(10,14,26,.6) 0%,rgba(26,10,46,.6) 100%)';
+        const valueEl = roiCard.querySelector('.summary-value');
+        if (valueEl) {
+          valueEl.style.background = 'linear-gradient(135deg,#ffffff 0%,#e9d5ff 100%)';
+          valueEl.style.webkitBackgroundClip = 'text';
+          valueEl.style.backgroundClip = 'text';
+          valueEl.style.webkitTextFillColor = 'transparent';
+        }
+      }
+    }
     return;
   }
   
@@ -1634,11 +1663,59 @@ function renderPortfolio(holdings) {
   
   if ($('totalValue')) $('totalValue').textContent = `$${totalValue.toFixed(2)}`;
   const pl = totalValue - totalCost;
+  const roi = totalCost > 0 ? ((totalValue / totalCost - 1) * 100) : 0;
+  
+  // Update Total P/L card with conditional colors
   if ($('totalPL')) {
     $('totalPL').textContent = pl >= 0 ? `+$${pl.toFixed(2)}` : `-$${Math.abs(pl).toFixed(2)}`;
     $('totalPL').style.color = pl >= 0 ? '#10b981' : '#ef4444';
+    
+    // Update parent summary card colors
+    const plCard = $('totalPL').closest('.summary-card');
+    if (plCard) {
+      if (pl >= 0) {
+        plCard.style.borderColor = 'rgba(16,185,129,.3)';
+        plCard.style.background = 'linear-gradient(135deg,rgba(10,14,26,.6) 0%,rgba(16,185,129,.08) 100%)';
+        plCard.querySelector('.summary-value').style.background = 'linear-gradient(135deg,#10b981 0%,#059669 100%)';
+        plCard.querySelector('.summary-value').style.webkitBackgroundClip = 'text';
+        plCard.querySelector('.summary-value').style.backgroundClip = 'text';
+        plCard.querySelector('.summary-value').style.webkitTextFillColor = 'transparent';
+      } else {
+        plCard.style.borderColor = 'rgba(239,68,68,.3)';
+        plCard.style.background = 'linear-gradient(135deg,rgba(10,14,26,.6) 0%,rgba(239,68,68,.08) 100%)';
+        plCard.querySelector('.summary-value').style.background = 'linear-gradient(135deg,#ef4444 0%,#dc2626 100%)';
+        plCard.querySelector('.summary-value').style.webkitBackgroundClip = 'text';
+        plCard.querySelector('.summary-value').style.backgroundClip = 'text';
+        plCard.querySelector('.summary-value').style.webkitTextFillColor = 'transparent';
+      }
+    }
   }
-  if ($('roi')) $('roi').textContent = totalCost > 0 ? `${((totalValue / totalCost - 1) * 100).toFixed(2)}%` : '0%';
+  
+  // Update ROI card with conditional colors
+  if ($('roi')) {
+    $('roi').textContent = totalCost > 0 ? `${roi >= 0 ? '+' : ''}${roi.toFixed(2)}%` : '0%';
+    $('roi').style.color = roi >= 0 ? '#10b981' : '#ef4444';
+    
+    // Update parent summary card colors
+    const roiCard = $('roi').closest('.summary-card');
+    if (roiCard) {
+      if (roi >= 0) {
+        roiCard.style.borderColor = 'rgba(16,185,129,.3)';
+        roiCard.style.background = 'linear-gradient(135deg,rgba(10,14,26,.6) 0%,rgba(16,185,129,.08) 100%)';
+        roiCard.querySelector('.summary-value').style.background = 'linear-gradient(135deg,#10b981 0%,#059669 100%)';
+        roiCard.querySelector('.summary-value').style.webkitBackgroundClip = 'text';
+        roiCard.querySelector('.summary-value').style.backgroundClip = 'text';
+        roiCard.querySelector('.summary-value').style.webkitTextFillColor = 'transparent';
+      } else {
+        roiCard.style.borderColor = 'rgba(239,68,68,.3)';
+        roiCard.style.background = 'linear-gradient(135deg,rgba(10,14,26,.6) 0%,rgba(239,68,68,.08) 100%)';
+        roiCard.querySelector('.summary-value').style.background = 'linear-gradient(135deg,#ef4444 0%,#dc2626 100%)';
+        roiCard.querySelector('.summary-value').style.webkitBackgroundClip = 'text';
+        roiCard.querySelector('.summary-value').style.backgroundClip = 'text';
+        roiCard.querySelector('.summary-value').style.webkitTextFillColor = 'transparent';
+      }
+    }
+  }
   document.querySelectorAll('.editable').forEach(el => el.onclick = () => startEdit(el));
 }
 
