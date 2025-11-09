@@ -3244,8 +3244,9 @@ function updatePortfolioAnalytics(holdings, totalValue) {
   
   if ($('portfolioAnalytics')) $('portfolioAnalytics').style.display = 'block';
   
-  // Calculate allocation
+  // Calculate allocation with token IDs for categorization
   const allocation = {};
+  const allocationByTokenId = {}; // Store by tokenId for categorization
   let totalAllocation = 0;
   
   Object.entries(holdings).forEach(([id, h]) => {
@@ -3256,6 +3257,7 @@ function updatePortfolioAnalytics(holdings, totalValue) {
       const token = cryptoData.find(t => t.id === h.tokenId);
       const tokenName = token?.symbol?.toUpperCase() || h.tokenId.toUpperCase().substring(0, 4);
       allocation[tokenName] = (allocation[tokenName] || 0) + value;
+      allocationByTokenId[h.tokenId] = (allocationByTokenId[h.tokenId] || 0) + value;
       totalAllocation += value;
     }
   });
@@ -3313,11 +3315,54 @@ function updatePortfolioAnalytics(holdings, totalValue) {
   const largestPosition = Object.entries(allocation).sort((a, b) => b[1] - a[1])[0];
   const largestPercentage = largestPosition ? (largestPosition[1] / totalAllocation * 100) : 0;
   
-  // Diversification score (0-100, higher is better)
-  // Based on: number of tokens, even distribution, largest position size
-  const evenDistribution = 100 / tokenCount;
-  const distributionScore = 100 - Math.abs(largestPercentage - evenDistribution);
-  const diversificationScore = Math.min(100, (tokenCount * 10) + (distributionScore * 0.5));
+  // Core-Satellite Model Target Allocations
+  const CORE_ASSETS_TARGET = 0.60;      // Large-cap, long-term store of value
+  const GROWTH_ASSETS_TARGET = 0.25;    // Mid-cap, ecosystem or infrastructure plays
+  const HIGH_RISK_TARGET = 0.10;        // Small-cap, narrative or experimental tokens
+  const STABLES_TARGET = 0.05;          // Stablecoins for liquidity and dip-buying
+  
+  // Define token categories by CoinGecko ID
+  const CORE_ASSETS_IDS = ['bitcoin', 'ethereum'];
+  const GROWTH_ASSETS_IDS = ['solana', 'chainlink', 'avalanche-2', 'arbitrum', 'cosmos', 'polkadot', 'matic-network', 'cardano', 'ripple', 'binancecoin', 'polygon', 'optimism-ethereum', 'near', 'aptos', 'sui', 'sei-network', 'injective-protocol', 'render-token'];
+  const STABLES_IDS = ['usd-coin', 'tether', 'dai', 'binance-usd', 'true-usd', 'paxos-standard'];
+  
+  // Calculate actual allocations by category using token IDs
+  let coreValue = 0;
+  let growthValue = 0;
+  let highRiskValue = 0;
+  let stablesValue = 0;
+  
+  Object.entries(allocationByTokenId).forEach(([tokenId, value]) => {
+    const tokenIdLower = tokenId.toLowerCase();
+    // Check if token matches any category (exact or partial match)
+    if (CORE_ASSETS_IDS.some(id => tokenIdLower === id || tokenIdLower.includes(id))) {
+      coreValue += value;
+    } else if (STABLES_IDS.some(id => tokenIdLower === id || tokenIdLower.includes(id))) {
+      stablesValue += value;
+    } else if (GROWTH_ASSETS_IDS.some(id => tokenIdLower === id || tokenIdLower.includes(id))) {
+      growthValue += value;
+    } else {
+      // Everything else is considered HIGH_RISK
+      highRiskValue += value;
+    }
+  });
+  
+  // Calculate percentages
+  const corePercentage = totalAllocation > 0 ? coreValue / totalAllocation : 0;
+  const growthPercentage = totalAllocation > 0 ? growthValue / totalAllocation : 0;
+  const highRiskPercentage = totalAllocation > 0 ? highRiskValue / totalAllocation : 0;
+  const stablesPercentage = totalAllocation > 0 ? stablesValue / totalAllocation : 0;
+  
+  // Calculate diversification score based on how close actual is to target
+  // Score = 100 - (sum of absolute differences from target * penalty factor)
+  const coreDiff = Math.abs(corePercentage - CORE_ASSETS_TARGET);
+  const growthDiff = Math.abs(growthPercentage - GROWTH_ASSETS_TARGET);
+  const highRiskDiff = Math.abs(highRiskPercentage - HIGH_RISK_TARGET);
+  const stablesDiff = Math.abs(stablesPercentage - STABLES_TARGET);
+  
+  // Weighted penalty (core allocation is most important)
+  const totalDeviation = (coreDiff * 2.0) + (growthDiff * 1.5) + (highRiskDiff * 1.0) + (stablesDiff * 0.5);
+  const diversificationScore = Math.max(0, Math.min(100, 100 - (totalDeviation * 100)));
   
   if ($('diversificationScore')) $('diversificationScore').textContent = `${Math.round(diversificationScore)}/100`;
   if ($('diversificationBar')) $('diversificationBar').style.width = `${diversificationScore}%`;
