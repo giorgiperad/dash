@@ -125,6 +125,29 @@ body{
 .loading-text{font-size:15px;color:#9aa0a6;font-weight:500;letter-spacing:0.3px}
 .error{background:rgba(234,67,53,.12);border:1px solid rgba(234,67,53,.25);color:#ea4335;border-radius:14px;padding:20px;margin:24px 0;font-weight:500;text-align:center;backdrop-filter:blur(10px)}
 
+/* Hero Carousel Styles - CoinAnk Style */
+.hero-carousel-wrapper{position:relative;margin-bottom:32px;width:100%}
+.carousel{display:flex;gap:16px;overflow-x:auto;overflow-y:hidden;scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent;padding:8px 0 16px;-webkit-overflow-scrolling:touch}
+.carousel::-webkit-scrollbar{height:6px}
+.carousel::-webkit-scrollbar-track{background:transparent}
+.carousel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
+.carousel::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.2)}
+.carousel-card{min-width:320px;width:320px;background:rgba(20,20,30,.4);backdrop-filter:blur(12px);border-radius:12px;padding:20px;border:1px solid rgba(255,255,255,.05);transition:all .2s;flex-shrink:0;display:flex;flex-direction:column}
+.carousel-card:hover{background:rgba(20,20,30,.6);border-color:rgba(255,255,255,.1);transform:translateY(-2px)}
+.carousel-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.carousel-card-title{font-size:11px;color:#9aa0a6;text-transform:uppercase;letter-spacing:0.8px;font-weight:600}
+.carousel-card-arrow{color:#6366f1;font-size:14px;opacity:0.6;transition:all .2s}
+.carousel-card:hover .carousel-card-arrow{opacity:1}
+.carousel-card-value{font-size:22px;font-weight:600;color:#fafafa;letter-spacing:-0.3px;margin-bottom:8px}
+.carousel-card-change{font-size:12px;font-weight:500;display:flex;align-items:center;gap:4px}
+.carousel-card-change.positive{color:#22c55e}
+.carousel-card-change.negative{color:#ef4444}
+.carousel-card-subtitle{font-size:11px;color:#71717a;margin-top:4px}
+.carousel-nav{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:rgba(20,20,30,.8);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1);color:#fafafa;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.carousel-nav:hover{background:rgba(99,102,241,.2);border-color:rgba(99,102,241,.3)}
+.carousel-nav-right{right:8px}
+.carousel-nav-left{left:8px}
+
 /* ANIMATED SVG ARROWS */
 .change-arrow{width:18px;height:18px;transition:transform .3s ease,filter .3s ease;animation:arrowPulse 1.5s ease-in-out infinite}
 @keyframes arrowPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
@@ -991,18 +1014,6 @@ function renderHeroStats() {
   const fearGreedValue = fearGreedData?.value || 'N/A';
   const fearGreedClassification = fearGreedData?.value_classification || 'N/A';
   
-  // ETF Flow data
-  const etfToday = etfFlowsData?.today || 0;
-  const etfWeek = etfFlowsData?.week || 0;
-  const etfTotal = etfFlowsData?.total || 0;
-  const formatETF = (value) => {
-    if (value === 0) return '$0';
-    const abs = Math.abs(value);
-    if (abs >= 1000000000) return `${value >= 0 ? '+' : ''}$${(value / 1000000000).toFixed(2)}B`;
-    if (abs >= 1000000) return `${value >= 0 ? '+' : ''}$${(value / 1000000).toFixed(2)}M`;
-    return `${value >= 0 ? '+' : ''}$${value.toFixed(0)}`;
-  };
-  
   const getFearGreedColor = (value) => {
     if (value <= 25) return '#ef4444';
     if (value <= 45) return '#f59e0b';
@@ -1052,32 +1063,6 @@ function renderHeroStats() {
       <div class="carousel-card-value" style="color:${getFearGreedColor(parseInt(fearGreedValue) || 50)};">${fearGreedValue}</div>
       <div class="carousel-card-subtitle" style="text-transform:capitalize;color:${getFearGreedColor(parseInt(fearGreedValue) || 50)};">
         ${fearGreedClassification}
-      </div>
-    </div>
-    
-    <div class="carousel-card">
-      <div class="carousel-card-header">
-        <div class="carousel-card-title">ETF ნაკადი (დღეს)</div>
-        <span class="carousel-card-arrow">→</span>
-      </div>
-      <div class="carousel-card-value" style="color:${etfFlowsData ? (etfToday >= 0 ? '#22c55e' : '#ef4444') : '#9aa0a6'};">
-        ${etfFlowsData ? formatETF(etfToday) : 'N/A'}
-      </div>
-      <div class="carousel-card-subtitle">
-        ${etfFlowsData ? `7დ: ${formatETF(etfWeek)}` : 'ჩატვირთვა...'}
-      </div>
-    </div>
-    
-    <div class="carousel-card">
-      <div class="carousel-card-header">
-        <div class="carousel-card-title">ETF ნაკადი (საერთო)</div>
-        <span class="carousel-card-arrow">→</span>
-      </div>
-      <div class="carousel-card-value" style="color:${etfFlowsData ? (etfTotal >= 0 ? '#22c55e' : '#ef4444') : '#9aa0a6'};">
-        ${etfFlowsData ? formatETF(etfTotal) : 'N/A'}
-      </div>
-      <div class="carousel-card-subtitle">
-        ${etfFlowsData ? (etfTotal >= 0 ? 'წმინდა შემოდინება' : 'წმინდა გადინება') : 'ჩატვირთვა...'}
       </div>
     </div>
     
