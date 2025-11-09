@@ -12,7 +12,9 @@ function getDatabase() {
       if (!process.env.FIREBASE_DATABASE_URL) missingVars.push('FIREBASE_DATABASE_URL');
       
       if (missingVars.length > 0) {
-        throw new Error(`Missing required Firebase environment variables: ${missingVars.join(', ')}`);
+        const errorMsg = `Missing required Firebase environment variables: ${missingVars.join(', ')}. Please set these in Vercel Dashboard → Settings → Environment Variables.`;
+        console.error(errorMsg);
+        throw new Error(errorMsg);
       }
 
       // Handle private key - Vercel environment variables may have different formats
@@ -38,6 +40,7 @@ function getDatabase() {
       }
 
       console.log('Initializing Firebase with project:', process.env.FIREBASE_PROJECT_ID);
+      console.log('Using client email:', process.env.FIREBASE_CLIENT_EMAIL);
       
       admin.initializeApp({
         credential: admin.credential.cert({
