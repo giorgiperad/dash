@@ -21,8 +21,8 @@ module.exports = async (req, res) => {
     const apiKey = process.env.SOSOVALUE_API_KEY || 'SOSO-bc7956bf380549e2971d5c31a105287c';
     const apiUrl = 'https://api.sosovalue.xyz/openapi/v2/etf/currentEtfDataMetrics';
     
-    // Fetch all ETF data in parallel
-    const [btcResponse, ethResponse, solResponse, hbarResponse, ltcResponse] = await Promise.all([
+    // Fetch all ETF data in parallel with error handling
+    const fetchPromises = [
       fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -31,6 +31,9 @@ module.exports = async (req, res) => {
         },
         body: JSON.stringify({ type: 'us-btc-spot' }),
         signal: AbortSignal.timeout(10000)
+      }).catch(err => {
+        console.warn('BTC ETF fetch error:', err.message);
+        return null;
       }),
       fetch(apiUrl, {
         method: 'POST',
@@ -40,6 +43,9 @@ module.exports = async (req, res) => {
         },
         body: JSON.stringify({ type: 'us-eth-spot' }),
         signal: AbortSignal.timeout(10000)
+      }).catch(err => {
+        console.warn('ETH ETF fetch error:', err.message);
+        return null;
       }),
       fetch(apiUrl, {
         method: 'POST',
@@ -68,7 +74,9 @@ module.exports = async (req, res) => {
         body: JSON.stringify({ type: 'us-ltc-spot' }),
         signal: AbortSignal.timeout(10000)
       }).catch(() => null) // LTC ETF might not exist yet
-    ]);
+    ];
+    
+    const [btcResponse, ethResponse, solResponse, hbarResponse, ltcResponse] = await Promise.all(fetchPromises);
     
     let btcData = null;
     let ethData = null;
@@ -77,7 +85,7 @@ module.exports = async (req, res) => {
     let ltcData = null;
     
     // Process Bitcoin ETF response
-    if (btcResponse.ok) {
+    if (btcResponse && btcResponse.ok) {
       try {
         const btcResult = await btcResponse.json();
         if (btcResult.code === 0 && btcResult.data) {
@@ -89,9 +97,15 @@ module.exports = async (req, res) => {
       } catch (e) {
         console.warn('Failed to parse BTC ETF data:', e.message);
       }
+    } else if (btcResponse) {
+      try {
+        const errorText = await btcResponse.text();
+        console.warn(`BTC ETF API returned ${btcResponse.status}:`, errorText.substring(0, 200));
+      } catch (e) {
+        console.warn('BTC ETF response error:', e.message);
+      }
     } else {
-      const errorText = await btcResponse.text();
-      console.warn(`BTC ETF API returned ${btcResponse.status}:`, errorText.substring(0, 200));
+      console.warn('BTC ETF fetch failed - no response');
     }
     
     // Process Ethereum ETF response
@@ -222,7 +236,8 @@ module.exports = async (req, res) => {
     return res.status(500).json({
       success: false,
       error: 'Failed to fetch ETF data',
-      message: error.message
+      message: error.message || 'Network or server error occurred',
+      error: error.name || 'Unknown error'
     });
   }
 };

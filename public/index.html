@@ -1858,15 +1858,47 @@ async function loadETFDataMain() {
   
   try {
     const res = await fetch('/api/etf-data');
+    
+    // Check if response is ok
+    if (!res.ok) {
+      const errorText = await res.text();
+      let errorData;
+      try {
+        errorData = JSON.parse(errorText);
+      } catch {
+        errorData = { message: `HTTP ${res.status}: ${res.statusText}` };
+      }
+      
+      mainContainer.style.display = 'block';
+      const container = $('etfDataMainContent');
+      if (container) {
+        const errorMsg = errorData.message || errorData.error || `HTTP შეცდომა ${res.status}`;
+        container.innerHTML = `
+          <div style="padding:40px;text-align:center;color:#ef4444;font-size:14px;font-weight:500;">
+            <div style="font-size:18px;margin-bottom:12px;">⚠️ ETF მონაცემების ჩატვირთვის შეცდომა</div>
+            <div style="color:#9aa0a6;font-size:13px;margin-top:8px;">${errorMsg}</div>
+            <div style="color:#71717a;font-size:11px;margin-top:12px;">გთხოვთ სცადოთ მოგვიანებით ან შეამოწმოთ API გასაღები</div>
+          </div>
+        `;
+      }
+      console.error('ETF API HTTP error:', res.status, errorData);
+      return;
+    }
+    
     const data = await res.json();
     
-    if (!res.ok || !data.success) {
-    mainContainer.style.display = 'block';
-    const container = $('etfDataMainContent');
-    if (container) {
-      const errorMsg = data.message || data.error || 'ETF მონაცემები მიუწვდომელია';
-      container.innerHTML = `<div style="padding:40px;text-align:center;color:#9aa0a6;font-size:13px;">${errorMsg}</div>`;
-    }
+    if (!data.success) {
+      mainContainer.style.display = 'block';
+      const container = $('etfDataMainContent');
+      if (container) {
+        const errorMsg = data.message || data.error || 'ETF მონაცემები მიუწვდომელია';
+        container.innerHTML = `
+          <div style="padding:40px;text-align:center;color:#ef4444;font-size:14px;font-weight:500;">
+            <div style="font-size:18px;margin-bottom:12px;">⚠️ ${errorMsg}</div>
+            <div style="color:#71717a;font-size:11px;margin-top:12px;">გთხოვთ შეამოწმოთ API გასაღები Vercel-ის გარემოს ცვლადებში</div>
+          </div>
+        `;
+      }
       console.error('ETF API error:', data);
       return;
     }
@@ -1880,13 +1912,36 @@ async function loadETFDataMain() {
       hbar: data.hbar, 
       ltc: data.ltc 
     };
+    
+    // Check if we have any ETF data
+    if (!etfData.btc && !etfData.eth && !etfData.sol && !etfData.hbar && !etfData.ltc) {
+      const container = $('etfDataMainContent');
+      if (container) {
+        container.innerHTML = `
+          <div style="padding:40px;text-align:center;color:#9aa0a6;font-size:14px;">
+            <div style="font-size:18px;margin-bottom:12px;">ℹ️ ETF მონაცემები არ არის ხელმისაწვდომი</div>
+            <div style="color:#71717a;font-size:11px;margin-top:12px;">API-დან მონაცემები არ მიღებულა</div>
+          </div>
+        `;
+      }
+      return;
+    }
+    
     renderETFDataMain(etfData);
   } catch (error) {
     console.error('ETF data load error:', error);
     const mainContainer = $('etfDataMain');
     if (mainContainer) mainContainer.style.display = 'block';
     const container = $('etfDataMainContent');
-    if (container) container.innerHTML = '<div style="padding:40px;text-align:center;color:#9aa0a6;font-size:13px;">ETF მონაცემების ჩატვირთვის შეცდომა</div>';
+    if (container) {
+      container.innerHTML = `
+        <div style="padding:40px;text-align:center;color:#ef4444;font-size:14px;font-weight:500;">
+          <div style="font-size:18px;margin-bottom:12px;">❌ ETF მონაცემების ჩატვირთვის შეცდომა</div>
+          <div style="color:#9aa0a6;font-size:13px;margin-top:8px;">${error.message || 'უცნობი შეცდომა'}</div>
+          <div style="color:#71717a;font-size:11px;margin-top:12px;">გთხოვთ გადატვირთოთ გვერდი ან სცადოთ მოგვიანებით</div>
+        </div>
+      `;
+    }
   }
 }
 
