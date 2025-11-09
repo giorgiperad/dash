@@ -300,6 +300,12 @@ body{
   .setting-item{flex-direction:column;align-items:flex-start;gap:8px}
   .alert-row{grid-template-columns:40px 1fr 1fr 60px;gap:10px;padding:14px;font-size:12px}
   .alert-row>div:nth-child(3){display:none}
+  #portfolioAnalytics{padding:20px}
+  #analyticsGrid{grid-template-columns:1fr!important;gap:20px}
+  #portfolioAnalytics>div:first-child{flex-direction:column;align-items:flex-start;gap:12px}
+  #allocationChart{max-width:100%!important;height:auto!important}
+  #tokenOfTheDay{padding:20px}
+  #todStatsGrid{grid-template-columns:1fr!important;gap:12px}
 }
 @media(max-width:480px){
   .navbar{padding:10px 12px}
@@ -328,6 +334,12 @@ body{
   .modal-title{font-size:16px}
   .sidebar-card{padding:16px}
   .quote-item,.gainer-item{padding:10px}
+  #portfolioAnalytics{padding:16px}
+  #portfolioAnalytics>div:first-child{margin-bottom:16px}
+  #allocationChart{width:100%!important;height:auto!important}
+  #tokenOfTheDay{padding:16px}
+  #tokenOfTheDay>div:first-child{flex-direction:column;gap:12px;margin-bottom:12px}
+  #todTokenIcon{width:48px!important;height:48px!important}
 }
 @media(orientation:landscape) and (max-height:600px){
   .navbar{padding:8px 16px}
@@ -393,6 +405,33 @@ body{
   <div id="error"></div>
 
   <div class="hero-section" id="heroStats" style="display:none;"></div>
+
+  <!-- Token of the Day Section -->
+  <div id="tokenOfTheDay" style="display:none;margin-bottom:32px;background:rgba(20,20,30,.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:24px;position:relative;overflow:hidden;" role="region" aria-label="Token of the day">
+    <div style="position:absolute;top:0;right:0;width:200px;height:200px;background:radial-gradient(circle,rgba(99,102,241,.1) 0%,transparent 70%);pointer-events:none;"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;position:relative;z-index:1;">
+      <div>
+        <div style="font-size:11px;color:#6366f1;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:4px;">⭐ Token of the Day</div>
+        <h3 id="todTokenName" style="font-size:20px;font-weight:600;color:#fafafa;letter-spacing:-0.3px;">-</h3>
+        <div id="todTokenSymbol" style="font-size:13px;color:#71717a;margin-top:4px;">-</div>
+      </div>
+      <div id="todTokenIcon" style="width:64px;height:64px;border-radius:50%;border:2px solid rgba(255,255,255,.1);overflow:hidden;background:rgba(20,20,30,.5);display:flex;align-items:center;justify-content:center;font-size:24px;">-</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;position:relative;z-index:1;" id="todStatsGrid">
+      <div role="region" aria-label="Token price">
+        <div style="font-size:11px;color:#71717a;margin-bottom:4px;">Price</div>
+        <div id="todPrice" style="font-size:18px;font-weight:600;color:#fafafa;" aria-live="polite">-</div>
+      </div>
+      <div role="region" aria-label="24 hour price change">
+        <div style="font-size:11px;color:#71717a;margin-bottom:4px;">24h Change</div>
+        <div id="todChange" style="font-size:18px;font-weight:600;" aria-live="polite">-</div>
+      </div>
+      <div role="region" aria-label="Market capitalization">
+        <div style="font-size:11px;color:#71717a;margin-bottom:4px;">Market Cap</div>
+        <div id="todMarketCap" style="font-size:18px;font-weight:600;color:#fafafa;" aria-live="polite">-</div>
+      </div>
+    </div>
+  </div>
 
   <div class="content-grid" id="contentGrid" style="display:none;">
     <div class="sidebar-section" id="sidebarSection">
@@ -466,17 +505,58 @@ body{
           <div class="summary-card" id="totalValueCard">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
               <div class="summary-label">Total Value</div>
-              <button id="toggleVisibility" style="background:transparent;border:none;color:#71717a;cursor:pointer;padding:4px;font-size:16px;transition:all .2s;opacity:0.7;" title="Toggle visibility">👁️</button>
+              <button id="toggleVisibility" style="background:transparent;border:none;color:#71717a;cursor:pointer;padding:4px;font-size:16px;transition:all .2s;opacity:0.7;" title="Toggle visibility" aria-label="Toggle portfolio visibility">👁️</button>
             </div>
-            <div class="summary-value" id="totalValue">$0.00</div>
+            <div class="summary-value" id="totalValue" aria-live="polite">$0.00</div>
           </div>
           <div class="summary-card" id="totalPLCard">
             <div class="summary-label">Total P/L</div>
-            <div class="summary-value" id="totalPL">$0.00</div>
+            <div class="summary-value" id="totalPL" aria-live="polite">$0.00</div>
           </div>
           <div class="summary-card">
             <div class="summary-label">ROI</div>
-            <div class="summary-value" id="roi">0%</div>
+            <div class="summary-value" id="roi" aria-live="polite">0%</div>
+          </div>
+        </div>
+
+        <!-- Portfolio Analytics Section -->
+        <div id="portfolioAnalytics" style="display:none;margin-bottom:32px;background:rgba(20,20,30,.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:24px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <h3 style="font-size:18px;font-weight:600;color:#fafafa;letter-spacing:-0.3px;">Portfolio Analytics</h3>
+            <button id="toggleAnalytics" style="background:transparent;border:1px solid rgba(255,255,255,.1);color:#71717a;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;transition:all .2s;" aria-label="Toggle analytics view" aria-expanded="true">Hide</button>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;" id="analyticsGrid">
+            <div>
+              <div style="font-size:12px;color:#71717a;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.8px;font-weight:500;" role="heading" aria-level="4">Asset Allocation</div>
+              <canvas id="allocationChart" width="200" height="200" style="max-width:100%;height:auto;" aria-label="Portfolio allocation pie chart" role="img"></canvas>
+              <div id="allocationLegend" style="margin-top:16px;display:flex;flex-direction:column;gap:8px;" role="list" aria-label="Token allocation percentages"></div>
+            </div>
+            <div>
+              <div style="font-size:12px;color:#71717a;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.8px;font-weight:500;" role="heading" aria-level="4">Risk Metrics</div>
+              <div id="riskMetrics" style="display:flex;flex-direction:column;gap:12px;" role="list" aria-label="Portfolio risk metrics">
+                <div style="padding:12px;background:rgba(20,20,30,.3);border-radius:8px;border:1px solid rgba(255,255,255,.05);">
+                  <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                    <span style="font-size:12px;color:#71717a;">Diversification Score</span>
+                    <span id="diversificationScore" style="font-size:14px;font-weight:600;color:#fafafa;">-</span>
+                  </div>
+                  <div style="height:4px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;">
+                    <div id="diversificationBar" style="height:100%;background:#6366f1;width:0%;transition:width .3s;"></div>
+                  </div>
+                </div>
+                <div style="padding:12px;background:rgba(20,20,30,.3);border-radius:8px;border:1px solid rgba(255,255,255,.05);">
+                  <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                    <span style="font-size:12px;color:#71717a;">Largest Position</span>
+                    <span id="largestPosition" style="font-size:14px;font-weight:600;color:#fafafa;">-</span>
+                  </div>
+                </div>
+                <div style="padding:12px;background:rgba(20,20,30,.3);border-radius:8px;border:1px solid rgba(255,255,255,.05);">
+                  <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                    <span style="font-size:12px;color:#71717a;">Token Count</span>
+                    <span id="tokenCount" style="font-size:14px;font-weight:600;color:#fafafa;">-</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -984,39 +1064,193 @@ window.sortBy = function(col) {
 };
 
 
-/* ---------- PORTFOLIO VISIBILITY TOGGLE ---------- */
+/* ---------- PORTFOLIO VISIBILITY TOGGLE (Enhanced Privacy Mode) ---------- */
 let portfolioVisible = true;
+let privacyMode = false;
+
+// Animate number counter
+function animateValue(element, start, end, duration = 1000) {
+  if (!element) return;
+  const startVal = parseFloat(start.toString().replace(/[^0-9.-]/g, '')) || 0;
+  const endVal = parseFloat(end.toString().replace(/[^0-9.-]/g, '')) || 0;
+  const isCurrency = start.toString().includes('$');
+  const isPercent = start.toString().includes('%');
+  const isNegative = start.toString().startsWith('-');
+  
+  const startTime = performance.now();
+  const animate = (currentTime) => {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+    const current = startVal + (endVal - startVal) * easeOutQuart;
+    
+    let formatted;
+    if (isCurrency) {
+      formatted = `${isNegative && current < 0 ? '-' : ''}$${Math.abs(current).toFixed(2)}`;
+    } else if (isPercent) {
+      formatted = `${current >= 0 ? '+' : ''}${current.toFixed(2)}%`;
+    } else {
+      formatted = current.toFixed(2);
+    }
+    
+    element.textContent = formatted;
+    
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    }
+  };
+  requestAnimationFrame(animate);
+}
 
 if ($('toggleVisibility')) {
   $('toggleVisibility').onclick = () => {
-    portfolioVisible = !portfolioVisible;
+    privacyMode = !privacyMode;
+    portfolioVisible = !privacyMode;
     const totalValueCard = $('totalValueCard');
     const totalPLCard = $('totalPLCard');
     const totalValue = $('totalValue');
     const totalPL = $('totalPL');
     const toggleBtn = $('toggleVisibility');
     
-    if (portfolioVisible) {
-      // Show values
-      if (totalValue) totalValue.style.display = 'block';
-      if (totalPL) totalPL.style.display = 'block';
-      if (totalValueCard) totalValueCard.style.opacity = '1';
-      if (totalPLCard) totalPLCard.style.opacity = '1';
-      toggleBtn.textContent = '👁️';
-      toggleBtn.style.opacity = '0.7';
-      toggleBtn.title = 'Hide values';
-    } else {
-      // Hide values
+    // Hide/show all dollar values across dashboard
+    const allDollarValues = document.querySelectorAll('[id*="Value"], [id*="PL"], .holding-row [style*="color"]');
+    
+    if (privacyMode) {
+      // Hide all dollar values
       if (totalValue) totalValue.style.display = 'none';
       if (totalPL) totalPL.style.display = 'none';
       if (totalValueCard) totalValueCard.style.opacity = '0.4';
       if (totalPLCard) totalPLCard.style.opacity = '0.4';
+      
+      // Hide dollar values in holdings
+      document.querySelectorAll('.holding-row').forEach(row => {
+        const valueCells = row.querySelectorAll('div');
+        valueCells.forEach(cell => {
+          if (cell.textContent.includes('$') && !cell.textContent.includes('%')) {
+            cell.style.opacity = '0';
+          }
+        });
+      });
+      
       toggleBtn.textContent = '👁️‍🗨️';
       toggleBtn.style.opacity = '1';
       toggleBtn.title = 'Show values';
+      toggleBtn.setAttribute('aria-label', 'Show portfolio values');
+    } else {
+      // Show all dollar values
+      if (totalValue) totalValue.style.display = 'block';
+      if (totalPL) totalPL.style.display = 'block';
+      if (totalValueCard) totalValueCard.style.opacity = '1';
+      if (totalPLCard) totalPLCard.style.opacity = '1';
+      
+      // Show dollar values in holdings
+      document.querySelectorAll('.holding-row').forEach(row => {
+        const valueCells = row.querySelectorAll('div');
+        valueCells.forEach(cell => {
+          if (cell.textContent.includes('$')) {
+            cell.style.opacity = '1';
+          }
+        });
+      });
+      
+      toggleBtn.textContent = '👁️';
+      toggleBtn.style.opacity = '0.7';
+      toggleBtn.title = 'Hide values';
+      toggleBtn.setAttribute('aria-label', 'Hide portfolio values');
     }
   };
 }
+
+/* ---------- TOKEN OF THE DAY ---------- */
+function renderTokenOfTheDay() {
+  if (!cryptoData || cryptoData.length === 0) return;
+  
+  // Select token with highest 24h volume or biggest gainer
+  const token = [...cryptoData]
+    .filter(t => t.market_cap && t.market_cap > 1000000) // Filter out very small tokens
+    .sort((a, b) => {
+      // Prioritize by volume, then by positive change
+      const scoreA = (a.total_volume || 0) + ((a.price_change_percentage_24h || 0) > 0 ? 1000000 : 0);
+      const scoreB = (b.total_volume || 0) + ((b.price_change_percentage_24h || 0) > 0 ? 1000000 : 0);
+      return scoreB - scoreA;
+    })[0];
+  
+  if (!token) return;
+  
+  if ($('tokenOfTheDay')) $('tokenOfTheDay').style.display = 'block';
+  if ($('todTokenName')) $('todTokenName').textContent = token.name || token.id;
+  if ($('todTokenSymbol')) $('todTokenSymbol').textContent = token.symbol?.toUpperCase() || token.id.toUpperCase();
+  if ($('todTokenIcon')) {
+    if (token.image) {
+      $('todTokenIcon').innerHTML = `<img src="${token.image}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.textContent='💰'">`;
+    } else {
+      $('todTokenIcon').textContent = '💰';
+    }
+  }
+  if ($('todPrice')) $('todPrice').textContent = `$${formatPrice(token.current_price || 0)}`;
+  if ($('todChange')) {
+    const change = token.price_change_percentage_24h || 0;
+    $('todChange').textContent = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
+    $('todChange').style.color = change >= 0 ? '#22c55e' : '#ef4444';
+  }
+  if ($('todMarketCap')) $('todMarketCap').textContent = `$${formatMarketCap(token.market_cap || 0)}`;
+}
+
+/* ---------- HAPTIC FEEDBACK (Mobile) ---------- */
+function vibrate(pattern = [50]) {
+  if ('vibrate' in navigator) {
+    navigator.vibrate(pattern);
+  }
+}
+
+// Add haptic feedback to alerts
+const originalAddAlert = window.addAlert;
+if (originalAddAlert) {
+  window.addAlert = async function(alertData) {
+    const result = await originalAddAlert.call(this, alertData);
+    vibrate([50, 50, 50]); // Short vibration pattern when adding alert
+    return result;
+  };
+}
+
+/* ---------- SCREEN READER OPTIMIZATION ---------- */
+// Add ARIA labels to interactive elements
+document.addEventListener('DOMContentLoaded', () => {
+  // Add labels to buttons
+  document.querySelectorAll('button').forEach(btn => {
+    if (!btn.getAttribute('aria-label') && !btn.textContent.trim()) {
+      btn.setAttribute('aria-label', btn.title || 'Button');
+    }
+  });
+  
+  // Add labels to inputs
+  document.querySelectorAll('input, select').forEach(input => {
+    if (!input.getAttribute('aria-label') && !input.id.includes('holding') && !input.id.includes('alert')) {
+      const label = input.previousElementSibling?.textContent || input.placeholder || 'Input field';
+      input.setAttribute('aria-label', label);
+    }
+  });
+  
+  // Add role attributes
+  const mainContent = document.querySelector('.main-section');
+  if (mainContent && !mainContent.getAttribute('role')) {
+    mainContent.setAttribute('role', 'main');
+  }
+  
+  // Add live regions for dynamic content
+  if (!document.getElementById('liveRegion')) {
+    const liveRegion = document.createElement('div');
+    liveRegion.id = 'liveRegion';
+    liveRegion.setAttribute('aria-live', 'polite');
+    liveRegion.setAttribute('aria-atomic', 'true');
+    liveRegion.style.position = 'absolute';
+    liveRegion.style.left = '-9999px';
+    liveRegion.style.width = '1px';
+    liveRegion.style.height = '1px';
+    liveRegion.style.overflow = 'hidden';
+    document.body.appendChild(liveRegion);
+  }
+});
 
 /* ---------- INITIAL LOAD ---------- */
 // Load data on page load
@@ -1106,6 +1340,7 @@ async function fetchAll(){
            if (cryptoData && cryptoData.length > 0) {
              renderTopGainers();
              renderQuotes();
+             renderTokenOfTheDay();
            }
            $('contentGrid').style.display = 'grid';
            $('heroStats').style.display = 'grid';
@@ -1671,13 +1906,32 @@ function renderPortfolio(holdings) {
       </div>`;
   });
   
-  if ($('totalValue')) $('totalValue').textContent = `$${totalValue.toFixed(2)}`;
+  // Store previous values for animation
+  const prevTotalValue = parseFloat($('totalValue')?.textContent.replace(/[^0-9.-]/g, '') || '0');
+  const prevPL = parseFloat($('totalPL')?.textContent.replace(/[^0-9.-]/g, '') || '0');
+  const prevROI = parseFloat($('roi')?.textContent.replace(/[^0-9.-]/g, '') || '0');
+  
   const pl = totalValue - totalCost;
   const roi = totalCost > 0 ? ((totalValue / totalCost - 1) * 100) : 0;
   
-  // Update Total P/L card with conditional colors
+  // Animate value changes
+  if ($('totalValue')) {
+    const newValue = totalValue.toFixed(2);
+    if (Math.abs(prevTotalValue - totalValue) > 0.01) {
+      animateValue($('totalValue'), `$${prevTotalValue.toFixed(2)}`, `$${newValue}`, 800);
+    } else {
+      $('totalValue').textContent = `$${newValue}`;
+    }
+  }
+  
+  // Update Total P/L card with conditional colors and animation
   if ($('totalPL')) {
-    $('totalPL').textContent = pl >= 0 ? `+$${pl.toFixed(2)}` : `-$${Math.abs(pl).toFixed(2)}`;
+    const newPL = pl >= 0 ? `+$${pl.toFixed(2)}` : `-$${Math.abs(pl).toFixed(2)}`;
+    if (Math.abs(prevPL - pl) > 0.01) {
+      animateValue($('totalPL'), prevPL >= 0 ? `+$${Math.abs(prevPL).toFixed(2)}` : `-$${Math.abs(prevPL).toFixed(2)}`, newPL, 800);
+    } else {
+      $('totalPL').textContent = newPL;
+    }
     $('totalPL').style.color = pl >= 0 ? '#10b981' : '#ef4444';
     
     // Update parent summary card colors
@@ -1701,9 +1955,14 @@ function renderPortfolio(holdings) {
     }
   }
   
-  // Update ROI card with conditional colors
+  // Update ROI card with conditional colors and animation
   if ($('roi')) {
-    $('roi').textContent = totalCost > 0 ? `${roi >= 0 ? '+' : ''}${roi.toFixed(2)}%` : '0%';
+    const newROI = totalCost > 0 ? `${roi >= 0 ? '+' : ''}${roi.toFixed(2)}%` : '0%';
+    if (Math.abs(prevROI - roi) > 0.01) {
+      animateValue($('roi'), `${prevROI >= 0 ? '+' : ''}${prevROI.toFixed(2)}%`, newROI, 800);
+    } else {
+      $('roi').textContent = newROI;
+    }
     $('roi').style.color = roi >= 0 ? '#10b981' : '#ef4444';
     
     // Update parent summary card colors
@@ -1727,6 +1986,119 @@ function renderPortfolio(holdings) {
     }
   }
   document.querySelectorAll('.editable').forEach(el => el.onclick = () => startEdit(el));
+  
+  // Update Portfolio Analytics
+  updatePortfolioAnalytics(holdings, totalValue);
+}
+
+/* ---------- PORTFOLIO ANALYTICS ---------- */
+function updatePortfolioAnalytics(holdings, totalValue) {
+  if (!holdings || Object.keys(holdings).length === 0) {
+    if ($('portfolioAnalytics')) $('portfolioAnalytics').style.display = 'none';
+    return;
+  }
+  
+  if ($('portfolioAnalytics')) $('portfolioAnalytics').style.display = 'block';
+  
+  // Calculate allocation
+  const allocation = {};
+  let totalAllocation = 0;
+  
+  Object.entries(holdings).forEach(([id, h]) => {
+    if (!h || !h.tokenId) return;
+    const price = prices[h.tokenId] || 0;
+    const value = h.amount * price;
+    if (value > 0) {
+      const token = cryptoData.find(t => t.id === h.tokenId);
+      const tokenName = token?.symbol?.toUpperCase() || h.tokenId.toUpperCase().substring(0, 4);
+      allocation[tokenName] = (allocation[tokenName] || 0) + value;
+      totalAllocation += value;
+    }
+  });
+  
+  // Draw pie chart
+  const canvas = $('allocationChart');
+  if (canvas && totalAllocation > 0) {
+    const ctx = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = Math.min(centerX, centerY) - 10;
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    const colors = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#ef4444', '#a78bfa'];
+    let currentAngle = -Math.PI / 2;
+    
+    const legendDiv = $('allocationLegend');
+    if (legendDiv) legendDiv.innerHTML = '';
+    
+    Object.entries(allocation)
+      .sort((a, b) => b[1] - a[1])
+      .forEach(([token, value], idx) => {
+        const percentage = (value / totalAllocation) * 100;
+        const sliceAngle = (value / totalAllocation) * 2 * Math.PI;
+        
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
+        ctx.closePath();
+        ctx.fillStyle = colors[idx % colors.length];
+        ctx.fill();
+        
+        // Add legend
+        if (legendDiv && percentage > 2) {
+          const legendItem = document.createElement('div');
+          legendItem.style.display = 'flex';
+          legendItem.style.alignItems = 'center';
+          legendItem.style.gap = '8px';
+          legendItem.style.fontSize = '12px';
+          legendItem.innerHTML = `
+            <div style="width:12px;height:12px;border-radius:3px;background:${colors[idx % colors.length]};"></div>
+            <span style="color:#71717a;">${token}</span>
+            <span style="color:#fafafa;margin-left:auto;font-weight:500;">${percentage.toFixed(1)}%</span>
+          `;
+          legendDiv.appendChild(legendItem);
+        }
+        
+        currentAngle += sliceAngle;
+      });
+  }
+  
+  // Calculate risk metrics
+  const tokenCount = Object.keys(allocation).length;
+  const largestPosition = Object.entries(allocation).sort((a, b) => b[1] - a[1])[0];
+  const largestPercentage = largestPosition ? (largestPosition[1] / totalAllocation * 100) : 0;
+  
+  // Diversification score (0-100, higher is better)
+  // Based on: number of tokens, even distribution, largest position size
+  const evenDistribution = 100 / tokenCount;
+  const distributionScore = 100 - Math.abs(largestPercentage - evenDistribution);
+  const diversificationScore = Math.min(100, (tokenCount * 10) + (distributionScore * 0.5));
+  
+  if ($('diversificationScore')) $('diversificationScore').textContent = `${Math.round(diversificationScore)}/100`;
+  if ($('diversificationBar')) $('diversificationBar').style.width = `${diversificationScore}%`;
+  if ($('largestPosition')) $('largestPosition').textContent = largestPosition ? `${largestPosition[0]} (${largestPercentage.toFixed(1)}%)` : '-';
+  if ($('tokenCount')) $('tokenCount').textContent = tokenCount;
+}
+
+// Toggle analytics visibility
+if ($('toggleAnalytics')) {
+  let analyticsVisible = true;
+  $('toggleAnalytics').onclick = () => {
+    analyticsVisible = !analyticsVisible;
+    const analyticsDiv = $('portfolioAnalytics');
+    if (analyticsDiv) {
+      if (analyticsVisible) {
+        analyticsDiv.style.display = 'block';
+        $('toggleAnalytics').textContent = 'Hide';
+        $('toggleAnalytics').setAttribute('aria-expanded', 'true');
+      } else {
+        analyticsDiv.style.display = 'none';
+        $('toggleAnalytics').textContent = 'Show';
+        $('toggleAnalytics').setAttribute('aria-expanded', 'false');
+      }
+    }
+  };
 }
 
 function startEdit(el) {
@@ -1796,11 +2168,21 @@ function renderAlerts(alerts) {
         <div class="delete-btn" onclick="deleteAlert('${id}')">X</div>
       </div>`;
     if (triggered && !a.notified) {
+      // Haptic feedback on mobile
+      vibrate([100, 50, 100, 50, 100]); // Strong vibration pattern for alert trigger
+      
       if (typeof confetti !== 'undefined') {
         confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
       }
       if ('Notification' in window && Notification.permission === 'granted') {
         new Notification('CCX Alert', { body: `${a.message || ''} ${tokenName} is ${a.condition} $${a.target}!` });
+      }
+      
+      // Announce to screen readers
+      const liveRegion = document.getElementById('liveRegion');
+      if (liveRegion) {
+        liveRegion.textContent = `Alert triggered: ${tokenName} is ${a.condition} $${a.target}`;
+        setTimeout(() => liveRegion.textContent = '', 1000);
       }
     }
   });
