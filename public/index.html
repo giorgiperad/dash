@@ -1346,10 +1346,20 @@ async function sendAIMessage() {
       aiMessageDiv.innerHTML = `<strong style="color:#8b5cf6;">AI:</strong> ${data.message.replace(/\n/g, '<br>')}`;
       messagesContainer.appendChild(aiMessageDiv);
     } else {
-      // Show error
+      // Show error with more details
+      let errorMsg = data.error || data.message || 'ვერ მოხერხდა AI-ს პასუხის მიღება';
+      if (data.details) {
+        errorMsg += `<br><small style="opacity:0.8;">${data.details.substring(0, 200)}</small>`;
+      }
+      if (data.status === 401) {
+        errorMsg = 'API გასაღები არასწორია ან ვადაგასულია. გთხოვთ შეამოწმოთ ASI:One API გასაღები.';
+      } else if (data.status === 404) {
+        errorMsg = 'კუსტომ აგენტი "ccx" არ მოიძებნა. გთხოვთ შეამოწმოთ აგენტის ID.';
+      }
+      
       const errorDiv = document.createElement('div');
-      errorDiv.style.cssText = 'padding:10px;background:rgba(239,68,68,.15);border-left:3px solid #ef4444;border-radius:6px;font-size:12px;color:#ef4444;';
-      errorDiv.innerHTML = `<strong>შეცდომა:</strong> ${data.error || data.message || 'ვერ მოხერხდა AI-ს პასუხის მიღება'}`;
+      errorDiv.style.cssText = 'padding:10px;background:rgba(239,68,68,.15);border-left:3px solid #ef4444;border-radius:6px;font-size:12px;color:#ef4444;line-height:1.5;';
+      errorDiv.innerHTML = `<strong>შეცდომა:</strong> ${errorMsg}`;
       messagesContainer.appendChild(errorDiv);
     }
     
