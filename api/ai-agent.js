@@ -30,7 +30,9 @@ module.exports = async (req, res) => {
 
     // ASI:One API endpoint (OpenAI-compatible)
     // Base URL: https://api.asi1.ai/v1
+    // For custom agents, might need different endpoint
     const apiUrl = 'https://api.asi1.ai/v1/chat/completions';
+    const customAgentUrl = 'https://api.asi1.ai/v1/agents/chat'; // Alternative endpoint for custom agents
     
     // For custom agents, system prompt may be defined in the agent itself
     // But we can still provide context to enhance responses
@@ -115,12 +117,54 @@ module.exports = async (req, res) => {
           'x-session-id': sessionId // Include for all agentic models
         };
         
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: headers,
-          body: JSON.stringify(requestBody),
-          signal: AbortSignal.timeout(90000) // 90 seconds timeout for agentic models (longer tasks)
-        });
+        // Try both endpoints - standard chat/completions should work for all models
+        // But try alternative endpoint if agent address fails
+        let endpoint = apiUrl;
+        let response;
+        let lastFetchError;
+        
+        // First try standard endpoint
+        try {
+          console.log('Using endpoint:', endpoint);
+          response = await fetch(endpoint, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(requestBody),
+            signal: AbortSignal.timeout(60000) // 60 seconds
+          });
+          
+          // If 404 and it's an agent address, try alternative endpoint
+          if (!response.ok && response.status === 404 && model.startsWith('agent1')) {
+            console.log('Trying alternative endpoint for agent address...');
+            endpoint = customAgentUrl;
+            response = await fetch(endpoint, {
+              method: 'POST',
+              headers: headers,
+              body: JSON.stringify(requestBody),
+              signal: AbortSignal.timeout(60000) // 60 seconds - reduced for faster feedback
+            });
+          }
+        } catch (fetchError) {
+          lastFetchError = fetchError;
+          console.error('Fetch error:', fetchError.message);
+          // If network error, try alternative endpoint for agent addresses
+          if (model.startsWith('agent1')) {
+            try {
+              console.log('Retrying with alternative endpoint due to network error...');
+              endpoint = customAgentUrl;
+              response = await fetch(endpoint, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(requestBody),
+                signal: AbortSignal.timeout(60000) // 60 seconds
+              });
+            } catch (retryError) {
+              throw fetchError; // Throw original error
+            }
+          } else {
+            throw fetchError;
+          }
+        }
 
         console.log('ASI:One API response status:', response.status, response.statusText);
 
@@ -149,8 +193,22 @@ module.exports = async (req, res) => {
           continue;
         }
       } catch (error) {
-        console.warn(`Model ${model} threw error:`, error.message);
-        lastError = { status: 0, message: error.message, model: model };
+        console.error(`\n❌ Model ${model} threw error:`);
+        console.error('Error name:', error.name);
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+        
+        // Provide more specific error info
+        let errorMsg = error.message;
+        if (error.name === 'AbortError' || error.name === 'TimeoutError') {
+          errorMsg = 'Request timeout - API took too long to respond (60s limit)';
+        } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
+          errorMsg = 'Network error - Cannot reach ASI:One API. Check internet connection.';
+        } else if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
+          errorMsg = 'DNS/Connection error - ASI:One API server unreachable';
+        }
+        
+        lastError = { status: 0, message: errorMsg, model: model, errorName: error.name };
         continue; // Try next model
       }
     }
