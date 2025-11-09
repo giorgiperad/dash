@@ -29,7 +29,7 @@
 /* ──── BODY & BACKGROUND ──── */
 body{
   font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  background:#0f0f1a;
+  background:#121217;
   color:#e4e4e7;
   min-height:100vh;
   overflow-x:hidden;
@@ -38,7 +38,7 @@ body{
   position:relative;
 }
 .grain-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");opacity:.015;pointer-events:none;z-index:1}
-.navbar{background:rgba(15,15,26,.8);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.05);padding:16px 48px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 1px 0 rgba(255,255,255,.02)}
+.navbar{background:rgba(18,18,23,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06);padding:16px 48px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 1px 0 rgba(255,255,255,.03)}
 .logo-section{display:flex;align-items:center;gap:16px}
 .logo-icon{width:48px;height:48px;min-width:48px;min-height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:28px;overflow:hidden;position:relative;flex-shrink:0}
 .logo-icon img{width:100%;height:100%;object-fit:contain;max-width:48px;max-height:48px;filter:none}
@@ -125,28 +125,28 @@ body{
 .loading-text{font-size:15px;color:#9aa0a6;font-weight:500;letter-spacing:0.3px}
 .error{background:rgba(234,67,53,.12);border:1px solid rgba(234,67,53,.25);color:#ea4335;border-radius:14px;padding:20px;margin:24px 0;font-weight:500;text-align:center;backdrop-filter:blur(10px)}
 
-/* Hero Carousel Styles - CoinAnk Style */
-.hero-carousel-wrapper{position:relative;margin-bottom:32px;width:100%}
-.carousel{display:flex;gap:16px;overflow-x:auto;overflow-y:hidden;scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent;padding:8px 0 16px;-webkit-overflow-scrolling:touch}
-.carousel::-webkit-scrollbar{height:6px}
-.carousel::-webkit-scrollbar-track{background:transparent}
-.carousel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
-.carousel::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.2)}
-.carousel-card{min-width:320px;width:320px;background:rgba(20,20,30,.4);backdrop-filter:blur(12px);border-radius:12px;padding:20px;border:1px solid rgba(255,255,255,.05);transition:all .2s;flex-shrink:0;display:flex;flex-direction:column}
-.carousel-card:hover{background:rgba(20,20,30,.6);border-color:rgba(255,255,255,.1);transform:translateY(-2px)}
-.carousel-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.carousel-card-title{font-size:11px;color:#9aa0a6;text-transform:uppercase;letter-spacing:0.8px;font-weight:600}
-.carousel-card-arrow{color:#6366f1;font-size:14px;opacity:0.6;transition:all .2s}
-.carousel-card:hover .carousel-card-arrow{opacity:1}
-.carousel-card-value{font-size:22px;font-weight:600;color:#fafafa;letter-spacing:-0.3px;margin-bottom:8px}
-.carousel-card-change{font-size:12px;font-weight:500;display:flex;align-items:center;gap:4px}
-.carousel-card-change.positive{color:#22c55e}
+/* Hero Carousel Styles - CoinAnk.com Exact Style */
+.hero-carousel-wrapper{position:relative;margin-bottom:32px;width:100%;padding:0 4px}
+.carousel{display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;scroll-behavior:smooth;scrollbar-width:none;-ms-overflow-style:none;padding:4px 0 12px;-webkit-overflow-scrolling:touch}
+.carousel::-webkit-scrollbar{display:none}
+.carousel-card{min-width:280px;width:280px;background:rgba(18,18,23,.85);backdrop-filter:blur(8px);border-radius:10px;padding:18px 20px;border:1px solid rgba(255,255,255,.06);transition:all .25s cubic-bezier(.4,0,.2,1);flex-shrink:0;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.carousel-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);opacity:0;transition:opacity .3s}
+.carousel-card:hover{background:rgba(22,22,28,.9);border-color:rgba(255,255,255,.1);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.carousel-card:hover::before{opacity:1}
+.carousel-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;position:relative;z-index:1}
+.carousel-card-title{font-size:10px;color:#8b8b95;text-transform:uppercase;letter-spacing:1.2px;font-weight:700;font-family:'Inter',sans-serif}
+.carousel-card-arrow{color:#5b5bff;font-size:13px;opacity:0.5;transition:all .2s;cursor:pointer;line-height:1}
+.carousel-card:hover .carousel-card-arrow{opacity:0.8;transform:translateX(1px);color:#6b6bff}
+.carousel-card-value{font-size:20px;font-weight:700;color:#ffffff;letter-spacing:-0.2px;margin-bottom:6px;line-height:1.2;font-family:'Inter',sans-serif}
+.carousel-card-change{font-size:11px;font-weight:600;display:flex;align-items:center;gap:3px;margin-top:2px}
+.carousel-card-change.positive{color:#10b981}
 .carousel-card-change.negative{color:#ef4444}
-.carousel-card-subtitle{font-size:11px;color:#71717a;margin-top:4px}
-.carousel-nav{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:rgba(20,20,30,.8);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1);color:#fafafa;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.3)}
-.carousel-nav:hover{background:rgba(99,102,241,.2);border-color:rgba(99,102,241,.3)}
-.carousel-nav-right{right:8px}
-.carousel-nav-left{left:8px}
+.carousel-card-subtitle{font-size:10px;color:#6b7280;margin-top:4px;line-height:1.4;font-weight:500}
+.carousel-nav{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(18,18,23,.95);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.08);color:#ffffff;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;z-index:10;box-shadow:0 2px 6px rgba(0,0,0,.3);opacity:0.8}
+.carousel-nav:hover{background:rgba(30,30,38,.95);border-color:rgba(255,255,255,.12);opacity:1;transform:translateY(-50%) scale(1.05)}
+.carousel-nav:active{transform:translateY(-50%) scale(0.95)}
+.carousel-nav-right{right:4px}
+.carousel-nav-left{left:4px}
 
 /* ANIMATED SVG ARROWS */
 .change-arrow{width:18px;height:18px;transition:transform .3s ease,filter .3s ease;animation:arrowPulse 1.5s ease-in-out infinite}
@@ -1030,8 +1030,7 @@ function renderHeroStats() {
       </div>
       <div class="carousel-card-value">$${formatMarketCap(marketCap)}</div>
       <div class="carousel-card-change ${marketCapChange >= 0 ? 'positive' : 'negative'}">
-        <span>${marketCapChange >= 0 ? '↑' : '↓'}</span>
-        <span>${Math.abs(marketCapChange).toFixed(2)}%</span>
+        ${marketCapChange >= 0 ? '↑' : '↓'} ${Math.abs(marketCapChange).toFixed(2)}%
       </div>
     </div>
     
