@@ -445,10 +445,10 @@ body{
       </div>
       <div class="sidebar-card" style="background:rgba(15,20,30,.6);backdrop-filter:blur(16px) saturate(180%);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,.08);margin-bottom:20px;box-shadow:0 4px 16px rgba(0,0,0,.2);">
         <div style="font-size:13px;font-weight:600;margin-bottom:18px;text-transform:uppercase;letter-spacing:0.8px;color:#9aa0a6;display:flex;align-items:center;gap:8px;">
-          <span style="opacity:0.8;">💹</span> Market Quotes
+          <span style="opacity:0.8;">📉</span> Top Losers
         </div>
         <div id="quotesList" class="quotes-list" style="display:flex;flex-direction:column;gap:10px;">
-          <div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">Loading quotes...</div>
+          <div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">Loading...</div>
         </div>
       </div>
       <div class="sidebar-card" style="background:rgba(15,20,30,.6);backdrop-filter:blur(16px) saturate(180%);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,.08);box-shadow:0 4px 16px rgba(0,0,0,.2);">
@@ -912,27 +912,40 @@ function renderQuotes() {
     return;
   }
   
-  // Show top 5 tokens by market cap
-  const topTokens = [...cryptoData]
-    .sort((a, b) => (b.market_cap || 0) - (a.market_cap || 0))
+  // Show top 5 losers (biggest 24h drops) from tracked tokens
+  const topLosers = [...cryptoData]
+    .filter(t => {
+      const change = t.price_change_percentage_24h || 0;
+      return !isNaN(change) && isFinite(change);
+    })
+    .sort((a, b) => {
+      // Sort by lowest 24h change (most negative first)
+      const changeA = a.price_change_percentage_24h || 0;
+      const changeB = b.price_change_percentage_24h || 0;
+      return changeA - changeB;
+    })
     .slice(0, 5);
   
-  quotesList.innerHTML = topTokens.map(token => {
+  if (topLosers.length === 0) {
+    quotesList.innerHTML = '<div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">No data available</div>';
+    return;
+  }
+  
+  quotesList.innerHTML = topLosers.map(token => {
     const change = token.price_change_percentage_24h || 0;
-    const changeClass = change >= 0 ? 'positive' : 'negative';
     return `
-      <div class="quote-item" style="padding:14px;background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.15);border-radius:12px;display:flex;justify-content:space-between;align-items:center;transition:all .25s cubic-bezier(.4,0,.2,1);backdrop-filter:blur(10px);">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <img src="${token.image || 'https://via.placeholder.com/24'}" style="width:24px;height:24px;border-radius:50%;border:1px solid rgba(255,255,255,.1);" onerror="this.src='https://via.placeholder.com/24?text=?'">
-          <div>
-            <div style="font-weight:600;font-size:13px;color:#e8eaed;letter-spacing:-0.2px;">${token.symbol?.toUpperCase() || token.id}</div>
-            <div style="font-size:11px;color:#9aa0a6;margin-top:2px;font-weight:400;">${token.name || token.id}</div>
+      <div class="quote-item" style="padding:14px;background:rgba(234,67,53,.06);border:1px solid rgba(234,67,53,.15);border-radius:12px;display:flex;justify-content:space-between;align-items:center;transition:all .25s cubic-bezier(.4,0,.2,1);backdrop-filter:blur(10px);">
+        <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;">
+          <img src="${token.image || 'https://via.placeholder.com/24'}" style="width:24px;height:24px;border-radius:50%;border:1px solid rgba(255,255,255,.1);flex-shrink:0;" onerror="this.src='https://via.placeholder.com/24?text=?'">
+          <div style="min-width:0;flex:1;">
+            <div style="font-weight:600;font-size:13px;color:#e8eaed;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${token.symbol?.toUpperCase() || token.id}</div>
+            <div style="font-size:11px;color:#9aa0a6;margin-top:2px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${(token.name || token.id).substring(0, 15)}${(token.name || token.id).length > 15 ? '...' : ''}</div>
           </div>
         </div>
-        <div style="text-align:right;">
+        <div style="text-align:right;flex-shrink:0;margin-left:12px;">
           <div style="font-weight:600;font-size:13px;color:#e8eaed;letter-spacing:-0.2px;">$${formatPrice(token.current_price || 0)}</div>
-          <div class="change-badge ${changeClass}" style="font-size:11px;padding:3px 8px;border-radius:6px;display:inline-block;margin-top:4px;background:${change >= 0 ? 'rgba(52,168,83,.15)' : 'rgba(234,67,53,.15)'};color:${change >= 0 ? '#34a853' : '#ea4335'};border:1px solid ${change >= 0 ? 'rgba(52,168,83,.25)' : 'rgba(234,67,53,.25)'};font-weight:600;">
-            ${change >= 0 ? '↑' : '↓'} ${Math.abs(change).toFixed(2)}%
+          <div class="change-badge negative" style="font-size:11px;padding:3px 8px;border-radius:6px;display:inline-block;margin-top:4px;background:rgba(234,67,53,.15);color:#ea4335;border:1px solid rgba(234,67,53,.25);font-weight:600;">
+            ↓ ${Math.abs(change).toFixed(2)}%
           </div>
         </div>
       </div>
@@ -942,14 +955,14 @@ function renderQuotes() {
   // Add hover effect
   quotesList.querySelectorAll('.quote-item').forEach(item => {
     item.onmouseenter = () => {
-      item.style.background = 'rgba(139,92,246,.1)';
-      item.style.borderColor = 'rgba(139,92,246,.25)';
+      item.style.background = 'rgba(234,67,53,.1)';
+      item.style.borderColor = 'rgba(234,67,53,.25)';
       item.style.transform = 'translateX(3px)';
-      item.style.boxShadow = '0 4px 12px rgba(139,92,246,.2)';
+      item.style.boxShadow = '0 4px 12px rgba(234,67,53,.2)';
     };
     item.onmouseleave = () => {
-      item.style.background = 'rgba(139,92,246,.06)';
-      item.style.borderColor = 'rgba(139,92,246,.15)';
+      item.style.background = 'rgba(234,67,53,.06)';
+      item.style.borderColor = 'rgba(234,67,53,.15)';
       item.style.transform = 'translateX(0)';
       item.style.boxShadow = 'none';
     };
