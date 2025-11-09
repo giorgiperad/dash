@@ -685,6 +685,59 @@ function authModal(mode){
     });
 }
 
+// Firebase real-time listener for tokens (auto-update when tokens are added/removed)
+let tokensListener = null;
+let initialTokensLoaded = false;
+
+function setupTokensListener() {
+  // Remove existing listener if any
+  if (tokensListener) {
+    const db = firebase.database();
+    db.ref('tokens').off('value', tokensListener);
+  }
+  
+  const db = firebase.database();
+  const tokensRef = db.ref('tokens');
+  
+  tokensListener = tokensRef.on('value', (snapshot) => {
+    const tokens = snapshot.val() || {};
+    const tokenCount = Object.keys(tokens).length;
+    console.log(`🔄 Tokens updated in Firebase: ${tokenCount} tokens detected`);
+    
+    // On first load, just mark as loaded (don't refresh yet)
+    if (!initialTokensLoaded) {
+      initialTokensLoaded = true;
+      console.log('Initial tokens loaded, waiting for changes...');
+      return;
+    }
+    
+    // Auto-refresh when tokens change (added or removed)
+    if (tokenCount > 0) {
+      console.log('✨ Auto-refreshing market data due to token changes...');
+      // Debounce: wait 1.5 seconds before refreshing to avoid multiple rapid updates
+      clearTimeout(window.tokenRefreshTimeout);
+      window.tokenRefreshTimeout = setTimeout(() => {
+        fetchAll();
+      }, 1500);
+    } else if (tokenCount === 0 && cryptoData.length > 0) {
+      // If all tokens were removed, clear the display
+      console.log('All tokens removed, clearing display...');
+      cryptoData = [];
+      renderAll();
+    }
+  }, (error) => {
+    console.error('Error listening to tokens:', error);
+  });
+  
+  console.log('✅ Tokens listener set up - will auto-update when tokens are added/removed');
+}
+
+// Set up tokens listener immediately (works for both logged in and logged out users)
+// This ensures tokens auto-update when admin adds them from admin.html
+setTimeout(() => {
+  setupTokensListener();
+}, 1000); // Wait 1 second for Firebase to fully initialize
+
 auth.onAuthStateChanged(user=>{
   currentUser = user;
   if(user){
@@ -954,6 +1007,10 @@ window.sortBy = function(col) {
   $(`sort${col.charAt(0).toUpperCase() + col.slice(1)}`).classList.add('active');
   renderTokens();
 };
+
+/* ---------- INITIAL LOAD ---------- */
+// Load data on page load
+fetchAll();
 
 /* ---------- FETCH MARKET DATA (via Vercel API) ---------- */
 async function fetchAll(){
