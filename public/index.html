@@ -582,6 +582,7 @@ body{overflow-x:hidden}
       <div id="userTabs" class="user-tabs" style="display:none;">
         <div class="user-tab active" data-tab="market">ბაზარი</div>
         <div class="user-tab" data-tab="portfolio">პორტფოლიო</div>
+        <div class="user-tab" data-tab="targets">გასაყიდი მიზნები</div>
         <div class="user-tab" data-tab="alerts">შეტყობინებები</div>
         <div class="user-tab" data-tab="profile">პროფილი</div>
       </div>
@@ -721,6 +722,44 @@ body{overflow-x:hidden}
           <input type="text" placeholder="შეტყობინება (არასავალდებულო)" id="alertMessage">
           <button type="submit"> დაყენება</button>
         </form>
+      </div>
+
+      <div id="targetsContent" class="user-content">
+        <div class="section-header">
+          <div class="section-title">გასაყიდი მიზნები</div>
+        </div>
+
+        <div style="background:rgba(20,20,30,.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:24px;margin-bottom:24px;">
+          <h3 style="font-size:16px;font-weight:600;color:#fafafa;margin-bottom:16px;">ახალი მიზნის დამატება</h3>
+          <form id="addTargetForm" style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:12px;align-items:flex-end;">
+            <div>
+              <label style="display:block;font-size:11px;color:#9aa0a6;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;font-weight:500;">ტოკენი</label>
+              <select id="targetToken" required style="width:100%;padding:10px 14px;background:rgba(10,14,26,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#e8eaed;font-size:13px;">
+                <option value="">აირჩიეთ ტოკენი</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block;font-size:11px;color:#9aa0a6;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;font-weight:500;">სამიზნე ფასი</label>
+              <input type="number" step="any" id="targetPrice" placeholder="0.00" required style="width:100%;padding:10px 14px;background:rgba(10,14,26,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#e8eaed;font-size:13px;">
+            </div>
+            <div>
+              <label style="display:block;font-size:11px;color:#9aa0a6;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;font-weight:500;">გასაყიდი %</label>
+              <input type="number" step="any" min="0" max="100" id="targetPercentage" placeholder="0" required style="width:100%;padding:10px 14px;background:rgba(10,14,26,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#e8eaed;font-size:13px;">
+            </div>
+            <button type="submit" style="padding:10px 20px;background:#6366f1;border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;transition:all .2s;white-space:nowrap;height:fit-content;">დამატება</button>
+          </form>
+        </div>
+
+        <div class="table-header" style="margin-bottom:12px;">
+          <div class="table-header-cell">ტოკენი</div>
+          <div class="table-header-cell">მიმდინარე ფასი</div>
+          <div class="table-header-cell">სამიზნე ფასი</div>
+          <div class="table-header-cell">დისტანცია</div>
+          <div class="table-header-cell">გასაყიდი %</div>
+          <div class="table-header-cell">მოქმედება</div>
+        </div>
+
+        <div id="targetsList" style="display:flex;flex-direction:column;gap:8px;"></div>
       </div>
 
       <div id="profileContent" class="user-content">
@@ -2086,10 +2125,17 @@ async function fetchAll(){
       $('marketContent').style.display = 'block';
     }
     $('heroStats').style.display = 'grid';
-           // Load portfolio and alerts after market data is loaded
+           // Load portfolio, alerts, and targets after market data is loaded
            if(currentUser) { 
              loadPortfolio(); 
-             loadAlerts(); 
+             loadAlerts();
+             loadTargets();
+           }
+           // Populate target token select
+           populateTargetTokenSelect();
+           // Refresh targets display when prices update
+           if (Object.keys(sellTargets).length > 0) {
+             renderTargets();
            }
   } catch (e) {
     console.error('Fetch error:', e);
@@ -2416,6 +2462,11 @@ $('addAlertForm').onsubmit = async e => {
   e.target.reset();
 };
 
+$('addTargetForm').onsubmit = async e => {
+  e.preventDefault();
+  await addTarget();
+};
+
 /* ---------- PROFILE MANAGEMENT ---------- */
 // Tab switching
 document.querySelectorAll('.user-tab').forEach(tab => {
@@ -2597,6 +2648,220 @@ $('changePasswordForm').onsubmit = async (e) => {
     }
   }
 };
+
+/* ---------- SELL TARGETS MANAGEMENT ---------- */
+let sellTargets = {};
+
+async function loadTargets() {
+  if (!currentUser) return;
+  
+  try {
+    const userId = currentUser.uid;
+    const db = firebase.database();
+    const targetsRef = db.ref(`users/${userId}/sellTargets`);
+    
+    targetsRef.once('value', (snapshot) => {
+      sellTargets = snapshot.val() || {};
+      renderTargets();
+    }, (error) => {
+      console.error('Failed to load targets:', error);
+      sellTargets = {};
+      renderTargets();
+    });
+  } catch (e) {
+    console.error('Load targets error:', e);
+    sellTargets = {};
+    renderTargets();
+  }
+}
+
+function renderTargets() {
+  const container = $('targetsList');
+  if (!container) return;
+  
+  const targetsArray = Object.entries(sellTargets).map(([id, target]) => ({ id, ...target }));
+  
+  if (targetsArray.length === 0) {
+    container.innerHTML = '<div style="padding:40px;text-align:center;color:#9aa0a6;font-size:13px;">გასაყიდი მიზნები არ არის დამატებული</div>';
+    return;
+  }
+  
+  // Group by token
+  const grouped = {};
+  targetsArray.forEach(target => {
+    if (!grouped[target.tokenId]) {
+      grouped[target.tokenId] = [];
+    }
+    grouped[target.tokenId].push(target);
+  });
+  
+  let html = '';
+  Object.entries(grouped).forEach(([tokenId, targets]) => {
+    const token = cryptoData.find(t => t.id === tokenId);
+    const currentPrice = token?.current_price || prices[tokenId] || 0;
+    const tokenName = token?.name || tokenId;
+    const tokenSymbol = token?.symbol?.toUpperCase() || tokenId.toUpperCase();
+    const tokenImage = token?.image || '';
+    
+    targets.sort((a, b) => a.targetPrice - b.targetPrice);
+    
+    html += `
+      <div style="background:rgba(20,20,30,.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.05);">
+          ${tokenImage ? `<img src="${tokenImage}" style="width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.1);">` : '<div style="width:32px;height:32px;border-radius:50%;background:rgba(99,102,241,.2);display:flex;align-items:center;justify-content:center;font-size:14px;color:#6366f1;">💰</div>'}
+          <div>
+            <div style="font-weight:600;font-size:14px;color:#fafafa;">${tokenName}</div>
+            <div style="font-size:11px;color:#71717a;margin-top:2px;">${tokenSymbol}</div>
+          </div>
+          <div style="margin-left:auto;text-align:right;">
+            <div style="font-size:11px;color:#9aa0a6;margin-bottom:4px;">მიმდინარე ფასი</div>
+            <div style="font-weight:600;font-size:16px;color:#fafafa;">$${formatPrice(currentPrice)}</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+    `;
+    
+    targets.forEach(target => {
+      const distance = currentPrice > 0 ? ((target.targetPrice - currentPrice) / currentPrice * 100) : 0;
+      const distanceColor = distance >= 0 ? '#22c55e' : '#ef4444';
+      const distanceText = distance >= 0 ? `+${distance.toFixed(2)}%` : `${distance.toFixed(2)}%`;
+      const isReached = currentPrice >= target.targetPrice;
+      
+      html += `
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:12px;align-items:center;padding:12px;background:rgba(10,14,26,.3);border-radius:8px;border:1px solid ${isReached ? 'rgba(34,197,94,.3)' : 'rgba(255,255,255,.05)'};">
+          <div>
+            <div style="font-size:11px;color:#9aa0a6;margin-bottom:4px;">სამიზნე ფასი</div>
+            <div style="font-weight:600;font-size:14px;color:#fafafa;">$${formatPrice(target.targetPrice)}</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:#9aa0a6;margin-bottom:4px;">დისტანცია</div>
+            <div style="font-weight:600;font-size:14px;color:${distanceColor};">${distanceText}</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:#9aa0a6;margin-bottom:4px;">გასაყიდი %</div>
+            <div style="font-weight:600;font-size:14px;color:#fafafa;">${target.percentage}%</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:#9aa0a6;margin-bottom:4px;">სტატუსი</div>
+            <div style="font-weight:600;font-size:12px;color:${isReached ? '#22c55e' : '#9aa0a6'};">
+              ${isReached ? '✓ მიღწეული' : 'მოლოდინში'}
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button onclick="editTarget('${target.id}')" style="padding:6px 12px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.3);color:#6366f1;border-radius:6px;cursor:pointer;font-size:11px;font-weight:500;transition:all .2s;">რედაქტირება</button>
+            <button onclick="deleteTarget('${target.id}')" style="padding:6px 12px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#ef4444;border-radius:6px;cursor:pointer;font-size:11px;font-weight:500;transition:all .2s;">წაშლა</button>
+          </div>
+        </div>
+      `;
+    });
+    
+    html += `
+        </div>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+}
+
+async function addTarget() {
+  if (!currentUser) {
+    alert('გთხოვთ შეხვიდეთ სისტემაში');
+    return;
+  }
+  
+  const tokenId = $('targetToken').value;
+  const targetPrice = parseFloat($('targetPrice').value);
+  const percentage = parseFloat($('targetPercentage').value);
+  
+  if (!tokenId || isNaN(targetPrice) || isNaN(percentage) || percentage <= 0 || percentage > 100) {
+    alert('გთხოვთ შეავსოთ ყველა ველი სწორად');
+    return;
+  }
+  
+  try {
+    const userId = currentUser.uid;
+    const db = firebase.database();
+    const targetsRef = db.ref(`users/${userId}/sellTargets`);
+    const newTargetRef = targetsRef.push();
+    
+    await newTargetRef.set({
+      tokenId,
+      targetPrice,
+      percentage
+    });
+    
+    $('addTargetForm').reset();
+    await loadTargets();
+  } catch (e) {
+    alert('მიზნის დამატების შეცდომა: ' + e.message);
+    console.error('Add target error:', e);
+  }
+}
+
+async function deleteTarget(targetId) {
+  if (!confirm('დარწმუნებული ხართ, რომ გსურთ ამ მიზნის წაშლა?')) return;
+  
+  if (!currentUser) return;
+  
+  try {
+    const userId = currentUser.uid;
+    const db = firebase.database();
+    await db.ref(`users/${userId}/sellTargets/${targetId}`).remove();
+    await loadTargets();
+  } catch (e) {
+    alert('მიზნის წაშლის შეცდომა: ' + e.message);
+    console.error('Delete target error:', e);
+  }
+}
+
+window.editTarget = function(targetId) {
+  const target = sellTargets[targetId];
+  if (!target) return;
+  
+  const newPrice = prompt('შეიყვანეთ ახალი სამიზნე ფასი:', target.targetPrice);
+  if (newPrice === null || isNaN(parseFloat(newPrice))) return;
+  
+  const newPercentage = prompt('შეიყვანეთ გასაყიდი პროცენტი:', target.percentage);
+  if (newPercentage === null || isNaN(parseFloat(newPercentage))) return;
+  
+  updateTarget(targetId, parseFloat(newPrice), parseFloat(newPercentage));
+};
+
+async function updateTarget(targetId, targetPrice, percentage) {
+  if (!currentUser) return;
+  
+  if (percentage <= 0 || percentage > 100) {
+    alert('პროცენტი უნდა იყოს 0-100 დიაპაზონში');
+    return;
+  }
+  
+  try {
+    const userId = currentUser.uid;
+    const db = firebase.database();
+    await db.ref(`users/${userId}/sellTargets/${targetId}`).update({
+      targetPrice,
+      percentage
+    });
+    await loadTargets();
+  } catch (e) {
+    alert('მიზნის განახლების შეცდომა: ' + e.message);
+    console.error('Update target error:', e);
+  }
+}
+
+function populateTargetTokenSelect() {
+  const select = $('targetToken');
+  if (!select || !cryptoData || cryptoData.length === 0) return;
+  
+  select.innerHTML = '<option value="">აირჩიეთ ტოკენი</option>';
+  cryptoData.forEach(token => {
+    const option = document.createElement('option');
+    option.value = token.id;
+    option.textContent = `${token.name} (${token.symbol?.toUpperCase() || token.id})`;
+    select.appendChild(option);
+  });
+}
 
 // Helper function to show status messages
 function showStatus(elementId, message, type) {
