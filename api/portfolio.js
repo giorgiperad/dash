@@ -208,7 +208,7 @@ module.exports = async function handler(req, res) {
         return null;
       };
       
-      let market, global, fg;
+      let market, global, fg, etfFlows = null;
       try {
         // Fetch with retry logic and staggered delays to avoid rate limits
         market = await fetchWithRetry(
@@ -242,7 +242,6 @@ module.exports = async function handler(req, res) {
         await new Promise(resolve => setTimeout(resolve, 200));
         
         // Fetch ETF flow data from Farside API
-        let etfFlows = null;
         try {
           const etfResponse = await fetch('https://farside.co.uk/bitcoin-etf/flow', {
             headers: { 'User-Agent': 'Mozilla/5.0 (compatible; CryptoCollectiveX/1.0)' },
