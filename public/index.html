@@ -2,11 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+<meta name="description" content="Professional crypto dashboard with real-time market data, portfolio tracking, and price alerts">
+<meta name="theme-color" content="#8b5cf6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CCX">
+<meta name="mobile-web-app-capable" content="yes">
 <title>CRYPTO COLLECTIVE X - Desktop Pro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
 <style>
 /* ──────────────────────────────────────────────────────────────
    FULL "DESKTOP PRO" STYLE – 100% PRESERVED */
@@ -16,9 +24,9 @@
 @keyframes shimmerEffect {0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
 @keyframes hoverFloat {0%,100%{transform:translateY(0)}50%{transform:translateY(-1px)}}
 @keyframes neonGlow {0%,100%{filter:drop-shadow(0 0 4px #00ffff)}50%{filter:drop-shadow(0 0 20px #00ffff)}}
-body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:linear-gradient(135deg,#0a0e1a 0%,#0f1419 50%,#0a0e1a 100%);color:#e8eaed;min-height:100vh;overflow-x:hidden}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:linear-gradient(135deg,#0a0e1a 0%,#0f1419 50%,#0a0e1a 100%);color:#e8eaed;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;touch-action:manipulation}
 .grain-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");opacity:.02;pointer-events:none;z-index:1}
-.navbar{background:rgba(10,14,26,.85);backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid rgba(255,255,255,.08);padding:20px 60px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 4px 24px rgba(0,0,0,.3)}
+.navbar{background:rgba(10,14,26,.85);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid rgba(255,255,255,.08);padding:20px 60px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 4px 24px rgba(0,0,0,.3)}
 .logo-section{display:flex;align-items:center;gap:16px}
 .logo-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:28px;animation:hoverFloat 6s ease-in-out infinite,neonGlow 3s linear infinite;overflow:hidden;position:relative}
 .logo-icon img{width:44px;height:44px;object-fit:contain;filter:brightness(0) invert(1)}
@@ -44,7 +52,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .live-text{font-size:12px;color:#34a853;font-weight:600;text-transform:uppercase;letter-spacing:0.8px}
 .time-display{font-size:14px;color:#9aa0a6;font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:0.5px}
 .container{max-width:1920px;margin:0 auto;padding:48px 60px;position:relative;z-index:2}
-.hero-section{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:32px}
+.hero-section{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:32px;grid-auto-rows:minmax(90px,auto)}
 .hero-stat{background:rgba(15,20,30,.6);backdrop-filter:blur(16px) saturate(180%);border-radius:12px;padding:16px 20px;border:1px solid rgba(255,255,255,.08);transition:all .3s cubic-bezier(.4,0,.2,1);box-shadow:0 4px 16px rgba(0,0,0,.2);display:flex;flex-direction:column;justify-content:space-between;min-height:90px}
 .hero-stat:hover{border-color:#8b5cf6;transform:translateY(-2px);box-shadow:0 8px 24px rgba(139,92,246,.25)}
 .hero-stat-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#9aa0a6;margin-bottom:8px;font-weight:600}
@@ -187,9 +195,142 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .form-group small{display:block;margin-top:6px;font-size:11px;color:#9aa0a6}
 .modal-header h3{font-size:20px;font-weight:600;color:#e8eaed;letter-spacing:-0.3px;margin:0}
 
+/* Mobile Responsive Styles */
 @media(max-width:1600px){.content-grid{grid-template-columns:340px 1fr}.hero-section{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:1400px){.content-grid{grid-template-columns:1fr}.hero-section{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:1024px){.navbar{padding:16px 32px}.container{padding:32px}.hero-section{grid-template-columns:repeat(2,1fr)}.token-row{grid-template-columns:60px 1.5fr 1fr 1fr}.token-mcap-col{display:none}.table-header{grid-template-columns:60px 1.5fr 1fr 1fr}.table-header-cell:last-child{display:none}}
+@media(max-width:1024px){
+  .navbar{padding:16px 24px;flex-wrap:wrap;gap:12px}
+  .logo-section{gap:12px}
+  .logo-icon{width:40px;height:40px}
+  .logo-title{font-size:18px}
+  .nav-right{gap:12px;flex-wrap:wrap}
+  .auth-btn{padding:8px 16px;font-size:12px}
+  .container{padding:24px 20px}
+  .hero-section{grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:32px}
+  .hero-stat{padding:16px;min-height:80px}
+  .hero-stat-value{font-size:18px}
+  .hero-stat-label{font-size:9px;margin-bottom:6px}
+  .hero-stat-change{font-size:10px}
+  .content-grid{grid-template-columns:1fr;gap:20px}
+  .sidebar-section{order:2}
+  .main-section{order:1;padding:24px}
+  .token-row{grid-template-columns:50px 1.5fr 1fr 1fr;gap:12px;padding:16px}
+  .token-mcap-col{display:none}
+  .table-header{grid-template-columns:50px 1.5fr 1fr 1fr;gap:12px;padding:12px 16px}
+  .table-header-cell:last-child{display:none}
+  .token-icon{width:40px;height:40px}
+  .token-name-col h3{font-size:14px}
+  .token-price-col{font-size:15px}
+  .change-badge{padding:4px 10px;font-size:12px}
+  .section-header{flex-direction:column;align-items:flex-start;gap:16px;margin-bottom:24px}
+  .filter-tabs{flex-wrap:wrap;width:100%}
+  .filter-tab{padding:8px 16px;font-size:12px}
+  .user-tabs{flex-wrap:wrap;gap:8px}
+  .user-tab{padding:10px 16px;font-size:12px}
+  .portfolio-summary{grid-template-columns:1fr;gap:12px}
+  .holding-row{grid-template-columns:50px 1fr 1fr 1fr 100px;gap:10px;padding:14px;font-size:13px}
+  .holding-row .editable{font-size:12px}
+  .add-holding-form{grid-template-columns:1fr;gap:10px}
+  .add-alert-form{grid-template-columns:1fr;gap:10px}
+  .modal-content{width:95vw;max-width:500px;padding:24px}
+  .admin-controls{flex-wrap:wrap;padding:12px 16px}
+  .admin-btn{padding:8px 16px;font-size:12px}
+}
+@media(max-width:768px){
+  .navbar{padding:12px 16px}
+  .logo-title{font-size:16px}
+  .logo-subtitle{font-size:10px}
+  .nav-right{gap:8px}
+  .live-indicator{padding:6px 12px}
+  .live-text{font-size:11px}
+  .time-display{font-size:12px;display:none}
+  .container{padding:16px 12px}
+  .hero-section{grid-template-columns:1fr;gap:10px;margin-bottom:24px}
+  .hero-stat{padding:14px 16px;min-height:70px}
+  .hero-stat-value{font-size:16px}
+  .hero-stat-label{font-size:8px;margin-bottom:4px}
+  .hero-stat-change{font-size:9px;margin-top:2px}
+  .content-grid{gap:16px}
+  .main-section{padding:20px 16px;border-radius:16px}
+  .section-title{font-size:22px}
+  .token-row{grid-template-columns:40px 1.5fr 1fr;gap:8px;padding:12px;border-radius:12px}
+  .token-icon{width:36px;height:36px}
+  .token-name-col h3{font-size:13px;margin-bottom:2px}
+  .token-symbol{font-size:11px}
+  .token-price-col{font-size:14px}
+  .token-change-col{display:none}
+  .table-header{grid-template-columns:40px 1.5fr 1fr;gap:8px;padding:10px 12px}
+  .table-header-cell:nth-child(4),.table-header-cell:nth-child(5){display:none}
+  .filter-tabs{padding:4px;gap:4px}
+  .filter-tab{padding:8px 12px;font-size:11px;letter-spacing:0.5px}
+  .user-tabs{gap:6px;margin-bottom:20px}
+  .user-tab{padding:10px 14px;font-size:11px}
+  .portfolio-summary{grid-template-columns:1fr;gap:10px;margin-bottom:24px}
+  .summary-card{padding:16px}
+  .summary-value{font-size:20px}
+  .holding-row{grid-template-columns:40px 1fr 1fr 80px;gap:8px;padding:12px;font-size:12px}
+  .holding-name{font-size:13px}
+  .holding-actions{flex-direction:column;gap:4px}
+  .edit-btn,.delete-btn{padding:6px 10px;font-size:11px}
+  .add-holding-form{grid-template-columns:1fr;gap:8px;margin-top:20px}
+  .add-alert-form{grid-template-columns:1fr;gap:8px;margin-top:20px}
+  .modal-content{width:95vw;padding:20px;border-radius:16px}
+  .modal-header{padding:20px;border-radius:16px 16px 0 0}
+  .modal-title{font-size:18px}
+  .modal-input input{padding:12px 14px;font-size:14px}
+  .modal-btn{padding:10px 20px;font-size:12px}
+  .admin-controls{flex-direction:column;align-items:stretch;gap:8px;padding:12px}
+  .admin-btn{width:100%;justify-content:center}
+  .sidebar-card{padding:20px;border-radius:14px}
+  .quotes-list,.top-gainers-list{gap:8px}
+  .quote-item,.gainer-item{padding:12px;border-radius:10px}
+  .settings-panel{gap:12px}
+  .setting-item{flex-direction:column;align-items:flex-start;gap:8px}
+  .alert-row{grid-template-columns:40px 1fr 1fr 60px;gap:10px;padding:14px;font-size:12px}
+  .alert-row>div:nth-child(3){display:none}
+}
+@media(max-width:480px){
+  .navbar{padding:10px 12px}
+  .logo-icon{width:36px;height:36px}
+  .logo-title{font-size:14px}
+  .auth-btn{padding:6px 12px;font-size:11px}
+  .container{padding:12px 8px}
+  .hero-stat{padding:12px;min-height:65px}
+  .hero-stat-value{font-size:14px}
+  .hero-stat-label{font-size:7px}
+  .hero-stat-change{font-size:8px}
+  .main-section{padding:16px 12px}
+  .section-title{font-size:18px}
+  .token-row{grid-template-columns:36px 1fr 1fr;padding:10px;gap:6px}
+  .token-icon{width:32px;height:32px}
+  .token-name-col h3{font-size:12px}
+  .token-price-col{font-size:13px}
+  .filter-tab{padding:6px 10px;font-size:10px}
+  .user-tab{padding:8px 12px;font-size:10px}
+  .holding-row{grid-template-columns:36px 1fr 70px;gap:6px;padding:10px}
+  .holding-name{font-size:12px}
+  .editable{font-size:11px}
+  .modal-content{width:98vw;padding:16px}
+  .modal-header{padding:16px}
+  .modal-title{font-size:16px}
+  .sidebar-card{padding:16px}
+  .quote-item,.gainer-item{padding:10px}
+}
+@media(orientation:landscape) and (max-height:600px){
+  .navbar{padding:8px 16px}
+  .hero-section{grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:20px}
+  .hero-stat{padding:10px 12px;min-height:60px}
+  .hero-stat-value{font-size:14px}
+  .container{padding:16px 20px}
+}
+/* Touch-friendly improvements */
+@media(hover:none) and (pointer:coarse){
+  .auth-btn,.admin-btn,.modal-btn,.filter-tab,.user-tab{min-height:44px;min-width:44px}
+  .edit-btn,.delete-btn{min-height:40px;min-width:40px;padding:10px 14px}
+  .token-row:hover{transform:none}
+  .quote-item:hover,.gainer-item:hover{transform:none}
+  .holding-row:hover{transform:none}
+}
 </style>
 </head>
 <body>
@@ -1567,6 +1708,95 @@ if (document.readyState === 'loading') {
 }
 
 if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+
+// PWA Service Worker Registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(registration => {
+        console.log('Service Worker registered:', registration.scope);
+        
+        // Check for updates periodically
+        setInterval(() => {
+          registration.update();
+        }, 60000); // Check every minute
+        
+        // Listen for updates
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              // New version available
+              if (confirm('New version available! Reload to update?')) {
+                newWorker.postMessage({ type: 'SKIP_WAITING' });
+                window.location.reload();
+              }
+            }
+          });
+        });
+      })
+      .catch(error => {
+        console.error('Service Worker registration failed:', error);
+      });
+  });
+  
+  // Listen for service worker messages
+  navigator.serviceWorker.addEventListener('message', event => {
+    if (event.data && event.data.type === 'SW_UPDATED') {
+      if (confirm('App updated! Reload to see changes?')) {
+        window.location.reload();
+      }
+    }
+  });
+}
+
+// PWA Install Prompt
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  
+  // Show install button (optional - you can add this to your UI)
+  const installBtn = document.createElement('button');
+  installBtn.textContent = '📱 Install App';
+  installBtn.style.cssText = 'position:fixed;bottom:20px;right:20px;padding:12px 20px;background:linear-gradient(135deg,#8b5cf6 0%,#7c3aed 100%);color:#fff;border:none;border-radius:12px;font-weight:600;font-size:13px;cursor:pointer;z-index:999;box-shadow:0 4px 16px rgba(139,92,246,.4);';
+  installBtn.onclick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log('User choice:', outcome);
+      deferredPrompt = null;
+      installBtn.remove();
+    }
+  };
+  
+  // Auto-hide after 10 seconds
+  setTimeout(() => {
+    if (installBtn.parentNode) {
+      installBtn.style.opacity = '0';
+      installBtn.style.transition = 'opacity 0.3s';
+      setTimeout(() => installBtn.remove(), 300);
+    }
+  }, 10000);
+  
+  document.body.appendChild(installBtn);
+});
+
+// Handle app installed
+window.addEventListener('appinstalled', () => {
+  console.log('PWA installed successfully');
+  deferredPrompt = null;
+});
+
+// Prevent zoom on double tap (iOS)
+let lastTouchEnd = 0;
+document.addEventListener('touchend', (e) => {
+  const now = Date.now();
+  if (now - lastTouchEnd <= 300) {
+    e.preventDefault();
+  }
+  lastTouchEnd = now;
+}, false);
 </script>
 </body>
 </html>

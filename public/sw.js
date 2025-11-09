@@ -1,14 +1,14 @@
-// sw.js
-const CACHE_NAME = 'crypto-collective-v6'; // Keep this, but we'll force update
+// sw.js - Service Worker for CCX PWA
+const CACHE_NAME = 'crypto-collective-v7';
 const CORE_ASSETS = [
   '/',
+  '/index.html',
   '/manifest.json',
   '/icon-192.png',
   '/icon-512.png'
 ];
 
-// Add a unique cache-busting query param based on build time
-const VERSION = 'v3.0.0-' + new Date().getTime(); // Or use git hash / build ID
+const VERSION = 'v7.0.0';
 const DYNAMIC_CACHE = `dynamic-${VERSION}`;
 
 // Install: Cache core assets
