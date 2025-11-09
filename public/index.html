@@ -1072,6 +1072,43 @@ function renderHeroStats() {
     return 'BTC სეზონი';
   };
   
+  // XAUT (Tether Gold) card
+  const getXAUTCard = () => {
+    const xaut = cryptoData.find(t => t.id === 'tether-gold' || t.symbol?.toLowerCase() === 'xaut');
+    
+    if (!xaut) {
+      return `
+        <div class="carousel-card" style="border-color:rgba(212,175,55,.2);">
+          <div class="carousel-card-header">
+            <div class="carousel-card-title">XAUT (ტეზერ გოლდი)</div>
+            <span class="carousel-card-arrow" style="color:#d4af37;">→</span>
+          </div>
+          <div class="carousel-card-value" style="color:#d4af37;">N/A</div>
+          <div class="carousel-card-subtitle" style="color:#8b6f1e;">
+            ტოკენი არ მოიძებნა
+          </div>
+        </div>
+      `;
+    }
+    
+    const price = xaut.current_price || 0;
+    const change = xaut.price_change_percentage_24h || 0;
+    const changeColor = change >= 0 ? '#d4af37' : '#b8860b';
+    
+    return `
+      <div class="carousel-card" style="border-color:rgba(212,175,55,.2);background:linear-gradient(135deg,rgba(18,18,23,.85) 0%,rgba(30,25,15,.9) 100%);">
+        <div class="carousel-card-header">
+          <div class="carousel-card-title" style="color:#d4af37;">XAUT (ტეზერ გოლდი)</div>
+          <span class="carousel-card-arrow" style="color:#d4af37;">→</span>
+        </div>
+        <div class="carousel-card-value" style="color:#d4af37;text-shadow:0 0 10px rgba(212,175,55,.3);">$${formatPrice(price)}</div>
+        <div class="carousel-card-change" style="color:${changeColor};">
+          ${change >= 0 ? '↑' : '↓'} ${Math.abs(change).toFixed(2)}%
+        </div>
+      </div>
+    `;
+  };
+  
   carousel.innerHTML = `
     <div class="carousel-card">
       <div class="carousel-card-header">
@@ -1125,6 +1162,8 @@ function renderHeroStats() {
         ${getAltcoinSeasonLabel(btcDominance)}
       </div>
     </div>
+    
+    ${getXAUTCard()}
   `;
   
   // Setup carousel navigation
