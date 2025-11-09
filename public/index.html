@@ -72,7 +72,7 @@ body{
 .hero-stat-change{font-size:11px;margin-top:6px;font-weight:500;padding:3px 8px;border-radius:6px;display:inline-block;width:fit-content}
 .hero-stat-change.positive{color:#22c55e;background:rgba(34,197,94,.1)}
 .hero-stat-change.negative{color:#ef4444;background:rgba(239,68,68,.1)}
-.content-grid{display:grid;grid-template-columns:380px 1fr;gap:32px;margin-bottom:48px}
+.content-grid{display:block;width:100%;margin-bottom:48px}
 .sidebar-section{display:flex;flex-direction:column;gap:20px}
 .featured-card{background:rgba(20,20,30,.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:24px;transition:all .2s}
 .featured-card:hover{background:rgba(20,20,30,.6);border-color:rgba(255,255,255,.1)}
@@ -1160,6 +1160,10 @@ function renderRecentActivity() {
     .sort((a, b) => b.timestamp - a.timestamp)
     .slice(0, 10); // Keep last 10 activities
   
+  // Show the carousel wrapper
+  const mainContainer = $('etfDataMain');
+  if (mainContainer) mainContainer.style.display = 'block';
+  
   if (activityFeed.length === 0) {
     carousel.innerHTML = '<div style="padding:40px;text-align:center;color:#9aa0a6;font-size:13px;">ბოლო აქტივობა არ არის</div>';
     return;
@@ -1685,23 +1689,28 @@ if ($('toggleVisibility')) {
 
 /* ---------- ETF DATA (Main Area) ---------- */
 async function loadETFDataMain() {
-  const container = $('etfDataMainContent');
-  if (!container) return;
+  const mainContainer = $('etfDataMain');
+  if (!mainContainer) return;
   
   try {
     const res = await fetch('/api/etf-data');
     const data = await res.json();
     
     if (!res.ok || !data.success) {
-      container.innerHTML = '<div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">ETF მონაცემები მიუწვდომელია</div>';
+      mainContainer.style.display = 'block';
+      const carousel = $('etfCarousel');
+      if (carousel) carousel.innerHTML = '<div style="padding:40px;text-align:center;color:#9aa0a6;font-size:13px;">ETF მონაცემები მიუწვდომელია</div>';
       return;
     }
     
-    if ($('etfDataMain')) $('etfDataMain').style.display = 'block';
+    mainContainer.style.display = 'block';
     renderETFDataMain(data.etfData || {});
   } catch (error) {
     console.error('ETF data load error:', error);
-    container.innerHTML = '<div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">ETF მონაცემების ჩატვირთვის შეცდომა</div>';
+    const mainContainer = $('etfDataMain');
+    if (mainContainer) mainContainer.style.display = 'block';
+    const carousel = $('etfCarousel');
+    if (carousel) carousel.innerHTML = '<div style="padding:40px;text-align:center;color:#9aa0a6;font-size:13px;">ETF მონაცემების ჩატვირთვის შეცდომა</div>';
   }
 }
 
@@ -1987,13 +1996,12 @@ async function fetchAll(){
            console.log(`Loaded ${cryptoData.length} tokens`);
            
     renderAll();
-           // Ensure all sidebar sections are rendered
+           // Ensure ETF and Activity sections are rendered
            if (cryptoData && cryptoData.length > 0) {
              loadETFDataMain(); // Load ETF data to main area
              renderRecentActivity();
-             renderTopGainerSidebar(); // Render top gainer to sidebar
            }
-    $('contentGrid').style.display = 'grid';
+    $('contentGrid').style.display = 'block';
     $('heroStats').style.display = 'grid';
            // Load portfolio and alerts after market data is loaded
            if(currentUser) { 
