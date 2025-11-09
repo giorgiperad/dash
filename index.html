@@ -623,7 +623,12 @@ async function fetchAll(){
   } catch (e) {
     console.error('Fetch error:', e);
     console.error('Error details:', e.message, e.stack);
-    err.innerHTML = `<div class="error"><strong>Network Error: ${e.message}</strong><br><br>This could mean:<br>• The API endpoint is not responding<br>• There's a network connectivity issue<br>• The serverless function crashed<br>• API rate limiting (429 errors)<br><br><small>Check browser console (F12) and Vercel deployment logs for details</small></div>`;
+    // Check if it's a rate limit error (503)
+    if (e.message && e.message.includes('503')) {
+      err.innerHTML = `<div class="error"><strong>⚠️ Rate Limit Exceeded</strong><br><br>CoinGecko API rate limit has been exceeded. Please wait a minute and refresh the page.<br><br><small>The system will automatically retry, but you may need to wait a bit longer.</small></div>`;
+    } else {
+      err.innerHTML = `<div class="error"><strong>Network Error: ${e.message}</strong><br><br>This could mean:<br>• The API endpoint is not responding<br>• There's a network connectivity issue<br>• The serverless function crashed<br>• API rate limiting (429 errors)<br><br><small>Check browser console (F12) and Vercel deployment logs for details</small></div>`;
+    }
     $('contentGrid').style.display = 'grid';
     $('heroStats').style.display = 'grid';
   } finally {
