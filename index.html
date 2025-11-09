@@ -446,23 +446,56 @@ async function fetchAll(){
   const err = $('error'), load = $('loading');
   err.innerHTML = ''; load.style.display = 'block';
   try {
+    console.log('Fetching market data from /api/portfolio...');
     const res = await fetch('/api/portfolio');
-    if (!res.ok) {
-      const errorData = await res.json().catch(() => ({ error: `HTTP ${res.status}: ${res.statusText}` }));
-      throw new Error(errorData.error || `HTTP ${res.status}`);
+    console.log('Response status:', res.status, res.statusText);
+    
+    let data;
+    try {
+      data = await res.json();
+      console.log('Response data:', data);
+    } catch (jsonError) {
+      console.error('Failed to parse JSON response:', jsonError);
+      throw new Error(`Server returned invalid response (${res.status} ${res.statusText})`);
     }
-    const data = await res.json();
+    
+    if (!res.ok) {
+      // API returned an error response
+      const errorMsg = data.error || data.message || `HTTP ${res.status}: ${res.statusText}`;
+      const hint = data.hint || '';
+      const requiredVars = data.requiredVars || [];
+      
+      let errorHtml = `<div class="error"><strong>Error: ${errorMsg}</strong>`;
+      if (hint) errorHtml += `<br><br>${hint}`;
+      if (requiredVars.length) {
+        errorHtml += `<br><br><strong>Required Environment Variables:</strong><br>${requiredVars.join(', ')}`;
+        errorHtml += `<br><br>Go to Vercel Dashboard → Settings → Environment Variables and set these values.`;
+      }
+      errorHtml += `<br><br><small>Check browser console (F12) and Vercel logs for more details</small></div>`;
+      
+      err.innerHTML = errorHtml;
+      $('contentGrid').style.display = 'grid';
+      $('heroStats').style.display = 'grid';
+      load.style.display = 'none';
+      return;
+    }
+    
+    // Success - process data
     cryptoData = data.cryptoData || [];
     cryptoData.forEach(t => prices[t.id] = t.current_price);
     globalData = data.globalData;
     fearGreedData = data.fearGreed;
+    
+    console.log(`Loaded ${cryptoData.length} tokens`);
+    
     renderAll();
     $('contentGrid').style.display = 'grid';
     $('heroStats').style.display = 'grid';
     if(currentUser) { loadPortfolio(); loadAlerts(); }
   } catch (e) {
     console.error('Fetch error:', e);
-    err.innerHTML = `<div class="error">Error: ${e.message}<br><small>Check browser console and Vercel logs for details</small></div>`;
+    console.error('Error details:', e.message, e.stack);
+    err.innerHTML = `<div class="error"><strong>Network Error: ${e.message}</strong><br><br>This could mean:<br>• The API endpoint is not responding<br>• There's a network connectivity issue<br>• The serverless function crashed<br><br><small>Check browser console (F12) and Vercel deployment logs for details</small></div>`;
     $('contentGrid').style.display = 'grid';
     $('heroStats').style.display = 'grid';
   } finally {

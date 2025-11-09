@@ -342,8 +342,7 @@ auth.onAuthStateChanged(user=>{
     $('userName').textContent = user.email.split('@')[0];
     $('userAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email)}&background=8b5cf6&color=fff&size=64`;
     $('userTabs').style.display='flex';
-    if(user.email === 'testireba5@gmail.com') $('adminControls').style.display='flex';
-    loadUserData();
+    if(user.email === 'vasokima@gmail.com') $('adminControls').classList.add('show');
   }else{
     $('authContainer').style.display='flex';
     $('userContainer').style.display='none';
@@ -361,24 +360,141 @@ document.querySelectorAll('.user-tab').forEach(tab=>{
   };
 });
 
+/* ---------- RENDER FUNCTIONS ---------- */
+function renderAll() {
+  renderHeroStats();
+  renderTokens();
+  populateTokenSelect('holdingToken');
+  populateTokenSelect('alertToken');
+}
+
+function renderHeroStats() {
+  const hero = $('heroStats');
+  if (!globalData) return;
+  hero.innerHTML = `
+    <div class="hero-stat">
+      <div class="hero-stat-label">Market Cap</div>
+      <div class="hero-stat-value">$${formatMarketCap(globalData.total_market_cap?.usd || 0)}</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-label">24h Volume</div>
+      <div class="hero-stat-value">$${formatMarketCap(globalData.total_volume?.usd || 0)}</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-label">BTC Dominance</div>
+      <div class="hero-stat-value">${globalData.market_cap_percentage?.btc?.toFixed(1) || 0}%</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-label">Fear & Greed</div>
+      <div class="hero-stat-value">${fearGreedData?.value || 'N/A'}</div>
+    </div>
+  `;
+}
+
+function renderTokens() {
+  const list = $('tokensList');
+  list.innerHTML = '';
+  if (!cryptoData || cryptoData.length === 0) {
+    list.innerHTML = '<div class="error">No tokens found. Add tokens in admin panel.</div>';
+    return;
+  }
+  cryptoData.sort((a, b) => {
+    if (sortColumn === 'name') return sortDirection * a.name.localeCompare(b.name);
+    if (sortColumn === 'price') return sortDirection * (a.current_price - b.current_price);
+    if (sortColumn === 'change') return sortDirection * (a.price_change_percentage_24h - b.price_change_percentage_24h);
+    if (sortColumn === 'mcap') return sortDirection * (a.market_cap - b.market_cap);
+    return 0;
+  }).forEach((coin, idx) => {
+    const change = coin.price_change_percentage_24h || 0;
+    const changeClass = change >= 0 ? 'positive' : 'negative';
+    list.innerHTML += `
+      <div class="token-row" style="--index: ${idx}">
+        <div class="token-icon-col"><img src="${coin.image}" class="token-icon" alt="${coin.name}"></div>
+        <div class="token-name-col">
+          <h3>${coin.name}</h3>
+          <span class="token-symbol">${coin.symbol.toUpperCase()}</span>
+        </div>
+        <div class="token-price-col">$${formatPrice(coin.current_price)}</div>
+        <div class="token-change-col">
+          <span class="change-badge ${changeClass}">
+            ${change >= 0 ? '↑' : '↓'} ${Math.abs(change).toFixed(2)}%
+          </span>
+        </div>
+        <div class="token-mcap-col">$${formatMarketCap(coin.market_cap)}</div>
+      </div>
+    `;
+  });
+}
+
+window.sortBy = function(col) {
+  if (sortColumn === col) {
+    sortDirection *= -1;
+  } else {
+    sortColumn = col;
+    sortDirection = col === 'name' ? 1 : -1;
+  }
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  $(`sort${col.charAt(0).toUpperCase() + col.slice(1)}`).classList.add('active');
+  renderTokens();
+};
+
 /* ---------- FETCH MARKET DATA (via Vercel API) ---------- */
 async function fetchAll(){
   const err = $('error'), load = $('loading');
   err.innerHTML = ''; load.style.display = 'block';
   try {
+    console.log('Fetching market data from /api/portfolio...');
     const res = await fetch('/api/portfolio');
-    const data = await res.json();
-    if (res.status !== 200) throw new Error(data.error || 'Network error');
+    console.log('Response status:', res.status, res.statusText);
+    
+    let data;
+    try {
+      data = await res.json();
+      console.log('Response data:', data);
+    } catch (jsonError) {
+      console.error('Failed to parse JSON response:', jsonError);
+      throw new Error(`Server returned invalid response (${res.status} ${res.statusText})`);
+    }
+    
+    if (!res.ok) {
+      // API returned an error response
+      const errorMsg = data.error || data.message || `HTTP ${res.status}: ${res.statusText}`;
+      const hint = data.hint || '';
+      const requiredVars = data.requiredVars || [];
+      
+      let errorHtml = `<div class="error"><strong>Error: ${errorMsg}</strong>`;
+      if (hint) errorHtml += `<br><br>${hint}`;
+      if (requiredVars.length) {
+        errorHtml += `<br><br><strong>Required Environment Variables:</strong><br>${requiredVars.join(', ')}`;
+        errorHtml += `<br><br>Go to Vercel Dashboard → Settings → Environment Variables and set these values.`;
+      }
+      errorHtml += `<br><br><small>Check browser console (F12) and Vercel logs for more details</small></div>`;
+      
+      err.innerHTML = errorHtml;
+      $('contentGrid').style.display = 'grid';
+      $('heroStats').style.display = 'grid';
+      load.style.display = 'none';
+      return;
+    }
+    
+    // Success - process data
     cryptoData = data.cryptoData || [];
     cryptoData.forEach(t => prices[t.id] = t.current_price);
     globalData = data.globalData;
     fearGreedData = data.fearGreed;
+    
+    console.log(`Loaded ${cryptoData.length} tokens`);
+    
     renderAll();
     $('contentGrid').style.display = 'grid';
     $('heroStats').style.display = 'grid';
     if(currentUser) { loadPortfolio(); loadAlerts(); }
   } catch (e) {
-    err.innerHTML = `<div class="error">Warning: ${e.message}</div>`;
+    console.error('Fetch error:', e);
+    console.error('Error details:', e.message, e.stack);
+    err.innerHTML = `<div class="error"><strong>Network Error: ${e.message}</strong><br><br>This could mean:<br>• The API endpoint is not responding<br>• There's a network connectivity issue<br>• The serverless function crashed<br><br><small>Check browser console (F12) and Vercel deployment logs for details</small></div>`;
+    $('contentGrid').style.display = 'grid';
+    $('heroStats').style.display = 'grid';
   } finally {
     load.style.display = 'none';
   }

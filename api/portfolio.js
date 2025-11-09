@@ -86,30 +86,72 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const db = getDatabase();
-    const snap = await db.ref('tokens').once('value');
-    const tokensData = snap.val() || {};
-    const tokens = Object.values(tokensData).map(t => t.id).filter(Boolean);
+    console.log('Portfolio API called');
+    
+    // Try to get database - this will throw if Firebase is not configured
+    let db;
+    try {
+      db = getDatabase();
+      console.log('Database connection successful');
+    } catch (firebaseError) {
+      console.error('Firebase initialization failed:', firebaseError.message);
+      return res.status(500).json({ 
+        error: 'Firebase configuration error',
+        message: firebaseError.message,
+        hint: 'Check your Firebase environment variables in Vercel Dashboard → Settings → Environment Variables',
+        requiredVars: ['FIREBASE_PROJECT_ID', 'FIREBASE_CLIENT_EMAIL', 'FIREBASE_PRIVATE_KEY', 'FIREBASE_DATABASE_URL']
+      });
+    }
 
+    // Fetch tokens from Firebase
+    let tokens = [];
+    try {
+      const snap = await db.ref('tokens').once('value');
+      const tokensData = snap.val() || {};
+      tokens = Object.values(tokensData).map(t => t.id).filter(Boolean);
+      console.log(`Found ${tokens.length} tokens in database`);
+    } catch (dbError) {
+      console.error('Database read error:', dbError.message);
+      return res.status(500).json({ 
+        error: 'Failed to read tokens from database',
+        message: dbError.message
+      });
+    }
+
+    // If no tokens, return empty data
     if (!tokens.length) {
+      console.log('No tokens found, returning empty data');
       return res.json({ cryptoData: [], globalData: null, fearGreed: null });
     }
 
+    // Fetch market data from CoinGecko
     const ids = tokens.join(',');
-    const [market, global, fg] = await Promise.all([
-      fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&price_change_percentage=24h`).then(r => {
-        if (!r.ok) throw new Error(`CoinGecko API error: ${r.status}`);
-        return r.json();
-      }),
-      fetch('https://api.coingecko.com/api/v3/global').then(r => {
-        if (!r.ok) throw new Error(`CoinGecko Global API error: ${r.status}`);
-        return r.json();
-      }),
-      fetch('https://api.alternative.me/fng/').then(r => {
-        if (!r.ok) throw new Error(`Fear & Greed API error: ${r.status}`);
-        return r.json();
-      })
-    ]);
+    console.log(`Fetching data for tokens: ${ids}`);
+    
+    let market, global, fg;
+    try {
+      [market, global, fg] = await Promise.all([
+        fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&price_change_percentage=24h`).then(r => {
+          if (!r.ok) throw new Error(`CoinGecko API error: ${r.status} ${r.statusText}`);
+          return r.json();
+        }),
+        fetch('https://api.coingecko.com/api/v3/global').then(r => {
+          if (!r.ok) throw new Error(`CoinGecko Global API error: ${r.status} ${r.statusText}`);
+          return r.json();
+        }),
+        fetch('https://api.alternative.me/fng/').then(r => {
+          if (!r.ok) throw new Error(`Fear & Greed API error: ${r.status} ${r.statusText}`);
+          return r.json();
+        })
+      ]);
+      console.log('Successfully fetched market data');
+    } catch (fetchError) {
+      console.error('External API fetch error:', fetchError.message);
+      return res.status(500).json({ 
+        error: 'Failed to fetch market data',
+        message: fetchError.message
+      });
+    }
 
     res.json({
       cryptoData: market || [],
@@ -117,26 +159,12 @@ module.exports = async function handler(req, res) {
       fearGreed: fg?.data?.[0] || null
     });
   } catch (error) {
-    console.error('Portfolio API error:', error);
-    
-    // Provide more helpful error messages
-    let errorMessage = error.message || 'Internal server error';
-    let errorDetails = {};
-    
-    if (error.message?.includes('Firebase') || error.message?.includes('FIREBASE')) {
-      errorDetails = {
-        hint: 'Check your Firebase environment variables in Vercel dashboard',
-        commonIssues: [
-          'FIREBASE_PRIVATE_KEY should include the full key with BEGIN/END markers',
-          'Private key newlines should be preserved (use \\n or actual newlines)',
-          'Ensure all Firebase credentials are correctly set in Vercel environment variables'
-        ]
-      };
-    }
+    console.error('Unexpected Portfolio API error:', error);
+    console.error('Error stack:', error.stack);
     
     res.status(500).json({ 
-      error: errorMessage,
-      ...errorDetails,
+      error: 'Internal server error',
+      message: error.message || 'Unknown error occurred',
       ...(process.env.NODE_ENV === 'development' ? { stack: error.stack } : {})
     });
   }
