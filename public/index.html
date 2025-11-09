@@ -229,7 +229,13 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   <div class="content-grid" id="contentGrid" style="display:none;">
     <div class="sidebar-section" id="sidebarSection">
       <div class="sidebar-card" style="background:rgba(0,0,0,.2);backdrop-filter:blur(10px);border-radius:20px;padding:24px;border:1px solid rgba(255,255,255,.1);margin-bottom:24px;">
-        <div style="font-size:14px;font-weight:700;margin-bottom:16px;text-transform:uppercase;letter-spacing:1px;color:#8b5cf6;">Market Quotes</div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:16px;text-transform:uppercase;letter-spacing:1px;color:#8b5cf6;">📈 Top Gainers</div>
+        <div id="topGainersList" class="top-gainers-list" style="display:flex;flex-direction:column;gap:12px;">
+          <div style="padding:20px;text-align:center;color:#888;">Loading...</div>
+        </div>
+      </div>
+      <div class="sidebar-card" style="background:rgba(0,0,0,.2);backdrop-filter:blur(10px);border-radius:20px;padding:24px;border:1px solid rgba(255,255,255,.1);margin-bottom:24px;">
+        <div style="font-size:14px;font-weight:700;margin-bottom:16px;text-transform:uppercase;letter-spacing:1px;color:#8b5cf6;">💹 Market Quotes</div>
         <div id="quotesList" class="quotes-list" style="display:flex;flex-direction:column;gap:12px;">
           <div style="padding:20px;text-align:center;color:#888;">Loading quotes...</div>
         </div>
@@ -509,9 +515,65 @@ document.querySelectorAll('.user-tab').forEach(tab=>{
 function renderAll() {
   renderHeroStats();
   renderTokens();
+  renderTopGainers();
   renderQuotes();
   populateTokenSelect('holdingToken');
   populateTokenSelect('alertToken');
+}
+
+function renderTopGainers() {
+  const gainersList = $('topGainersList');
+  if (!gainersList) return;
+  
+  if (!cryptoData || cryptoData.length === 0) {
+    gainersList.innerHTML = '<div style="padding:20px;text-align:center;color:#888;">No market data available</div>';
+    return;
+  }
+  
+  // Show top 5 tokens by 24h change (gainers)
+  const topGainers = [...cryptoData]
+    .filter(token => (token.price_change_percentage_24h || 0) > 0)
+    .sort((a, b) => (b.price_change_percentage_24h || 0) - (a.price_change_percentage_24h || 0))
+    .slice(0, 5);
+  
+  if (topGainers.length === 0) {
+    gainersList.innerHTML = '<div style="padding:20px;text-align:center;color:#888;">No gainers found</div>';
+    return;
+  }
+  
+  gainersList.innerHTML = topGainers.map((token, idx) => {
+    const change = token.price_change_percentage_24h || 0;
+    return `
+      <div class="gainer-item" style="padding:12px;background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.2);border-radius:12px;display:flex;justify-content:space-between;align-items:center;transition:all .2s;">
+        <div style="display:flex;align-items:center;gap:10px;flex:1;">
+          <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;color:#fff;">${idx + 1}</div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <img src="${token.image || 'https://via.placeholder.com/20'}" style="width:20px;height:20px;border-radius:50%;" onerror="this.src='https://via.placeholder.com/20?text=?'">
+              <div style="font-weight:700;font-size:13px;color:#fff;">${token.symbol?.toUpperCase() || token.id}</div>
+            </div>
+            <div style="font-size:11px;color:#888;margin-top:2px;">${token.name || token.id}</div>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-weight:700;font-size:13px;color:#10b981;">+${change.toFixed(2)}%</div>
+          <div style="font-size:11px;color:#888;margin-top:2px;">$${formatPrice(token.current_price || 0)}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  // Add hover effect
+  gainersList.querySelectorAll('.gainer-item').forEach(item => {
+    item.onmouseenter = () => {
+      item.style.background = 'rgba(16,185,129,.1)';
+      item.style.transform = 'translateX(4px)';
+    };
+    item.onmouseleave = () => {
+      item.style.background = 'rgba(16,185,129,.05)';
+      item.style.transform = 'translateX(0)';
+    };
+  });
 }
 
 function renderQuotes() {
@@ -532,23 +594,35 @@ function renderQuotes() {
     const change = token.price_change_percentage_24h || 0;
     const changeClass = change >= 0 ? 'positive' : 'negative';
     return `
-      <div class="quote-item">
+      <div class="quote-item" style="padding:12px;background:rgba(139,92,246,.05);border:1px solid rgba(139,92,246,.2);border-radius:12px;display:flex;justify-content:space-between;align-items:center;transition:all .2s;">
         <div style="display:flex;align-items:center;gap:8px;">
           <img src="${token.image || 'https://via.placeholder.com/24'}" style="width:24px;height:24px;border-radius:50%;" onerror="this.src='https://via.placeholder.com/24?text=?'">
           <div>
-            <div style="font-weight:600;font-size:13px;">${token.symbol?.toUpperCase() || token.id}</div>
+            <div style="font-weight:600;font-size:13px;color:#fff;">${token.symbol?.toUpperCase() || token.id}</div>
             <div style="font-size:11px;color:#888;">${token.name || token.id}</div>
           </div>
         </div>
         <div style="text-align:right;">
-          <div style="font-weight:700;font-size:13px;">$${formatPrice(token.current_price || 0)}</div>
-          <div class="change-badge ${changeClass}" style="font-size:11px;padding:2px 6px;border-radius:4px;display:inline-block;">
+          <div style="font-weight:700;font-size:13px;color:#fff;">$${formatPrice(token.current_price || 0)}</div>
+          <div class="change-badge ${changeClass}" style="font-size:11px;padding:2px 6px;border-radius:4px;display:inline-block;margin-top:2px;background:${change >= 0 ? 'rgba(16,185,129,.2)' : 'rgba(239,68,68,.2)'};color:${change >= 0 ? '#10b981' : '#ef4444'};">
             ${change >= 0 ? '↑' : '↓'} ${Math.abs(change).toFixed(2)}%
           </div>
         </div>
       </div>
     `;
   }).join('');
+  
+  // Add hover effect
+  quotesList.querySelectorAll('.quote-item').forEach(item => {
+    item.onmouseenter = () => {
+      item.style.background = 'rgba(139,92,246,.1)';
+      item.style.transform = 'translateX(4px)';
+    };
+    item.onmouseleave = () => {
+      item.style.background = 'rgba(139,92,246,.05)';
+      item.style.transform = 'translateX(0)';
+    };
+  });
 }
 
 function renderHeroStats() {
