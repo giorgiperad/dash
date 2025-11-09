@@ -372,36 +372,36 @@ body{
   </div>
 
   <div class="nav-right">
-    <div class="live-indicator"><div class="live-dot"></div><div class="live-text">Live</div></div>
+    <div class="live-indicator"><div class="live-dot"></div><div class="live-text">ცოცხალი</div></div>
     <div class="time-display" id="navTime">--:--:--</div>
 
     <div id="authContainer">
       <div class="auth-buttons">
-        <button class="auth-btn" id="loginBtn">Login</button>
-        <button class="auth-btn primary" id="registerBtn">Register</button>
+        <button class="auth-btn" id="loginBtn">შესვლა</button>
+        <button class="auth-btn primary" id="registerBtn">რეგისტრაცია</button>
       </div>
     </div>
 
     <div id="userContainer" class="user-menu" style="display:none;">
-      <img id="userAvatar" class="user-avatar" src="" alt="Avatar">
+      <img id="userAvatar" class="user-avatar" src="" alt="ავატარი">
       <span id="userName" class="user-name"></span>
-      <button class="auth-btn" id="logoutBtn">Logout</button>
+      <button class="auth-btn" id="logoutBtn">გასვლა</button>
     </div>
 
     <div id="adminControls" class="admin-controls" style="display:none;gap:12px;align-items:center;padding:14px 24px;background:rgba(15,20,30,.6);border:1px solid rgba(255,255,255,.12);border-radius:14px;backdrop-filter:blur(16px) saturate(180%);box-shadow:0 4px 16px rgba(0,0,0,.2);">
       <div style="display:flex;align-items:center;gap:10px;padding-right:16px;border-right:1px solid rgba(255,255,255,.1);">
         <span style="font-size:16px;opacity:0.9;">👑</span>
-        <span style="font-size:11px;font-weight:600;color:#9aa0a6;text-transform:uppercase;letter-spacing:0.8px;">Admin</span>
+        <span style="font-size:11px;font-weight:600;color:#9aa0a6;text-transform:uppercase;letter-spacing:0.8px;">ადმინი</span>
       </div>
-      <button class="admin-btn" id="addTokenBtn" style="padding:10px 20px;background:linear-gradient(135deg,#8b5cf6 0%,#7c3aed 100%);border:none;color:#fff;font-size:13px;font-weight:600;border-radius:10px;cursor:pointer;transition:all .25s;box-shadow:0 2px 8px rgba(139,92,246,.25);letter-spacing:0.3px;">➕ Add Token</button>
-      <button class="admin-btn" id="refreshBtn" style="padding:10px 20px;background:rgba(52,168,83,.12);border:1.5px solid rgba(52,168,83,.25);color:#34a853;font-size:13px;font-weight:600;border-radius:10px;cursor:pointer;transition:all .25s;letter-spacing:0.3px;">🔄 Refresh</button>
+      <button class="admin-btn" id="addTokenBtn" style="padding:10px 20px;background:linear-gradient(135deg,#8b5cf6 0%,#7c3aed 100%);border:none;color:#fff;font-size:13px;font-weight:600;border-radius:10px;cursor:pointer;transition:all .25s;box-shadow:0 2px 8px rgba(139,92,246,.25);letter-spacing:0.3px;">➕ ტოკენის დამატება</button>
+      <button class="admin-btn" id="refreshBtn" style="padding:10px 20px;background:rgba(52,168,83,.12);border:1.5px solid rgba(52,168,83,.25);color:#34a853;font-size:13px;font-weight:600;border-radius:10px;cursor:pointer;transition:all .25s;letter-spacing:0.3px;">🔄 განახლება</button>
     </div>
     
   </div>
 </nav>
 
 <div class="container">
-  <div id="loading" class="loading"><div class="spinner"></div><div class="loading-text">Loading market data...</div></div>
+  <div id="loading" class="loading"><div class="spinner"></div><div class="loading-text">ბაზრის მონაცემების ჩატვირთვა...</div></div>
   <div id="error"></div>
 
   <div class="hero-section" id="heroStats" style="display:none;"></div>
@@ -411,23 +411,23 @@ body{
     <div style="position:absolute;top:0;right:0;width:200px;height:200px;background:radial-gradient(circle,rgba(99,102,241,.1) 0%,transparent 70%);pointer-events:none;"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;position:relative;z-index:1;">
       <div>
-        <div style="font-size:11px;color:#6366f1;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:4px;">⭐ Top Gainer Today</div>
+        <div style="font-size:11px;color:#6366f1;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:4px;">⭐ დღის ლიდერი</div>
         <h3 id="todTokenName" style="font-size:20px;font-weight:600;color:#fafafa;letter-spacing:-0.3px;">-</h3>
         <div id="todTokenSymbol" style="font-size:13px;color:#71717a;margin-top:4px;">-</div>
       </div>
       <div id="todTokenIcon" style="width:64px;height:64px;border-radius:50%;border:2px solid rgba(255,255,255,.1);overflow:hidden;background:rgba(20,20,30,.5);display:flex;align-items:center;justify-content:center;font-size:24px;">-</div>
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;position:relative;z-index:1;" id="todStatsGrid">
-      <div role="region" aria-label="Token price">
-        <div style="font-size:11px;color:#71717a;margin-bottom:4px;">Price</div>
+      <div role="region" aria-label="ტოკენის ფასი">
+        <div style="font-size:11px;color:#71717a;margin-bottom:4px;">ფასი</div>
         <div id="todPrice" style="font-size:18px;font-weight:600;color:#fafafa;" aria-live="polite">-</div>
       </div>
-      <div role="region" aria-label="24 hour price change">
-        <div style="font-size:11px;color:#71717a;margin-bottom:4px;">24h Change</div>
+      <div role="region" aria-label="24 საათიანი ფასის ცვლილება">
+        <div style="font-size:11px;color:#71717a;margin-bottom:4px;">24სთ ცვლილება</div>
         <div id="todChange" style="font-size:18px;font-weight:600;" aria-live="polite">-</div>
       </div>
-      <div role="region" aria-label="Market capitalization">
-        <div style="font-size:11px;color:#71717a;margin-bottom:4px;">Market Cap</div>
+      <div role="region" aria-label="საბაზრო კაპიტალიზაცია">
+        <div style="font-size:11px;color:#71717a;margin-bottom:4px;">საბაზრო კაპიტალიზაცია</div>
         <div id="todMarketCap" style="font-size:18px;font-weight:600;color:#fafafa;" aria-live="polite">-</div>
       </div>
     </div>
@@ -437,34 +437,34 @@ body{
     <div class="sidebar-section" id="sidebarSection">
       <div class="sidebar-card" style="background:rgba(15,20,30,.6);backdrop-filter:blur(16px) saturate(180%);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,.08);margin-bottom:20px;box-shadow:0 4px 16px rgba(0,0,0,.2);">
         <div style="font-size:13px;font-weight:600;margin-bottom:18px;text-transform:uppercase;letter-spacing:0.8px;color:#9aa0a6;display:flex;align-items:center;gap:8px;">
-          <span style="opacity:0.8;">📈</span> Top Gainers
+          <span style="opacity:0.8;">📈</span> ტოპ მოგება
         </div>
         <div id="topGainersList" class="top-gainers-list" style="display:flex;flex-direction:column;gap:10px;">
-          <div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">Loading...</div>
+          <div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">ჩატვირთვა...</div>
         </div>
       </div>
       <div class="sidebar-card" style="background:rgba(15,20,30,.6);backdrop-filter:blur(16px) saturate(180%);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,.08);margin-bottom:20px;box-shadow:0 4px 16px rgba(0,0,0,.2);">
         <div style="font-size:13px;font-weight:600;margin-bottom:18px;text-transform:uppercase;letter-spacing:0.8px;color:#9aa0a6;display:flex;align-items:center;gap:8px;">
-          <span style="opacity:0.8;">📉</span> Top Losers
+          <span style="opacity:0.8;">📉</span> ტოპ ზარალი
         </div>
         <div id="quotesList" class="quotes-list" style="display:flex;flex-direction:column;gap:10px;">
-          <div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">Loading...</div>
+          <div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">ჩატვირთვა...</div>
         </div>
       </div>
       <div class="sidebar-card" style="background:rgba(15,20,30,.6);backdrop-filter:blur(16px) saturate(180%);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,.08);box-shadow:0 4px 16px rgba(0,0,0,.2);">
-        <div style="font-size:13px;font-weight:600;margin-bottom:18px;text-transform:uppercase;letter-spacing:0.8px;color:#9aa0a6;">Settings</div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:18px;text-transform:uppercase;letter-spacing:0.8px;color:#9aa0a6;">პარამეტრები</div>
         <div id="settingsPanel" class="settings-panel" style="display:flex;flex-direction:column;gap:16px;">
           <div class="setting-item" style="display:flex;justify-content:space-between;align-items:center;">
-            <label style="font-size:13px;color:#bdc1c6;font-weight:500;">Auto-refresh:</label>
+            <label style="font-size:13px;color:#bdc1c6;font-weight:500;">ავტო-განახლება:</label>
             <select id="refreshInterval" style="background:rgba(10,14,26,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 12px;color:#e8eaed;font-size:12px;cursor:pointer;transition:all .25s;backdrop-filter:blur(10px);">
-              <option value="60000">1 min</option>
-              <option value="120000">2 min</option>
-              <option value="180000" selected>3 min</option>
-              <option value="300000">5 min</option>
+              <option value="60000">1 წუთი</option>
+              <option value="120000">2 წუთი</option>
+              <option value="180000" selected>3 წუთი</option>
+              <option value="300000">5 წუთი</option>
             </select>
           </div>
           <div class="setting-item" style="display:flex;justify-content:space-between;align-items:center;">
-            <label style="font-size:13px;color:#bdc1c6;font-weight:500;">Price alerts:</label>
+            <label style="font-size:13px;color:#bdc1c6;font-weight:500;">ფასის შეტყობინებები:</label>
             <input type="checkbox" id="enableAlerts" checked style="width:18px;height:18px;accent-color:#8b5cf6;cursor:pointer;">
           </div>
         </div>
@@ -473,28 +473,28 @@ body{
 
     <div class="main-section">
       <div id="userTabs" class="user-tabs" style="display:none;">
-        <div class="user-tab active" data-tab="market">Market</div>
-        <div class="user-tab" data-tab="portfolio">Portfolio</div>
-        <div class="user-tab" data-tab="alerts">Alerts</div>
+        <div class="user-tab active" data-tab="market">ბაზარი</div>
+        <div class="user-tab" data-tab="portfolio">პორტფოლიო</div>
+        <div class="user-tab" data-tab="alerts">შეტყობინებები</div>
       </div>
 
       <div id="marketContent" class="user-content active">
         <div class="section-header">
-          <div class="section-title">Market Overview</div>
+          <div class="section-title">ბაზრის მიმოხილვა</div>
           <div class="filter-tabs">
-            <button class="filter-tab" onclick="sortBy('name')" id="sortName">Name</button>
-            <button class="filter-tab" onclick="sortBy('price')" id="sortPrice">Price</button>
-            <button class="filter-tab active" onclick="sortBy('change')" id="sortChange">24h</button>
-            <button class="filter-tab" onclick="sortBy('mcap')" id="sortMcap">MCap</button>
+            <button class="filter-tab" onclick="sortBy('name')" id="sortName">სახელი</button>
+            <button class="filter-tab" onclick="sortBy('price')" id="sortPrice">ფასი</button>
+            <button class="filter-tab active" onclick="sortBy('change')" id="sortChange">24სთ</button>
+            <button class="filter-tab" onclick="sortBy('mcap')" id="sortMcap">კაპიტალიზაცია</button>
           </div>
         </div>
 
         <div class="table-header">
           <div class="table-header-cell">#</div>
-          <div class="table-header-cell">Asset</div>
-          <div class="table-header-cell">Price</div>
-          <div class="table-header-cell">24h Change</div>
-          <div class="table-header-cell">Market Cap</div>
+          <div class="table-header-cell">აქტივი</div>
+          <div class="table-header-cell">ფასი</div>
+          <div class="table-header-cell">24სთ ცვლილება</div>
+          <div class="table-header-cell">საბაზრო კაპიტალიზაცია</div>
         </div>
 
         <div class="tokens-list" id="tokensList"></div>
@@ -504,13 +504,13 @@ body{
         <div class="portfolio-summary">
           <div class="summary-card" id="totalValueCard">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-              <div class="summary-label">Total Value</div>
-              <button id="toggleVisibility" style="background:transparent;border:none;color:#71717a;cursor:pointer;padding:4px;font-size:16px;transition:all .2s;opacity:0.7;" title="Toggle visibility" aria-label="Toggle portfolio visibility">👁️</button>
+              <div class="summary-label">საერთო ღირებულება</div>
+              <button id="toggleVisibility" style="background:transparent;border:none;color:#71717a;cursor:pointer;padding:4px;font-size:16px;transition:all .2s;opacity:0.7;" title="ხილვადობის გადართვა" aria-label="პორტფოლიოს ხილვადობის გადართვა">👁️</button>
             </div>
             <div class="summary-value" id="totalValue" aria-live="polite">$0.00</div>
           </div>
           <div class="summary-card" id="totalPLCard">
-            <div class="summary-label">Total P/L</div>
+            <div class="summary-label">საერთო მოგება/ზარალი</div>
             <div class="summary-value" id="totalPL" aria-live="polite">$0.00</div>
           </div>
           <div class="summary-card">
@@ -522,21 +522,21 @@ body{
         <!-- Portfolio Analytics Section -->
         <div id="portfolioAnalytics" style="display:none;margin-bottom:32px;background:rgba(20,20,30,.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:24px;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-            <h3 style="font-size:18px;font-weight:600;color:#fafafa;letter-spacing:-0.3px;">Portfolio Analytics</h3>
-            <button id="toggleAnalytics" style="background:transparent;border:1px solid rgba(255,255,255,.1);color:#71717a;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;transition:all .2s;" aria-label="Toggle analytics view" aria-expanded="true">Hide</button>
+            <h3 style="font-size:18px;font-weight:600;color:#fafafa;letter-spacing:-0.3px;">პორტფოლიოს ანალიტიკა</h3>
+            <button id="toggleAnalytics" style="background:transparent;border:1px solid rgba(255,255,255,.1);color:#71717a;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;transition:all .2s;" aria-label="ანალიტიკის ხილვის გადართვა" aria-expanded="true">დამალვა</button>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;" id="analyticsGrid">
             <div>
-              <div style="font-size:12px;color:#71717a;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.8px;font-weight:500;" role="heading" aria-level="4">Asset Allocation</div>
-              <canvas id="allocationChart" width="200" height="200" style="max-width:100%;height:auto;" aria-label="Portfolio allocation pie chart" role="img"></canvas>
-              <div id="allocationLegend" style="margin-top:16px;display:flex;flex-direction:column;gap:8px;" role="list" aria-label="Token allocation percentages"></div>
+              <div style="font-size:12px;color:#71717a;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.8px;font-weight:500;" role="heading" aria-level="4">აქტივების განაწილება</div>
+              <canvas id="allocationChart" width="200" height="200" style="max-width:100%;height:auto;" aria-label="პორტფოლიოს განაწილების ნამდვილი დიაგრამა" role="img"></canvas>
+              <div id="allocationLegend" style="margin-top:16px;display:flex;flex-direction:column;gap:8px;" role="list" aria-label="ტოკენების განაწილების პროცენტები"></div>
             </div>
             <div>
-              <div style="font-size:12px;color:#71717a;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.8px;font-weight:500;" role="heading" aria-level="4">Risk Metrics</div>
-              <div id="riskMetrics" style="display:flex;flex-direction:column;gap:12px;" role="list" aria-label="Portfolio risk metrics">
+              <div style="font-size:12px;color:#71717a;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.8px;font-weight:500;" role="heading" aria-level="4">რისკის მეტრიკები</div>
+              <div id="riskMetrics" style="display:flex;flex-direction:column;gap:12px;" role="list" aria-label="პორტფოლიოს რისკის მეტრიკები">
                 <div style="padding:12px;background:rgba(20,20,30,.3);border-radius:8px;border:1px solid rgba(255,255,255,.05);">
                   <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-                    <span style="font-size:12px;color:#71717a;">Diversification Score</span>
+                    <span style="font-size:12px;color:#71717a;">დივერსიფიკაციის ქულა</span>
                     <span id="diversificationScore" style="font-size:14px;font-weight:600;color:#fafafa;">-</span>
                   </div>
                   <div style="height:4px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;">
@@ -545,13 +545,13 @@ body{
                 </div>
                 <div style="padding:12px;background:rgba(20,20,30,.3);border-radius:8px;border:1px solid rgba(255,255,255,.05);">
                   <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-                    <span style="font-size:12px;color:#71717a;">Largest Position</span>
+                    <span style="font-size:12px;color:#71717a;">უდიდესი პოზიცია</span>
                     <span id="largestPosition" style="font-size:14px;font-weight:600;color:#fafafa;">-</span>
                   </div>
                 </div>
                 <div style="padding:12px;background:rgba(20,20,30,.3);border-radius:8px;border:1px solid rgba(255,255,255,.05);">
                   <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-                    <span style="font-size:12px;color:#71717a;">Token Count</span>
+                    <span style="font-size:12px;color:#71717a;">ტოკენების რაოდენობა</span>
                     <span id="tokenCount" style="font-size:14px;font-weight:600;color:#fafafa;">-</span>
                   </div>
                 </div>
@@ -564,9 +564,9 @@ body{
 
         <form class="add-holding-form" id="addHoldingForm">
           <select id="holdingToken" required></select>
-          <input type="number" step="any" placeholder="Amount" id="holdingAmount" required>
-          <input type="number" step="any" placeholder="Buy Price" id="buyPrice" required>
-          <button type="submit">Add</button>
+          <input type="number" step="any" placeholder="რაოდენობა" id="holdingAmount" required>
+          <input type="number" step="any" placeholder="შესყიდვის ფასი" id="buyPrice" required>
+          <button type="submit">დამატება</button>
         </form>
       </div>
 
@@ -574,27 +574,27 @@ body{
       <div id="editHoldingModal" class="modal">
         <div class="modal-content">
           <div class="modal-header">
-            <h3>Edit Holding</h3>
+            <h3>პოზიციის რედაქტირება</h3>
             <button class="modal-close" onclick="$('editHoldingModal').classList.remove('show')">×</button>
           </div>
           <form id="editHoldingForm">
             <input type="hidden" id="editHoldingId">
             <div class="form-group">
-              <label>Token</label>
+              <label>ტოკენი</label>
               <select id="editHoldingToken" required disabled></select>
-              <small style="color: #888;">Token cannot be changed</small>
+              <small style="color: #888;">ტოკენი ვერ შეიცვლება</small>
             </div>
             <div class="form-group">
-              <label>Amount</label>
+              <label>რაოდენობა</label>
               <input type="number" step="any" id="editHoldingAmount" required>
             </div>
             <div class="form-group">
-              <label>Buy Price (USD)</label>
+              <label>შესყიდვის ფასი (USD)</label>
               <input type="number" step="any" id="editHoldingBuyPrice" required>
             </div>
             <div class="modal-actions">
-              <button type="button" class="modal-btn cancel" onclick="$('editHoldingModal').classList.remove('show')">Cancel</button>
-              <button type="submit" class="modal-btn save">Save Changes</button>
+              <button type="button" class="modal-btn cancel" onclick="$('editHoldingModal').classList.remove('show')">გაუქმება</button>
+              <button type="submit" class="modal-btn save">ცვლილებების შენახვა</button>
             </div>
           </form>
         </div>
@@ -606,12 +606,12 @@ body{
         <form class="add-alert-form" id="addAlertForm">
           <select id="alertToken" required></select>
           <select id="alertCondition" required>
-            <option value="above">Above</option>
-            <option value="below">Below</option>
+            <option value="above">ზემოთ</option>
+            <option value="below">ქვემოთ</option>
           </select>
-          <input type="number" step="any" placeholder="Target Price" id="targetPrice" required>
-          <input type="text" placeholder="Message (optional)" id="alertMessage">
-          <button type="submit">Set Alert</button>
+          <input type="number" step="any" placeholder="სამიზნე ფასი" id="targetPrice" required>
+          <input type="text" placeholder="შეტყობინება (არასავალდებულო)" id="alertMessage">
+          <button type="submit">შეტყობინების დაყენება</button>
         </form>
       </div>
     </div>
@@ -621,14 +621,14 @@ body{
 <div id="addTokenModal" class="modal">
   <div class="modal-content" style="max-width:600px;width:90vw;">
     <div class="modal-header" style="background:rgba(15,20,30,.95);backdrop-filter:blur(24px) saturate(180%);padding:24px;border-radius:20px 20px 0 0;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.08);">
-      <div class="modal-title" style="font-size:20px;font-weight:600;color:#e8eaed;letter-spacing:-0.3px;">🔍 Add Crypto Token</div>
+      <div class="modal-title" style="font-size:20px;font-weight:600;color:#e8eaed;letter-spacing:-0.3px;">🔍 კრიპტო ტოკენის დამატება</div>
       <span class="close-modal" id="closeModal" style="color:#9aa0a6;font-size:28px;cursor:pointer;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:transparent;transition:all .25s;">×</span>
     </div>
     <div style="padding:28px;background:rgba(15,20,30,.95);backdrop-filter:blur(24px) saturate(180%);">
       <div class="modal-input" style="margin-bottom:20px;">
-        <label style="display:block;font-size:12px;font-weight:500;color:#9aa0a6;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.8px;">Search Token</label>
+        <label style="display:block;font-size:12px;font-weight:500;color:#9aa0a6;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.8px;">ტოკენის ძიება</label>
         <div style="position:relative;">
-          <input type="text" id="tokenSearch" placeholder="Type to search (e.g. bitcoin, ethereum, solana)..." 
+          <input type="text" id="tokenSearch" placeholder="ჩაწერეთ ძიებისთვის (მაგ. bitcoin, ethereum, solana)..." 
             style="width:100%;padding:14px 18px;background:rgba(10,14,26,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;color:#e8eaed;font-size:14px;transition:all .25s;backdrop-filter:blur(10px);"
             autocomplete="off">
           <div id="tokenSearchResults" style="position:absolute;top:100%;left:0;right:0;margin-top:8px;background:rgba(15,20,30,.98);backdrop-filter:blur(24px) saturate(180%);border:1px solid rgba(255,255,255,.12);border-radius:12px;max-height:300px;overflow-y:auto;z-index:1000;display:none;box-shadow:0 12px 40px rgba(0,0,0,.5);"></div>
@@ -639,13 +639,13 @@ body{
               <div style="font-weight:600;color:#e8eaed;font-size:15px;letter-spacing:-0.2px;" id="selectedTokenName"></div>
               <div style="font-size:12px;color:#9aa0a6;margin-top:4px;font-weight:400;" id="selectedTokenId"></div>
             </div>
-            <button id="clearSelection" style="padding:8px 14px;background:rgba(234,67,53,.12);border:1.5px solid rgba(234,67,53,.25);color:#ea4335;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;transition:all .25s;letter-spacing:0.2px;">Clear</button>
+            <button id="clearSelection" style="padding:8px 14px;background:rgba(234,67,53,.12);border:1.5px solid rgba(234,67,53,.25);color:#ea4335;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;transition:all .25s;letter-spacing:0.2px;">გასუფთავება</button>
           </div>
         </div>
       </div>
       <div class="modal-actions" style="display:flex;gap:12px;justify-content:flex-end;">
-        <button class="modal-btn cancel" id="cancelAdd" style="padding:12px 24px;background:transparent;border:1.5px solid rgba(255,255,255,.15);color:#9aa0a6;border-radius:10px;cursor:pointer;font-weight:600;transition:all .25s;letter-spacing:0.3px;">Cancel</button>
-        <button class="modal-btn add" id="confirmAdd" style="padding:12px 24px;background:linear-gradient(135deg,#8b5cf6 0%,#7c3aed 100%);border:none;color:#fff;border-radius:10px;cursor:pointer;font-weight:600;transition:all .25s;box-shadow:0 2px 8px rgba(139,92,246,.25);letter-spacing:0.3px;" disabled>Add Token</button>
+        <button class="modal-btn cancel" id="cancelAdd" style="padding:12px 24px;background:transparent;border:1.5px solid rgba(255,255,255,.15);color:#9aa0a6;border-radius:10px;cursor:pointer;font-weight:600;transition:all .25s;letter-spacing:0.3px;">გაუქმება</button>
+        <button class="modal-btn add" id="confirmAdd" style="padding:12px 24px;background:linear-gradient(135deg,#8b5cf6 0%,#7c3aed 100%);border:none;color:#fff;border-radius:10px;cursor:pointer;font-weight:600;transition:all .25s;box-shadow:0 2px 8px rgba(139,92,246,.25);letter-spacing:0.3px;" disabled>ტოკენის დამატება</button>
       </div>
       <div id="addTokenStatus" style="margin-top:16px;padding:14px;border-radius:10px;display:none;font-size:13px;font-weight:500;backdrop-filter:blur(10px);"></div>
     </div>
@@ -695,9 +695,9 @@ $('registerBtn').onclick = () => authModal('register');
 $('logoutBtn').onclick = () => auth.signOut();
 
 function authModal(mode){
-  const email = prompt(`Enter email:`);
+  const email = prompt(`შეიყვანეთ ელფოსტა:`);
   if(!email) return;
-  const password = prompt('Enter password:');
+  const password = prompt('შეიყვანეთ პაროლი:');
   if(!password) return;
   
   // Ensure Firebase Auth is initialized
@@ -706,7 +706,7 @@ function authModal(mode){
       auth = firebase.auth();
     } catch (e) {
       console.error('Firebase Auth initialization error:', e);
-      alert('Authentication service is not available. Please refresh the page.');
+      alert('ავტორიზაციის სერვისი მიუწვდომელია. გთხოვთ განაახლოთ გვერდი.');
       return;
     }
   }
@@ -716,7 +716,7 @@ function authModal(mode){
   authMethod.call(auth, email, password)
     .then(() => {
       if(mode === 'register') {
-        alert('Registration successful! You are now logged in.');
+        alert('რეგისტრაცია წარმატებულია! ახლა შეხვედით სისტემაში.');
       }
     })
     .catch(e => {
@@ -724,17 +724,17 @@ function authModal(mode){
       let errorMsg = e.message;
       // Provide more helpful error messages
       if(e.code === 'auth/email-already-in-use') {
-        errorMsg = 'This email is already registered. Please login instead.';
+        errorMsg = 'ეს ელფოსტა უკვე რეგისტრირებულია. გთხოვთ შეხვიდეთ.';
       } else if(e.code === 'auth/weak-password') {
-        errorMsg = 'Password is too weak. Please use at least 6 characters.';
+        errorMsg = 'პაროლი ძალიან სუსტია. გთხოვთ გამოიყენოთ მინიმუმ 6 სიმბოლო.';
       } else if(e.code === 'auth/invalid-email') {
-        errorMsg = 'Invalid email address. Please check and try again.';
+        errorMsg = 'არასწორი ელფოსტის მისამართი. გთხოვთ შეამოწმოთ და სცადოთ თავიდან.';
       } else if(e.code === 'auth/user-not-found') {
-        errorMsg = 'No account found with this email. Please register first.';
+        errorMsg = 'ამ ელფოსტით ანგარიში არ მოიძებნა. გთხოვთ ჯერ დარეგისტრირდეთ.';
       } else if(e.code === 'auth/wrong-password') {
-        errorMsg = 'Incorrect password. Please try again.';
+        errorMsg = 'არასწორი პაროლი. გთხოვთ სცადოთ თავიდან.';
       } else if(e.message && e.message.includes('_delegate')) {
-        errorMsg = 'Authentication service error. Please refresh the page and try again.';
+        errorMsg = 'ავტორიზაციის სერვისის შეცდომა. გთხოვთ განაახლოთ გვერდი და სცადოთ თავიდან.';
       }
       alert(errorMsg);
     });
@@ -857,7 +857,7 @@ function renderTopGainers() {
     .slice(0, 5);
   
   if (topGainers.length === 0) {
-    gainersList.innerHTML = '<div style="padding:20px;text-align:center;color:#888;">No gainers found</div>';
+    gainersList.innerHTML = '<div style="padding:20px;text-align:center;color:#888;">მოგება არ მოიძებნა</div>';
     return;
   }
   
@@ -908,7 +908,7 @@ function renderQuotes() {
   }
   
   if (!cryptoData || cryptoData.length === 0) {
-    quotesList.innerHTML = '<div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">No market data available</div>';
+    quotesList.innerHTML = '<div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">ბაზრის მონაცემები მიუწვდომელია</div>';
     return;
   }
   
@@ -927,7 +927,7 @@ function renderQuotes() {
     .slice(0, 5);
   
   if (topLosers.length === 0) {
-    quotesList.innerHTML = '<div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">No data available</div>';
+    quotesList.innerHTML = '<div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">მონაცემები მიუწვდომელია</div>';
     return;
   }
   
@@ -996,49 +996,49 @@ function renderHeroStats() {
   
   hero.innerHTML = `
     <div class="hero-stat">
-      <div class="hero-stat-label">Market Cap</div>
+      <div class="hero-stat-label">საბაზრო კაპიტალიზაცია</div>
       <div class="hero-stat-value">$${formatMarketCap(marketCap)}</div>
       <div class="hero-stat-change ${marketCapChange >= 0 ? 'positive' : 'negative'}">
         ${marketCapChange >= 0 ? '↑' : '↓'} ${Math.abs(marketCapChange).toFixed(2)}%
       </div>
     </div>
     <div class="hero-stat">
-      <div class="hero-stat-label">24h Volume</div>
+      <div class="hero-stat-label">24სთ ბრუნვა</div>
       <div class="hero-stat-value">$${formatMarketCap(volume)}</div>
       <div class="hero-stat-change" style="color:#9aa0a6;font-size:10px;">
-        ${volume > 0 ? ((volume / marketCap * 100).toFixed(1) + '% of cap') : 'N/A'}
+        ${volume > 0 ? ((volume / marketCap * 100).toFixed(1) + '% კაპიტალიზაციის') : 'N/A'}
       </div>
     </div>
     <div class="hero-stat">
-      <div class="hero-stat-label">BTC Dominance</div>
+      <div class="hero-stat-label">BTC დომინანტობა</div>
       <div class="hero-stat-value">${btcDominance.toFixed(1)}%</div>
       <div class="hero-stat-change" style="color:#9aa0a6;font-size:10px;">
         ETH: ${ethDominance.toFixed(1)}%
       </div>
     </div>
     <div class="hero-stat">
-      <div class="hero-stat-label">Fear & Greed</div>
+      <div class="hero-stat-label">შიში და ხარბება</div>
       <div class="hero-stat-value">${fearGreedValue}</div>
       <div class="hero-stat-change" style="color:#9aa0a6;font-size:10px;text-transform:capitalize;">
         ${fearGreedClassification}
       </div>
     </div>
     <div class="hero-stat">
-      <div class="hero-stat-label">ETF Flow (Today)</div>
+      <div class="hero-stat-label">ETF ნაკადი (დღეს)</div>
       <div class="hero-stat-value" style="color:${etfFlowsData ? (etfToday >= 0 ? '#34a853' : '#ea4335') : '#9aa0a6'};">
         ${etfFlowsData ? formatETF(etfToday) : 'N/A'}
       </div>
       <div class="hero-stat-change" style="color:#9aa0a6;font-size:10px;">
-        ${etfFlowsData ? `7d: ${formatETF(etfWeek)}` : 'Loading...'}
+        ${etfFlowsData ? `7დ: ${formatETF(etfWeek)}` : 'ჩატვირთვა...'}
       </div>
     </div>
     <div class="hero-stat">
-      <div class="hero-stat-label">ETF Flow (Total)</div>
+      <div class="hero-stat-label">ETF ნაკადი (საერთო)</div>
       <div class="hero-stat-value" style="color:${etfFlowsData ? (etfTotal >= 0 ? '#34a853' : '#ea4335') : '#9aa0a6'};">
         ${etfFlowsData ? formatETF(etfTotal) : 'N/A'}
       </div>
       <div class="hero-stat-change" style="color:#9aa0a6;font-size:10px;">
-        ${etfFlowsData ? (etfTotal >= 0 ? 'Net Inflow' : 'Net Outflow') : 'Loading...'}
+        ${etfFlowsData ? (etfTotal >= 0 ? 'წმინდა შემოდინება' : 'წმინდა გადინება') : 'ჩატვირთვა...'}
       </div>
     </div>
   `;
@@ -1048,7 +1048,7 @@ function renderTokens() {
   const list = $('tokensList');
   list.innerHTML = '';
   if (!cryptoData || cryptoData.length === 0) {
-    list.innerHTML = '<div class="error">No tokens found. Add tokens in admin panel.</div>';
+    list.innerHTML = '<div class="error">ტოკენები არ მოიძებნა. დაამატეთ ტოკენები ადმინ პანელში.</div>';
     return;
   }
   cryptoData.sort((a, b) => {
@@ -1162,8 +1162,8 @@ if ($('toggleVisibility')) {
       
       toggleBtn.textContent = '👁️‍🗨️';
       toggleBtn.style.opacity = '1';
-      toggleBtn.title = 'Show values';
-      toggleBtn.setAttribute('aria-label', 'Show portfolio values');
+      toggleBtn.title = 'მნიშვნელობების ჩვენება';
+      toggleBtn.setAttribute('aria-label', 'პორტფოლიოს მნიშვნელობების ჩვენება');
     } else {
       // Show all dollar values
       if (totalValue) totalValue.style.display = 'block';
@@ -1183,8 +1183,8 @@ if ($('toggleVisibility')) {
       
       toggleBtn.textContent = '👁️';
       toggleBtn.style.opacity = '0.7';
-      toggleBtn.title = 'Hide values';
-      toggleBtn.setAttribute('aria-label', 'Hide portfolio values');
+      toggleBtn.title = 'მნიშვნელობების დამალვა';
+      toggleBtn.setAttribute('aria-label', 'პორტფოლიოს მნიშვნელობების დამალვა');
     }
   };
 }
@@ -1313,13 +1313,13 @@ async function fetchAll(){
       const hint = data.hint || '';
       const requiredVars = data.requiredVars || [];
       
-      let errorHtml = `<div class="error"><strong>Error: ${errorMsg}</strong>`;
+      let errorHtml = `<div class="error"><strong>შეცდომა: ${errorMsg}</strong>`;
       if (hint) errorHtml += `<br><br>${hint}`;
       if (requiredVars.length) {
-        errorHtml += `<br><br><strong>Required Environment Variables:</strong><br>${requiredVars.join(', ')}`;
-        errorHtml += `<br><br>Go to Vercel Dashboard → Settings → Environment Variables and set these values.`;
+        errorHtml += `<br><br><strong>საჭირო გარემოს ცვლადები:</strong><br>${requiredVars.join(', ')}`;
+        errorHtml += `<br><br>გადადით Vercel Dashboard → Settings → Environment Variables და დააყენეთ ეს მნიშვნელობები.`;
       }
-      errorHtml += `<br><br><small>Check browser console (F12) and Vercel logs for more details</small></div>`;
+      errorHtml += `<br><br><small>დამატებითი დეტალებისთვის შეამოწმეთ ბრაუზერის კონსოლი (F12) და Vercel ლოგები</small></div>`;
       
       err.innerHTML = errorHtml;
       $('contentGrid').style.display = 'grid';
@@ -1341,7 +1341,7 @@ async function fetchAll(){
     }
     
     if (data.warning || data.stale) {
-      const warningMsg = data.warning || 'Using cached data due to API error';
+      const warningMsg = data.warning || 'API შეცდომის გამო გამოიყენება დაკეშილი მონაცემები';
       console.warn('API Warning:', warningMsg);
       // Show a subtle warning to user
       const warningEl = document.createElement('div');
@@ -1349,7 +1349,7 @@ async function fetchAll(){
       warningEl.style.background = 'rgba(245,158,11,.1)';
       warningEl.style.borderColor = 'rgba(245,158,11,.3)';
       warningEl.style.color = '#f59e0b';
-      warningEl.innerHTML = `<strong>⚠️ ${data.stale ? 'Cached Data' : 'Rate Limit Warning'}:</strong> ${warningMsg}. Some data may be incomplete.`;
+      warningEl.innerHTML = `<strong>⚠️ ${data.stale ? 'დაკეშილი მონაცემები' : 'სიჩქარის ლიმიტის გაფრთხილება'}:</strong> ${warningMsg}. ზოგიერთი მონაცემი შეიძლება არასრული იყოს.`;
       const errorDiv = $('error');
       if (errorDiv && !errorDiv.querySelector('.error')) {
         errorDiv.appendChild(warningEl);
@@ -1361,7 +1361,7 @@ async function fetchAll(){
       console.warn('API Rate Limited - Retry after:', data.retryAfter, 'seconds');
       const errorEl = document.createElement('div');
       errorEl.className = 'error';
-      errorEl.innerHTML = `<strong>⚠️ Rate Limit Exceeded:</strong> ${data.message || 'CoinGecko API rate limit exceeded'}. Please wait ${data.retryAfter} seconds before refreshing.`;
+      errorEl.innerHTML = `<strong>⚠️ სიჩქარის ლიმიტი გადაჭარბებულია:</strong> ${data.message || 'CoinGecko API სიჩქარის ლიმიტი გადაჭარბებულია'}. გთხოვთ დაელოდოთ ${data.retryAfter} წამს განახლებამდე.`;
       $('error').innerHTML = '';
       $('error').appendChild(errorEl);
     }
@@ -1513,7 +1513,7 @@ window.deleteHolding = async (id) => {
     // Reload portfolio after delete
     await loadPortfolio();
   } catch (e) {
-    alert('Delete error: ' + e.message);
+    alert('წაშლის შეცდომა: ' + e.message);
     console.error('Delete holding error:', e);
   }
 };
@@ -1523,7 +1523,7 @@ $('addHoldingForm').onsubmit = async e => {
   const tokenId = $('holdingToken').value;
   const amount = parseFloat($('holdingAmount').value);
   const buyPrice = parseFloat($('buyPrice').value);
-  if(!tokenId || isNaN(amount) || isNaN(buyPrice)) return alert('Fill all fields');
+  if(!tokenId || isNaN(amount) || isNaN(buyPrice)) return alert('გთხოვთ შეავსოთ ყველა ველი');
   try {
     const token = await currentUser.getIdToken();
     const res = await fetch('/api/portfolio', {
@@ -1549,7 +1549,7 @@ $('addHoldingForm').onsubmit = async e => {
     console.log('Holding added, reloading portfolio...');
     await loadPortfolio();
   } catch (e) {
-    alert('Add error: ' + e.message);
+    alert('დამატების შეცდომა: ' + e.message);
     console.error('Add holding error:', e);
   }
 };
@@ -1562,7 +1562,7 @@ $('editHoldingForm').onsubmit = async e => {
   const buyPrice = parseFloat($('editHoldingBuyPrice').value);
   
   if (!id || isNaN(amount) || isNaN(buyPrice) || amount <= 0 || buyPrice <= 0) {
-    return alert('Please enter valid values for amount and buy price');
+    return alert('გთხოვთ შეიყვანოთ სწორი მნიშვნელობები რაოდენობისა და შესყიდვის ფასისთვის');
   }
   
   try {
@@ -1610,7 +1610,7 @@ $('editHoldingForm').onsubmit = async e => {
     $('editHoldingModal').classList.remove('show');
     await loadPortfolio();
   } catch (e) {
-    alert('Update error: ' + e.message);
+    alert('განახლების შეცდომა: ' + e.message);
     console.error('Edit holding error:', e);
   }
 };
@@ -1647,7 +1647,7 @@ async function loadAlerts(){
     console.error('Load alerts error:', e);
     // Don't show alert if it's just empty alerts
     if (!e.message.includes('404') && !e.message.includes('invalid response')) {
-      alert('Load alerts error: ' + e.message);
+      alert('შეტყობინებების ჩატვირთვის შეცდომა: ' + e.message);
     }
   }
 }
@@ -1660,15 +1660,15 @@ async function addAlert(alert) {
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ alert })
     });
-    if (res.status !== 200) throw new Error('Add failed');
+    if (res.status !== 200) throw new Error('დამატება ვერ მოხერხდა');
     loadAlerts();
   } catch (e) {
-    alert('Add error: ' + e.message);
+    alert('დამატების შეცდომა: ' + e.message);
   }
 }
 
 window.deleteAlert = async (id) => {
-  if(!confirm('Delete?')) return;
+  if(!confirm('წაშლა?')) return;
   try {
     const token = await currentUser.getIdToken();
     const res = await fetch(`/api/alerts?id=${encodeURIComponent(id)}`, {
@@ -1691,7 +1691,7 @@ window.deleteAlert = async (id) => {
     
     loadAlerts();
   } catch (e) {
-    alert('Delete alert error: ' + e.message);
+    alert('შეტყობინების წაშლის შეცდომა: ' + e.message);
     console.error('Delete alert error:', e);
   }
 };
@@ -1702,7 +1702,7 @@ $('addAlertForm').onsubmit = async e => {
   const condition = $('alertCondition').value;
   const target = parseFloat($('targetPrice').value);
   const message = $('alertMessage').value;
-  if(!tokenId || isNaN(target)) return alert('Fill all fields');
+  if(!tokenId || isNaN(target)) return alert('გთხოვთ შეავსოთ ყველა ველი');
   await addAlert({ tokenId, condition, target, message });
   e.target.reset();
 };
@@ -1728,18 +1728,18 @@ $('tokenSearch').oninput = async (e) => {
   clearTimeout(searchTimeout);
   searchTimeout = setTimeout(async () => {
     try {
-      resultsDiv.innerHTML = '<div style="padding:20px;text-align:center;color:#888;">Searching...</div>';
+      resultsDiv.innerHTML = '<div style="padding:20px;text-align:center;color:#888;">ძიება...</div>';
       resultsDiv.style.display = 'block';
       
       const res = await fetch(`/api/search-tokens?query=${encodeURIComponent(query)}`);
       const data = await res.json();
       
       if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Search failed');
+        throw new Error(data.error || 'ძიება ვერ მოხერხდა');
       }
       
       if (data.tokens.length === 0) {
-        resultsDiv.innerHTML = '<div style="padding:20px;text-align:center;color:#888;">No tokens found</div>';
+        resultsDiv.innerHTML = '<div style="padding:20px;text-align:center;color:#888;">ტოკენები არ მოიძებნა</div>';
         return;
       }
       
@@ -1768,7 +1768,7 @@ $('tokenSearch').oninput = async (e) => {
       
     } catch (error) {
       console.error('Search error:', error);
-      resultsDiv.innerHTML = `<div style="padding:20px;text-align:center;color:#ef4444;">Error: ${error.message}</div>`;
+      resultsDiv.innerHTML = `<div style="padding:20px;text-align:center;color:#ef4444;">შეცდომა: ${error.message}</div>`;
     }
   }, 300);
 };
@@ -1802,14 +1802,14 @@ document.addEventListener('click', (e) => {
 
 // Add token
 $('confirmAdd').onclick = async () => {
-  if (!selectedTokenId) return alert('Please select a token');
+  if (!selectedTokenId) return alert('გთხოვთ აირჩიოთ ტოკენი');
   
   const statusDiv = $('addTokenStatus');
   statusDiv.style.display = 'block';
   statusDiv.style.background = 'rgba(59,130,246,.1)';
   statusDiv.style.border = '1px solid rgba(59,130,246,.3)';
   statusDiv.style.color = '#3b82f6';
-  statusDiv.textContent = 'Adding token...';
+  statusDiv.textContent = 'ტოკენის დამატება...';
   $('confirmAdd').disabled = true;
   
   try {
@@ -1835,7 +1835,7 @@ $('confirmAdd').onclick = async () => {
     statusDiv.style.background = 'rgba(16,185,129,.1)';
     statusDiv.style.border = '1px solid rgba(16,185,129,.3)';
     statusDiv.style.color = '#10b981';
-    statusDiv.textContent = `✅ ${data.message || `Token "${selectedTokenId}" added successfully!`}`;
+    statusDiv.textContent = `✅ ${data.message || `ტოკენი "${selectedTokenId}" წარმატებით დაემატა!`}`;
     
     setTimeout(() => {
       $('addTokenModal').classList.remove('show');
@@ -1851,7 +1851,7 @@ $('confirmAdd').onclick = async () => {
     statusDiv.style.background = 'rgba(239,68,68,.1)';
     statusDiv.style.border = '1px solid rgba(239,68,68,.3)';
     statusDiv.style.color = '#ef4444';
-    statusDiv.textContent = `❌ Error: ${e.message}`;
+    statusDiv.textContent = `❌ შეცდომა: ${e.message}`;
     $('confirmAdd').disabled = false;
     console.error('Token add error:', e);
   }
@@ -1869,7 +1869,7 @@ function renderPortfolio(holdings) {
   let totalValue = 0, totalCost = 0;
   
   if (!holdings || Object.keys(holdings).length === 0) {
-    list.innerHTML = '<div style="text-align:center;padding:40px;color:#9aa0a6;font-size:14px;">No holdings yet. Add tokens to your portfolio!</div>';
+    list.innerHTML = '<div style="text-align:center;padding:40px;color:#9aa0a6;font-size:14px;">პოზიციები ჯერ არ არის. დაამატეთ ტოკენები თქვენს პორტფოლიოში!</div>';
     if ($('totalValue')) $('totalValue').textContent = '$0.00';
     if ($('totalPL')) {
       $('totalPL').textContent = '$0.00';
@@ -2123,11 +2123,11 @@ if ($('toggleAnalytics')) {
     if (analyticsDiv) {
       if (analyticsVisible) {
         analyticsDiv.style.display = 'block';
-        $('toggleAnalytics').textContent = 'Hide';
+        $('toggleAnalytics').textContent = 'დამალვა';
         $('toggleAnalytics').setAttribute('aria-expanded', 'true');
       } else {
         analyticsDiv.style.display = 'none';
-        $('toggleAnalytics').textContent = 'Show';
+        $('toggleAnalytics').textContent = 'ჩვენება';
         $('toggleAnalytics').setAttribute('aria-expanded', 'false');
       }
     }
@@ -2168,7 +2168,7 @@ function startEdit(el) {
   input.focus();
   const save = async () => {
     const newVal = parseFloat(input.value);
-    if (isNaN(newVal) || newVal < 0) return alert('Invalid value');
+    if (isNaN(newVal) || newVal < 0) return alert('არასწორი მნიშვნელობა');
     const holdingId = el.closest('.holding-row').dataset.id;
     await updateHolding(holdingId, field, newVal);
   };
@@ -2208,13 +2208,13 @@ function renderAlerts(alerts) {
         confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
       }
       if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification('CCX Alert', { body: `${a.message || ''} ${tokenName} is ${a.condition} $${a.target}!` });
+        new Notification('CCX შეტყობინება', { body: `${a.message || ''} ${tokenName} არის ${a.condition === 'above' ? 'ზემოთ' : 'ქვემოთ'} $${a.target}!` });
       }
       
       // Announce to screen readers
       const liveRegion = document.getElementById('liveRegion');
       if (liveRegion) {
-        liveRegion.textContent = `Alert triggered: ${tokenName} is ${a.condition} $${a.target}`;
+        liveRegion.textContent = `შეტყობინება გააქტიურდა: ${tokenName} არის ${a.condition === 'above' ? 'ზემოთ' : 'ქვემოთ'} $${a.target}`;
         setTimeout(() => liveRegion.textContent = '', 1000);
       }
     }
@@ -2226,11 +2226,11 @@ function renderAlerts(alerts) {
 function populateTokenSelect(id) {
   const sel = $(id);
   if (!sel) return; // Element doesn't exist
-  sel.innerHTML = '<option value="">Select Token</option>';
+  sel.innerHTML = '<option value="">ტოკენის არჩევა</option>';
   if (!cryptoData || cryptoData.length === 0) {
     const opt = document.createElement('option');
     opt.value = '';
-    opt.textContent = 'No tokens available';
+    opt.textContent = 'ტოკენები მიუწვდომელია';
     opt.disabled = true;
     sel.appendChild(opt);
     return;
