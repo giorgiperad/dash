@@ -32,32 +32,36 @@ module.exports = async (req, res) => {
     // Base URL: https://api.asi1.ai/v1
     const apiUrl = 'https://api.asi1.ai/v1/chat/completions';
     
-    // Build system prompt with crypto context
-    let systemPrompt = `You are an expert cryptocurrency market analyst and advisor. You help users understand crypto markets, analyze trends, and make informed decisions.
-
-Your capabilities include:
-- Analyzing cryptocurrency market trends and price movements
-- Explaining complex crypto concepts in simple terms
-- Providing portfolio advice and diversification strategies
-- Interpreting market data and technical indicators
-- Answering questions about specific cryptocurrencies
-- Providing market sentiment analysis
-
-Always be helpful, accurate, and provide actionable insights. If you don't know something, say so.`;
-
+    // For custom agents, system prompt may be defined in the agent itself
+    // But we can still provide context to enhance responses
+    let systemPrompt = '';
+    let userMessage = message;
+    
     // Add context if provided (market data, portfolio info, etc.)
     if (context) {
+      let contextText = '';
       if (context.marketData) {
-        systemPrompt += `\n\nCurrent Market Context:\n${JSON.stringify(context.marketData, null, 2)}`;
+        contextText += `\n\nCurrent Market Context:\n${JSON.stringify(context.marketData, null, 2)}`;
       }
       if (context.portfolio) {
-        systemPrompt += `\n\nUser Portfolio:\n${JSON.stringify(context.portfolio, null, 2)}`;
+        contextText += `\n\nUser Portfolio:\n${JSON.stringify(context.portfolio, null, 2)}`;
+      }
+      if (contextText) {
+        // Append context to user message for custom agents
+        userMessage = `${message}\n\n${contextText}`;
       }
     }
 
-    // Try different agentic models in order of preference
-    // According to docs: asi1-agentic, asi1-fast-agentic, asi1-extended-agentic
-    const models = ['asi1-fast-agentic', 'asi1-agentic', 'asi1-extended-agentic'];
+    // Use custom agent: https://asi1.ai/ai/ccx
+    // Custom agents can be referenced by their ID
+    const customAgentId = 'ccx'; // Your custom agent ID from asi1.ai/ai/ccx
+    const models = [
+      customAgentId, // Try custom agent first
+      'ai/ccx', // Alternative format
+      'asi1-fast-agentic', // Fallback to generic models
+      'asi1-agentic',
+      'asi1-extended-agentic'
+    ];
     let lastError;
     let data;
     
@@ -69,20 +73,26 @@ Always be helpful, accurate, and provide actionable insights. If you don't know 
     
     for (const model of models) {
       try {
+        // Build request body - custom agents may not need system prompt
         const requestBody = {
           model: model,
-          messages: [
+          messages: systemPrompt ? [
             {
               role: 'system',
               content: systemPrompt
             },
             {
               role: 'user',
-              content: message
+              content: userMessage
+            }
+          ] : [
+            {
+              role: 'user',
+              content: userMessage
             }
           ],
           temperature: 0.7,
-          max_tokens: 1000
+          max_tokens: 2000 // Increased for custom agents
         };
 
         console.log(`Trying model: ${model}`);
@@ -162,7 +172,7 @@ Always be helpful, accurate, and provide actionable insights. If you don't know 
     return res.status(200).json({
       success: true,
       message: aiMessage,
-      model: data.model || 'asi1-fast-agentic',
+      model: data.model || customAgentId || 'asi1-fast-agentic',
       usage: data.usage || null,
       sessionId: sessionId // Return session ID for client to maintain context
     });
