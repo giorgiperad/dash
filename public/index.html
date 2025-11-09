@@ -450,42 +450,29 @@ body{
     </div>
   </div>
 
-  <!-- Token of the Day Section -->
-  <div id="tokenOfTheDay" style="display:none;margin-bottom:32px;background:rgba(20,20,30,.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:24px;position:relative;overflow:hidden;" role="region" aria-label="Token of the day">
+  <!-- Crypto ETF Data Section (moved from sidebar) -->
+  <div id="etfDataMain" style="display:none;margin-bottom:32px;background:rgba(20,20,30,.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:24px;position:relative;overflow:hidden;" role="region" aria-label="Crypto ETF Data">
     <div style="position:absolute;top:0;right:0;width:200px;height:200px;background:radial-gradient(circle,rgba(99,102,241,.1) 0%,transparent 70%);pointer-events:none;"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;position:relative;z-index:1;">
       <div>
-        <div style="font-size:11px;color:#6366f1;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:4px;"></div>
-        <h3 id="todTokenName" style="font-size:20px;font-weight:600;color:#fafafa;letter-spacing:-0.3px;">-</h3>
-        <div id="todTokenSymbol" style="font-size:13px;color:#71717a;margin-top:4px;">-</div>
+        <div style="font-size:11px;color:#6366f1;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:4px;">📊 კრიპტო ETF მონაცემები</div>
+        <h3 style="font-size:20px;font-weight:600;color:#fafafa;letter-spacing:-0.3px;">Bitcoin & Ethereum ETF</h3>
       </div>
-      <div id="todTokenIcon" style="width:64px;height:64px;border-radius:50%;border:2px solid rgba(255,255,255,.1);overflow:hidden;background:rgba(20,20,30,.5);display:flex;align-items:center;justify-content:center;font-size:24px;">-</div>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;position:relative;z-index:1;" id="todStatsGrid">
-      <div role="region" aria-label="ტოკენის ფასი">
-        <div style="font-size:11px;color:#71717a;margin-bottom:4px;">ფასი</div>
-        <div id="todPrice" style="font-size:18px;font-weight:600;color:#fafafa;" aria-live="polite">-</div>
-      </div>
-      <div role="region" aria-label="24 საათიანი ფასის ცვლილება">
-        <div style="font-size:11px;color:#71717a;margin-bottom:4px;">24სთ ცვლილება</div>
-        <div id="todChange" style="font-size:18px;font-weight:600;" aria-live="polite">-</div>
-      </div>
-      <div role="region" aria-label="საბაზრო კაპიტალიზაცია">
-        <div style="font-size:11px;color:#71717a;margin-bottom:4px;">საბაზრო კაპიტალიზაცია</div>
-        <div id="todMarketCap" style="font-size:18px;font-weight:600;color:#fafafa;" aria-live="polite">-</div>
-      </div>
+    <div id="etfDataMainContent" style="position:relative;z-index:1;">
+      <div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">ჩატვირთვა...</div>
     </div>
   </div>
 
   <div class="content-grid" id="contentGrid" style="display:none;">
     <div class="sidebar-section" id="sidebarSection">
-      <!-- Crypto ETF Data from SoSoValue -->
+      <!-- Top Gainer of Day (moved from main area) -->
       <div class="sidebar-card" style="background:rgba(15,20,30,.6);backdrop-filter:blur(16px) saturate(180%);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,.08);margin-bottom:20px;box-shadow:0 4px 16px rgba(0,0,0,.2);">
         <div style="font-size:13px;font-weight:600;margin-bottom:18px;text-transform:uppercase;letter-spacing:0.8px;color:#9aa0a6;display:flex;align-items:center;gap:8px;">
-          <span style="opacity:0.8;">📊</span> 
-          <span>კრიპტო ETF მონაცემები</span>
+          <span style="opacity:0.8;">🚀</span> 
+          <span>დღის ტოპ გეინერი</span>
         </div>
-        <div id="etfDataList" class="etf-data-list" style="display:flex;flex-direction:column;gap:10px;">
+        <div id="topGainerSidebar" style="display:flex;flex-direction:column;gap:12px;">
           <div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">ჩატვირთვა...</div>
         </div>
       </div>
@@ -1681,9 +1668,144 @@ if ($('toggleVisibility')) {
   };
 }
 
-/* ---------- TOKEN OF THE DAY ---------- */
-function renderTokenOfTheDay() {
-  if (!cryptoData || cryptoData.length === 0) return;
+/* ---------- ETF DATA (Main Area) ---------- */
+async function loadETFDataMain() {
+  const container = $('etfDataMainContent');
+  if (!container) return;
+  
+  try {
+    const res = await fetch('/api/etf-data');
+    const data = await res.json();
+    
+    if (!res.ok || !data.success) {
+      container.innerHTML = '<div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">ETF მონაცემები მიუწვდომელია</div>';
+      return;
+    }
+    
+    if ($('etfDataMain')) $('etfDataMain').style.display = 'block';
+    renderETFDataMain(data.etfData || {});
+  } catch (error) {
+    console.error('ETF data load error:', error);
+    container.innerHTML = '<div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">ETF მონაცემების ჩატვირთვის შეცდომა</div>';
+  }
+}
+
+function renderETFDataMain(etfData) {
+  const container = $('etfDataMainContent');
+  if (!container) return;
+  
+  const formatFlow = (value) => {
+    if (value === null || value === undefined || isNaN(value)) return 'N/A';
+    const abs = Math.abs(value);
+    if (abs >= 1000000000) return `${(value / 1000000000).toFixed(2)}B`;
+    if (abs >= 1000000) return `${(value / 1000000).toFixed(2)}M`;
+    return `${value.toFixed(0)}`;
+  };
+  
+  const formatAUM = (value) => {
+    if (value === null || value === undefined || isNaN(value)) return 'N/A';
+    if (value >= 1000000000) return `$${(value / 1000000000).toFixed(2)}B`;
+    if (value >= 1000000) return `$${(value / 1000000).toFixed(2)}M`;
+    return `$${value.toFixed(0)}`;
+  };
+  
+  const formatDate = (dateStr) => {
+    if (!dateStr) return '';
+    try {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('ka-GE', { year: 'numeric', month: 'short', day: 'numeric' });
+    } catch {
+      return dateStr;
+    }
+  };
+  
+  let html = '';
+  
+  // Bitcoin ETF
+  if (etfData.btc) {
+    const btc = etfData.btc;
+    const dailyNetInflow = btc.dailyNetInflow?.value || btc.dailyNetInflow || 0;
+    const cumNetInflow = btc.cumNetInflow?.value || btc.cumNetInflow || 0;
+    const totalNetAssets = btc.totalNetAssets?.value || btc.totalNetAssets || 0;
+    const flowColor = dailyNetInflow >= 0 ? '#22c55e' : '#ef4444';
+    
+    html += `
+      <div style="margin-bottom:24px;padding:20px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:12px;">
+        <div style="font-size:16px;font-weight:600;color:#fafafa;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+          <span>₿</span> Bitcoin ETF
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+          <div>
+            <div style="font-size:11px;color:#9aa0a6;margin-bottom:6px;text-transform:uppercase;">წმინდა შემოდინება (დღეს)</div>
+            <div style="font-size:18px;font-weight:600;color:${flowColor};">${formatFlow(dailyNetInflow)}</div>
+            ${btc.dailyNetInflowDate || btc.dailyNetInflow?.lastUpdateDate ? `<div style="font-size:10px;color:#6b7280;margin-top:4px;">${formatDate(btc.dailyNetInflowDate || btc.dailyNetInflow?.lastUpdateDate)}</div>` : ''}
+          </div>
+          <div>
+            <div style="font-size:11px;color:#9aa0a6;margin-bottom:6px;text-transform:uppercase;">კუმულაციური შემოდინება</div>
+            <div style="font-size:18px;font-weight:600;color:#fafafa;">${formatFlow(cumNetInflow)}</div>
+            ${btc.cumNetInflowDate || btc.cumNetInflow?.lastUpdateDate ? `<div style="font-size:10px;color:#6b7280;margin-top:4px;">${formatDate(btc.cumNetInflowDate || btc.cumNetInflow?.lastUpdateDate)}</div>` : ''}
+          </div>
+          <div>
+            <div style="font-size:11px;color:#9aa0a6;margin-bottom:6px;text-transform:uppercase;">საერთო აქტივები</div>
+            <div style="font-size:18px;font-weight:600;color:#fafafa;">${formatAUM(totalNetAssets)}</div>
+            ${btc.totalNetAssetsDate || btc.totalNetAssets?.lastUpdateDate ? `<div style="font-size:10px;color:#6b7280;margin-top:4px;">${formatDate(btc.totalNetAssetsDate || btc.totalNetAssets?.lastUpdateDate)}</div>` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  // Ethereum ETF
+  if (etfData.eth) {
+    const eth = etfData.eth;
+    const dailyNetInflow = eth.dailyNetInflow?.value || eth.dailyNetInflow || 0;
+    const cumNetInflow = eth.cumNetInflow?.value || eth.cumNetInflow || 0;
+    const totalNetAssets = eth.totalNetAssets?.value || eth.totalNetAssets || 0;
+    const flowColor = dailyNetInflow >= 0 ? '#22c55e' : '#ef4444';
+    
+    html += `
+      <div style="padding:20px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:12px;">
+        <div style="font-size:16px;font-weight:600;color:#fafafa;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+          <span>Ξ</span> Ethereum ETF
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+          <div>
+            <div style="font-size:11px;color:#9aa0a6;margin-bottom:6px;text-transform:uppercase;">წმინდა შემოდინება (დღეს)</div>
+            <div style="font-size:18px;font-weight:600;color:${flowColor};">${formatFlow(dailyNetInflow)}</div>
+            ${eth.dailyNetInflowDate || eth.dailyNetInflow?.lastUpdateDate ? `<div style="font-size:10px;color:#6b7280;margin-top:4px;">${formatDate(eth.dailyNetInflowDate || eth.dailyNetInflow?.lastUpdateDate)}</div>` : ''}
+          </div>
+          <div>
+            <div style="font-size:11px;color:#9aa0a6;margin-bottom:6px;text-transform:uppercase;">კუმულაციური შემოდინება</div>
+            <div style="font-size:18px;font-weight:600;color:#fafafa;">${formatFlow(cumNetInflow)}</div>
+            ${eth.cumNetInflowDate || eth.cumNetInflow?.lastUpdateDate ? `<div style="font-size:10px;color:#6b7280;margin-top:4px;">${formatDate(eth.cumNetInflowDate || eth.cumNetInflow?.lastUpdateDate)}</div>` : ''}
+          </div>
+          <div>
+            <div style="font-size:11px;color:#9aa0a6;margin-bottom:6px;text-transform:uppercase;">საერთო აქტივები</div>
+            <div style="font-size:18px;font-weight:600;color:#fafafa;">${formatAUM(totalNetAssets)}</div>
+            ${eth.totalNetAssetsDate || eth.totalNetAssets?.lastUpdateDate ? `<div style="font-size:10px;color:#6b7280;margin-top:4px;">${formatDate(eth.totalNetAssetsDate || eth.totalNetAssets?.lastUpdateDate)}</div>` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  if (!html) {
+    container.innerHTML = '<div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">ETF მონაცემები არ არის ხელმისაწვდომი</div>';
+    return;
+  }
+  
+  container.innerHTML = html;
+}
+
+/* ---------- TOP GAINER OF DAY (Sidebar) ---------- */
+function renderTopGainerSidebar() {
+  const container = $('topGainerSidebar');
+  if (!container) return;
+  
+  if (!cryptoData || cryptoData.length === 0) {
+    container.innerHTML = '<div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">მონაცემები მიუწვდომელია</div>';
+    return;
+  }
   
   // Select token with highest 24h gain % from tracked tokens
   const token = [...cryptoData]
@@ -1699,25 +1821,31 @@ function renderTokenOfTheDay() {
       return changeB - changeA;
     })[0];
   
-  if (!token) return;
+  if (!token) {
+    container.innerHTML = '<div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">ტოკენები არ მოიძებნა</div>';
+    return;
+  }
   
-  if ($('tokenOfTheDay')) $('tokenOfTheDay').style.display = 'block';
-  if ($('todTokenName')) $('todTokenName').textContent = token.name || token.id;
-  if ($('todTokenSymbol')) $('todTokenSymbol').textContent = token.symbol?.toUpperCase() || token.id.toUpperCase();
-  if ($('todTokenIcon')) {
-    if (token.image) {
-      $('todTokenIcon').innerHTML = `<img src="${token.image}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.textContent='💰'">`;
-    } else {
-      $('todTokenIcon').textContent = '💰';
-    }
-  }
-  if ($('todPrice')) $('todPrice').textContent = `$${formatPrice(token.current_price || 0)}`;
-  if ($('todChange')) {
-    const change = token.price_change_percentage_24h || 0;
-    $('todChange').textContent = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
-    $('todChange').style.color = change >= 0 ? '#22c55e' : '#ef4444';
-  }
-  if ($('todMarketCap')) $('todMarketCap').textContent = `$${formatMarketCap(token.market_cap || 0)}`;
+  const change = token.price_change_percentage_24h || 0;
+  const changeColor = change >= 0 ? '#22c55e' : '#ef4444';
+  
+  container.innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;padding:16px;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);border-radius:12px;">
+      <div style="width:48px;height:48px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;background:rgba(20,20,30,.5);">
+        ${token.image ? `<img src="${token.image}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='💰'">` : '💰'}
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:600;font-size:14px;color:#fafafa;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${token.name || token.id}</div>
+        <div style="font-size:11px;color:#71717a;margin-top:2px;">${(token.symbol || token.id).toUpperCase()}</div>
+        <div style="margin-top:8px;display:flex;align-items:center;gap:8px;">
+          <div style="font-size:13px;font-weight:600;color:#fafafa;">$${formatPrice(token.current_price || 0)}</div>
+          <div style="font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;background:${changeColor}20;color:${changeColor};border:1px solid ${changeColor}40;">
+            ${change >= 0 ? '+' : ''}${change.toFixed(2)}%
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 /* ---------- HAPTIC FEEDBACK (Mobile) ---------- */
@@ -1863,9 +1991,9 @@ async function fetchAll(){
     renderAll();
            // Ensure all sidebar sections are rendered
            if (cryptoData && cryptoData.length > 0) {
-             loadETFData();
+             loadETFDataMain(); // Load ETF data to main area
              renderRecentActivity();
-             renderTokenOfTheDay();
+             renderTopGainerSidebar(); // Render top gainer to sidebar
            }
     $('contentGrid').style.display = 'grid';
     $('heroStats').style.display = 'grid';
