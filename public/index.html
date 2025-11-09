@@ -2026,31 +2026,27 @@ function renderETFDataMain(etfData) {
     const flowColor = dailyNetInflow >= 0 ? '#22c55e' : '#ef4444';
     
     return `
-      <div style="background:rgba(20,20,30,.6);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:20px;flex:1;min-width:0;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.1);">
-          <div style="font-size:18px;">${symbol}</div>
-          <div style="font-size:16px;font-weight:600;color:#fafafa;">${name} ETF</div>
+      <div class="carousel-card" style="flex:1;min-width:0;">
+        <div class="carousel-card-header">
+          <div class="carousel-card-title">${symbol} ${name} ETF</div>
+          <span class="carousel-card-arrow">→</span>
         </div>
         
-        <div style="display:flex;flex-direction:column;gap:12px;">
-          <!-- Daily Net Inflow -->
-          <div style="background:rgba(10,14,26,.5);border:1px solid rgba(255,255,255,.05);border-radius:8px;padding:14px;">
-            <div style="font-size:10px;color:#9aa0a6;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">დღის შემოდინება</div>
-            <div style="font-size:20px;font-weight:600;color:${flowColor};margin-bottom:4px;">${formatFlow(dailyNetInflow)}</div>
-            <div style="font-size:9px;color:#71717a;margin-top:6px;">${dailyNetInflowDate}</div>
-          </div>
-          
-          <!-- Cumulative Net Inflow -->
-          <div style="background:rgba(10,14,26,.5);border:1px solid rgba(255,255,255,.05);border-radius:8px;padding:14px;">
-            <div style="font-size:10px;color:#9aa0a6;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">კუმულაციური</div>
-            <div style="font-size:20px;font-weight:600;color:#fafafa;margin-bottom:4px;">${formatFlow(cumNetInflow)}</div>
-          </div>
-          
-          <!-- Total Net Assets -->
-          <div style="background:rgba(10,14,26,.5);border:1px solid rgba(255,255,255,.05);border-radius:8px;padding:14px;">
-            <div style="font-size:10px;color:#9aa0a6;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">საერთო აქტივები</div>
-            <div style="font-size:20px;font-weight:600;color:#fafafa;margin-bottom:4px;">${formatAUM(totalNetAssets)}</div>
-          </div>
+        <!-- Daily Net Inflow -->
+        <div class="carousel-card-value" style="color:${flowColor};margin-bottom:8px;">${formatFlow(dailyNetInflow)}</div>
+        <div class="carousel-card-subtitle" style="margin-bottom:12px;">დღის შემოდინება</div>
+        <div style="font-size:9px;color:#6b7280;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.05);">${dailyNetInflowDate}</div>
+        
+        <!-- Cumulative Net Inflow -->
+        <div style="margin-bottom:12px;">
+          <div style="font-size:10px;color:#8b8b95;text-transform:uppercase;letter-spacing:1.2px;font-weight:700;margin-bottom:6px;font-family:'Inter',sans-serif;">კუმულაციური</div>
+          <div style="font-size:16px;font-weight:700;color:#ffffff;letter-spacing:-0.2px;line-height:1.2;font-family:'Inter',sans-serif;">${formatFlow(cumNetInflow)}</div>
+        </div>
+        
+        <!-- Total Net Assets -->
+        <div>
+          <div style="font-size:10px;color:#8b8b95;text-transform:uppercase;letter-spacing:1.2px;font-weight:700;margin-bottom:6px;font-family:'Inter',sans-serif;">საერთო აქტივები</div>
+          <div style="font-size:16px;font-weight:700;color:#ffffff;letter-spacing:-0.2px;line-height:1.2;font-family:'Inter',sans-serif;">${formatAUM(totalNetAssets)}</div>
         </div>
       </div>
     `;
