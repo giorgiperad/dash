@@ -1,4 +1,4 @@
-# Ignore Firebase Functions directory
+# Ignore Firebase Functions directory completely
 functions/
 functions/**
 functions/*
@@ -8,8 +8,4 @@ node_modules/
 .env
 .env.local
 *.log
-
-# Explicitly ignore Firebase Functions files
-**/functions/index.js
-**/functions/**/*.js
 

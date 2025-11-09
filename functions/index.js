@@ -12,15 +12,39 @@ exports.getMarketData = functions.https.onCall(async (data, context) => {
 
   const ids = tokens.join(',');
   const [market, global, fg] = await Promise.all([
-    fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&price_change_percentage=24h`).then(r => r.json()),
-    fetch('https://api.coingecko.com/api/v3/global').then(r => r.json()),
-    fetch('https://api.alternative.me/fng/').then(r => r.json())
+    fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&price_change_percentage=24h`)
+      .then(r => {
+        if (!r.ok) throw new Error(`CoinGecko API error: ${r.status}`);
+        return r.json();
+      })
+      .catch(error => {
+        console.error('Market data fetch error:', error);
+        return [];
+      }),
+    fetch('https://api.coingecko.com/api/v3/global')
+      .then(r => {
+        if (!r.ok) throw new Error(`CoinGecko Global API error: ${r.status}`);
+        return r.json();
+      })
+      .catch(error => {
+        console.error('Global data fetch error:', error);
+        return { data: null };
+      }),
+    fetch('https://api.alternative.me/fng/')
+      .then(r => {
+        if (!r.ok) throw new Error(`Fear & Greed API error: ${r.status}`);
+        return r.json();
+      })
+      .catch(error => {
+        console.error('Fear & Greed fetch error:', error);
+        return { data: [] };
+      })
   ]);
 
   return {
-    cryptoData: market,
-    globalData: global.data,
-    fearGreed: fg.data[0]
+    cryptoData: market || [],
+    globalData: global?.data || null,
+    fearGreed: fg?.data?.[0] || null
   };
 });
 

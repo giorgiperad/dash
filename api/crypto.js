@@ -22,10 +22,26 @@ export default async function handler(req, res) {
     res.status(400).json({ error: 'Missing URL parameter' });
     return;
   }
+
+  // Validate URL to prevent SSRF attacks
+  let decodedUrl;
+  try {
+    decodedUrl = decodeURIComponent(url);
+    const urlObj = new URL(decodedUrl);
+    // Only allow CoinGecko and alternative.me domains
+    const allowedDomains = ['api.coingecko.com', 'alternative.me'];
+    if (!allowedDomains.some(domain => urlObj.hostname.includes(domain))) {
+      res.status(400).json({ error: 'Invalid URL domain. Only CoinGecko and alternative.me are allowed.' });
+      return;
+    }
+  } catch (error) {
+    res.status(400).json({ error: 'Invalid URL format' });
+    return;
+  }
   
   try {
     // Fetch CoinGecko-დან (Vercel-ის სერვერზე CORS არ იბლოკება)
-    const response = await fetch(decodeURIComponent(url), {
+    const response = await fetch(decodedUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; CryptoCollectiveX/1.0)'
       }
