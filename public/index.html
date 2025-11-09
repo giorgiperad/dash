@@ -414,16 +414,11 @@ body{
       <button class="admin-btn" id="refreshBtn" style="padding:10px 20px;background:rgba(52,168,83,.12);border:1.5px solid rgba(52,168,83,.25);color:#34a853;font-size:13px;font-weight:600;border-radius:10px;cursor:pointer;transition:all .25s;letter-spacing:0.3px;">🔄 Refresh</button>
     </div>
     
-    <!-- Music Player -->
-    <div id="musicPlayer" style="position:fixed;bottom:24px;right:24px;z-index:999;display:flex;align-items:center;gap:12px;padding:14px 20px;background:linear-gradient(135deg,rgba(15,20,30,.95) 0%,rgba(26,10,46,.95) 100%);backdrop-filter:blur(24px) saturate(200%);border:2px solid rgba(139,92,246,.3);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 0 1px rgba(139,92,246,.2) inset;animation:slideInRight .6s ease-out;">
-      <button id="musicToggle" style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6 0%,#7c3aed 100%);border:none;color:#fff;font-size:20px;cursor:pointer;transition:all .3s;box-shadow:0 4px 16px rgba(139,92,246,.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;" title="Play/Pause Music">
-        <span id="musicIcon">▶️</span>
+    <!-- Music Player - Minimal Style -->
+    <div id="musicPlayer" style="position:fixed;bottom:24px;left:24px;z-index:999;">
+      <button id="musicToggle" style="width:40px;height:40px;border-radius:50%;background:rgba(139,92,246,.15);border:1.5px solid rgba(139,92,246,.3);color:#c4b5fd;font-size:16px;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px);box-shadow:0 2px 8px rgba(0,0,0,.2);" title="Play/Pause Music">
+        <span id="musicIcon">▶</span>
       </button>
-      <div style="display:flex;flex-direction:column;gap:4px;min-width:120px;">
-        <div style="font-size:12px;font-weight:600;color:#c4b5fd;text-transform:uppercase;letter-spacing:0.5px;">Hakuna Matata</div>
-        <div style="font-size:10px;color:#9aa0a6;opacity:0.8;">The Lion King</div>
-      </div>
-      <input type="range" id="musicVolume" min="0" max="100" value="50" style="width:80px;height:4px;background:rgba(255,255,255,.1);border-radius:2px;outline:none;cursor:pointer;accent-color:#8b5cf6;" title="Volume">
       <audio id="backgroundMusic" loop>
         <source src="/hakuna-matata.mp3" type="audio/mpeg">
         <source src="/hakuna-matata.ogg" type="audio/ogg">
@@ -1025,24 +1020,14 @@ window.sortBy = function(col) {
   renderTokens();
 };
 
-/* ---------- MUSIC PLAYER ---------- */
+/* ---------- MUSIC PLAYER - MINIMAL ---------- */
 const musicPlayer = $('backgroundMusic');
 const musicToggle = $('musicToggle');
 const musicIcon = $('musicIcon');
-const musicVolume = $('musicVolume');
 
-// Set initial volume
-if (musicPlayer && musicVolume) {
-  musicPlayer.volume = musicVolume.value / 100;
-}
-
-// Volume control
-if (musicVolume) {
-  musicVolume.oninput = (e) => {
-    if (musicPlayer) {
-      musicPlayer.volume = e.target.value / 100;
-    }
-  };
+// Set initial volume (50%)
+if (musicPlayer) {
+  musicPlayer.volume = 0.5;
 }
 
 // Play/Pause toggle
@@ -1052,18 +1037,40 @@ if (musicToggle) {
     
     if (musicPlayer.paused) {
       musicPlayer.play().then(() => {
-        musicIcon.textContent = '⏸️';
-        musicToggle.style.background = 'linear-gradient(135deg,#10b981 0%,#059669 100%)';
-        musicToggle.style.boxShadow = '0 4px 16px rgba(16,185,129,.4)';
+        musicIcon.textContent = '⏸';
+        musicToggle.style.background = 'rgba(16,185,129,.15)';
+        musicToggle.style.borderColor = 'rgba(16,185,129,.3)';
+        musicToggle.style.color = '#10b981';
       }).catch(e => {
         console.error('Error playing music:', e);
-        alert('Unable to play music. Please check if the audio file exists at /hakuna-matata.mp3');
       });
     } else {
       musicPlayer.pause();
-      musicIcon.textContent = '▶️';
-      musicToggle.style.background = 'linear-gradient(135deg,#8b5cf6 0%,#7c3aed 100%)';
-      musicToggle.style.boxShadow = '0 4px 16px rgba(139,92,246,.4)';
+      musicIcon.textContent = '▶';
+      musicToggle.style.background = 'rgba(139,92,246,.15)';
+      musicToggle.style.borderColor = 'rgba(139,92,246,.3)';
+      musicToggle.style.color = '#c4b5fd';
+    }
+  };
+  
+  // Hover effects
+  musicToggle.onmouseenter = () => {
+    if (musicPlayer && !musicPlayer.paused) {
+      musicToggle.style.background = 'rgba(16,185,129,.25)';
+      musicToggle.style.borderColor = 'rgba(16,185,129,.4)';
+    } else {
+      musicToggle.style.background = 'rgba(139,92,246,.25)';
+      musicToggle.style.borderColor = 'rgba(139,92,246,.4)';
+    }
+  };
+  
+  musicToggle.onmouseleave = () => {
+    if (musicPlayer && !musicPlayer.paused) {
+      musicToggle.style.background = 'rgba(16,185,129,.15)';
+      musicToggle.style.borderColor = 'rgba(16,185,129,.3)';
+    } else {
+      musicToggle.style.background = 'rgba(139,92,246,.15)';
+      musicToggle.style.borderColor = 'rgba(139,92,246,.3)';
     }
   };
 }
@@ -1075,14 +1082,17 @@ if (musicPlayer) {
     const musicPlayerDiv = $('musicPlayer');
     if (musicPlayerDiv) {
       musicPlayerDiv.style.opacity = '0.5';
-      musicPlayerDiv.title = 'Audio file not found. Add hakuna-matata.mp3 to /public folder.';
     }
   };
   
   // Update icon when music ends (shouldn't happen with loop, but just in case)
   musicPlayer.onended = () => {
-    musicIcon.textContent = '▶️';
-    musicToggle.style.background = 'linear-gradient(135deg,#8b5cf6 0%,#7c3aed 100%)';
+    if (musicIcon) musicIcon.textContent = '▶';
+    if (musicToggle) {
+      musicToggle.style.background = 'rgba(139,92,246,.15)';
+      musicToggle.style.borderColor = 'rgba(139,92,246,.3)';
+      musicToggle.style.color = '#c4b5fd';
+    }
   };
 }
 
