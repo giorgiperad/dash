@@ -479,13 +479,13 @@ body{
 
   <div class="content-grid" id="contentGrid" style="display:none;">
     <div class="sidebar-section" id="sidebarSection">
-      <!-- Option 4: Price Ranges & Levels -->
+      <!-- Crypto ETF Data from SoSoValue -->
       <div class="sidebar-card" style="background:rgba(15,20,30,.6);backdrop-filter:blur(16px) saturate(180%);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,.08);margin-bottom:20px;box-shadow:0 4px 16px rgba(0,0,0,.2);">
         <div style="font-size:13px;font-weight:600;margin-bottom:18px;text-transform:uppercase;letter-spacing:0.8px;color:#9aa0a6;display:flex;align-items:center;gap:8px;">
-          <span style="opacity:0.8;">📈</span> 
-          <span>ფასის დიაპაზონები</span>
+          <span style="opacity:0.8;">📊</span> 
+          <span>კრიპტო ETF მონაცემები</span>
         </div>
-        <div id="priceRangesList" class="price-ranges-list" style="display:flex;flex-direction:column;gap:10px;">
+        <div id="etfDataList" class="etf-data-list" style="display:flex;flex-direction:column;gap:10px;">
           <div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">ჩატვირთვა...</div>
         </div>
       </div>
@@ -891,7 +891,7 @@ function renderAll() {
   renderHeroStats();
   renderTokens();
   if (cryptoData && cryptoData.length > 0) {
-    renderPriceRanges();
+    loadETFData();
     renderRecentActivity();
     renderMarketHealth();
   }
@@ -899,72 +899,115 @@ function renderAll() {
   populateTokenSelect('alertToken');
 }
 
-// Option 4: Price Ranges & Levels
-function renderPriceRanges() {
-  const rangesList = $('priceRangesList');
-  if (!rangesList) {
-    console.warn('priceRangesList element not found');
+// Crypto ETF Data from SoSoValue
+let etfDataCache = null;
+async function loadETFData() {
+  const etfList = $('etfDataList');
+  if (!etfList) {
+    console.warn('etfDataList element not found');
     return;
   }
   
-  if (!cryptoData || cryptoData.length === 0) {
-    rangesList.innerHTML = '<div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">ბაზრის მონაცემები მიუწვდომელია</div>';
-    return;
+  try {
+    const res = await fetch('/api/etf-data');
+    const data = await res.json();
+    
+    if (!res.ok || !data.success) {
+      etfList.innerHTML = '<div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">ETF მონაცემები მიუწვდომელია</div>';
+      return;
+    }
+    
+    etfDataCache = data;
+    renderETFData(data);
+  } catch (error) {
+    console.error('Error loading ETF data:', error);
+    etfList.innerHTML = '<div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">ETF მონაცემების ჩატვირთვის შეცდომა</div>';
   }
+}
+
+function renderETFData(data) {
+  const etfList = $('etfDataList');
+  if (!etfList) return;
   
-  // Get top 5 tokens by market cap for price ranges
-  const topTokens = [...cryptoData]
-    .filter(t => t.market_cap && t.market_cap > 0)
-    .sort((a, b) => (b.market_cap || 0) - (a.market_cap || 0))
-    .slice(0, 5);
+  const formatFlow = (value) => {
+    if (!value && value !== 0) return 'N/A';
+    const abs = Math.abs(value);
+    if (abs >= 1000000000) return `${value >= 0 ? '+' : ''}$${(value / 1000000000).toFixed(2)}B`;
+    if (abs >= 1000000) return `${value >= 0 ? '+' : ''}$${(value / 1000000).toFixed(2)}M`;
+    return `${value >= 0 ? '+' : ''}$${value.toFixed(0)}`;
+  };
   
-  if (topTokens.length === 0) {
-    rangesList.innerHTML = '<div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">მონაცემები მიუწვდომელია</div>';
-    return;
-  }
+  const formatAUM = (value) => {
+    if (!value && value !== 0) return 'N/A';
+    const abs = Math.abs(value);
+    if (abs >= 1000000000) return `$${(value / 1000000000).toFixed(2)}B`;
+    if (abs >= 1000000) return `$${(value / 1000000).toFixed(2)}M`;
+    return `$${value.toFixed(0)}`;
+  };
   
-  rangesList.innerHTML = topTokens.map(token => {
-    const current = token.current_price || 0;
-    const high24h = token.high_24h || current;
-    const low24h = token.low_24h || current;
-    const range = high24h - low24h;
-    const rangePercent = high24h > 0 ? ((range / high24h) * 100) : 0;
+  // Extract BTC and ETH ETF data
+  const btcData = data.btc || data.data?.btc || null;
+  const ethData = data.eth || data.data?.eth || null;
+  
+  let html = '';
+  
+  // Bitcoin ETF
+  if (btcData) {
+    const netFlow = btcData.netFlow || btcData.net_inflow || btcData.flow || 0;
+    const totalAUM = btcData.totalAUM || btcData.total_assets || btcData.aum || 0;
+    const flowColor = netFlow >= 0 ? '#22c55e' : '#ef4444';
     
-    // Calculate position of current price in the range (0-100%)
-    const positionInRange = range > 0 ? ((current - low24h) / range) * 100 : 50;
-    const clampedPosition = Math.max(0, Math.min(100, positionInRange));
-    
-    // Distance from high/low
-    const distanceFromHigh = high24h > 0 ? ((high24h - current) / high24h * 100) : 0;
-    const distanceFromLow = low24h > 0 ? ((current - low24h) / low24h * 100) : 0;
-    
-    return `
-      <div class="price-range-item" style="padding:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:10px;transition:all .25s;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <div style="display:flex;align-items:center;gap:8px;">
-            <img src="${token.image || 'https://via.placeholder.com/20'}" style="width:20px;height:20px;border-radius:50%;" onerror="this.src='https://via.placeholder.com/20?text=?'">
-            <span style="font-weight:600;font-size:12px;color:#e8eaed;">${token.symbol?.toUpperCase() || token.id}</span>
-          </div>
-          <span style="font-size:12px;font-weight:600;color:#fafafa;">$${formatPrice(current)}</span>
+    html += `
+      <div class="etf-item" style="padding:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:10px;margin-bottom:10px;transition:all .25s;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="font-size:16px;">₿</span>
+          <span style="font-weight:600;font-size:13px;color:#e8eaed;">Bitcoin ETF</span>
         </div>
         <div style="margin-bottom:6px;">
-          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-            <span style="font-size:10px;color:#9aa0a6;">24სთ მაქს: $${formatPrice(high24h)}</span>
-            <span style="font-size:10px;color:#9aa0a6;">24სთ მინ: $${formatPrice(low24h)}</span>
-          </div>
-          <div style="height:4px;background:rgba(255,255,255,.1);border-radius:2px;position:relative;overflow:hidden;">
-            <div style="height:100%;width:4px;background:#6366f1;position:absolute;left:${clampedPosition}%;border-radius:2px;box-shadow:0 0 6px rgba(99,102,241,.5);transition:left .3s;"></div>
-          </div>
+          <div style="font-size:10px;color:#9aa0a6;margin-bottom:4px;">წმინდა შემოდინება (დღეს)</div>
+          <div style="font-size:14px;font-weight:600;color:${flowColor};">${formatFlow(netFlow)}</div>
         </div>
-        <div style="font-size:10px;color:#9aa0a6;">
-          დიაპაზონი: ${rangePercent.toFixed(1)}% | 
-          ${current >= high24h ? 'მაქს-ზე' : current <= low24h ? 'მინ-ზე' : distanceFromHigh < distanceFromLow ? `მაქს-დან ${distanceFromHigh.toFixed(1)}%` : `მინ-დან ${distanceFromLow.toFixed(1)}%`}
+        <div>
+          <div style="font-size:10px;color:#9aa0a6;margin-bottom:4px;">საერთო აქტივები</div>
+          <div style="font-size:12px;font-weight:600;color:#fafafa;">${formatAUM(totalAUM)}</div>
         </div>
       </div>
     `;
-  }).join('');
+  }
   
-  rangesList.querySelectorAll('.price-range-item').forEach(item => {
+  // Ethereum ETF
+  if (ethData) {
+    const netFlow = ethData.netFlow || ethData.net_inflow || ethData.flow || 0;
+    const totalAUM = ethData.totalAUM || ethData.total_assets || ethData.aum || 0;
+    const flowColor = netFlow >= 0 ? '#22c55e' : '#ef4444';
+    
+    html += `
+      <div class="etf-item" style="padding:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:10px;transition:all .25s;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="font-size:16px;">Ξ</span>
+          <span style="font-weight:600;font-size:13px;color:#e8eaed;">Ethereum ETF</span>
+        </div>
+        <div style="margin-bottom:6px;">
+          <div style="font-size:10px;color:#9aa0a6;margin-bottom:4px;">წმინდა შემოდინება (დღეს)</div>
+          <div style="font-size:14px;font-weight:600;color:${flowColor};">${formatFlow(netFlow)}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:#9aa0a6;margin-bottom:4px;">საერთო აქტივები</div>
+          <div style="font-size:12px;font-weight:600;color:#fafafa;">${formatAUM(totalAUM)}</div>
+        </div>
+      </div>
+    `;
+  }
+  
+  if (!html) {
+    etfList.innerHTML = '<div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">ETF მონაცემები არ არის ხელმისაწვდომი</div>';
+    return;
+  }
+  
+  etfList.innerHTML = html;
+  
+  // Add hover effects
+  etfList.querySelectorAll('.etf-item').forEach(item => {
     item.onmouseenter = () => {
       item.style.background = 'rgba(255,255,255,.05)';
       item.style.borderColor = 'rgba(255,255,255,.1)';
@@ -1814,7 +1857,7 @@ async function fetchAll(){
            renderAll();
            // Ensure all sidebar sections are rendered
            if (cryptoData && cryptoData.length > 0) {
-             renderPriceRanges();
+             loadETFData();
              renderRecentActivity();
              renderMarketHealth();
              renderTokenOfTheDay();
