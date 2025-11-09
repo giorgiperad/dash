@@ -587,7 +587,7 @@ body{overflow-x:hidden}
         <div class="user-tab" data-tab="profile">პროფილი</div>
       </div>
 
-      <div id="marketContent" class="user-content active">
+      <div id="marketContent" class="user-content active" style="display:block;">
         <div class="section-header">
           <div class="section-title">ბაზრის მიმოხილვა</div>
           <div class="filter-tabs">
@@ -727,7 +727,7 @@ body{overflow-x:hidden}
       <div id="targetsContent" class="user-content">
         <div class="section-header">
           <div class="section-title">გასაყიდი მიზნები</div>
-        </div>
+    </div>
 
         <div style="background:rgba(20,20,30,.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:24px;margin-bottom:24px;">
           <h3 style="font-size:16px;font-weight:600;color:#fafafa;margin-bottom:16px;">ახალი მიზნის დამატება</h3>
@@ -740,11 +740,11 @@ body{overflow-x:hidden}
             </div>
             <div>
               <label style="display:block;font-size:11px;color:#9aa0a6;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;font-weight:500;">სამიზნე ფასი</label>
-              <input type="number" step="any" id="targetPrice" placeholder="0.00" required style="width:100%;padding:10px 14px;background:rgba(10,14,26,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#e8eaed;font-size:13px;">
+              <input type="number" step="any" id="targetSellPrice" placeholder="0.00" required style="width:100%;padding:10px 14px;background:rgba(10,14,26,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#e8eaed;font-size:13px;">
             </div>
             <div>
               <label style="display:block;font-size:11px;color:#9aa0a6;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;font-weight:500;">გასაყიდი %</label>
-              <input type="number" step="any" min="0" max="100" id="targetPercentage" placeholder="0" required style="width:100%;padding:10px 14px;background:rgba(10,14,26,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#e8eaed;font-size:13px;">
+              <input type="number" step="any" min="0" max="100" id="targetSellPercentage" placeholder="0" required style="width:100%;padding:10px 14px;background:rgba(10,14,26,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#e8eaed;font-size:13px;">
             </div>
             <button type="submit" style="padding:10px 20px;background:#6366f1;border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;transition:all .2s;white-space:nowrap;height:fit-content;">დამატება</button>
           </form>
@@ -2472,10 +2472,17 @@ $('addTargetForm').onsubmit = async e => {
 document.querySelectorAll('.user-tab').forEach(tab => {
   tab.onclick = () => {
     document.querySelectorAll('.user-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.user-content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.user-content').forEach(c => {
+      c.classList.remove('active');
+      c.style.display = 'none';
+    });
     tab.classList.add('active');
     const tabName = tab.getAttribute('data-tab');
-    $(tabName + 'Content').classList.add('active');
+    const contentEl = $(tabName + 'Content');
+    if (contentEl) {
+      contentEl.classList.add('active');
+      contentEl.style.display = 'block';
+    }
   };
 });
 
@@ -2770,12 +2777,22 @@ async function addTarget() {
     return;
   }
   
-  const tokenId = $('targetToken').value;
-  const targetPrice = parseFloat($('targetPrice').value);
-  const percentage = parseFloat($('targetPercentage').value);
+  const tokenId = $('targetToken')?.value;
+  const targetPrice = parseFloat($('targetSellPrice')?.value);
+  const percentage = parseFloat($('targetSellPercentage')?.value);
   
-  if (!tokenId || isNaN(targetPrice) || isNaN(percentage) || percentage <= 0 || percentage > 100) {
-    alert('გთხოვთ შეავსოთ ყველა ველი სწორად');
+  if (!tokenId || !tokenId.trim()) {
+    alert('გთხოვთ აირჩიოთ ტოკენი');
+    return;
+  }
+  
+  if (isNaN(targetPrice) || targetPrice <= 0) {
+    alert('გთხოვთ შეიყვანოთ სწორი სამიზნე ფასი');
+    return;
+  }
+  
+  if (isNaN(percentage) || percentage <= 0 || percentage > 100) {
+    alert('გასაყიდი პროცენტი უნდა იყოს 0-100 დიაპაზონში');
     return;
   }
   
