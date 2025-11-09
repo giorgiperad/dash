@@ -427,13 +427,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 
       <div id="marketContent" class="user-content active">
         <div class="section-header">
-          <div style="display:flex;justify-content:space-between;align-items:center;width:100%;flex-wrap:wrap;gap:12px;">
-            <div class="section-title">Market Overview</div>
-            <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
-              <button class="admin-btn" id="addTokenBtnUser" style="display:none;padding:10px 20px;background:linear-gradient(135deg,#8b5cf6 0%,#7c3aed 100%);border:none;color:#fff;font-size:13px;font-weight:600;border-radius:10px;cursor:pointer;transition:all .25s;box-shadow:0 2px 8px rgba(139,92,246,.25);letter-spacing:0.3px;">➕ Add Token</button>
-              <button class="admin-btn" id="manageDashboardBtn" style="display:none;padding:10px 20px;background:rgba(139,92,246,.12);border:1.5px solid rgba(139,92,246,.25);color:#8b5cf6;font-size:13px;font-weight:600;border-radius:10px;cursor:pointer;transition:all .25s;letter-spacing:0.3px;">⚙️ Manage</button>
-            </div>
-          </div>
+          <div class="section-title">Market Overview</div>
           <div class="filter-tabs">
             <button class="filter-tab" onclick="sortBy('name')" id="sortName">Name</button>
             <button class="filter-tab" onclick="sortBy('price')" id="sortPrice">Price</button>
@@ -659,22 +653,17 @@ auth.onAuthStateChanged(user=>{
     $('userTabs').style.display='flex';
     if(user.email === 'testireba5@gmail.com') $('adminControls').classList.add('show');
     
-    // Show "Add Token" button for all users (not just admin)
-    $('addTokenBtnUser').style.display = 'flex';
-    
     // Load user data when authenticated
     // Wait a bit to ensure Firebase is fully initialized
     setTimeout(() => {
       loadPortfolio();
       loadAlerts();
-      loadDashboardTokens(); // Load user's dashboard tokens
     }, 500);
   }else{
     $('authContainer').style.display='flex';
     $('userContainer').style.display='none';
     $('userTabs').style.display='none';
     $('adminControls').style.display='none';
-    $('addTokenBtnUser').style.display='none';
   }
 });
 
@@ -881,7 +870,7 @@ function renderTokens() {
   const list = $('tokensList');
   list.innerHTML = '';
   if (!cryptoData || cryptoData.length === 0) {
-    list.innerHTML = '<div class="error">No tokens found. ' + (currentUser ? 'Add tokens to your dashboard using the "Add Token" button above.' : 'Please login to customize your dashboard.') + '</div>';
+    list.innerHTML = '<div class="error">No tokens found. Add tokens in admin panel.</div>';
     return;
   }
   cryptoData.sort((a, b) => {
@@ -893,7 +882,6 @@ function renderTokens() {
   }).forEach((coin, idx) => {
     const change = coin.price_change_percentage_24h || 0;
     const changeClass = change >= 0 ? 'positive' : 'negative';
-    const removeBtn = currentUser ? `<button class="delete-btn" onclick="removeTokenFromDashboard('${coin.id}')" title="Remove from dashboard" style="padding:6px 10px;font-size:11px;margin-left:8px;">✕</button>` : '';
     list.innerHTML += `
       <div class="token-row" style="--index: ${idx}">
         <div class="token-icon-col"><img src="${coin.image}" class="token-icon" alt="${coin.name}"></div>
@@ -907,10 +895,7 @@ function renderTokens() {
             ${change >= 0 ? '↑' : '↓'} ${Math.abs(change).toFixed(2)}%
           </span>
         </div>
-        <div class="token-mcap-col" style="display:flex;align-items:center;gap:8px;">
-          $${formatMarketCap(coin.market_cap)}
-          ${removeBtn}
-        </div>
+        <div class="token-mcap-col">$${formatMarketCap(coin.market_cap)}</div>
       </div>
     `;
   });
@@ -935,20 +920,7 @@ async function fetchAll(){
   try {
     console.log('Fetching market data from /api/portfolio...');
     
-    // Include auth token if user is logged in (for user-specific tokens)
-    const headers = {};
-    if (currentUser) {
-      try {
-        const token = await currentUser.getIdToken();
-        headers['Authorization'] = `Bearer ${token}`;
-      } catch (tokenError) {
-        console.warn('Failed to get auth token, using global tokens:', tokenError);
-      }
-    }
-    
-    const res = await fetch('/api/portfolio', {
-      headers: headers
-    });
+    const res = await fetch('/api/portfolio');
     console.log('Response status:', res.status, res.statusText);
     
     let data;
@@ -1495,8 +1467,6 @@ $('confirmAdd').onclick = async () => {
       selectedTokenId = null;
       $('confirmAdd').disabled = true;
       statusDiv.style.display = 'none';
-      // Reload dashboard tokens and refresh market data
-      loadDashboardTokens();
       fetchAll();
     }, 1500);
     
@@ -1828,129 +1798,6 @@ document.addEventListener('touchend', (e) => {
   }
   lastTouchEnd = now;
 }, false);
-
-// Dashboard Token Management
-let userDashboardTokens = [];
-
-async function loadDashboardTokens() {
-  if (!currentUser) return;
-  
-  try {
-    const userId = currentUser.uid;
-    const db = firebase.database();
-    const tokensRef = db.ref(`users/${userId}/dashboardTokens`);
-    
-    tokensRef.once('value', (snapshot) => {
-      const tokens = snapshot.val() || {};
-      userDashboardTokens = Object.values(tokens).map(t => t.id).filter(Boolean);
-      console.log('Loaded dashboard tokens:', userDashboardTokens.length);
-      
-      // Show manage button if user has tokens
-      if (userDashboardTokens.length > 0 && $('manageDashboardBtn')) {
-        $('manageDashboardBtn').style.display = 'flex';
-      }
-    }, (error) => {
-      console.error('Error loading dashboard tokens:', error);
-    });
-  } catch (e) {
-    console.error('Load dashboard tokens error:', e);
-  }
-}
-
-async function removeTokenFromDashboard(tokenId) {
-  if (!currentUser) return;
-  if (!confirm(`Remove "${tokenId}" from your dashboard?`)) return;
-  
-  try {
-    const token = await currentUser.getIdToken();
-    const res = await fetch('/api/token', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ id: tokenId })
-    });
-    
-    let data;
-    try {
-      data = await res.json();
-    } catch (jsonError) {
-      throw new Error(`Server returned invalid response (${res.status} ${res.statusText})`);
-    }
-    
-    if (!res.ok) {
-      const errorMsg = data.error || data.message || `HTTP ${res.status}: ${res.statusText}`;
-      throw new Error(errorMsg);
-    }
-    
-    console.log('Token removed from dashboard:', tokenId);
-    // Reload dashboard
-    await loadDashboardTokens();
-    await fetchAll();
-  } catch (e) {
-    alert('Remove error: ' + e.message);
-    console.error('Remove token error:', e);
-  }
-}
-
-// Make addTokenBtnUser work for all users
-if ($('addTokenBtnUser')) {
-  $('addTokenBtnUser').onclick = () => {
-    if (!currentUser) {
-      alert('Please login to add tokens to your dashboard');
-      return;
-    }
-    $('addTokenModal').classList.add('show');
-  };
-}
-
-// Make manageDashboardBtn show modal with user's tokens
-if ($('manageDashboardBtn')) {
-  $('manageDashboardBtn').onclick = () => {
-    if (!currentUser) return;
-    showManageDashboardModal();
-  };
-}
-
-function showManageDashboardModal() {
-  const modal = document.createElement('div');
-  modal.className = 'modal show';
-  modal.id = 'manageDashboardModal';
-  modal.innerHTML = `
-    <div class="modal-content" style="max-width:600px;width:90vw;">
-      <div class="modal-header">
-        <h3>Manage Your Dashboard</h3>
-        <span class="close-modal" onclick="this.closest('.modal').remove()">×</span>
-      </div>
-      <div style="padding:24px;">
-        <p style="color:#9aa0a6;margin-bottom:20px;font-size:13px;">Your dashboard currently shows ${cryptoData.length} token(s). Add or remove tokens to customize your view.</p>
-        <div id="dashboardTokensList" style="max-height:400px;overflow-y:auto;">
-          ${cryptoData.length === 0 ? '<div style="text-align:center;padding:40px;color:#9aa0a6;">No tokens in your dashboard</div>' : ''}
-        </div>
-        <div class="modal-actions" style="margin-top:24px;">
-          <button class="modal-btn cancel" onclick="this.closest('.modal').remove()">Close</button>
-          <button class="modal-btn add" onclick="$('addTokenModal').classList.add('show'); this.closest('.modal').remove();">Add More Tokens</button>
-        </div>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(modal);
-  
-  // Populate tokens list
-  const list = modal.querySelector('#dashboardTokensList');
-  if (cryptoData.length > 0) {
-    list.innerHTML = cryptoData.map(coin => `
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:rgba(10,14,26,.4);border:1px solid rgba(255,255,255,.08);border-radius:12px;margin-bottom:10px;">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <img src="${coin.image}" style="width:32px;height:32px;border-radius:50%;" onerror="this.src='https://via.placeholder.com/32?text=?'">
-          <div>
-            <div style="font-weight:600;color:#e8eaed;font-size:14px;">${coin.name}</div>
-            <div style="font-size:12px;color:#9aa0a6;">${coin.symbol.toUpperCase()}</div>
-          </div>
-        </div>
-        <button class="delete-btn" onclick="removeTokenFromDashboard('${coin.id}'); this.closest('.modal').remove();" style="padding:8px 14px;font-size:12px;">Remove</button>
-      </div>
-    `).join('');
-  }
-}
 </script>
 </body>
 </html>

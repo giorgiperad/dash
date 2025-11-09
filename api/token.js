@@ -65,7 +65,7 @@ const ADMIN_EMAIL = 'testireba5@gmail.com';
 module.exports = async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   // Handle preflight OPTIONS request
@@ -74,7 +74,7 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  if (req.method !== 'POST' && req.method !== 'DELETE') {
+  if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
@@ -100,140 +100,71 @@ module.exports = async function handler(req, res) {
       return res.status(401).json({ error: 'Unauthorized - Invalid token', details: authError.message });
     }
 
-    const userId = decodedToken.uid;
-    const isAdmin = decodedToken.email === ADMIN_EMAIL;
+    // Check if user is admin
+    if (decodedToken.email !== ADMIN_EMAIL) {
+      return res.status(403).json({ error: 'Forbidden - Admin access required' });
+    }
 
-    // Handle DELETE - Remove token from user dashboard
-    if (req.method === 'DELETE') {
-      const { id } = req.body;
-      if (!id || typeof id !== 'string' || !id.trim()) {
-        return res.status(400).json({ error: 'Missing or invalid token ID' });
-      }
+    // Get token ID from request body
+    const { id } = req.body;
+    if (!id || typeof id !== 'string' || !id.trim()) {
+      return res.status(400).json({ error: 'Missing or invalid token ID' });
+    }
 
-      const tokenId = id.trim().toLowerCase();
-      console.log(`User ${decodedToken.email} attempting to remove token: ${tokenId}`);
+    const tokenId = id.trim().toLowerCase();
+    console.log(`Admin ${decodedToken.email} attempting to add token: ${tokenId}`);
+
+    // Verify token exists on CoinGecko
+    try {
+      const coingeckoResponse = await fetch(
+        `https://api.coingecko.com/api/v3/coins/${tokenId}?localization=false&tickers=false&market_data=false&community_data=false&developer_data=false&sparkline=false`
+      );
       
-      const db = getDatabase();
-      const userTokensRef = db.ref(`users/${userId}/dashboardTokens`);
-      
-      // Find and remove the token
-      const userSnapshot = await userTokensRef.once('value');
-      const userTokens = userSnapshot.val() || {};
-      
-      let tokenKey = null;
-      for (const [key, token] of Object.entries(userTokens)) {
-        if (token && token.id === tokenId) {
-          tokenKey = key;
-          break;
+      if (!coingeckoResponse.ok) {
+        if (coingeckoResponse.status === 404) {
+          return res.status(404).json({ error: `Token "${tokenId}" not found on CoinGecko. Please check the CoinGecko ID.` });
         }
+        throw new Error(`CoinGecko API error: ${coingeckoResponse.status}`);
       }
       
-      if (!tokenKey) {
-        return res.status(404).json({ error: `Token "${tokenId}" not found in your dashboard` });
-      }
-
-      await userTokensRef.child(tokenKey).remove();
-      
-      console.log(`Successfully removed token from user dashboard: ${tokenId} for user ${userId}`);
-      
-      return res.status(200).json({ 
-        success: true,
-        message: `Token "${tokenId}" removed successfully from your dashboard`,
-        tokenId: tokenId
+      const coinData = await coingeckoResponse.json();
+      console.log(`Verified token on CoinGecko: ${coinData.name} (${coinData.symbol})`);
+    } catch (coingeckoError) {
+      console.error('CoinGecko verification error:', coingeckoError.message);
+      return res.status(500).json({ 
+        error: 'Failed to verify token on CoinGecko',
+        message: coingeckoError.message
       });
     }
 
-    // Handle POST - Add token to dashboard
-    if (req.method === 'POST') {
-      // Get token ID from request body
-      const { id } = req.body;
-      if (!id || typeof id !== 'string' || !id.trim()) {
-        return res.status(400).json({ error: 'Missing or invalid token ID' });
-      }
-
-      const tokenId = id.trim().toLowerCase();
-      
-      console.log(`${isAdmin ? 'Admin' : 'User'} ${decodedToken.email} attempting to add token: ${tokenId}`);
-
-      // Verify token exists on CoinGecko
-      try {
-        const coingeckoResponse = await fetch(
-          `https://api.coingecko.com/api/v3/coins/${tokenId}?localization=false&tickers=false&market_data=false&community_data=false&developer_data=false&sparkline=false`
-        );
-        
-        if (!coingeckoResponse.ok) {
-          if (coingeckoResponse.status === 404) {
-            return res.status(404).json({ error: `Token "${tokenId}" not found on CoinGecko. Please check the CoinGecko ID.` });
-          }
-          throw new Error(`CoinGecko API error: ${coingeckoResponse.status}`);
-        }
-        
-        const coinData = await coingeckoResponse.json();
-        console.log(`Verified token on CoinGecko: ${coinData.name} (${coinData.symbol})`);
-      } catch (coingeckoError) {
-        console.error('CoinGecko verification error:', coingeckoError.message);
-        return res.status(500).json({ 
-          error: 'Failed to verify token on CoinGecko',
-          message: coingeckoError.message
-        });
-      }
-
-      const db = getDatabase();
-      
-      // If admin, add to global tokens list
-      if (isAdmin) {
-        const tokensRef = db.ref('tokens');
-        
-        // Check if token already exists in global list
-        const snapshot = await tokensRef.once('value');
-        const existingTokens = snapshot.val() || {};
-        const tokenExists = Object.values(existingTokens).some(t => t.id === tokenId);
-        
-        if (tokenExists) {
-          return res.status(409).json({ error: `Token "${tokenId}" already exists in the global database` });
-        }
-
-        // Add new token to global list
-        const newTokenRef = tokensRef.push();
-        await newTokenRef.set({
-          id: tokenId,
-          addedAt: admin.database.ServerValue.TIMESTAMP,
-          addedBy: decodedToken.email
-        });
-
-        console.log(`Successfully added token to global list: ${tokenId}`);
-      }
-      
-      // For all users (including admin), add to their personal dashboard
-      const userTokensRef = db.ref(`users/${userId}/dashboardTokens`);
-      
-      // Check if token already exists in user's dashboard
-      const userSnapshot = await userTokensRef.once('value');
-      const userTokens = userSnapshot.val() || {};
-      const userTokenExists = Object.values(userTokens).some(t => t.id === tokenId);
-      
-      if (userTokenExists) {
-        return res.status(409).json({ error: `Token "${tokenId}" already exists in your dashboard` });
-      }
-
-      // Add token to user's dashboard
-      const newUserTokenRef = userTokensRef.push();
-      await newUserTokenRef.set({
-        id: tokenId,
-        addedAt: admin.database.ServerValue.TIMESTAMP,
-        addedBy: decodedToken.email
-      });
-
-      console.log(`Successfully added token to user dashboard: ${tokenId} for user ${userId}`);
-      
-      res.status(200).json({ 
-        success: true,
-        message: `Token "${tokenId}" added successfully to your dashboard`,
-        tokenId: tokenId,
-        isAdmin: isAdmin
-      });
-      return;
+    // Add token to Firebase
+    const db = getDatabase();
+    const tokensRef = db.ref('tokens');
+    
+    // Check if token already exists
+    const snapshot = await tokensRef.once('value');
+    const existingTokens = snapshot.val() || {};
+    const tokenExists = Object.values(existingTokens).some(t => t.id === tokenId);
+    
+    if (tokenExists) {
+      return res.status(409).json({ error: `Token "${tokenId}" already exists in the database` });
     }
+
+    // Add new token
+    const newTokenRef = tokensRef.push();
+    await newTokenRef.set({
+      id: tokenId,
+      addedAt: admin.database.ServerValue.TIMESTAMP,
+      addedBy: decodedToken.email
+    });
+
+    console.log(`Successfully added token: ${tokenId}`);
+    
+    res.status(200).json({ 
+      success: true,
+      message: `Token "${tokenId}" added successfully`,
+      tokenId: tokenId
+    });
 
   } catch (error) {
     console.error('Token API error:', error);

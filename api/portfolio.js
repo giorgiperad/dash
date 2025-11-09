@@ -119,55 +119,20 @@ module.exports = async function handler(req, res) {
         });
       }
 
-      // Check if user is authenticated
-      let userId = null;
-      let userTokens = [];
-      const authHeader = req.headers.authorization;
-      
-      if (authHeader && authHeader.startsWith('Bearer ')) {
-        try {
-          const idToken = authHeader.split('Bearer ')[1];
-          const decodedToken = await admin.auth().verifyIdToken(idToken);
-          userId = decodedToken.uid;
-          console.log(`Authenticated user: ${userId}`);
-          
-          // Fetch user's dashboard tokens
-          try {
-            const userSnap = await db.ref(`users/${userId}/dashboardTokens`).once('value');
-            const userTokensData = userSnap.val() || {};
-            userTokens = Object.values(userTokensData).map(t => t.id).filter(Boolean);
-            console.log(`Found ${userTokens.length} tokens in user dashboard`);
-          } catch (userDbError) {
-            console.error('Error reading user dashboard tokens:', userDbError.message);
-            // Continue with global tokens if user tokens fail
-          }
-        } catch (authError) {
-          console.log('User not authenticated or token invalid, using global tokens');
-          // Continue with global tokens
-        }
-      }
-
-      // Fetch tokens from Firebase (global tokens for non-authenticated users or as fallback)
-      let globalTokens = [];
+      // Fetch tokens from Firebase
+      let tokens = [];
       try {
         const snap = await db.ref('tokens').once('value');
         const tokensData = snap.val() || {};
-        globalTokens = Object.values(tokensData).map(t => t.id).filter(Boolean);
-        console.log(`Found ${globalTokens.length} global tokens in database`);
+        tokens = Object.values(tokensData).map(t => t.id).filter(Boolean);
+        console.log(`Found ${tokens.length} tokens in database`);
       } catch (dbError) {
         console.error('Database read error:', dbError.message);
-        // If we have user tokens, continue with those
-        if (userTokens.length === 0) {
-          return res.status(500).json({ 
-            error: 'Failed to read tokens from database',
-            message: dbError.message
-          });
-        }
+        return res.status(500).json({ 
+          error: 'Failed to read tokens from database',
+          message: dbError.message
+        });
       }
-
-      // Use user tokens if available, otherwise use global tokens
-      const tokens = userTokens.length > 0 ? userTokens : globalTokens;
-      console.log(`Using ${tokens.length} tokens (${userTokens.length > 0 ? 'user-specific' : 'global'})`);
 
       // If no tokens, return empty data
       if (!tokens.length) {
