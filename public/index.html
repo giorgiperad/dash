@@ -3560,22 +3560,32 @@ function startAutoRefresh() {
 // Load quotes function
 let quotesData = [];
 function loadQuotes() {
-  if (!db) return;
-  
-  db.ref('quotes').once('value').then(snapshot => {
-    const quotes = snapshot.val() || {};
-    quotesData = Object.values(quotes).filter(q => q && q.text);
-    
-    if (quotesData.length > 0) {
-      displayRandomQuote();
-      $('quotesSection').style.display = 'block';
-    } else {
-      $('quotesSection').style.display = 'none';
+  try {
+    if (typeof firebase === 'undefined' || !firebase.database) {
+      console.warn('Firebase not available for quotes');
+      return;
     }
-  }).catch(error => {
-    console.error('Error loading quotes:', error);
-    $('quotesSection').style.display = 'none';
-  });
+    
+    const db = firebase.database();
+    if (!db) return;
+    
+    db.ref('quotes').once('value').then(snapshot => {
+      const quotes = snapshot.val() || {};
+      quotesData = Object.values(quotes).filter(q => q && q.text);
+      
+      if (quotesData.length > 0) {
+        displayRandomQuote();
+        if ($('quotesSection')) $('quotesSection').style.display = 'block';
+      } else {
+        if ($('quotesSection')) $('quotesSection').style.display = 'none';
+      }
+    }).catch(error => {
+      console.error('Error loading quotes:', error);
+      if ($('quotesSection')) $('quotesSection').style.display = 'none';
+    });
+  } catch (e) {
+    console.error('Error in loadQuotes:', e);
+  }
 }
 
 function displayRandomQuote() {
@@ -3613,12 +3623,17 @@ startAutoRefresh();
 if (typeof firebase !== 'undefined' && firebase.database) {
   // Wait for Firebase to be ready
   setTimeout(() => {
-    if (db) {
-      loadQuotes();
-      // Listen for new quotes
-      db.ref('quotes').on('value', () => {
+    try {
+      const db = firebase.database();
+      if (db) {
         loadQuotes();
-      });
+        // Listen for new quotes
+        db.ref('quotes').on('value', () => {
+          loadQuotes();
+        });
+      }
+    } catch (e) {
+      console.error('Firebase database not available:', e);
     }
   }, 1000);
 }
@@ -3633,8 +3648,12 @@ function initSettings() {
       console.log(`Refresh interval changed to ${refreshIntervalMs / 1000} seconds`);
     };
     console.log('Settings panel initialized');
-  } else {
-    console.warn('Settings panel not found, retrying...');
+    return; // Success, stop retrying
+  }
+  // Only retry a few times to avoid infinite warnings
+  if (!initSettings.retryCount) initSettings.retryCount = 0;
+  if (initSettings.retryCount < 3) {
+    initSettings.retryCount++;
     setTimeout(initSettings, 500);
   }
 }
