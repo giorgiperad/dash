@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PWA Icon Generator - CCX</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #0a0e1a;
+      color: #e4e4e7;
+    }
+    .container {
+      background: rgba(20,20,30,.6);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 16px;
+      padding: 32px;
+    }
+    h1 {
+      color: #8b5cf6;
+      margin-bottom: 24px;
+    }
+    .upload-area {
+      border: 2px dashed rgba(139,92,246,.3);
+      border-radius: 12px;
+      padding: 40px;
+      text-align: center;
+      margin: 24px 0;
+      cursor: pointer;
+      transition: all .3s;
+    }
+    .upload-area:hover {
+      border-color: #8b5cf6;
+      background: rgba(139,92,246,.05);
+    }
+    .upload-area.dragover {
+      border-color: #8b5cf6;
+      background: rgba(139,92,246,.1);
+    }
+    input[type="file"] {
+      display: none;
+    }
+    .preview {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin: 24px 0;
+    }
+    .preview-item {
+      text-align: center;
+      padding: 20px;
+      background: rgba(10,14,26,.6);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.05);
+    }
+    .preview-item canvas {
+      border: 2px solid rgba(139,92,246,.3);
+      border-radius: 8px;
+      margin: 12px 0;
+    }
+    button {
+      background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+      border: none;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 8px;
+      transition: all .2s;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(139,92,246,.4);
+    }
+    button:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+    .instructions {
+      background: rgba(139,92,246,.1);
+      border-left: 4px solid #8b5cf6;
+      padding: 16px;
+      border-radius: 8px;
+      margin: 24px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 PWA Icon Generator</h1>
+    
+    <div class="instructions">
+      <strong>Instructions:</strong>
+      <ol>
+        <li>Upload a square image (recommended: 512x512px or larger)</li>
+        <li>Preview the generated icons below</li>
+        <li>Click "Download Icons" to save both icon files</li>
+        <li>Place the downloaded files in your <code>/public</code> folder</li>
+      </ol>
+    </div>
+
+    <div class="upload-area" id="uploadArea">
+      <p>📁 Click to upload or drag & drop</p>
+      <p style="font-size: 12px; color: #9aa0a6; margin-top: 8px;">PNG, JPG, or SVG (square images work best)</p>
+      <input type="file" id="fileInput" accept="image/*">
+    </div>
+
+    <div class="preview" id="preview" style="display: none;">
+      <div class="preview-item">
+        <h3>192x192 Icon</h3>
+        <canvas id="canvas192" width="192" height="192"></canvas>
+        <button id="download192">Download icon-192.png</button>
+      </div>
+      <div class="preview-item">
+        <h3>512x512 Icon</h3>
+        <canvas id="canvas512" width="512" height="512"></canvas>
+        <button id="download512">Download icon-512.png</button>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 24px;">
+      <button id="downloadAll" style="display: none;">📥 Download Both Icons</button>
+    </div>
+  </div>
+
+  <script>
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const preview = document.getElementById('preview');
+    const canvas192 = document.getElementById('canvas192');
+    const canvas512 = document.getElementById('canvas512');
+    const ctx192 = canvas192.getContext('2d');
+    const ctx512 = canvas512.getContext('2d');
+
+    uploadArea.addEventListener('click', () => fileInput.click());
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('dragover');
+    });
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.classList.remove('dragover');
+    });
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+      const file = e.dataTransfer.files[0];
+      if (file) handleFile(file);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) handleFile(file);
+    });
+
+    function handleFile(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          // Draw 192x192
+          ctx192.clearRect(0, 0, 192, 192);
+          ctx192.fillStyle = '#0a0e1a';
+          ctx192.fillRect(0, 0, 192, 192);
+          const size192 = Math.min(img.width, img.height);
+          const x192 = (192 - size192) / 2;
+          const y192 = (192 - size192) / 2;
+          ctx192.drawImage(img, 0, 0, img.width, img.height, x192, y192, size192, size192);
+
+          // Draw 512x512
+          ctx512.clearRect(0, 0, 512, 512);
+          ctx512.fillStyle = '#0a0e1a';
+          ctx512.fillRect(0, 0, 512, 512);
+          const size512 = Math.min(img.width, img.height);
+          const x512 = (512 - size512) / 2;
+          const y512 = (512 - size512) / 2;
+          ctx512.drawImage(img, 0, 0, img.width, img.height, x512, y512, size512, size512);
+
+          preview.style.display = 'grid';
+          document.getElementById('downloadAll').style.display = 'inline-block';
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function downloadCanvas(canvas, filename) {
+      canvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+    }
+
+    document.getElementById('download192').addEventListener('click', () => {
+      downloadCanvas(canvas192, 'icon-192.png');
+    });
+
+    document.getElementById('download512').addEventListener('click', () => {
+      downloadCanvas(canvas512, 'icon-512.png');
+    });
+
+    document.getElementById('downloadAll').addEventListener('click', () => {
+      downloadCanvas(canvas192, 'icon-192.png');
+      setTimeout(() => {
+        downloadCanvas(canvas512, 'icon-512.png');
+      }, 500);
+    });
+  </script>
+</body>
+</html>

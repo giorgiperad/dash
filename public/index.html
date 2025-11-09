@@ -9,6 +9,10 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="CCX">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="msapplication-TileColor" content="#8b5cf6">
+<meta name="msapplication-config" content="/browserconfig.xml">
+<meta name="application-name" content="CCX">
+<meta name="format-detection" content="telephone=no">
 <title>CRYPTO COLLECTIVE X - Desktop Pro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -3480,39 +3484,41 @@ if ('Notification' in window && Notification.permission === 'default') Notificat
 
 // PWA Service Worker Registration
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(registration => {
-        console.log('Service Worker registered:', registration.scope);
-        
-        // Check for updates periodically
-        setInterval(() => {
-          registration.update();
-        }, 60000); // Check every minute
-        
-        // Listen for updates
-        registration.addEventListener('updatefound', () => {
-          const newWorker = registration.installing;
+  // Register immediately, don't wait for load
+  navigator.serviceWorker.register('/sw.js', { scope: '/' })
+    .then(registration => {
+      console.log('✅ Service Worker registered:', registration.scope);
+      
+      // Check for updates periodically
+      setInterval(() => {
+        registration.update();
+      }, 60000); // Check every minute
+      
+      // Listen for updates
+      registration.addEventListener('updatefound', () => {
+        const newWorker = registration.installing;
+        if (newWorker) {
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
               // New version available
-              if (confirm('New version available! Reload to update?')) {
+              console.log('🔄 New service worker version available');
+              if (confirm('ახალი ვერსია ხელმისაწვდომია! განახლება?')) {
                 newWorker.postMessage({ type: 'SKIP_WAITING' });
                 window.location.reload();
               }
             }
           });
-        });
-      })
-      .catch(error => {
-        console.error('Service Worker registration failed:', error);
+        }
       });
-  });
+    })
+    .catch(error => {
+      console.error('❌ Service Worker registration failed:', error);
+    });
   
   // Listen for service worker messages
   navigator.serviceWorker.addEventListener('message', event => {
     if (event.data && event.data.type === 'SW_UPDATED') {
-      if (confirm('App updated! Reload to see changes?')) {
+      if (confirm('აპლიკაცია განახლდა! გადატვირთვა?')) {
         window.location.reload();
       }
     }

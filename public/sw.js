@@ -3,9 +3,8 @@ const CACHE_NAME = 'crypto-collective-v7';
 const CORE_ASSETS = [
   '/',
   '/index.html',
-  '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png'
+  '/manifest.json'
+  // Note: Icons should be added when they exist
 ];
 
 const VERSION = 'v7.0.0';
