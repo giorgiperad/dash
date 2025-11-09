@@ -463,11 +463,14 @@ body{
 
       <div id="portfolioContent" class="user-content">
         <div class="portfolio-summary">
-          <div class="summary-card">
-            <div class="summary-label">Total Value</div>
+          <div class="summary-card" id="totalValueCard">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <div class="summary-label">Total Value</div>
+              <button id="toggleVisibility" style="background:transparent;border:none;color:#71717a;cursor:pointer;padding:4px;font-size:16px;transition:all .2s;opacity:0.7;" title="Toggle visibility">👁️</button>
+            </div>
             <div class="summary-value" id="totalValue">$0.00</div>
           </div>
-          <div class="summary-card">
+          <div class="summary-card" id="totalPLCard">
             <div class="summary-label">Total P/L</div>
             <div class="summary-value" id="totalPL">$0.00</div>
           </div>
@@ -980,6 +983,40 @@ window.sortBy = function(col) {
   renderTokens();
 };
 
+
+/* ---------- PORTFOLIO VISIBILITY TOGGLE ---------- */
+let portfolioVisible = true;
+
+if ($('toggleVisibility')) {
+  $('toggleVisibility').onclick = () => {
+    portfolioVisible = !portfolioVisible;
+    const totalValueCard = $('totalValueCard');
+    const totalPLCard = $('totalPLCard');
+    const totalValue = $('totalValue');
+    const totalPL = $('totalPL');
+    const toggleBtn = $('toggleVisibility');
+    
+    if (portfolioVisible) {
+      // Show values
+      if (totalValue) totalValue.style.display = 'block';
+      if (totalPL) totalPL.style.display = 'block';
+      if (totalValueCard) totalValueCard.style.opacity = '1';
+      if (totalPLCard) totalPLCard.style.opacity = '1';
+      toggleBtn.textContent = '👁️';
+      toggleBtn.style.opacity = '0.7';
+      toggleBtn.title = 'Hide values';
+    } else {
+      // Hide values
+      if (totalValue) totalValue.style.display = 'none';
+      if (totalPL) totalPL.style.display = 'none';
+      if (totalValueCard) totalValueCard.style.opacity = '0.4';
+      if (totalPLCard) totalPLCard.style.opacity = '0.4';
+      toggleBtn.textContent = '👁️‍🗨️';
+      toggleBtn.style.opacity = '1';
+      toggleBtn.title = 'Show values';
+    }
+  };
+}
 
 /* ---------- INITIAL LOAD ---------- */
 // Load data on page load
