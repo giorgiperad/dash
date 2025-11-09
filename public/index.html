@@ -2011,16 +2011,41 @@ function renderETFDataMain(etfData) {
   const renderETFDetails = (etf, name, symbol, color) => {
     if (!etf) return '';
     
-    const dailyNetInflow = etf.dailyNetInflow?.value || etf.dailyNetInflow || 0;
+    // Safely extract values with proper type checking
+    const dailyNetInflow = parseFloat(etf.dailyNetInflow?.value || etf.dailyNetInflow || 0) || 0;
     const dailyNetInflowDate = formatDate(etf.dailyNetInflow?.date || etf.dailyNetInflowDate);
-    const cumNetInflow = etf.cumNetInflow?.value || etf.cumNetInflow || 0;
+    const cumNetInflow = parseFloat(etf.cumNetInflow?.value || etf.cumNetInflow || 0) || 0;
     const cumNetInflowDate = formatDate(etf.cumNetInflow?.date || etf.cumNetInflowDate);
-    const totalNetAssets = etf.totalNetAssets?.value || etf.totalNetAssets || 0;
+    const totalNetAssets = parseFloat(etf.totalNetAssets?.value || etf.totalNetAssets || 0) || 0;
     const totalNetAssetsDate = formatDate(etf.totalNetAssets?.date || etf.totalNetAssetsDate);
-    const totalNetAssetsPercentage = etf.totalNetAssetsPercentage?.value || etf.totalNetAssetsPercentage || 0;
-    const totalTokenHoldings = etf.totalTokenHoldings?.value || etf.totalTokenHoldings || 0;
+    // Handle totalNetAssetsPercentage - could be number, string, or object
+    let totalNetAssetsPercentage = null;
+    if (etf.totalNetAssetsPercentage !== undefined && etf.totalNetAssetsPercentage !== null) {
+      if (typeof etf.totalNetAssetsPercentage === 'object' && etf.totalNetAssetsPercentage.value !== undefined) {
+        totalNetAssetsPercentage = etf.totalNetAssetsPercentage.value;
+      } else {
+        totalNetAssetsPercentage = etf.totalNetAssetsPercentage;
+      }
+    }
+    // Handle totalTokenHoldings - could be number, string, or object
+    let totalTokenHoldings = null;
+    if (etf.totalTokenHoldings !== undefined && etf.totalTokenHoldings !== null) {
+      if (typeof etf.totalTokenHoldings === 'object' && etf.totalTokenHoldings.value !== undefined) {
+        totalTokenHoldings = etf.totalTokenHoldings.value;
+      } else {
+        totalTokenHoldings = etf.totalTokenHoldings;
+      }
+    }
     const totalTokenHoldingsDate = formatDate(etf.totalTokenHoldings?.date || etf.totalTokenHoldingsDate);
-    const dailyTotalValueTraded = etf.dailyTotalValueTraded?.value || etf.dailyTotalValueTraded || 0;
+    // Handle dailyTotalValueTraded - could be number, string, or object
+    let dailyTotalValueTraded = null;
+    if (etf.dailyTotalValueTraded !== undefined && etf.dailyTotalValueTraded !== null) {
+      if (typeof etf.dailyTotalValueTraded === 'object' && etf.dailyTotalValueTraded.value !== undefined) {
+        dailyTotalValueTraded = etf.dailyTotalValueTraded.value;
+      } else {
+        dailyTotalValueTraded = etf.dailyTotalValueTraded;
+      }
+    }
     const dailyTotalValueTradedDate = formatDate(etf.dailyTotalValueTraded?.date || etf.dailyTotalValueTradedDate);
     
     const flowColor = dailyNetInflow >= 0 ? '#22c55e' : '#ef4444';
@@ -2052,23 +2077,23 @@ function renderETFDataMain(etfData) {
             <div style="font-size:11px;color:#9aa0a6;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">საერთო აქტივები</div>
             <div style="font-size:24px;font-weight:600;color:#fafafa;margin-bottom:4px;">${formatAUM(totalNetAssets)}</div>
             <div style="font-size:10px;color:#71717a;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05);">თარიღი: ${totalNetAssetsDate}</div>
-            ${totalNetAssetsPercentage ? `<div style="font-size:10px;color:#71717a;margin-top:4px;">პროცენტი: ${totalNetAssetsPercentage.toFixed(2)}%</div>` : ''}
+            ${totalNetAssetsPercentage && !isNaN(parseFloat(totalNetAssetsPercentage)) ? `<div style="font-size:10px;color:#71717a;margin-top:4px;">პროცენტი: ${parseFloat(totalNetAssetsPercentage).toFixed(2)}%</div>` : ''}
           </div>
           
           <!-- Total Token Holdings -->
-          ${totalTokenHoldings ? `
+          ${totalTokenHoldings !== null && totalTokenHoldings !== undefined && totalTokenHoldings !== '' ? `
           <div style="background:rgba(10,14,26,.5);border:1px solid rgba(255,255,255,.05);border-radius:10px;padding:16px;">
             <div style="font-size:11px;color:#9aa0a6;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">ტოკენების რაოდენობა</div>
-            <div style="font-size:24px;font-weight:600;color:#fafafa;margin-bottom:4px;">${totalTokenHoldings.toLocaleString('ka-GE')}</div>
+            <div style="font-size:24px;font-weight:600;color:#fafafa;margin-bottom:4px;">${typeof totalTokenHoldings === 'number' ? totalTokenHoldings.toLocaleString('ka-GE') : String(totalTokenHoldings)}</div>
             <div style="font-size:10px;color:#71717a;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05);">თარიღი: ${totalTokenHoldingsDate}</div>
           </div>
           ` : ''}
           
           <!-- Daily Total Value Traded -->
-          ${dailyTotalValueTraded ? `
+          ${dailyTotalValueTraded !== null && dailyTotalValueTraded !== undefined && dailyTotalValueTraded !== '' && !isNaN(parseFloat(dailyTotalValueTraded)) ? `
           <div style="background:rgba(10,14,26,.5);border:1px solid rgba(255,255,255,.05);border-radius:10px;padding:16px;">
             <div style="font-size:11px;color:#9aa0a6;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">დღის ბრუნვა</div>
-            <div style="font-size:24px;font-weight:600;color:#fafafa;margin-bottom:4px;">${formatAUM(dailyTotalValueTraded)}</div>
+            <div style="font-size:24px;font-weight:600;color:#fafafa;margin-bottom:4px;">${formatAUM(parseFloat(dailyTotalValueTraded))}</div>
             <div style="font-size:10px;color:#71717a;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05);">თარიღი: ${dailyTotalValueTradedDate}</div>
           </div>
           ` : ''}
