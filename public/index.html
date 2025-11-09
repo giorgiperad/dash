@@ -418,7 +418,7 @@ body{
       <div style="display:flex;align-items:center;gap:10px;padding-right:16px;border-right:1px solid rgba(255,255,255,.1);">
         <span style="font-size:16px;opacity:0.9;">👑</span>
         <span style="font-size:11px;font-weight:600;color:#9aa0a6;text-transform:uppercase;letter-spacing:0.8px;">ადმინი</span>
-      </div>
+    </div>
       <button class="admin-btn" id="addTokenBtn" style="padding:10px 20px;background:linear-gradient(135deg,#8b5cf6 0%,#7c3aed 100%);border:none;color:#fff;font-size:13px;font-weight:600;border-radius:10px;cursor:pointer;transition:all .25s;box-shadow:0 2px 8px rgba(139,92,246,.25);letter-spacing:0.3px;">➕ ტოკენის დამატება</button>
       <button class="admin-btn" id="refreshBtn" style="padding:10px 20px;background:rgba(52,168,83,.12);border:1.5px solid rgba(52,168,83,.25);color:#34a853;font-size:13px;font-weight:600;border-radius:10px;cursor:pointer;transition:all .25s;letter-spacing:0.3px;">🔄 განახლება</button>
     </div>
@@ -566,7 +566,7 @@ body{
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
               <div class="summary-label">საერთო ღირებულება</div>
               <button id="toggleVisibility" style="background:transparent;border:none;color:#71717a;cursor:pointer;padding:4px;font-size:16px;transition:all .2s;opacity:0.7;" title="ხილვადობის გადართვა" aria-label="პორტფოლიოს ხილვადობის გადართვა">👁️</button>
-            </div>
+          </div>
             <div class="summary-value" id="totalValue" aria-live="polite">$0.00</div>
           </div>
           <div class="summary-card" id="totalPLCard">
@@ -692,7 +692,7 @@ body{
             style="width:100%;padding:14px 18px;background:rgba(10,14,26,.6);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;color:#e8eaed;font-size:14px;transition:all .25s;backdrop-filter:blur(10px);"
             autocomplete="off">
           <div id="tokenSearchResults" style="position:absolute;top:100%;left:0;right:0;margin-top:8px;background:rgba(15,20,30,.98);backdrop-filter:blur(24px) saturate(180%);border:1px solid rgba(255,255,255,.12);border-radius:12px;max-height:300px;overflow-y:auto;z-index:1000;display:none;box-shadow:0 12px 40px rgba(0,0,0,.5);"></div>
-        </div>
+    </div>
         <div id="selectedToken" style="margin-top:16px;padding:16px;background:rgba(139,92,246,.1);border:1.5px solid rgba(139,92,246,.25);border-radius:12px;display:none;backdrop-filter:blur(10px);">
           <div style="display:flex;justify-content:space-between;align-items:center;">
             <div>
@@ -945,16 +945,33 @@ function renderETFData(data) {
     return `$${value.toFixed(0)}`;
   };
   
-  // Extract BTC and ETH ETF data
-  const btcData = data.btc || data.data?.btc || null;
-  const ethData = data.eth || data.data?.eth || null;
+  // Extract BTC and ETH ETF data - handle various response formats
+  let btcData = data.btc || data.data?.btc || null;
+  let ethData = data.eth || data.data?.eth || null;
+  
+  // If data is nested differently, try to extract it
+  if (!btcData && data.data && typeof data.data === 'object') {
+    // Check if data.data is an array or object with BTC/ETH keys
+    if (Array.isArray(data.data)) {
+      btcData = data.data.find(item => item.symbol === 'BTC' || item.name?.toLowerCase().includes('bitcoin'));
+      ethData = data.data.find(item => item.symbol === 'ETH' || item.name?.toLowerCase().includes('ethereum'));
+    } else if (data.data.bitcoin) {
+      btcData = data.data.bitcoin;
+    } else if (data.data.ethereum) {
+      ethData = data.data.ethereum;
+    }
+  }
   
   let html = '';
   
   // Bitcoin ETF
   if (btcData) {
-    const netFlow = btcData.netFlow || btcData.net_inflow || btcData.flow || 0;
-    const totalAUM = btcData.totalAUM || btcData.total_assets || btcData.aum || 0;
+    // Try multiple field names for net flow
+    const netFlow = btcData.netFlow || btcData.net_inflow || btcData.flow || 
+                   btcData.todayFlow || btcData.dailyFlow || btcData.netFlowToday || 0;
+    // Try multiple field names for AUM
+    const totalAUM = btcData.totalAUM || btcData.total_assets || btcData.aum || 
+                     btcData.totalAssets || btcData.assets || btcData.marketCap || 0;
     const flowColor = netFlow >= 0 ? '#22c55e' : '#ef4444';
     
     html += `
@@ -977,8 +994,12 @@ function renderETFData(data) {
   
   // Ethereum ETF
   if (ethData) {
-    const netFlow = ethData.netFlow || ethData.net_inflow || ethData.flow || 0;
-    const totalAUM = ethData.totalAUM || ethData.total_assets || ethData.aum || 0;
+    // Try multiple field names for net flow
+    const netFlow = ethData.netFlow || ethData.net_inflow || ethData.flow || 
+                   ethData.todayFlow || ethData.dailyFlow || ethData.netFlowToday || 0;
+    // Try multiple field names for AUM
+    const totalAUM = ethData.totalAUM || ethData.total_assets || ethData.aum || 
+                     ethData.totalAssets || ethData.assets || ethData.marketCap || 0;
     const flowColor = netFlow >= 0 ? '#22c55e' : '#ef4444';
     
     html += `
@@ -1854,7 +1875,7 @@ async function fetchAll(){
     
            console.log(`Loaded ${cryptoData.length} tokens`);
            
-           renderAll();
+    renderAll();
            // Ensure all sidebar sections are rendered
            if (cryptoData && cryptoData.length > 0) {
              loadETFData();
@@ -1862,8 +1883,8 @@ async function fetchAll(){
              renderMarketHealth();
              renderTokenOfTheDay();
            }
-           $('contentGrid').style.display = 'grid';
-           $('heroStats').style.display = 'grid';
+    $('contentGrid').style.display = 'grid';
+    $('heroStats').style.display = 'grid';
            // Load portfolio and alerts after market data is loaded
            if(currentUser) { 
              loadPortfolio(); 
@@ -2325,13 +2346,13 @@ $('confirmAdd').onclick = async () => {
     statusDiv.textContent = `✅ ${data.message || `ტოკენი "${selectedTokenId}" წარმატებით დაემატა!`}`;
     
     setTimeout(() => {
-      $('addTokenModal').classList.remove('show');
+    $('addTokenModal').classList.remove('show');
       $('tokenSearch').value = '';
       $('selectedToken').style.display = 'none';
       selectedTokenId = null;
       $('confirmAdd').disabled = true;
       statusDiv.style.display = 'none';
-      fetchAll();
+    fetchAll();
     }, 1500);
     
   } catch (e) {
@@ -2452,7 +2473,7 @@ function renderPortfolio(holdings) {
     } else {
       $('totalPL').textContent = newPL;
     }
-    $('totalPL').style.color = pl >= 0 ? '#10b981' : '#ef4444';
+  $('totalPL').style.color = pl >= 0 ? '#10b981' : '#ef4444';
     
     // Update parent summary card colors
     const plCard = $('totalPL').closest('.summary-card');
@@ -2692,7 +2713,7 @@ function renderAlerts(alerts) {
       vibrate([100, 50, 100, 50, 100]); // Strong vibration pattern for alert trigger
       
       if (typeof confetti !== 'undefined') {
-        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
       }
       if ('Notification' in window && Notification.permission === 'granted') {
         new Notification('CCX შეტყობინება', { body: `${a.message || ''} ${tokenName} არის ${a.condition === 'above' ? 'ზემოთ' : 'ქვემოთ'} $${a.target}!` });
@@ -2761,11 +2782,11 @@ let refreshIntervalMs = 180000; // Default 3 minutes
 function startAutoRefresh() {
   if (refreshIntervalId) clearInterval(refreshIntervalId);
   refreshIntervalId = setInterval(() => {
-    fetchAll();
-    if (currentUser) {
-      loadPortfolio();
-      loadAlerts();
-    }
+  fetchAll();
+  if (currentUser) {
+    loadPortfolio();
+    loadAlerts();
+  }
   }, refreshIntervalMs);
 }
 
