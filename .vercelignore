@@ -1,11 +1,17 @@
-# Ignore Firebase Functions directory completely
+# Ignore Firebase Functions directory completely (NOT Vercel serverless functions)
+functions
 functions/
 functions/**
 functions/*
+**/functions
+**/functions/
+**/functions/**
 
 # Ignore other files
 node_modules/
 .env
 .env.local
 *.log
+.git
+.vscode
 
