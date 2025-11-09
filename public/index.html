@@ -450,17 +450,21 @@ body{
     </div>
   </div>
 
-  <!-- Crypto ETF Data Section (moved from sidebar) -->
-  <div id="etfDataMain" style="display:none;margin-bottom:32px;background:rgba(20,20,30,.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:24px;position:relative;overflow:hidden;" role="region" aria-label="Crypto ETF Data">
-    <div style="position:absolute;top:0;right:0;width:200px;height:200px;background:radial-gradient(circle,rgba(99,102,241,.1) 0%,transparent 70%);pointer-events:none;"></div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;position:relative;z-index:1;">
-      <div>
-        <div style="font-size:11px;color:#6366f1;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:4px;">📊 კრიპტო ETF მონაცემები</div>
-        <h3 style="font-size:20px;font-weight:600;color:#fafafa;letter-spacing:-0.3px;">Bitcoin & Ethereum ETF</h3>
+  <!-- Crypto ETF Data & Recent Activity Section (Hero Carousel Style) -->
+  <div id="etfDataMain" style="display:none;margin-bottom:32px;">
+    <div class="hero-carousel-wrapper" style="margin-bottom:24px;">
+      <div class="carousel" id="etfCarousel">
+        <!-- ETF cards will be rendered here -->
       </div>
+      <button class="carousel-nav carousel-nav-right" id="etfCarouselNext" aria-label="Next cards">→</button>
     </div>
-    <div id="etfDataMainContent" style="position:relative;z-index:1;">
-      <div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">ჩატვირთვა...</div>
+    
+    <!-- Recent Activity Carousel -->
+    <div class="hero-carousel-wrapper">
+      <div class="carousel" id="activityCarousel">
+        <!-- Activity cards will be rendered here -->
+      </div>
+      <button class="carousel-nav carousel-nav-right" id="activityCarouselNext" aria-label="Next cards">→</button>
     </div>
   </div>
 
@@ -477,16 +481,6 @@ body{
         </div>
       </div>
 
-      <!-- Option 6: Recent Activity Feed -->
-      <div class="sidebar-card" style="background:rgba(15,20,30,.6);backdrop-filter:blur(16px) saturate(180%);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,.08);margin-bottom:20px;box-shadow:0 4px 16px rgba(0,0,0,.2);">
-        <div style="font-size:13px;font-weight:600;margin-bottom:18px;text-transform:uppercase;letter-spacing:0.8px;color:#9aa0a6;display:flex;align-items:center;gap:8px;">
-          <span style="opacity:0.8;">⚡</span> 
-          <span>ბოლო აქტივობა</span>
-        </div>
-        <div id="recentActivityList" class="recent-activity-list" style="display:flex;flex-direction:column;gap:10px;max-height:300px;overflow-y:auto;">
-          <div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">ჩატვირთვა...</div>
-        </div>
-      </div>
 
 
       <div class="sidebar-card" style="background:rgba(15,20,30,.6);backdrop-filter:blur(16px) saturate(180%);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,.08);box-shadow:0 4px 16px rgba(0,0,0,.2);">
@@ -1165,17 +1159,17 @@ function renderTokenCategories() {
     }).join('');
 }
 
-// Option 6: Recent Activity Feed
+// Option 6: Recent Activity Feed (Carousel Style)
 let activityFeed = [];
 function renderRecentActivity() {
-  const activityList = $('recentActivityList');
-  if (!activityList) {
-    console.warn('recentActivityList element not found');
+  const carousel = $('activityCarousel');
+  if (!carousel) {
+    console.warn('activityCarousel element not found');
     return;
   }
   
   if (!cryptoData || cryptoData.length === 0) {
-    activityList.innerHTML = '<div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">ბაზრის მონაცემები მიუწვდომელია</div>';
+    carousel.innerHTML = '<div style="padding:40px;text-align:center;color:#9aa0a6;font-size:13px;">ბაზრის მონაცემები მიუწვდომელია</div>';
     return;
   }
   
@@ -1187,6 +1181,7 @@ function renderRecentActivity() {
       newActivities.push({
         type: change > 0 ? 'surge' : 'drop',
         token: token.symbol?.toUpperCase() || token.id,
+        tokenName: token.name || token.id,
         change: change,
         price: token.current_price || 0,
         timestamp: Date.now() - Math.random() * 3600000 // Random time in last hour
@@ -1200,42 +1195,42 @@ function renderRecentActivity() {
     .slice(0, 10); // Keep last 10 activities
   
   if (activityFeed.length === 0) {
-    activityList.innerHTML = '<div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">ბოლო აქტივობა არ არის</div>';
+    carousel.innerHTML = '<div style="padding:40px;text-align:center;color:#9aa0a6;font-size:13px;">ბოლო აქტივობა არ არის</div>';
     return;
   }
   
-  activityList.innerHTML = activityFeed.map(activity => {
+  // Render as carousel cards
+  carousel.innerHTML = activityFeed.map(activity => {
     const timeAgo = Math.floor((Date.now() - activity.timestamp) / 60000);
     const timeText = timeAgo < 1 ? 'ახლახან' : timeAgo < 60 ? `${timeAgo}წთ` : `${Math.floor(timeAgo / 60)}სთ`;
-    const color = activity.type === 'surge' ? '#22c55e' : '#ef4444';
+    const changeColor = activity.type === 'surge' ? '#22c55e' : '#ef4444';
     const icon = activity.type === 'surge' ? '📈' : '📉';
     
     return `
-      <div class="activity-item" style="padding:10px;background:rgba(255,255,255,.03);border-left:3px solid ${color};border-radius:6px;margin-bottom:8px;transition:all .2s;">
-        <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:4px;">
-          <div style="flex:1;">
-            <div style="font-size:11px;color:#9aa0a6;margin-bottom:2px;">${icon} ${activity.token}</div>
-            <div style="font-size:12px;font-weight:500;color:#e8eaed;">
-              ${activity.type === 'surge' ? 'მნიშვნელოვანი ზრდა' : 'მნიშვნელოვანი დაცემა'}: ${activity.change >= 0 ? '+' : ''}${activity.change.toFixed(2)}%
-            </div>
-          </div>
-          <span style="font-size:10px;color:#71717a;">${timeText}</span>
+      <div class="carousel-card">
+        <div class="carousel-card-header">
+          <div class="carousel-card-title">${icon} ${activity.token}</div>
+          <span class="carousel-card-arrow">→</span>
         </div>
-        <div style="font-size:11px;color:#9aa0a6;">ფასი: $${formatPrice(activity.price)}</div>
+        <div class="carousel-card-value" style="color:${changeColor};">
+          ${activity.change >= 0 ? '+' : ''}${activity.change.toFixed(2)}%
+        </div>
+        <div class="carousel-card-subtitle">${activity.type === 'surge' ? 'მნიშვნელოვანი ზრდა' : 'მნიშვნელოვანი დაცემა'}</div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;font-size:11px;">
+          <div>
+            <div style="color:#9aa0a6;margin-bottom:4px;">ფასი</div>
+            <div style="color:#fafafa;font-weight:600;">$${formatPrice(activity.price)}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="color:#9aa0a6;margin-bottom:4px;">დრო</div>
+            <div style="color:#fafafa;font-weight:600;">${timeText}</div>
+          </div>
+        </div>
       </div>
     `;
   }).join('');
   
-  activityList.querySelectorAll('.activity-item').forEach(item => {
-    item.onmouseenter = () => {
-      item.style.background = 'rgba(255,255,255,.05)';
-      item.style.transform = 'translateX(2px)';
-    };
-    item.onmouseleave = () => {
-      item.style.background = 'rgba(255,255,255,.03)';
-      item.style.transform = 'translateX(0)';
-    };
-  });
+  setupCarouselNavigation('activityCarousel', 'activityCarouselNext');
 }
 
 
@@ -1463,12 +1458,12 @@ function renderHeroStats() {
   `;
   
   // Setup carousel navigation
-  setupCarouselNavigation();
+  setupCarouselNavigation('heroCarousel', 'carouselNext');
 }
 
-function setupCarouselNavigation() {
-  const carousel = $('heroCarousel');
-  const nextBtn = $('carouselNext');
+function setupCarouselNavigation(carouselId = 'heroCarousel', nextBtnId = 'carouselNext') {
+  const carousel = $(carouselId);
+  const nextBtn = $(nextBtnId);
   
   if (!carousel || !nextBtn) return;
   
@@ -1691,8 +1686,8 @@ async function loadETFDataMain() {
 }
 
 function renderETFDataMain(etfData) {
-  const container = $('etfDataMainContent');
-  if (!container) return;
+  const carousel = $('etfCarousel');
+  if (!carousel) return;
   
   const formatFlow = (value) => {
     if (value === null || value === undefined || isNaN(value)) return 'N/A';
@@ -1709,19 +1704,9 @@ function renderETFDataMain(etfData) {
     return `$${value.toFixed(0)}`;
   };
   
-  const formatDate = (dateStr) => {
-    if (!dateStr) return '';
-    try {
-      const date = new Date(dateStr);
-      return date.toLocaleDateString('ka-GE', { year: 'numeric', month: 'short', day: 'numeric' });
-    } catch {
-      return dateStr;
-    }
-  };
-  
   let html = '';
   
-  // Bitcoin ETF
+  // Bitcoin ETF Card
   if (etfData.btc) {
     const btc = etfData.btc;
     const dailyNetInflow = btc.dailyNetInflow?.value || btc.dailyNetInflow || 0;
@@ -1730,32 +1715,28 @@ function renderETFDataMain(etfData) {
     const flowColor = dailyNetInflow >= 0 ? '#22c55e' : '#ef4444';
     
     html += `
-      <div style="margin-bottom:24px;padding:20px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:12px;">
-        <div style="font-size:16px;font-weight:600;color:#fafafa;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
-          <span>₿</span> Bitcoin ETF
+      <div class="carousel-card">
+        <div class="carousel-card-header">
+          <div class="carousel-card-title">₿ Bitcoin ETF</div>
+          <span class="carousel-card-arrow">→</span>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+        <div class="carousel-card-value" style="color:${flowColor};">${formatFlow(dailyNetInflow)}</div>
+        <div class="carousel-card-subtitle">დღის შემოდინება</div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;">
           <div>
-            <div style="font-size:11px;color:#9aa0a6;margin-bottom:6px;text-transform:uppercase;">წმინდა შემოდინება (დღეს)</div>
-            <div style="font-size:18px;font-weight:600;color:${flowColor};">${formatFlow(dailyNetInflow)}</div>
-            ${btc.dailyNetInflowDate || btc.dailyNetInflow?.lastUpdateDate ? `<div style="font-size:10px;color:#6b7280;margin-top:4px;">${formatDate(btc.dailyNetInflowDate || btc.dailyNetInflow?.lastUpdateDate)}</div>` : ''}
+            <div style="color:#9aa0a6;margin-bottom:4px;">კუმულაციური</div>
+            <div style="color:#fafafa;font-weight:600;">${formatFlow(cumNetInflow)}</div>
           </div>
           <div>
-            <div style="font-size:11px;color:#9aa0a6;margin-bottom:6px;text-transform:uppercase;">კუმულაციური შემოდინება</div>
-            <div style="font-size:18px;font-weight:600;color:#fafafa;">${formatFlow(cumNetInflow)}</div>
-            ${btc.cumNetInflowDate || btc.cumNetInflow?.lastUpdateDate ? `<div style="font-size:10px;color:#6b7280;margin-top:4px;">${formatDate(btc.cumNetInflowDate || btc.cumNetInflow?.lastUpdateDate)}</div>` : ''}
-          </div>
-          <div>
-            <div style="font-size:11px;color:#9aa0a6;margin-bottom:6px;text-transform:uppercase;">საერთო აქტივები</div>
-            <div style="font-size:18px;font-weight:600;color:#fafafa;">${formatAUM(totalNetAssets)}</div>
-            ${btc.totalNetAssetsDate || btc.totalNetAssets?.lastUpdateDate ? `<div style="font-size:10px;color:#6b7280;margin-top:4px;">${formatDate(btc.totalNetAssetsDate || btc.totalNetAssets?.lastUpdateDate)}</div>` : ''}
+            <div style="color:#9aa0a6;margin-bottom:4px;">საერთო აქტივები</div>
+            <div style="color:#fafafa;font-weight:600;">${formatAUM(totalNetAssets)}</div>
           </div>
         </div>
       </div>
     `;
   }
   
-  // Ethereum ETF
+  // Ethereum ETF Card
   if (etfData.eth) {
     const eth = etfData.eth;
     const dailyNetInflow = eth.dailyNetInflow?.value || eth.dailyNetInflow || 0;
@@ -1764,25 +1745,21 @@ function renderETFDataMain(etfData) {
     const flowColor = dailyNetInflow >= 0 ? '#22c55e' : '#ef4444';
     
     html += `
-      <div style="padding:20px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:12px;">
-        <div style="font-size:16px;font-weight:600;color:#fafafa;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
-          <span>Ξ</span> Ethereum ETF
+      <div class="carousel-card">
+        <div class="carousel-card-header">
+          <div class="carousel-card-title">Ξ Ethereum ETF</div>
+          <span class="carousel-card-arrow">→</span>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+        <div class="carousel-card-value" style="color:${flowColor};">${formatFlow(dailyNetInflow)}</div>
+        <div class="carousel-card-subtitle">დღის შემოდინება</div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;">
           <div>
-            <div style="font-size:11px;color:#9aa0a6;margin-bottom:6px;text-transform:uppercase;">წმინდა შემოდინება (დღეს)</div>
-            <div style="font-size:18px;font-weight:600;color:${flowColor};">${formatFlow(dailyNetInflow)}</div>
-            ${eth.dailyNetInflowDate || eth.dailyNetInflow?.lastUpdateDate ? `<div style="font-size:10px;color:#6b7280;margin-top:4px;">${formatDate(eth.dailyNetInflowDate || eth.dailyNetInflow?.lastUpdateDate)}</div>` : ''}
+            <div style="color:#9aa0a6;margin-bottom:4px;">კუმულაციური</div>
+            <div style="color:#fafafa;font-weight:600;">${formatFlow(cumNetInflow)}</div>
           </div>
           <div>
-            <div style="font-size:11px;color:#9aa0a6;margin-bottom:6px;text-transform:uppercase;">კუმულაციური შემოდინება</div>
-            <div style="font-size:18px;font-weight:600;color:#fafafa;">${formatFlow(cumNetInflow)}</div>
-            ${eth.cumNetInflowDate || eth.cumNetInflow?.lastUpdateDate ? `<div style="font-size:10px;color:#6b7280;margin-top:4px;">${formatDate(eth.cumNetInflowDate || eth.cumNetInflow?.lastUpdateDate)}</div>` : ''}
-          </div>
-          <div>
-            <div style="font-size:11px;color:#9aa0a6;margin-bottom:6px;text-transform:uppercase;">საერთო აქტივები</div>
-            <div style="font-size:18px;font-weight:600;color:#fafafa;">${formatAUM(totalNetAssets)}</div>
-            ${eth.totalNetAssetsDate || eth.totalNetAssets?.lastUpdateDate ? `<div style="font-size:10px;color:#6b7280;margin-top:4px;">${formatDate(eth.totalNetAssetsDate || eth.totalNetAssets?.lastUpdateDate)}</div>` : ''}
+            <div style="color:#9aa0a6;margin-bottom:4px;">საერთო აქტივები</div>
+            <div style="color:#fafafa;font-weight:600;">${formatAUM(totalNetAssets)}</div>
           </div>
         </div>
       </div>
@@ -1790,11 +1767,12 @@ function renderETFDataMain(etfData) {
   }
   
   if (!html) {
-    container.innerHTML = '<div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">ETF მონაცემები არ არის ხელმისაწვდომი</div>';
+    carousel.innerHTML = '<div style="padding:40px;text-align:center;color:#9aa0a6;font-size:13px;">ETF მონაცემები არ არის ხელმისაწვდომი</div>';
     return;
   }
   
-  container.innerHTML = html;
+  carousel.innerHTML = html;
+  setupCarouselNavigation('etfCarousel', 'etfCarouselNext');
 }
 
 /* ---------- TOP GAINER OF DAY (Sidebar) ---------- */
