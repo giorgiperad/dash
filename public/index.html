@@ -1333,9 +1333,9 @@ function renderRecentActivity() {
     .sort((a, b) => b.timestamp - a.timestamp)
     .slice(0, 10); // Keep last 10 activities
   
-  // Show the carousel wrapper
-  const mainContainer = $('etfDataMain');
-  if (mainContainer) mainContainer.style.display = 'block';
+  // Show the activity carousel wrapper
+  const activityWrapper = $('activityCarouselWrapper');
+  if (activityWrapper) activityWrapper.style.display = 'block';
   
   if (activityFeed.length === 0) {
     carousel.innerHTML = '<div style="padding:40px;text-align:center;color:#9aa0a6;font-size:13px;">ბოლო აქტივობა არ არის</div>';
@@ -2081,6 +2081,10 @@ async function fetchAll(){
              renderRecentActivity();
            }
     $('contentGrid').style.display = 'block';
+    // Ensure market content is visible
+    if ($('marketContent')) {
+      $('marketContent').style.display = 'block';
+    }
     $('heroStats').style.display = 'grid';
            // Load portfolio and alerts after market data is loaded
            if(currentUser) { 
