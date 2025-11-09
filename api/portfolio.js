@@ -1,5 +1,21 @@
 const admin = require('firebase-admin');
 
+// In-memory cache for CoinGecko data
+const cache = {
+  market: null,
+  global: null,
+  fearGreed: null,
+  timestamp: null,
+  TTL: 60000 // Cache for 60 seconds (1 minute)
+};
+
+// Helper function to check if cache is valid
+function isCacheValid() {
+  if (!cache.timestamp) return false;
+  const age = Date.now() - cache.timestamp;
+  return age < cache.TTL;
+}
+
 // Initialize Firebase Admin SDK
 function getDatabase() {
   if (!admin.apps.length) {
@@ -124,20 +140,40 @@ module.exports = async function handler(req, res) {
         return res.json({ cryptoData: [], globalData: null, fearGreed: null });
       }
 
+      // Check cache first
+      if (isCacheValid()) {
+        console.log('Returning cached market data');
+        return res.json({
+          cryptoData: cache.market || [],
+          globalData: cache.global?.data || null,
+          fearGreed: cache.fearGreed?.data?.[0] || null,
+          cached: true
+        });
+      }
+
       // Fetch market data from CoinGecko with retry logic
       const ids = tokens.join(',');
-      console.log(`Fetching data for tokens: ${ids}`);
+      console.log(`Fetching fresh data for tokens: ${ids}`);
       
       // Helper function to fetch with retry
       const fetchWithRetry = async (url, options = {}, maxRetries = 2, delay = 1000) => {
+        // Add CoinGecko API key if available
+        const apiKey = process.env.COINGECKO_API_KEY;
+        const headers = {
+          'User-Agent': 'Mozilla/5.0 (compatible; CryptoCollectiveX/1.0)',
+          ...options.headers
+        };
+        
+        // Add API key to URL if provided (CoinGecko uses query parameter)
+        if (apiKey && url.includes('api.coingecko.com')) {
+          url += (url.includes('?') ? '&' : '?') + `x_cg_demo_api_key=${apiKey}`;
+        }
+        
         for (let i = 0; i <= maxRetries; i++) {
           try {
             const response = await fetch(url, {
               ...options,
-              headers: {
-                'User-Agent': 'Mozilla/5.0 (compatible; CryptoCollectiveX/1.0)',
-                ...options.headers
-              }
+              headers: headers
             });
             
             if (response.status === 429) {
@@ -210,8 +246,28 @@ module.exports = async function handler(req, res) {
         }
         
         console.log('Successfully fetched market data');
+        
+        // Update cache with fresh data
+        cache.market = market || [];
+        cache.global = global || null;
+        cache.fearGreed = fg || null;
+        cache.timestamp = Date.now();
+        
       } catch (fetchError) {
         console.error('External API fetch error:', fetchError.message);
+        // Return cached data if available, otherwise return partial data
+        if (cache.market && cache.timestamp) {
+          const cacheAge = Date.now() - cache.timestamp;
+          console.log(`Returning stale cache (${Math.round(cacheAge / 1000)}s old) due to API error`);
+          return res.status(200).json({ 
+            cryptoData: cache.market || [],
+            globalData: cache.global?.data || null,
+            fearGreed: cache.fearGreed?.data?.[0] || null,
+            cached: true,
+            stale: true,
+            warning: 'Using cached data due to API error'
+          });
+        }
         // Return partial data if available
         return res.status(200).json({ 
           cryptoData: market || [],
@@ -224,7 +280,8 @@ module.exports = async function handler(req, res) {
       res.json({
         cryptoData: market || [],
         globalData: global?.data || null,
-        fearGreed: fg?.data?.[0] || null
+        fearGreed: fg?.data?.[0] || null,
+        cached: false
       });
       return;
     } catch (error) {

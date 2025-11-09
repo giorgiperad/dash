@@ -223,7 +223,32 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   <div class="hero-section" id="heroStats" style="display:none;"></div>
 
   <div class="content-grid" id="contentGrid" style="display:none;">
-    <div class="sidebar-section" id="sidebarSection"></div>
+    <div class="sidebar-section" id="sidebarSection">
+      <div class="sidebar-card" style="background:rgba(0,0,0,.2);backdrop-filter:blur(10px);border-radius:20px;padding:24px;border:1px solid rgba(255,255,255,.1);margin-bottom:24px;">
+        <div style="font-size:14px;font-weight:700;margin-bottom:16px;text-transform:uppercase;letter-spacing:1px;color:#8b5cf6;">Market Quotes</div>
+        <div id="quotesList" class="quotes-list" style="display:flex;flex-direction:column;gap:12px;">
+          <div style="padding:20px;text-align:center;color:#888;">Loading quotes...</div>
+        </div>
+      </div>
+      <div class="sidebar-card" style="background:rgba(0,0,0,.2);backdrop-filter:blur(10px);border-radius:20px;padding:24px;border:1px solid rgba(255,255,255,.1);">
+        <div style="font-size:14px;font-weight:700;margin-bottom:16px;text-transform:uppercase;letter-spacing:1px;color:#8b5cf6;">Settings</div>
+        <div id="settingsPanel" class="settings-panel" style="display:flex;flex-direction:column;gap:16px;">
+          <div class="setting-item" style="display:flex;justify-content:space-between;align-items:center;">
+            <label style="font-size:13px;color:#ddd;">Auto-refresh:</label>
+            <select id="refreshInterval" style="background:#0a0a0a;border:1px solid rgba(139,92,246,.3);border-radius:8px;padding:6px 12px;color:#fff;font-size:12px;">
+              <option value="60000">1 min</option>
+              <option value="120000">2 min</option>
+              <option value="180000" selected>3 min</option>
+              <option value="300000">5 min</option>
+            </select>
+          </div>
+          <div class="setting-item" style="display:flex;justify-content:space-between;align-items:center;">
+            <label style="font-size:13px;color:#ddd;">Price alerts:</label>
+            <input type="checkbox" id="enableAlerts" checked style="width:18px;height:18px;accent-color:#8b5cf6;">
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="main-section">
       <div id="userTabs" class="user-tabs" style="display:none;">
@@ -463,8 +488,46 @@ document.querySelectorAll('.user-tab').forEach(tab=>{
 function renderAll() {
   renderHeroStats();
   renderTokens();
+  renderQuotes();
   populateTokenSelect('holdingToken');
   populateTokenSelect('alertToken');
+}
+
+function renderQuotes() {
+  const quotesList = $('quotesList');
+  if (!quotesList) return;
+  
+  if (!cryptoData || cryptoData.length === 0) {
+    quotesList.innerHTML = '<div style="padding:20px;text-align:center;color:#888;">No market data available</div>';
+    return;
+  }
+  
+  // Show top 5 tokens by market cap
+  const topTokens = [...cryptoData]
+    .sort((a, b) => (b.market_cap || 0) - (a.market_cap || 0))
+    .slice(0, 5);
+  
+  quotesList.innerHTML = topTokens.map(token => {
+    const change = token.price_change_percentage_24h || 0;
+    const changeClass = change >= 0 ? 'positive' : 'negative';
+    return `
+      <div class="quote-item">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <img src="${token.image || 'https://via.placeholder.com/24'}" style="width:24px;height:24px;border-radius:50%;" onerror="this.src='https://via.placeholder.com/24?text=?'">
+          <div>
+            <div style="font-weight:600;font-size:13px;">${token.symbol?.toUpperCase() || token.id}</div>
+            <div style="font-size:11px;color:#888;">${token.name || token.id}</div>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-weight:700;font-size:13px;">$${formatPrice(token.current_price || 0)}</div>
+          <div class="change-badge ${changeClass}" style="font-size:11px;padding:2px 6px;border-radius:4px;display:inline-block;">
+            ${change >= 0 ? '↑' : '↓'} ${Math.abs(change).toFixed(2)}%
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 function renderHeroStats() {
@@ -582,15 +645,21 @@ async function fetchAll(){
     globalData = data.globalData;
     fearGreedData = data.fearGreed;
     
-    if (data.warning) {
-      console.warn('API Warning:', data.warning);
+    if (data.cached && !data.stale) {
+      // Silently use cached data - no warning needed for fresh cache
+      console.log('Using cached data');
+    }
+    
+    if (data.warning || data.stale) {
+      const warningMsg = data.warning || 'Using cached data due to API error';
+      console.warn('API Warning:', warningMsg);
       // Show a subtle warning to user
       const warningEl = document.createElement('div');
       warningEl.className = 'error';
       warningEl.style.background = 'rgba(245,158,11,.1)';
       warningEl.style.borderColor = 'rgba(245,158,11,.3)';
       warningEl.style.color = '#f59e0b';
-      warningEl.innerHTML = `<strong>⚠️ Rate Limit Warning:</strong> ${data.warning}. Some data may be incomplete.`;
+      warningEl.innerHTML = `<strong>⚠️ ${data.stale ? 'Cached Data' : 'Rate Limit Warning'}:</strong> ${warningMsg}. Some data may be incomplete.`;
       const errorDiv = $('error');
       if (errorDiv && !errorDiv.querySelector('.error')) {
         errorDiv.appendChild(warningEl);
@@ -980,7 +1049,12 @@ function renderPortfolio(holdings) {
   list.innerHTML = '';
   let totalValue = 0, totalCost = 0;
   Object.entries(holdings || {}).forEach(([id, h]) => {
-    const token = cryptoData.find(t => t.id === h.tokenId) || { name: h.tokenId, symbol: '', image: '' };
+    if (!h || !h.tokenId) return; // Skip invalid holdings
+    const token = cryptoData.find(t => t.id === h.tokenId) || { 
+      name: h.tokenId || 'Unknown Token', 
+      symbol: h.tokenId ? h.tokenId.toUpperCase().substring(0, 4) : 'UNK', 
+      image: 'https://via.placeholder.com/32?text=?' 
+    };
     const price = prices[h.tokenId] || 0;
     const value = h.amount * price;
     const cost = h.amount * h.buyPrice;
@@ -988,10 +1062,11 @@ function renderPortfolio(holdings) {
     totalCost += cost;
     const pl = value - cost;
     const plPct = cost > 0 ? (pl / cost * 100) : 0;
+    const symbolDisplay = token.symbol ? `(${token.symbol.toUpperCase()})` : '';
     list.innerHTML += `
       <div class="holding-row" data-id="${id}">
-        <div class="token-icon-col"><img src="${token.image}" class="token-icon"></div>
-        <div class="holding-name">${token.name} <span class="token-symbol">(${token.symbol.toUpperCase()})</span></div>
+        <div class="token-icon-col"><img src="${token.image || 'https://via.placeholder.com/32'}" class="token-icon" onerror="this.src='https://via.placeholder.com/32?text=?'"></div>
+        <div class="holding-name">${token.name || h.tokenId || 'Unknown'} ${symbolDisplay}</div>
         <div class="editable" data-field="amount" data-value="${h.amount}">${h.amount}</div>
         <div class="editable" data-field="buyPrice" data-value="${h.buyPrice}">$${formatPrice(h.buyPrice)}</div>
         <div style="color:${pl >= 0 ? '#10b981' : '#ef4444'}">
@@ -1057,20 +1132,33 @@ function startEdit(el) {
 function renderAlerts(alerts) {
   const list = $('alertsList');
   list.innerHTML = '';
+  if (!alerts || Object.keys(alerts).length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:40px;color:#888;">No alerts set. Create one below!</div>';
+    populateTokenSelect('alertToken');
+    return;
+  }
   Object.entries(alerts || {}).forEach(([id, a]) => {
+    if (!a || !a.tokenId) return; // Skip invalid alerts
+    const token = cryptoData.find(t => t.id === a.tokenId);
+    const tokenName = token?.name || a.tokenId || 'Unknown Token';
+    const tokenImage = token?.image || 'https://via.placeholder.com/32?text=?';
     const price = prices[a.tokenId] || 0;
     const triggered = (a.condition === 'above' && price >= a.target) || (a.condition === 'below' && price <= a.target);
     list.innerHTML += `
       <div class="alert-row ${triggered ? 'triggered' : ''}">
-        <div class="token-icon-col"><img src="${cryptoData.find(t => t.id === a.tokenId)?.image || ''}" class="token-icon"></div>
-        <div>${cryptoData.find(t => t.id === a.tokenId)?.name || a.tokenId}</div>
-        <div>${a.condition === 'above' ? '>' : '<'} $${a.target}</div>
-        <div>${formatPrice(price)}</div>
+        <div class="token-icon-col"><img src="${tokenImage}" class="token-icon" onerror="this.src='https://via.placeholder.com/32?text=?'"></div>
+        <div>${tokenName}</div>
+        <div>${a.condition === 'above' ? '>' : '<'} $${formatPrice(a.target || 0)}</div>
+        <div>$${formatPrice(price)}</div>
         <div class="delete-btn" onclick="deleteAlert('${id}')">X</div>
       </div>`;
     if (triggered && !a.notified) {
-      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-      new Notification('CCX Alert', { body: `${a.message || ''} ${cryptoData.find(t => t.id === a.tokenId)?.name} is ${a.condition} $${a.target}!` });
+      if (typeof confetti !== 'undefined') {
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      }
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('CCX Alert', { body: `${a.message || ''} ${tokenName} is ${a.condition} $${a.target}!` });
+      }
     }
   });
   populateTokenSelect('alertToken');
@@ -1079,11 +1167,21 @@ function renderAlerts(alerts) {
 /* ---------- POPULATE SELECTS ---------- */
 function populateTokenSelect(id) {
   const sel = $(id);
+  if (!sel) return; // Element doesn't exist
   sel.innerHTML = '<option value="">Select Token</option>';
+  if (!cryptoData || cryptoData.length === 0) {
+    const opt = document.createElement('option');
+    opt.value = '';
+    opt.textContent = 'No tokens available';
+    opt.disabled = true;
+    sel.appendChild(opt);
+    return;
+  }
   cryptoData.forEach(t => {
+    if (!t || !t.id) return; // Skip invalid tokens
     const opt = document.createElement('option');
     opt.value = t.id;
-    opt.textContent = `${t.name} (${t.symbol.toUpperCase()})`;
+    opt.textContent = `${t.name || t.id} (${(t.symbol || t.id.substring(0, 4)).toUpperCase()})`;
     sel.appendChild(opt);
   });
 }
@@ -1095,14 +1193,33 @@ $('cancelAdd').onclick = () => $('addTokenModal').classList.remove('show');
 $('refreshBtn').onclick = () => fetchAll();
 
 /* ---------- AUTO REFRESH ---------- */
+let refreshIntervalId = null;
+let refreshIntervalMs = 180000; // Default 3 minutes
+
+function startAutoRefresh() {
+  if (refreshIntervalId) clearInterval(refreshIntervalId);
+  refreshIntervalId = setInterval(() => {
+    fetchAll();
+    if (currentUser) {
+      loadPortfolio();
+      loadAlerts();
+    }
+  }, refreshIntervalMs);
+}
+
+// Load settings and start auto-refresh
 fetchAll();
-setInterval(() => {
-  fetchAll();
-  if (currentUser) {
-    loadPortfolio();
-    loadAlerts();
-  }
-}, 90000);
+startAutoRefresh();
+
+// Settings handler
+const refreshIntervalSelect = $('refreshInterval');
+if (refreshIntervalSelect) {
+  refreshIntervalSelect.onchange = (e) => {
+    refreshIntervalMs = parseInt(e.target.value);
+    startAutoRefresh();
+    console.log(`Refresh interval changed to ${refreshIntervalMs / 1000} seconds`);
+  };
+}
 
 if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
 </script>
