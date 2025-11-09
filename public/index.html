@@ -450,7 +450,7 @@ body{
     </div>
   </div>
 
-  <!-- Crypto ETF Data & Recent Activity Section (Hero Carousel Style) -->
+  <!-- Crypto ETF Data & Recent Activity Section (Hero Carousel Style) - Below Hero -->
   <div id="etfDataMain" style="display:none;margin-bottom:32px;">
     <div class="hero-carousel-wrapper" style="margin-bottom:24px;">
       <div class="carousel" id="etfCarousel">
@@ -469,41 +469,7 @@ body{
   </div>
 
   <div class="content-grid" id="contentGrid" style="display:none;">
-    <div class="sidebar-section" id="sidebarSection">
-      <!-- Top Gainer of Day (moved from main area) -->
-      <div class="sidebar-card" style="background:rgba(15,20,30,.6);backdrop-filter:blur(16px) saturate(180%);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,.08);margin-bottom:20px;box-shadow:0 4px 16px rgba(0,0,0,.2);">
-        <div style="font-size:13px;font-weight:600;margin-bottom:18px;text-transform:uppercase;letter-spacing:0.8px;color:#9aa0a6;display:flex;align-items:center;gap:8px;">
-          <span style="opacity:0.8;">🚀</span> 
-          <span>დღის ტოპ გეინერი</span>
-        </div>
-        <div id="topGainerSidebar" style="display:flex;flex-direction:column;gap:12px;">
-          <div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">ჩატვირთვა...</div>
-        </div>
-      </div>
-
-
-
-      <div class="sidebar-card" style="background:rgba(15,20,30,.6);backdrop-filter:blur(16px) saturate(180%);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,.08);box-shadow:0 4px 16px rgba(0,0,0,.2);">
-        <div style="font-size:13px;font-weight:600;margin-bottom:18px;text-transform:uppercase;letter-spacing:0.8px;color:#9aa0a6;">პარამეტრები</div>
-        <div id="settingsPanel" class="settings-panel" style="display:flex;flex-direction:column;gap:16px;">
-          <div class="setting-item" style="display:flex;justify-content:space-between;align-items:center;">
-            <label style="font-size:13px;color:#bdc1c6;font-weight:500;">ავტო-განახლება:</label>
-            <select id="refreshInterval" style="background:rgba(10,14,26,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 12px;color:#e8eaed;font-size:12px;cursor:pointer;transition:all .25s;backdrop-filter:blur(10px);">
-              <option value="60000">1 წუთი</option>
-              <option value="120000">2 წუთი</option>
-              <option value="180000" selected>3 წუთი</option>
-              <option value="300000">5 წუთი</option>
-            </select>
-          </div>
-          <div class="setting-item" style="display:flex;justify-content:space-between;align-items:center;">
-            <label style="font-size:13px;color:#bdc1c6;font-weight:500;">ფასის შეტყობინებები:</label>
-            <input type="checkbox" id="enableAlerts" checked style="width:18px;height:18px;accent-color:#8b5cf6;cursor:pointer;">
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="main-section">
+    <div class="main-section" style="width:100%;">
       <div id="userTabs" class="user-tabs" style="display:none;">
         <div class="user-tab active" data-tab="market">ბაზარი</div>
         <div class="user-tab" data-tab="portfolio">პორტფოლიო</div>
@@ -1363,6 +1329,69 @@ function renderHeroStats() {
     return 'BTC სეზონი';
   };
   
+  // Top Gainer Card (Green, before XAUT)
+  const getTopGainerCard = () => {
+    if (!cryptoData || cryptoData.length === 0) {
+      return `
+        <div class="carousel-card" style="border-color:rgba(34,197,94,.2);background:linear-gradient(135deg,rgba(18,18,23,.85) 0%,rgba(20,30,20,.9) 100%);">
+          <div class="carousel-card-header">
+            <div class="carousel-card-title" style="color:#22c55e;">🚀 დღის ტოპ გეინერი</div>
+            <span class="carousel-card-arrow" style="color:#22c55e;">→</span>
+          </div>
+          <div class="carousel-card-value" style="color:#22c55e;text-shadow:0 0 10px rgba(34,197,94,.3);">N/A</div>
+          <div class="carousel-card-subtitle" style="color:#16a34a;">
+            მონაცემები მიუწვდომელია
+          </div>
+        </div>
+      `;
+    }
+    
+    // Select token with highest 24h gain % from tracked tokens
+    const token = [...cryptoData]
+      .filter(t => {
+        const change = t.price_change_percentage_24h || 0;
+        return !isNaN(change) && isFinite(change);
+      })
+      .sort((a, b) => {
+        const changeA = a.price_change_percentage_24h || 0;
+        const changeB = b.price_change_percentage_24h || 0;
+        return changeB - changeA;
+      })[0];
+    
+    if (!token) {
+      return `
+        <div class="carousel-card" style="border-color:rgba(34,197,94,.2);background:linear-gradient(135deg,rgba(18,18,23,.85) 0%,rgba(20,30,20,.9) 100%);">
+          <div class="carousel-card-header">
+            <div class="carousel-card-title" style="color:#22c55e;">🚀 დღის ტოპ გეინერი</div>
+            <span class="carousel-card-arrow" style="color:#22c55e;">→</span>
+          </div>
+          <div class="carousel-card-value" style="color:#22c55e;text-shadow:0 0 10px rgba(34,197,94,.3);">N/A</div>
+          <div class="carousel-card-subtitle" style="color:#16a34a;">
+            ტოკენები არ მოიძებნა
+          </div>
+        </div>
+      `;
+    }
+    
+    const change = token.price_change_percentage_24h || 0;
+    
+    return `
+      <div class="carousel-card" style="border-color:rgba(34,197,94,.2);background:linear-gradient(135deg,rgba(18,18,23,.85) 0%,rgba(20,30,20,.9) 100%);">
+        <div class="carousel-card-header">
+          <div class="carousel-card-title" style="color:#22c55e;">🚀 დღის ტოპ გეინერი</div>
+          <span class="carousel-card-arrow" style="color:#22c55e;">→</span>
+        </div>
+        <div class="carousel-card-value" style="color:#22c55e;text-shadow:0 0 10px rgba(34,197,94,.3);">+${change.toFixed(2)}%</div>
+        <div class="carousel-card-subtitle" style="color:#16a34a;">
+          ${token.symbol?.toUpperCase() || token.id.toUpperCase()}
+        </div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(34,197,94,.2);font-size:11px;color:#9aa0a6;">
+          $${formatPrice(token.current_price || 0)}
+        </div>
+      </div>
+    `;
+  };
+  
   // XAUT (Tether Gold) card
   const getXAUTCard = () => {
     const xaut = cryptoData.find(t => t.id === 'tether-gold' || t.symbol?.toLowerCase() === 'xaut');
@@ -1414,17 +1443,6 @@ function renderHeroStats() {
     
     <div class="carousel-card">
       <div class="carousel-card-header">
-        <div class="carousel-card-title">24სთ ბრუნვა</div>
-        <span class="carousel-card-arrow">→</span>
-      </div>
-      <div class="carousel-card-value">$${formatMarketCap(volume)}</div>
-      <div class="carousel-card-subtitle">
-        ${volume > 0 ? ((volume / marketCap * 100).toFixed(1) + '% კაპიტალიზაციის') : 'N/A'}
-      </div>
-    </div>
-    
-    <div class="carousel-card">
-      <div class="carousel-card-header">
         <div class="carousel-card-title">BTC დომინაცია</div>
         <span class="carousel-card-arrow">→</span>
       </div>
@@ -1453,6 +1471,8 @@ function renderHeroStats() {
         ${getAltcoinSeasonLabel(btcDominance)}
       </div>
     </div>
+    
+    ${getTopGainerCard()}
     
     ${getXAUTCard()}
   `;
