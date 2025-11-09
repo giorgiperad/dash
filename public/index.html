@@ -209,9 +209,13 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       <button class="auth-btn" id="logoutBtn">Logout</button>
     </div>
 
-    <div id="adminControls" class="admin-controls">
-      <button class="admin-btn" id="addTokenBtn">Add Token</button>
-      <button class="admin-btn" id="refreshBtn">Refresh Now</button>
+    <div id="adminControls" class="admin-controls" style="display:none;gap:12px;align-items:center;padding:12px 20px;background:rgba(139,92,246,.1);border:2px solid rgba(139,92,246,.3);border-radius:16px;backdrop-filter:blur(10px);">
+      <div style="display:flex;align-items:center;gap:8px;padding-right:12px;border-right:1px solid rgba(139,92,246,.3);">
+        <span style="font-size:18px;">👑</span>
+        <span style="font-size:12px;font-weight:700;color:#8b5cf6;text-transform:uppercase;letter-spacing:1px;">Admin</span>
+      </div>
+      <button class="admin-btn" id="addTokenBtn" style="padding:10px 20px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;color:#fff;font-size:13px;font-weight:700;border-radius:12px;cursor:pointer;transition:all .3s;box-shadow:0 4px 12px rgba(139,92,246,.3);">➕ Add Token</button>
+      <button class="admin-btn" id="refreshBtn" style="padding:10px 20px;background:rgba(16,185,129,.1);border:2px solid rgba(16,185,129,.3);color:#10b981;font-size:13px;font-weight:700;border-radius:12px;cursor:pointer;transition:all .3s;">🔄 Refresh</button>
     </div>
   </div>
 </nav>
@@ -354,18 +358,35 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 </div>
 
 <div id="addTokenModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <div class="modal-title">Add Global Token</div>
-      <span class="close-modal" id="closeModal">x</span>
+  <div class="modal-content" style="max-width:600px;width:90vw;">
+    <div class="modal-header" style="background:linear-gradient(135deg,#8b5cf6,#ec4899);padding:24px;border-radius:20px 20px 0 0;display:flex;justify-content:space-between;align-items:center;">
+      <div class="modal-title" style="font-size:20px;font-weight:900;color:#fff;">🔍 Add Crypto Token</div>
+      <span class="close-modal" id="closeModal" style="color:#fff;font-size:28px;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,.2);transition:all .3s;">×</span>
     </div>
-    <div class="modal-input">
-      <label>CoinGecko ID</label>
-      <input type="text" id="newTokenId" placeholder="e.g. bitcoin">
-    </div>
-    <div class="modal-actions">
-      <button class="modal-btn cancel" id="cancelAdd">Cancel</button>
-      <button class="modal-btn add" id="confirmAdd">Add Token</button>
+    <div style="padding:24px;background:#0a0a0a;">
+      <div class="modal-input" style="margin-bottom:20px;">
+        <label style="display:block;font-size:13px;font-weight:700;color:#8b5cf6;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Search Token</label>
+        <div style="position:relative;">
+          <input type="text" id="tokenSearch" placeholder="Type to search (e.g. bitcoin, ethereum, solana)..." 
+            style="width:100%;padding:14px 16px;background:rgba(0,0,0,.5);border:2px solid rgba(139,92,246,.3);border-radius:12px;color:#fff;font-size:14px;transition:all .3s;"
+            autocomplete="off">
+          <div id="tokenSearchResults" style="position:absolute;top:100%;left:0;right:0;margin-top:8px;background:#0a0a0a;border:2px solid rgba(139,92,246,.3);border-radius:12px;max-height:300px;overflow-y:auto;z-index:1000;display:none;box-shadow:0 8px 32px rgba(0,0,0,.5);"></div>
+        </div>
+        <div id="selectedToken" style="margin-top:16px;padding:16px;background:rgba(139,92,246,.1);border:2px solid rgba(139,92,246,.3);border-radius:12px;display:none;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-weight:700;color:#fff;font-size:16px;" id="selectedTokenName"></div>
+              <div style="font-size:12px;color:#888;margin-top:4px;" id="selectedTokenId"></div>
+            </div>
+            <button id="clearSelection" style="padding:6px 12px;background:rgba(239,68,68,.2);border:1px solid rgba(239,68,68,.3);color:#ef4444;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700;">Clear</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions" style="display:flex;gap:12px;justify-content:flex-end;">
+        <button class="modal-btn cancel" id="cancelAdd" style="padding:12px 24px;background:transparent;border:2px solid rgba(255,255,255,.2);color:#bbb;border-radius:12px;cursor:pointer;font-weight:700;transition:all .3s;">Cancel</button>
+        <button class="modal-btn add" id="confirmAdd" style="padding:12px 24px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;color:#fff;border-radius:12px;cursor:pointer;font-weight:700;transition:all .3s;box-shadow:0 4px 16px rgba(139,92,246,.3);" disabled>Add Token</button>
+      </div>
+      <div id="addTokenStatus" style="margin-top:16px;padding:12px;border-radius:8px;display:none;font-size:13px;"></div>
     </div>
   </div>
 </div>
@@ -1009,16 +1030,111 @@ $('addAlertForm').onsubmit = async e => {
   e.target.reset();
 };
 
-/* ---------- ADMIN ADD TOKEN (via Vercel API) ---------- */
+/* ---------- ADMIN ADD TOKEN (with CoinGecko Search) ---------- */
+let selectedTokenId = null;
+let searchTimeout = null;
+
+// Token search functionality
+$('tokenSearch').oninput = async (e) => {
+  const query = e.target.value.trim();
+  const resultsDiv = $('tokenSearchResults');
+  
+  if (query.length < 2) {
+    resultsDiv.style.display = 'none';
+    selectedTokenId = null;
+    $('selectedToken').style.display = 'none';
+    $('confirmAdd').disabled = true;
+    return;
+  }
+  
+  // Debounce search
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(async () => {
+    try {
+      resultsDiv.innerHTML = '<div style="padding:20px;text-align:center;color:#888;">Searching...</div>';
+      resultsDiv.style.display = 'block';
+      
+      const res = await fetch(`/api/search-tokens?query=${encodeURIComponent(query)}`);
+      const data = await res.json();
+      
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Search failed');
+      }
+      
+      if (data.tokens.length === 0) {
+        resultsDiv.innerHTML = '<div style="padding:20px;text-align:center;color:#888;">No tokens found</div>';
+        return;
+      }
+      
+      resultsDiv.innerHTML = data.tokens.map(token => `
+        <div class="token-result-item" onclick="selectToken('${token.id}', '${token.name}', '${token.symbol}')" 
+          style="padding:12px 16px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.05);transition:all .2s;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-weight:700;color:#fff;font-size:14px;">${token.name}</div>
+            <div style="font-size:12px;color:#888;margin-top:2px;">${token.symbol} • ${token.id}</div>
+          </div>
+          <span style="color:#8b5cf6;font-size:20px;">→</span>
+        </div>
+      `).join('');
+      
+      // Add hover effect
+      resultsDiv.querySelectorAll('.token-result-item').forEach(item => {
+        item.onmouseenter = () => item.style.background = 'rgba(139,92,246,.1)';
+        item.onmouseleave = () => item.style.background = 'transparent';
+      });
+      
+    } catch (error) {
+      console.error('Search error:', error);
+      resultsDiv.innerHTML = `<div style="padding:20px;text-align:center;color:#ef4444;">Error: ${error.message}</div>`;
+    }
+  }, 300);
+};
+
+// Select token from search results
+window.selectToken = (id, name, symbol) => {
+  selectedTokenId = id;
+  $('tokenSearch').value = name;
+  $('tokenSearchResults').style.display = 'none';
+  $('selectedTokenName').textContent = `${name} (${symbol})`;
+  $('selectedTokenId').textContent = `ID: ${id}`;
+  $('selectedToken').style.display = 'block';
+  $('confirmAdd').disabled = false;
+};
+
+// Clear selection
+$('clearSelection').onclick = () => {
+  selectedTokenId = null;
+  $('tokenSearch').value = '';
+  $('selectedToken').style.display = 'none';
+  $('confirmAdd').disabled = true;
+  $('tokenSearchResults').style.display = 'none';
+};
+
+// Close search results when clicking outside
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('#tokenSearch') && !e.target.closest('#tokenSearchResults')) {
+    $('tokenSearchResults').style.display = 'none';
+  }
+});
+
+// Add token
 $('confirmAdd').onclick = async () => {
-  const id = $('newTokenId').value.trim().toLowerCase();
-  if(!id) return alert('Enter ID');
+  if (!selectedTokenId) return alert('Please select a token');
+  
+  const statusDiv = $('addTokenStatus');
+  statusDiv.style.display = 'block';
+  statusDiv.style.background = 'rgba(59,130,246,.1)';
+  statusDiv.style.border = '1px solid rgba(59,130,246,.3)';
+  statusDiv.style.color = '#3b82f6';
+  statusDiv.textContent = 'Adding token...';
+  $('confirmAdd').disabled = true;
+  
   try {
     const token = await currentUser.getIdToken();
     const res = await fetch('/api/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ id })
+      body: JSON.stringify({ id: selectedTokenId })
     });
     
     let data;
@@ -1033,12 +1149,27 @@ $('confirmAdd').onclick = async () => {
       throw new Error(errorMsg);
     }
     
-    alert(data.message || `Added ${id} successfully!`);
-    $('newTokenId').value = '';
-    $('addTokenModal').classList.remove('show');
-    fetchAll();
+    statusDiv.style.background = 'rgba(16,185,129,.1)';
+    statusDiv.style.border = '1px solid rgba(16,185,129,.3)';
+    statusDiv.style.color = '#10b981';
+    statusDiv.textContent = `✅ ${data.message || `Token "${selectedTokenId}" added successfully!`}`;
+    
+    setTimeout(() => {
+      $('addTokenModal').classList.remove('show');
+      $('tokenSearch').value = '';
+      $('selectedToken').style.display = 'none';
+      selectedTokenId = null;
+      $('confirmAdd').disabled = true;
+      statusDiv.style.display = 'none';
+      fetchAll();
+    }, 1500);
+    
   } catch (e) {
-    alert('Add error: ' + e.message);
+    statusDiv.style.background = 'rgba(239,68,68,.1)';
+    statusDiv.style.border = '1px solid rgba(239,68,68,.3)';
+    statusDiv.style.color = '#ef4444';
+    statusDiv.textContent = `❌ Error: ${e.message}`;
+    $('confirmAdd').disabled = false;
     console.error('Token add error:', e);
   }
 };
@@ -1187,9 +1318,26 @@ function populateTokenSelect(id) {
 }
 
 /* ---------- MODAL HANDLERS ---------- */
-$('addTokenBtn').onclick = () => $('addTokenModal').classList.add('show');
-$('closeModal').onclick = () => $('addTokenModal').classList.remove('show');
-$('cancelAdd').onclick = () => $('addTokenModal').classList.remove('show');
+$('addTokenBtn').onclick = () => {
+  $('addTokenModal').classList.add('show');
+  $('tokenSearch').focus();
+};
+$('closeModal').onclick = () => {
+  $('addTokenModal').classList.remove('show');
+  $('tokenSearch').value = '';
+  $('selectedToken').style.display = 'none';
+  $('tokenSearchResults').style.display = 'none';
+  selectedTokenId = null;
+  $('confirmAdd').disabled = true;
+};
+$('cancelAdd').onclick = () => {
+  $('addTokenModal').classList.remove('show');
+  $('tokenSearch').value = '';
+  $('selectedToken').style.display = 'none';
+  $('tokenSearchResults').style.display = 'none';
+  selectedTokenId = null;
+  $('confirmAdd').disabled = true;
+};
 $('refreshBtn').onclick = () => fetchAll();
 
 /* ---------- AUTO REFRESH ---------- */
