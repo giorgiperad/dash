@@ -501,6 +501,39 @@ body{
         </div>
       </div>
 
+      <!-- AI Agent Chat Interface -->
+      <div class="sidebar-card" style="background:rgba(15,20,30,.6);backdrop-filter:blur(16px) saturate(180%);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,.08);margin-bottom:20px;box-shadow:0 4px 16px rgba(0,0,0,.2);">
+        <div style="font-size:13px;font-weight:600;margin-bottom:18px;text-transform:uppercase;letter-spacing:0.8px;color:#9aa0a6;display:flex;align-items:center;gap:8px;">
+          <span style="opacity:0.8;">🤖</span> 
+          <span>AI ასისტენტი</span>
+        </div>
+        <div id="aiChatContainer" style="display:flex;flex-direction:column;height:400px;">
+          <div id="aiChatMessages" style="flex:1;overflow-y:auto;margin-bottom:12px;padding:12px;background:rgba(0,0,0,.2);border-radius:8px;min-height:250px;max-height:300px;display:flex;flex-direction:column;gap:10px;">
+            <div style="padding:10px;background:rgba(139,92,246,.15);border-left:3px solid #8b5cf6;border-radius:6px;font-size:12px;color:#e8eaed;line-height:1.5;">
+              <strong style="color:#8b5cf6;">AI:</strong> გამარჯობა! როგორ შემიძლია დაგეხმაროთ კრიპტო ბაზრის შესახებ? შემიძლია გაგიწიოთ ანალიზი, ტრენდების ახსნა და პორტფოლიოს რჩევები.
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <input 
+              type="text" 
+              id="aiChatInput" 
+              placeholder="დასვით შეკითხვა..."
+              style="flex:1;background:rgba(10,14,26,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;color:#e8eaed;font-size:13px;outline:none;transition:all .25s;"
+              onkeypress="if(event.key==='Enter') sendAIMessage()"
+            >
+            <button 
+              onclick="sendAIMessage()" 
+              id="aiSendBtn"
+              style="background:linear-gradient(135deg,#8b5cf6 0%,#6366f1 100%);border:none;border-radius:8px;padding:10px 16px;color:#fff;font-weight:600;font-size:13px;cursor:pointer;transition:all .25s;white-space:nowrap;"
+              onmouseenter="this.style.transform='scale(1.05)';this.style.boxShadow='0 4px 12px rgba(139,92,246,.4)'"
+              onmouseleave="this.style.transform='scale(1)';this.style.boxShadow='none'"
+            >
+              გაგზავნა
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div class="sidebar-card" style="background:rgba(15,20,30,.6);backdrop-filter:blur(16px) saturate(180%);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,.08);box-shadow:0 4px 16px rgba(0,0,0,.2);">
         <div style="font-size:13px;font-weight:600;margin-bottom:18px;text-transform:uppercase;letter-spacing:0.8px;color:#9aa0a6;">პარამეტრები</div>
         <div id="settingsPanel" class="settings-panel" style="display:flex;flex-direction:column;gap:16px;">
@@ -1250,6 +1283,117 @@ function renderRecentActivity() {
   });
 }
 
+
+/* ---------- AI AGENT FUNCTIONS ---------- */
+async function sendAIMessage() {
+  const input = $('aiChatInput');
+  const messagesContainer = $('aiChatMessages');
+  const sendBtn = $('aiSendBtn');
+  
+  if (!input || !messagesContainer) return;
+  
+  const message = input.value.trim();
+  if (!message) return;
+  
+  // Add user message to chat
+  const userMessageDiv = document.createElement('div');
+  userMessageDiv.style.cssText = 'padding:10px;background:rgba(99,102,241,.15);border-left:3px solid #6366f1;border-radius:6px;font-size:12px;color:#e8eaed;line-height:1.5;align-self:flex-end;max-width:85%;';
+  userMessageDiv.innerHTML = `<strong style="color:#6366f1;">თქვენ:</strong> ${message}`;
+  messagesContainer.appendChild(userMessageDiv);
+  
+  // Clear input and disable button
+  input.value = '';
+  sendBtn.disabled = true;
+  sendBtn.textContent = 'გაგზავნა...';
+  sendBtn.style.opacity = '0.6';
+  
+  // Scroll to bottom
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  
+  // Add loading indicator
+  const loadingDiv = document.createElement('div');
+  loadingDiv.id = 'aiLoading';
+  loadingDiv.style.cssText = 'padding:10px;background:rgba(139,92,246,.15);border-left:3px solid #8b5cf6;border-radius:6px;font-size:12px;color:#8b5cf6;font-style:italic;';
+  loadingDiv.textContent = 'AI ფიქრობს...';
+  messagesContainer.appendChild(loadingDiv);
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  
+  try {
+    // Prepare context with current market data
+    const context = {
+      marketData: cryptoData ? {
+        totalTokens: cryptoData.length,
+        topGainers: cryptoData.slice(0, 5).map(t => ({
+          symbol: t.symbol,
+          price: t.current_price,
+          change24h: t.price_change_percentage_24h
+        })),
+        marketCap: globalData?.total_market_cap?.usd || null,
+        fearGreed: fearGreedData?.value || null
+      } : null,
+      portfolio: currentUser && portfolioData ? {
+        totalValue: portfolioData.totalValue || 0,
+        totalPL: portfolioData.totalPL || 0,
+        roi: portfolioData.roi || 0,
+        holdings: portfolioData.holdings?.length || 0
+      } : null
+    };
+    
+    const response = await fetch('/api/ai-agent', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: message,
+        context: context
+      })
+    });
+    
+    const data = await response.json();
+    
+    // Remove loading indicator
+    const loading = $('aiLoading');
+    if (loading) loading.remove();
+    
+    if (data.success && data.message) {
+      // Add AI response
+      const aiMessageDiv = document.createElement('div');
+      aiMessageDiv.style.cssText = 'padding:10px;background:rgba(139,92,246,.15);border-left:3px solid #8b5cf6;border-radius:6px;font-size:12px;color:#e8eaed;line-height:1.5;';
+      aiMessageDiv.innerHTML = `<strong style="color:#8b5cf6;">AI:</strong> ${data.message.replace(/\n/g, '<br>')}`;
+      messagesContainer.appendChild(aiMessageDiv);
+    } else {
+      // Show error
+      const errorDiv = document.createElement('div');
+      errorDiv.style.cssText = 'padding:10px;background:rgba(239,68,68,.15);border-left:3px solid #ef4444;border-radius:6px;font-size:12px;color:#ef4444;';
+      errorDiv.innerHTML = `<strong>შეცდომა:</strong> ${data.error || data.message || 'ვერ მოხერხდა AI-ს პასუხის მიღება'}`;
+      messagesContainer.appendChild(errorDiv);
+    }
+    
+    // Scroll to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+  } catch (error) {
+    console.error('AI Agent error:', error);
+    
+    // Remove loading indicator
+    const loading = $('aiLoading');
+    if (loading) loading.remove();
+    
+    // Show error
+    const errorDiv = document.createElement('div');
+    errorDiv.style.cssText = 'padding:10px;background:rgba(239,68,68,.15);border-left:3px solid #ef4444;border-radius:6px;font-size:12px;color:#ef4444;';
+    errorDiv.innerHTML = '<strong>შეცდომა:</strong> კავშირის პრობლემა. გთხოვთ სცადოთ მოგვიანებით.';
+    messagesContainer.appendChild(errorDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  } finally {
+    // Re-enable button
+    sendBtn.disabled = false;
+    sendBtn.textContent = 'გაგზავნა';
+    sendBtn.style.opacity = '1';
+    input.focus();
+  }
+}
 
 function renderQuotes() {
   const quotesList = $('quotesList');
