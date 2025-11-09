@@ -65,7 +65,7 @@ const ADMIN_EMAIL = 'testireba5@gmail.com';
 module.exports = async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   // Handle preflight OPTIONS request
@@ -74,7 +74,7 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  if (req.method !== 'POST') {
+  if (req.method !== 'POST' && req.method !== 'DELETE') {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
@@ -100,11 +100,6 @@ module.exports = async function handler(req, res) {
       return res.status(401).json({ error: 'Unauthorized - Invalid token', details: authError.message });
     }
 
-    // Check if user is admin
-    if (decodedToken.email !== ADMIN_EMAIL) {
-      return res.status(403).json({ error: 'Forbidden - Admin access required' });
-    }
-
     // Get token ID from request body
     const { id } = req.body;
     if (!id || typeof id !== 'string' || !id.trim()) {
@@ -112,7 +107,10 @@ module.exports = async function handler(req, res) {
     }
 
     const tokenId = id.trim().toLowerCase();
-    console.log(`Admin ${decodedToken.email} attempting to add token: ${tokenId}`);
+    const userId = decodedToken.uid;
+    const isAdmin = decodedToken.email === ADMIN_EMAIL;
+    
+    console.log(`${isAdmin ? 'Admin' : 'User'} ${decodedToken.email} attempting to add token: ${tokenId}`);
 
     // Verify token exists on CoinGecko
     try {
@@ -137,33 +135,59 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    // Add token to Firebase
     const db = getDatabase();
-    const tokensRef = db.ref('tokens');
     
-    // Check if token already exists
-    const snapshot = await tokensRef.once('value');
-    const existingTokens = snapshot.val() || {};
-    const tokenExists = Object.values(existingTokens).some(t => t.id === tokenId);
+    // If admin, add to global tokens list
+    if (isAdmin) {
+      const tokensRef = db.ref('tokens');
+      
+      // Check if token already exists in global list
+      const snapshot = await tokensRef.once('value');
+      const existingTokens = snapshot.val() || {};
+      const tokenExists = Object.values(existingTokens).some(t => t.id === tokenId);
+      
+      if (tokenExists) {
+        return res.status(409).json({ error: `Token "${tokenId}" already exists in the global database` });
+      }
+
+      // Add new token to global list
+      const newTokenRef = tokensRef.push();
+      await newTokenRef.set({
+        id: tokenId,
+        addedAt: admin.database.ServerValue.TIMESTAMP,
+        addedBy: decodedToken.email
+      });
+
+      console.log(`Successfully added token to global list: ${tokenId}`);
+    }
     
-    if (tokenExists) {
-      return res.status(409).json({ error: `Token "${tokenId}" already exists in the database` });
+    // For all users (including admin), add to their personal dashboard
+    const userTokensRef = db.ref(`users/${userId}/dashboardTokens`);
+    
+    // Check if token already exists in user's dashboard
+    const userSnapshot = await userTokensRef.once('value');
+    const userTokens = userSnapshot.val() || {};
+    const userTokenExists = Object.values(userTokens).some(t => t.id === tokenId);
+    
+    if (userTokenExists) {
+      return res.status(409).json({ error: `Token "${tokenId}" already exists in your dashboard` });
     }
 
-    // Add new token
-    const newTokenRef = tokensRef.push();
-    await newTokenRef.set({
+    // Add token to user's dashboard
+    const newUserTokenRef = userTokensRef.push();
+    await newUserTokenRef.set({
       id: tokenId,
       addedAt: admin.database.ServerValue.TIMESTAMP,
       addedBy: decodedToken.email
     });
 
-    console.log(`Successfully added token: ${tokenId}`);
+    console.log(`Successfully added token to user dashboard: ${tokenId} for user ${userId}`);
     
     res.status(200).json({ 
       success: true,
-      message: `Token "${tokenId}" added successfully`,
-      tokenId: tokenId
+      message: `Token "${tokenId}" added successfully to your dashboard`,
+      tokenId: tokenId,
+      isAdmin: isAdmin
     });
 
   } catch (error) {
