@@ -591,6 +591,27 @@ async function fetchAll(){
     
     if (data.warning) {
       console.warn('API Warning:', data.warning);
+      // Show a subtle warning to user
+      const warningEl = document.createElement('div');
+      warningEl.className = 'error';
+      warningEl.style.background = 'rgba(245,158,11,.1)';
+      warningEl.style.borderColor = 'rgba(245,158,11,.3)';
+      warningEl.style.color = '#f59e0b';
+      warningEl.innerHTML = `<strong>⚠️ Rate Limit Warning:</strong> ${data.warning}. Some data may be incomplete.`;
+      const errorDiv = $('error');
+      if (errorDiv && !errorDiv.querySelector('.error')) {
+        errorDiv.appendChild(warningEl);
+        setTimeout(() => warningEl.remove(), 10000); // Remove after 10 seconds
+      }
+    }
+    
+    if (data.retryAfter) {
+      console.warn('API Rate Limited - Retry after:', data.retryAfter, 'seconds');
+      const errorEl = document.createElement('div');
+      errorEl.className = 'error';
+      errorEl.innerHTML = `<strong>⚠️ Rate Limit Exceeded:</strong> ${data.message || 'CoinGecko API rate limit exceeded'}. Please wait ${data.retryAfter} seconds before refreshing.`;
+      $('error').innerHTML = '';
+      $('error').appendChild(errorEl);
     }
     
     console.log(`Loaded ${cryptoData.length} tokens`);

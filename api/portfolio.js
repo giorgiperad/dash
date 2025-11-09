@@ -124,55 +124,95 @@ module.exports = async function handler(req, res) {
         return res.json({ cryptoData: [], globalData: null, fearGreed: null });
       }
 
-      // Fetch market data from CoinGecko
+      // Fetch market data from CoinGecko with retry logic
       const ids = tokens.join(',');
       console.log(`Fetching data for tokens: ${ids}`);
       
+      // Helper function to fetch with retry
+      const fetchWithRetry = async (url, options = {}, maxRetries = 2, delay = 1000) => {
+        for (let i = 0; i <= maxRetries; i++) {
+          try {
+            const response = await fetch(url, {
+              ...options,
+              headers: {
+                'User-Agent': 'Mozilla/5.0 (compatible; CryptoCollectiveX/1.0)',
+                ...options.headers
+              }
+            });
+            
+            if (response.status === 429) {
+              // Rate limited - wait and retry
+              if (i < maxRetries) {
+                const waitTime = delay * Math.pow(2, i); // Exponential backoff
+                console.warn(`Rate limited (429), retrying in ${waitTime}ms... (attempt ${i + 1}/${maxRetries + 1})`);
+                await new Promise(resolve => setTimeout(resolve, waitTime));
+                continue;
+              } else {
+                console.warn('Rate limited (429) after all retries, returning empty data');
+                return null; // Return null to indicate failure
+              }
+            }
+            
+            if (!response.ok) {
+              throw new Error(`API error: ${response.status} ${response.statusText}`);
+            }
+            
+            return await response.json();
+          } catch (error) {
+            if (i === maxRetries) {
+              console.error(`Fetch failed after ${maxRetries + 1} attempts:`, error.message);
+              return null;
+            }
+            // Wait before retry
+            await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)));
+          }
+        }
+        return null;
+      };
+      
       let market, global, fg;
       try {
-        [market, global, fg] = await Promise.all([
-          fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&price_change_percentage=24h`, {
-            headers: {
-              'User-Agent': 'Mozilla/5.0 (compatible; CryptoCollectiveX/1.0)'
-            }
-          }).then(async r => {
-            if (r.status === 429) {
-              // Rate limited - return cached data or empty array
-              console.warn('CoinGecko rate limited (429), returning empty market data');
-              return [];
-            }
-            if (!r.ok) throw new Error(`CoinGecko API error: ${r.status} ${r.statusText}`);
-            return r.json();
-          }),
-          fetch('https://api.coingecko.com/api/v3/global', {
-            headers: {
-              'User-Agent': 'Mozilla/5.0 (compatible; CryptoCollectiveX/1.0)'
-            }
-          }).then(async r => {
-            if (r.status === 429) {
-              console.warn('CoinGecko Global rate limited (429), returning null');
-              return { data: null };
-            }
-            if (!r.ok) throw new Error(`CoinGecko Global API error: ${r.status} ${r.statusText}`);
-            return r.json();
-          }),
-          fetch('https://api.alternative.me/fng/', {
-            headers: {
-              'User-Agent': 'Mozilla/5.0 (compatible; CryptoCollectiveX/1.0)'
-            }
-          }).then(async r => {
-            if (r.status === 429) {
-              console.warn('Fear & Greed API rate limited (429), returning null');
-              return { data: [null] };
-            }
-            if (!r.ok) throw new Error(`Fear & Greed API error: ${r.status} ${r.statusText}`);
-            return r.json();
-          })
-        ]);
+        // Fetch with retry logic and staggered delays to avoid rate limits
+        market = await fetchWithRetry(
+          `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&price_change_percentage=24h`,
+          {},
+          2,
+          500
+        );
+        
+        // Small delay between requests
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        global = await fetchWithRetry(
+          'https://api.coingecko.com/api/v3/global',
+          {},
+          2,
+          500
+        );
+        
+        // Small delay between requests
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        fg = await fetchWithRetry(
+          'https://api.alternative.me/fng/',
+          {},
+          2,
+          500
+        );
+        
+        // If all requests failed due to rate limiting, return error
+        if (!market && !global && !fg) {
+          return res.status(503).json({
+            error: 'Service temporarily unavailable',
+            message: 'CoinGecko API rate limit exceeded. Please try again in a few moments.',
+            retryAfter: 60 // Suggest retrying after 60 seconds
+          });
+        }
+        
         console.log('Successfully fetched market data');
       } catch (fetchError) {
         console.error('External API fetch error:', fetchError.message);
-        // Return partial data if available, or empty data
+        // Return partial data if available
         return res.status(200).json({ 
           cryptoData: market || [],
           globalData: global?.data || null,
