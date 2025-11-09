@@ -968,28 +968,69 @@ function renderETFData(data) {
   if (btcData) {
     // Extract data from SoSoValue API response structure
     const dailyNetInflow = btcData.dailyNetInflow?.value || 0;
+    const dailyNetInflowDate = btcData.dailyNetInflow?.lastUpdateDate || null;
     const totalNetAssets = btcData.totalNetAssets?.value || 0;
+    const totalNetAssetsDate = btcData.totalNetAssets?.lastUpdateDate || null;
+    const totalNetAssetsPercentage = btcData.totalNetAssetsPercentage?.value || 0;
     const cumNetInflow = btcData.cumNetInflow?.value || 0;
+    const cumNetInflowDate = btcData.cumNetInflow?.lastUpdateDate || null;
     const totalTokenHoldings = btcData.totalTokenHoldings?.value || 0;
+    const totalTokenHoldingsDate = btcData.totalTokenHoldings?.lastUpdateDate || null;
+    const dailyTotalValueTraded = btcData.dailyTotalValueTraded?.value || 0;
+    const dailyTotalValueTradedDate = btcData.dailyTotalValueTraded?.lastUpdateDate || null;
     const flowColor = dailyNetInflow >= 0 ? '#22c55e' : '#ef4444';
     
+    const formatDate = (dateStr) => {
+      if (!dateStr) return '';
+      try {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('ka-GE', { year: 'numeric', month: 'short', day: 'numeric' });
+      } catch {
+        return dateStr;
+      }
+    };
+    
     html += `
-      <div class="etf-item" style="padding:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:10px;margin-bottom:10px;transition:all .25s;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-          <span style="font-size:16px;">₿</span>
-          <span style="font-weight:600;font-size:13px;color:#e8eaed;">Bitcoin ETF</span>
+      <div class="etf-item" style="padding:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:10px;margin-bottom:10px;transition:all .25s;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.05);">
+          <span style="font-size:18px;">₿</span>
+          <span style="font-weight:600;font-size:14px;color:#e8eaed;">Bitcoin ETF</span>
         </div>
-        <div style="margin-bottom:6px;">
-          <div style="font-size:10px;color:#9aa0a6;margin-bottom:4px;">წმინდა შემოდინება (დღეს)</div>
-          <div style="font-size:14px;font-weight:600;color:${flowColor};">${formatFlow(dailyNetInflow)}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+          <div>
+            <div style="font-size:9px;color:#9aa0a6;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">წმინდა შემოდინება (დღეს)</div>
+            <div style="font-size:15px;font-weight:600;color:${flowColor};margin-bottom:2px;">${formatFlow(dailyNetInflow)}</div>
+            ${dailyNetInflowDate ? `<div style="font-size:8px;color:#6b7280;">${formatDate(dailyNetInflowDate)}</div>` : ''}
+          </div>
+          <div>
+            <div style="font-size:9px;color:#9aa0a6;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">კუმულაციური შემოდინება</div>
+            <div style="font-size:13px;font-weight:600;color:#fafafa;margin-bottom:2px;">${formatFlow(cumNetInflow)}</div>
+            ${cumNetInflowDate ? `<div style="font-size:8px;color:#6b7280;">${formatDate(cumNetInflowDate)}</div>` : ''}
+          </div>
         </div>
-        <div style="margin-bottom:6px;">
-          <div style="font-size:10px;color:#9aa0a6;margin-bottom:4px;">კუმულაციური შემოდინება</div>
-          <div style="font-size:12px;font-weight:600;color:#fafafa;">${formatFlow(cumNetInflow)}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+          <div>
+            <div style="font-size:9px;color:#9aa0a6;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">საერთო აქტივები</div>
+            <div style="font-size:13px;font-weight:600;color:#fafafa;margin-bottom:2px;">${formatAUM(totalNetAssets)}</div>
+            ${totalNetAssetsDate ? `<div style="font-size:8px;color:#6b7280;">${formatDate(totalNetAssetsDate)}</div>` : ''}
+          </div>
+          <div>
+            <div style="font-size:9px;color:#9aa0a6;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">აქტივების %</div>
+            <div style="font-size:13px;font-weight:600;color:#fafafa;margin-bottom:2px;">${(totalNetAssetsPercentage * 100).toFixed(2)}%</div>
+            ${totalNetAssetsDate ? `<div style="font-size:8px;color:#6b7280;">${formatDate(totalNetAssetsDate)}</div>` : ''}
+          </div>
         </div>
-        <div>
-          <div style="font-size:10px;color:#9aa0a6;margin-bottom:4px;">საერთო აქტივები</div>
-          <div style="font-size:12px;font-weight:600;color:#fafafa;">${formatAUM(totalNetAssets)}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <div style="font-size:9px;color:#9aa0a6;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">ტოკენების რაოდენობა</div>
+            <div style="font-size:13px;font-weight:600;color:#fafafa;margin-bottom:2px;">${totalTokenHoldings >= 1000 ? `${(totalTokenHoldings / 1000).toFixed(2)}K` : totalTokenHoldings.toFixed(0)}</div>
+            ${totalTokenHoldingsDate ? `<div style="font-size:8px;color:#6b7280;">${formatDate(totalTokenHoldingsDate)}</div>` : ''}
+          </div>
+          <div>
+            <div style="font-size:9px;color:#9aa0a6;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">დღიური ვაჭრობა</div>
+            <div style="font-size:13px;font-weight:600;color:#fafafa;margin-bottom:2px;">${formatAUM(dailyTotalValueTraded)}</div>
+            ${dailyTotalValueTradedDate ? `<div style="font-size:8px;color:#6b7280;">${formatDate(dailyTotalValueTradedDate)}</div>` : ''}
+          </div>
         </div>
       </div>
     `;
@@ -999,28 +1040,69 @@ function renderETFData(data) {
   if (ethData) {
     // Extract data from SoSoValue API response structure
     const dailyNetInflow = ethData.dailyNetInflow?.value || 0;
+    const dailyNetInflowDate = ethData.dailyNetInflow?.lastUpdateDate || null;
     const totalNetAssets = ethData.totalNetAssets?.value || 0;
+    const totalNetAssetsDate = ethData.totalNetAssets?.lastUpdateDate || null;
+    const totalNetAssetsPercentage = ethData.totalNetAssetsPercentage?.value || 0;
     const cumNetInflow = ethData.cumNetInflow?.value || 0;
+    const cumNetInflowDate = ethData.cumNetInflow?.lastUpdateDate || null;
     const totalTokenHoldings = ethData.totalTokenHoldings?.value || 0;
+    const totalTokenHoldingsDate = ethData.totalTokenHoldings?.lastUpdateDate || null;
+    const dailyTotalValueTraded = ethData.dailyTotalValueTraded?.value || 0;
+    const dailyTotalValueTradedDate = ethData.dailyTotalValueTraded?.lastUpdateDate || null;
     const flowColor = dailyNetInflow >= 0 ? '#22c55e' : '#ef4444';
     
+    const formatDate = (dateStr) => {
+      if (!dateStr) return '';
+      try {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('ka-GE', { year: 'numeric', month: 'short', day: 'numeric' });
+      } catch {
+        return dateStr;
+      }
+    };
+    
     html += `
-      <div class="etf-item" style="padding:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:10px;transition:all .25s;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-          <span style="font-size:16px;">Ξ</span>
-          <span style="font-weight:600;font-size:13px;color:#e8eaed;">Ethereum ETF</span>
+      <div class="etf-item" style="padding:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:10px;transition:all .25s;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.05);">
+          <span style="font-size:18px;">Ξ</span>
+          <span style="font-weight:600;font-size:14px;color:#e8eaed;">Ethereum ETF</span>
         </div>
-        <div style="margin-bottom:6px;">
-          <div style="font-size:10px;color:#9aa0a6;margin-bottom:4px;">წმინდა შემოდინება (დღეს)</div>
-          <div style="font-size:14px;font-weight:600;color:${flowColor};">${formatFlow(dailyNetInflow)}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+          <div>
+            <div style="font-size:9px;color:#9aa0a6;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">წმინდა შემოდინება (დღეს)</div>
+            <div style="font-size:15px;font-weight:600;color:${flowColor};margin-bottom:2px;">${formatFlow(dailyNetInflow)}</div>
+            ${dailyNetInflowDate ? `<div style="font-size:8px;color:#6b7280;">${formatDate(dailyNetInflowDate)}</div>` : ''}
+          </div>
+          <div>
+            <div style="font-size:9px;color:#9aa0a6;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">კუმულაციური შემოდინება</div>
+            <div style="font-size:13px;font-weight:600;color:#fafafa;margin-bottom:2px;">${formatFlow(cumNetInflow)}</div>
+            ${cumNetInflowDate ? `<div style="font-size:8px;color:#6b7280;">${formatDate(cumNetInflowDate)}</div>` : ''}
+          </div>
         </div>
-        <div style="margin-bottom:6px;">
-          <div style="font-size:10px;color:#9aa0a6;margin-bottom:4px;">კუმულაციური შემოდინება</div>
-          <div style="font-size:12px;font-weight:600;color:#fafafa;">${formatFlow(cumNetInflow)}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+          <div>
+            <div style="font-size:9px;color:#9aa0a6;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">საერთო აქტივები</div>
+            <div style="font-size:13px;font-weight:600;color:#fafafa;margin-bottom:2px;">${formatAUM(totalNetAssets)}</div>
+            ${totalNetAssetsDate ? `<div style="font-size:8px;color:#6b7280;">${formatDate(totalNetAssetsDate)}</div>` : ''}
+          </div>
+          <div>
+            <div style="font-size:9px;color:#9aa0a6;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">აქტივების %</div>
+            <div style="font-size:13px;font-weight:600;color:#fafafa;margin-bottom:2px;">${(totalNetAssetsPercentage * 100).toFixed(2)}%</div>
+            ${totalNetAssetsDate ? `<div style="font-size:8px;color:#6b7280;">${formatDate(totalNetAssetsDate)}</div>` : ''}
+          </div>
         </div>
-        <div>
-          <div style="font-size:10px;color:#9aa0a6;margin-bottom:4px;">საერთო აქტივები</div>
-          <div style="font-size:12px;font-weight:600;color:#fafafa;">${formatAUM(totalNetAssets)}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <div style="font-size:9px;color:#9aa0a6;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">ტოკენების რაოდენობა</div>
+            <div style="font-size:13px;font-weight:600;color:#fafafa;margin-bottom:2px;">${totalTokenHoldings >= 1000 ? `${(totalTokenHoldings / 1000).toFixed(2)}K` : totalTokenHoldings.toFixed(0)}</div>
+            ${totalTokenHoldingsDate ? `<div style="font-size:8px;color:#6b7280;">${formatDate(totalTokenHoldingsDate)}</div>` : ''}
+          </div>
+          <div>
+            <div style="font-size:9px;color:#9aa0a6;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">დღიური ვაჭრობა</div>
+            <div style="font-size:13px;font-weight:600;color:#fafafa;margin-bottom:2px;">${formatAUM(dailyTotalValueTraded)}</div>
+            ${dailyTotalValueTradedDate ? `<div style="font-size:8px;color:#6b7280;">${formatDate(dailyTotalValueTradedDate)}</div>` : ''}
+          </div>
         </div>
       </div>
     `;
