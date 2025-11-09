@@ -542,10 +542,13 @@ function renderAll() {
 
 function renderTopGainers() {
   const gainersList = $('topGainersList');
-  if (!gainersList) return;
+  if (!gainersList) {
+    console.warn('topGainersList element not found');
+    return;
+  }
   
   if (!cryptoData || cryptoData.length === 0) {
-    gainersList.innerHTML = '<div style="padding:20px;text-align:center;color:#888;">No market data available</div>';
+    gainersList.innerHTML = '<div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">No market data available</div>';
     return;
   }
   
@@ -601,10 +604,13 @@ function renderTopGainers() {
 
 function renderQuotes() {
   const quotesList = $('quotesList');
-  if (!quotesList) return;
+  if (!quotesList) {
+    console.warn('quotesList element not found');
+    return;
+  }
   
   if (!cryptoData || cryptoData.length === 0) {
-    quotesList.innerHTML = '<div style="padding:20px;text-align:center;color:#888;">No market data available</div>';
+    quotesList.innerHTML = '<div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">No market data available</div>';
     return;
   }
   
@@ -835,12 +841,17 @@ async function fetchAll(){
       $('error').appendChild(errorEl);
     }
     
-    console.log(`Loaded ${cryptoData.length} tokens`);
-    
-    renderAll();
-    $('contentGrid').style.display = 'grid';
-    $('heroStats').style.display = 'grid';
-    if(currentUser) { loadPortfolio(); loadAlerts(); }
+           console.log(`Loaded ${cryptoData.length} tokens`);
+           
+           renderAll();
+           // Ensure quotes and gainers are rendered even if renderAll didn't catch them
+           if (cryptoData && cryptoData.length > 0) {
+             renderTopGainers();
+             renderQuotes();
+           }
+           $('contentGrid').style.display = 'grid';
+           $('heroStats').style.display = 'grid';
+           if(currentUser) { loadPortfolio(); loadAlerts(); }
   } catch (e) {
     console.error('Fetch error:', e);
     console.error('Error details:', e.message, e.stack);
@@ -1503,14 +1514,27 @@ function startAutoRefresh() {
 fetchAll();
 startAutoRefresh();
 
-// Settings handler
-const refreshIntervalSelect = $('refreshInterval');
-if (refreshIntervalSelect) {
-  refreshIntervalSelect.onchange = (e) => {
-    refreshIntervalMs = parseInt(e.target.value);
-    startAutoRefresh();
-    console.log(`Refresh interval changed to ${refreshIntervalMs / 1000} seconds`);
-  };
+// Settings handler - ensure it's attached after DOM is ready
+function initSettings() {
+  const refreshIntervalSelect = $('refreshInterval');
+  if (refreshIntervalSelect) {
+    refreshIntervalSelect.onchange = (e) => {
+      refreshIntervalMs = parseInt(e.target.value);
+      startAutoRefresh();
+      console.log(`Refresh interval changed to ${refreshIntervalMs / 1000} seconds`);
+    };
+    console.log('Settings panel initialized');
+  } else {
+    console.warn('Settings panel not found, retrying...');
+    setTimeout(initSettings, 500);
+  }
+}
+
+// Initialize settings when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initSettings);
+} else {
+  initSettings();
 }
 
 if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
