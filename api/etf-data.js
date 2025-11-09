@@ -21,30 +21,60 @@ module.exports = async (req, res) => {
     const apiKey = process.env.SOSOVALUE_API_KEY || 'SOSO-bc7956bf380549e2971d5c31a105287c';
     const apiUrl = 'https://api.sosovalue.xyz/openapi/v2/etf/currentEtfDataMetrics';
     
-    // Fetch Bitcoin ETF data
-    const btcResponse = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'x-soso-api-key': apiKey,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ type: 'us-btc-spot' }),
-      signal: AbortSignal.timeout(10000)
-    });
-    
-    // Fetch Ethereum ETF data
-    const ethResponse = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'x-soso-api-key': apiKey,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ type: 'us-eth-spot' }),
-      signal: AbortSignal.timeout(10000)
-    });
+    // Fetch all ETF data in parallel
+    const [btcResponse, ethResponse, solResponse, hbarResponse, ltcResponse] = await Promise.all([
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'x-soso-api-key': apiKey,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ type: 'us-btc-spot' }),
+        signal: AbortSignal.timeout(10000)
+      }),
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'x-soso-api-key': apiKey,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ type: 'us-eth-spot' }),
+        signal: AbortSignal.timeout(10000)
+      }),
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'x-soso-api-key': apiKey,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ type: 'us-sol-spot' }),
+        signal: AbortSignal.timeout(10000)
+      }).catch(() => null), // Solana ETF might not exist yet
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'x-soso-api-key': apiKey,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ type: 'us-hbar-spot' }),
+        signal: AbortSignal.timeout(10000)
+      }).catch(() => null), // HBAR ETF might not exist yet
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'x-soso-api-key': apiKey,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ type: 'us-ltc-spot' }),
+        signal: AbortSignal.timeout(10000)
+      }).catch(() => null) // LTC ETF might not exist yet
+    ]);
     
     let btcData = null;
     let ethData = null;
+    let solData = null;
+    let hbarData = null;
+    let ltcData = null;
     
     // Process Bitcoin ETF response
     if (btcResponse.ok) {
@@ -65,7 +95,7 @@ module.exports = async (req, res) => {
     }
     
     // Process Ethereum ETF response
-    if (ethResponse.ok) {
+    if (ethResponse && ethResponse.ok) {
       try {
         const ethResult = await ethResponse.json();
         if (ethResult.code === 0 && ethResult.data) {
@@ -77,25 +107,100 @@ module.exports = async (req, res) => {
       } catch (e) {
         console.warn('Failed to parse ETH ETF data:', e.message);
       }
-    } else {
+    } else if (ethResponse) {
       const errorText = await ethResponse.text();
       console.warn(`ETH ETF API returned ${ethResponse.status}:`, errorText.substring(0, 200));
     }
     
+    // Process Solana ETF response
+    if (solResponse && solResponse.ok) {
+      try {
+        const solResult = await solResponse.json();
+        if (solResult.code === 0 && solResult.data) {
+          solData = solResult.data;
+          console.log('SOL ETF data fetched successfully');
+        } else {
+          console.warn('SOL ETF API returned error:', solResult.msg || 'Unknown error');
+        }
+      } catch (e) {
+        console.warn('Failed to parse SOL ETF data:', e.message);
+      }
+    } else if (solResponse) {
+      try {
+        const errorText = await solResponse.text();
+        console.warn(`SOL ETF API returned ${solResponse.status}:`, errorText.substring(0, 200));
+      } catch (e) {
+        console.warn('SOL ETF not available');
+      }
+    }
+    
+    // Process HBAR ETF response
+    if (hbarResponse && hbarResponse.ok) {
+      try {
+        const hbarResult = await hbarResponse.json();
+        if (hbarResult.code === 0 && hbarResult.data) {
+          hbarData = hbarResult.data;
+          console.log('HBAR ETF data fetched successfully');
+        } else {
+          console.warn('HBAR ETF API returned error:', hbarResult.msg || 'Unknown error');
+        }
+      } catch (e) {
+        console.warn('Failed to parse HBAR ETF data:', e.message);
+      }
+    } else if (hbarResponse) {
+      try {
+        const errorText = await hbarResponse.text();
+        console.warn(`HBAR ETF API returned ${hbarResponse.status}:`, errorText.substring(0, 200));
+      } catch (e) {
+        console.warn('HBAR ETF not available');
+      }
+    }
+    
+    // Process LTC ETF response
+    if (ltcResponse && ltcResponse.ok) {
+      try {
+        const ltcResult = await ltcResponse.json();
+        if (ltcResult.code === 0 && ltcResult.data) {
+          ltcData = ltcResult.data;
+          console.log('LTC ETF data fetched successfully');
+        } else {
+          console.warn('LTC ETF API returned error:', ltcResult.msg || 'Unknown error');
+        }
+      } catch (e) {
+        console.warn('Failed to parse LTC ETF data:', e.message);
+      }
+    } else if (ltcResponse) {
+      try {
+        const errorText = await ltcResponse.text();
+        console.warn(`LTC ETF API returned ${ltcResponse.status}:`, errorText.substring(0, 200));
+      } catch (e) {
+        console.warn('LTC ETF not available');
+      }
+    }
+    
     // If we have any data, return it
-    if (btcData || ethData) {
+    if (btcData || ethData || solData || hbarData || ltcData) {
       return res.status(200).json({
         success: true,
         etfData: {
           btc: btcData,
-          eth: ethData
+          eth: ethData,
+          sol: solData,
+          hbar: hbarData,
+          ltc: ltcData
         },
         data: {
           btc: btcData,
-          eth: ethData
+          eth: ethData,
+          sol: solData,
+          hbar: hbarData,
+          ltc: ltcData
         },
         btc: btcData,
         eth: ethData,
+        sol: solData,
+        hbar: hbarData,
+        ltc: ltcData,
         source: 'sosovalue'
       });
     }

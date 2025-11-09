@@ -1772,8 +1772,14 @@ async function loadETFDataMain() {
     }
     
     mainContainer.style.display = 'block';
-    // Try both etfData and data properties
-    const etfData = data.etfData || data.data || { btc: data.btc, eth: data.eth };
+    // Try both etfData and data properties, include all ETFs
+    const etfData = data.etfData || data.data || { 
+      btc: data.btc, 
+      eth: data.eth, 
+      sol: data.sol, 
+      hbar: data.hbar, 
+      ltc: data.ltc 
+    };
     renderETFDataMain(etfData);
   } catch (error) {
     console.error('ETF data load error:', error);
@@ -1847,6 +1853,96 @@ function renderETFDataMain(etfData) {
       <div class="carousel-card">
         <div class="carousel-card-header">
           <div class="carousel-card-title">Ξ Ethereum ETF</div>
+          <span class="carousel-card-arrow">→</span>
+        </div>
+        <div class="carousel-card-value" style="color:${flowColor};">${formatFlow(dailyNetInflow)}</div>
+        <div class="carousel-card-subtitle">დღის შემოდინება</div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;">
+          <div>
+            <div style="color:#9aa0a6;margin-bottom:4px;">კუმულაციური</div>
+            <div style="color:#fafafa;font-weight:600;">${formatFlow(cumNetInflow)}</div>
+          </div>
+          <div>
+            <div style="color:#9aa0a6;margin-bottom:4px;">საერთო აქტივები</div>
+            <div style="color:#fafafa;font-weight:600;">${formatAUM(totalNetAssets)}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  // Solana ETF Card
+  if (etfData.sol) {
+    const sol = etfData.sol;
+    const dailyNetInflow = sol.dailyNetInflow?.value || sol.dailyNetInflow || 0;
+    const cumNetInflow = sol.cumNetInflow?.value || sol.cumNetInflow || 0;
+    const totalNetAssets = sol.totalNetAssets?.value || sol.totalNetAssets || 0;
+    const flowColor = dailyNetInflow >= 0 ? '#22c55e' : '#ef4444';
+    
+    html += `
+      <div class="carousel-card">
+        <div class="carousel-card-header">
+          <div class="carousel-card-title">◎ Solana ETF</div>
+          <span class="carousel-card-arrow">→</span>
+        </div>
+        <div class="carousel-card-value" style="color:${flowColor};">${formatFlow(dailyNetInflow)}</div>
+        <div class="carousel-card-subtitle">დღის შემოდინება</div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;">
+          <div>
+            <div style="color:#9aa0a6;margin-bottom:4px;">კუმულაციური</div>
+            <div style="color:#fafafa;font-weight:600;">${formatFlow(cumNetInflow)}</div>
+          </div>
+          <div>
+            <div style="color:#9aa0a6;margin-bottom:4px;">საერთო აქტივები</div>
+            <div style="color:#fafafa;font-weight:600;">${formatAUM(totalNetAssets)}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  // HBAR ETF Card
+  if (etfData.hbar) {
+    const hbar = etfData.hbar;
+    const dailyNetInflow = hbar.dailyNetInflow?.value || hbar.dailyNetInflow || 0;
+    const cumNetInflow = hbar.cumNetInflow?.value || hbar.cumNetInflow || 0;
+    const totalNetAssets = hbar.totalNetAssets?.value || hbar.totalNetAssets || 0;
+    const flowColor = dailyNetInflow >= 0 ? '#22c55e' : '#ef4444';
+    
+    html += `
+      <div class="carousel-card">
+        <div class="carousel-card-header">
+          <div class="carousel-card-title">⚡ HBAR ETF</div>
+          <span class="carousel-card-arrow">→</span>
+        </div>
+        <div class="carousel-card-value" style="color:${flowColor};">${formatFlow(dailyNetInflow)}</div>
+        <div class="carousel-card-subtitle">დღის შემოდინება</div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;">
+          <div>
+            <div style="color:#9aa0a6;margin-bottom:4px;">კუმულაციური</div>
+            <div style="color:#fafafa;font-weight:600;">${formatFlow(cumNetInflow)}</div>
+          </div>
+          <div>
+            <div style="color:#9aa0a6;margin-bottom:4px;">საერთო აქტივები</div>
+            <div style="color:#fafafa;font-weight:600;">${formatAUM(totalNetAssets)}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  // Litecoin ETF Card
+  if (etfData.ltc) {
+    const ltc = etfData.ltc;
+    const dailyNetInflow = ltc.dailyNetInflow?.value || ltc.dailyNetInflow || 0;
+    const cumNetInflow = ltc.cumNetInflow?.value || ltc.cumNetInflow || 0;
+    const totalNetAssets = ltc.totalNetAssets?.value || ltc.totalNetAssets || 0;
+    const flowColor = dailyNetInflow >= 0 ? '#22c55e' : '#ef4444';
+    
+    html += `
+      <div class="carousel-card">
+        <div class="carousel-card-header">
+          <div class="carousel-card-title">Ł Litecoin ETF</div>
           <span class="carousel-card-arrow">→</span>
         </div>
         <div class="carousel-card-value" style="color:${flowColor};">${formatFlow(dailyNetInflow)}</div>
