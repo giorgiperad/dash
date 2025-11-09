@@ -130,8 +130,8 @@ body{
 .error{background:rgba(234,67,53,.12);border:1px solid rgba(234,67,53,.25);color:#ea4335;border-radius:14px;padding:20px;margin:24px 0;font-weight:500;text-align:center;backdrop-filter:blur(10px)}
 
 /* Hero Carousel Styles - CoinAnk.com Exact Style */
-.hero-carousel-wrapper{position:relative;margin-bottom:32px;width:100%;padding:0 4px}
-.carousel{display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;scroll-behavior:smooth;scrollbar-width:none;-ms-overflow-style:none;padding:4px 0 12px;-webkit-overflow-scrolling:touch}
+.hero-carousel-wrapper{position:relative;margin-bottom:32px;width:100%;padding:0 4px;display:flex;justify-content:center;align-items:center}
+.carousel{display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;scroll-behavior:smooth;scrollbar-width:none;-ms-overflow-style:none;padding:4px 0 12px;-webkit-overflow-scrolling:touch;justify-content:center;max-width:100%}
 .carousel::-webkit-scrollbar{display:none}
 .carousel-card{min-width:280px;width:280px;background:rgba(18,18,23,.85);backdrop-filter:blur(8px);border-radius:10px;padding:18px 20px;border:1px solid rgba(255,255,255,.06);transition:all .25s cubic-bezier(.4,0,.2,1);flex-shrink:0;display:flex;flex-direction:column;position:relative;overflow:hidden}
 .carousel-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);opacity:0;transition:opacity .3s}
@@ -149,8 +149,8 @@ body{
 .carousel-nav{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(18,18,23,.95);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.08);color:#ffffff;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;z-index:10;box-shadow:0 2px 6px rgba(0,0,0,.3);opacity:0.8}
 .carousel-nav:hover{background:rgba(30,30,38,.95);border-color:rgba(255,255,255,.12);opacity:1;transform:translateY(-50%) scale(1.05)}
 .carousel-nav:active{transform:translateY(-50%) scale(0.95)}
-.carousel-nav-right{right:4px}
-.carousel-nav-left{left:4px}
+.carousel-nav-right{right:8px}
+.carousel-nav-left{left:8px}
 
 /* ANIMATED SVG ARROWS */
 .change-arrow{width:18px;height:18px;transition:transform .3s ease,filter .3s ease;animation:arrowPulse 1.5s ease-in-out infinite}
@@ -482,10 +482,12 @@ body{overflow-x:hidden}
 /* Ensure proper box-sizing */
 *,*::before,*::after{box-sizing:border-box}
 
-/* Improve carousel responsiveness */
-.hero-carousel-wrapper{width:100%;overflow:hidden;position:relative}
-.carousel{width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
+/* Improve carousel responsiveness and centering */
+.hero-carousel-wrapper{width:100%;overflow:hidden;position:relative;display:flex;justify-content:center;align-items:center}
+.carousel{width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;display:flex;justify-content:flex-start;align-items:center}
 .carousel-card{flex-shrink:0}
+/* Center carousel when content fits in viewport (handled by JavaScript) */
+.carousel.centered{justify-content:center}
 
 /* Responsive ETF and Activity carousels */
 #etfCarousel,#activityCarousel{width:100%;overflow-x:auto;overflow-y:hidden;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
@@ -1647,6 +1649,20 @@ function renderHeroStats() {
   
   // Setup carousel navigation
   setupCarouselNavigation('heroCarousel', 'carouselNext');
+  
+  // Center carousel after rendering
+  setTimeout(() => {
+    const carousel = $('heroCarousel');
+    if (carousel) {
+      if (carousel.scrollWidth <= carousel.clientWidth) {
+        carousel.style.justifyContent = 'center';
+        carousel.classList.add('centered');
+      } else {
+        carousel.style.justifyContent = 'flex-start';
+        carousel.classList.remove('centered');
+      }
+    }
+  }, 200);
 }
 
 function setupCarouselNavigation(carouselId = 'heroCarousel', nextBtnId = 'carouselNext') {
@@ -1660,16 +1676,34 @@ function setupCarouselNavigation(carouselId = 'heroCarousel', nextBtnId = 'carou
     carousel.scrollBy({ left: 300, behavior: 'smooth' });
   };
   
+  // Center carousel if content is smaller than viewport
+  const centerCarousel = () => {
+    if (carousel.scrollWidth <= carousel.clientWidth) {
+      carousel.style.justifyContent = 'center';
+      carousel.classList.add('centered');
+      nextBtn.style.display = 'none';
+    } else {
+      carousel.style.justifyContent = 'flex-start';
+      carousel.classList.remove('centered');
+      nextBtn.style.display = 'flex';
+    }
+  };
+  
   // Show/hide navigation based on scroll position
   const updateNavVisibility = () => {
     const maxScroll = carousel.scrollWidth - carousel.clientWidth;
     if (maxScroll <= 0) {
       nextBtn.style.display = 'none';
+      centerCarousel();
     } else {
       nextBtn.style.display = 'flex';
+      carousel.style.justifyContent = 'flex-start';
     }
   };
   
+  // Center on load and resize
+  setTimeout(centerCarousel, 100);
+  window.addEventListener('resize', centerCarousel);
   carousel.addEventListener('scroll', updateNavVisibility);
   updateNavVisibility();
   
