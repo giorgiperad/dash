@@ -678,7 +678,7 @@ try {
 const auth = firebase.auth();
 
 /* ---------- GLOBALS ---------- */
-let cryptoData = [], prices = {}, globalData = null, fearGreedData = null;
+let cryptoData = [], prices = {}, globalData = null, fearGreedData = null, etfFlowsData = null;
 let sortColumn = 'change', sortDirection = 'desc';
 let currentUser = null;
 
@@ -978,10 +978,21 @@ function renderHeroStats() {
   const btcDominance = globalData.market_cap_percentage?.btc || 0;
   const ethDominance = globalData.market_cap_percentage?.eth || 0;
   const marketCapChange = globalData.market_cap_change_percentage_24h_usd || 0;
-  const activeCryptos = globalData.active_cryptocurrencies || 0;
   
   const fearGreedValue = fearGreedData?.value || 'N/A';
   const fearGreedClassification = fearGreedData?.value_classification || 'N/A';
+  
+  // ETF Flow data
+  const etfToday = etfFlowsData?.today || 0;
+  const etfWeek = etfFlowsData?.week || 0;
+  const etfTotal = etfFlowsData?.total || 0;
+  const formatETF = (value) => {
+    if (value === 0) return '$0';
+    const abs = Math.abs(value);
+    if (abs >= 1000000000) return `${value >= 0 ? '+' : ''}$${(value / 1000000000).toFixed(2)}B`;
+    if (abs >= 1000000) return `${value >= 0 ? '+' : ''}$${(value / 1000000).toFixed(2)}M`;
+    return `${value >= 0 ? '+' : ''}$${value.toFixed(0)}`;
+  };
   
   hero.innerHTML = `
     <div class="hero-stat">
@@ -1013,17 +1024,21 @@ function renderHeroStats() {
       </div>
     </div>
     <div class="hero-stat">
-      <div class="hero-stat-label">Active Cryptos</div>
-      <div class="hero-stat-value">${activeCryptos.toLocaleString()}</div>
+      <div class="hero-stat-label">ETF Flow (Today)</div>
+      <div class="hero-stat-value" style="color:${etfFlowsData ? (etfToday >= 0 ? '#34a853' : '#ea4335') : '#9aa0a6'};">
+        ${etfFlowsData ? formatETF(etfToday) : 'N/A'}
+      </div>
       <div class="hero-stat-change" style="color:#9aa0a6;font-size:10px;">
-        Markets: ${(globalData.markets || 0).toLocaleString()}
+        ${etfFlowsData ? `7d: ${formatETF(etfWeek)}` : 'Loading...'}
       </div>
     </div>
     <div class="hero-stat">
-      <div class="hero-stat-label">Total Coins</div>
-      <div class="hero-stat-value">${(globalData.total_cryptocurrencies || 0).toLocaleString()}</div>
+      <div class="hero-stat-label">ETF Flow (Total)</div>
+      <div class="hero-stat-value" style="color:${etfFlowsData ? (etfTotal >= 0 ? '#34a853' : '#ea4335') : '#9aa0a6'};">
+        ${etfFlowsData ? formatETF(etfTotal) : 'N/A'}
+      </div>
       <div class="hero-stat-change" style="color:#9aa0a6;font-size:10px;">
-        Exchanges: ${(globalData.exchanges || 0).toLocaleString()}
+        ${etfFlowsData ? (etfTotal >= 0 ? 'Net Inflow' : 'Net Outflow') : 'Loading...'}
       </div>
     </div>
   `;
@@ -1318,6 +1333,7 @@ async function fetchAll(){
     cryptoData.forEach(t => prices[t.id] = t.current_price);
     globalData = data.globalData;
     fearGreedData = data.fearGreed;
+    etfFlowsData = data.etfFlows;
     
     if (data.cached && !data.stale) {
       // Silently use cached data - no warning needed for fresh cache

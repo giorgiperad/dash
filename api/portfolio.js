@@ -5,6 +5,7 @@ const cache = {
   market: null,
   global: null,
   fearGreed: null,
+  etfFlows: null,
   timestamp: null,
   TTL: 60000 // Cache for 60 seconds (1 minute)
 };
@@ -137,7 +138,7 @@ module.exports = async function handler(req, res) {
       // If no tokens, return empty data
       if (!tokens.length) {
         console.log('No tokens found, returning empty data');
-        return res.json({ cryptoData: [], globalData: null, fearGreed: null });
+        return res.json({ cryptoData: [], globalData: null, fearGreed: null, etfFlows: null });
       }
 
       // Check cache first
@@ -147,6 +148,7 @@ module.exports = async function handler(req, res) {
           cryptoData: cache.market || [],
           globalData: cache.global?.data || null,
           fearGreed: cache.fearGreed?.data?.[0] || null,
+          etfFlows: cache.etfFlows || null,
           cached: true
         });
       }
@@ -236,6 +238,51 @@ module.exports = async function handler(req, res) {
           500
         );
         
+        // Small delay before ETF data fetch
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        // Fetch ETF flow data from Farside API
+        let etfFlows = null;
+        try {
+          const etfResponse = await fetch('https://farside.co.uk/bitcoin-etf/flow', {
+            headers: { 'User-Agent': 'Mozilla/5.0 (compatible; CryptoCollectiveX/1.0)' },
+            timeout: 5000
+          });
+          if (etfResponse.ok) {
+            const etfData = await etfResponse.json();
+            // Handle different response formats
+            if (etfData && Array.isArray(etfData) && etfData.length > 0) {
+              // Calculate today's flow (most recent entry)
+              const today = etfData[0] || {};
+              const todayFlow = parseFloat(today.net || today.flow || 0) || 0;
+              
+              // Calculate 7-day total (last 7 entries)
+              const weekFlow = etfData.slice(0, 7).reduce((sum, day) => {
+                const flow = parseFloat(day.net || day.flow || 0) || 0;
+                return sum + flow;
+              }, 0);
+              
+              // Calculate total (all entries)
+              const totalFlow = etfData.reduce((sum, day) => {
+                const flow = parseFloat(day.net || day.flow || 0) || 0;
+                return sum + flow;
+              }, 0);
+              
+              etfFlows = {
+                today: todayFlow,
+                week: weekFlow,
+                total: totalFlow
+              };
+              console.log('ETF flows fetched successfully:', etfFlows);
+            }
+          } else {
+            console.warn('ETF API returned non-OK status:', etfResponse.status);
+          }
+        } catch (etfError) {
+          console.warn('ETF flow data fetch failed:', etfError.message);
+          // Continue without ETF data - not critical
+        }
+        
         // If all requests failed due to rate limiting, return error
         if (!market && !global && !fg) {
           return res.status(503).json({
@@ -251,6 +298,7 @@ module.exports = async function handler(req, res) {
         cache.market = market || [];
         cache.global = global || null;
         cache.fearGreed = fg || null;
+        cache.etfFlows = etfFlows || null;
         cache.timestamp = Date.now();
         
       } catch (fetchError) {
@@ -263,6 +311,7 @@ module.exports = async function handler(req, res) {
             cryptoData: cache.market || [],
             globalData: cache.global?.data || null,
             fearGreed: cache.fearGreed?.data?.[0] || null,
+            etfFlows: cache.etfFlows || null,
             cached: true,
             stale: true,
             warning: 'Using cached data due to API error'
@@ -273,6 +322,7 @@ module.exports = async function handler(req, res) {
           cryptoData: market || [],
           globalData: global?.data || null,
           fearGreed: fg?.data?.[0] || null,
+          etfFlows: null,
           warning: 'Some data may be incomplete due to API rate limiting'
         });
       }
@@ -281,6 +331,7 @@ module.exports = async function handler(req, res) {
         cryptoData: market || [],
         globalData: global?.data || null,
         fearGreed: fg?.data?.[0] || null,
+        etfFlows: etfFlows || null,
         cached: false
       });
       return;
