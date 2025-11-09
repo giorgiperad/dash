@@ -1285,6 +1285,9 @@ function renderRecentActivity() {
 
 
 /* ---------- AI AGENT FUNCTIONS ---------- */
+// Session management for AI agent (maintains context across requests)
+let aiSessionId = null;
+
 async function sendAIMessage() {
   const input = $('aiChatInput');
   const messagesContainer = $('aiChatMessages');
@@ -1294,6 +1297,11 @@ async function sendAIMessage() {
   
   const message = input.value.trim();
   if (!message) return;
+  
+  // Initialize session ID if not exists
+  if (!aiSessionId) {
+    aiSessionId = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  }
   
   // Add user message to chat
   const userMessageDiv = document.createElement('div');
@@ -1342,11 +1350,13 @@ async function sendAIMessage() {
     const response = await fetch('/api/ai-agent', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'x-session-id': aiSessionId // Include session ID for agentic models
       },
       body: JSON.stringify({
         message: message,
-        context: context
+        context: context,
+        sessionId: aiSessionId // Also send in body as fallback
       })
     });
     
@@ -1357,6 +1367,11 @@ async function sendAIMessage() {
     if (loading) loading.remove();
     
     if (data.success && data.message) {
+      // Update session ID if returned from server
+      if (data.sessionId) {
+        aiSessionId = data.sessionId;
+      }
+      
       // Add AI response
       const aiMessageDiv = document.createElement('div');
       aiMessageDiv.style.cssText = 'padding:10px;background:rgba(139,92,246,.15);border-left:3px solid #8b5cf6;border-radius:6px;font-size:12px;color:#e8eaed;line-height:1.5;';

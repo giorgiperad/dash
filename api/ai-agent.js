@@ -55,10 +55,17 @@ Always be helpful, accurate, and provide actionable insights. If you don't know 
       }
     }
 
-    // Try different models in order of preference
-    const models = ['asi1-agentic', 'asi1-extended', 'asi1-mini'];
+    // Try different agentic models in order of preference
+    // According to docs: asi1-agentic, asi1-fast-agentic, asi1-extended-agentic
+    const models = ['asi1-fast-agentic', 'asi1-agentic', 'asi1-extended-agentic'];
     let lastError;
     let data;
+    
+    // Session management for agentic models
+    // Generate or retrieve session ID (in production, store in Redis/DB)
+    const sessionId = req.headers['x-session-id'] || 
+                      req.body.sessionId || 
+                      `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
     for (const model of models) {
       try {
@@ -81,16 +88,18 @@ Always be helpful, accurate, and provide actionable insights. If you don't know 
         console.log(`Trying model: ${model}`);
         console.log('Sending request to ASI:One API:', apiUrl);
         console.log('Using API key:', apiKey.substring(0, 10) + '...');
+        console.log('Session ID:', sessionId);
         
         const response = await fetch(apiUrl, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${apiKey}`,
+            'x-session-id': sessionId, // Required for agentic models
             'Content-Type': 'application/json',
             'User-Agent': 'CryptoCollectiveX/1.0'
           },
           body: JSON.stringify(requestBody),
-          signal: AbortSignal.timeout(30000) // 30 second timeout
+          signal: AbortSignal.timeout(90000) // 90 seconds timeout for agentic models (longer tasks)
         });
 
         console.log('ASI:One API response status:', response.status, response.statusText);
@@ -153,8 +162,9 @@ Always be helpful, accurate, and provide actionable insights. If you don't know 
     return res.status(200).json({
       success: true,
       message: aiMessage,
-      model: data.model || 'asi1-agentic',
-      usage: data.usage || null
+      model: data.model || 'asi1-fast-agentic',
+      usage: data.usage || null,
+      sessionId: sessionId // Return session ID for client to maintain context
     });
 
   } catch (error) {
