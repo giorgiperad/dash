@@ -1,7 +1,29 @@
-import admin from 'firebase-admin';
+// Use createRequire for better compatibility with Vercel's module resolution
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
+let admin = null;
+
+function loadFirebaseAdmin() {
+  if (!admin) {
+    try {
+      admin = require('firebase-admin');
+    } catch (error) {
+      console.error('Failed to require firebase-admin:', error);
+      console.error('Error details:', {
+        code: error.code,
+        message: error.message,
+        stack: error.stack
+      });
+      throw new Error(`Failed to load firebase-admin module: ${error.message}. Make sure firebase-admin is listed in package.json dependencies and npm install has been run.`);
+    }
+  }
+  return admin;
+}
 
 // Initialize Firebase Admin SDK
 function getDatabase() {
+  const admin = loadFirebaseAdmin();
   if (!admin.apps.length) {
     try {
       // Check for required environment variables
