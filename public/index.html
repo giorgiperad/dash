@@ -495,6 +495,12 @@ body{overflow-x:hidden}
 
 /* Responsive quotes section */
 #quotesSection{width:100%;max-width:100%;overflow:hidden}
+
+/* ETF Two-Column Layout Responsive */
+#etfDataMainContent > div:first-of-type{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:768px){
+  #etfDataMainContent > div:first-of-type{grid-template-columns:1fr!important}
+}
 </style>
 </head>
 <body>
@@ -2011,107 +2017,66 @@ function renderETFDataMain(etfData) {
   const renderETFDetails = (etf, name, symbol, color) => {
     if (!etf) return '';
     
-    // Safely extract values with proper type checking
+    // Safely extract only essential values
     const dailyNetInflow = parseFloat(etf.dailyNetInflow?.value || etf.dailyNetInflow || 0) || 0;
     const dailyNetInflowDate = formatDate(etf.dailyNetInflow?.date || etf.dailyNetInflowDate);
     const cumNetInflow = parseFloat(etf.cumNetInflow?.value || etf.cumNetInflow || 0) || 0;
-    const cumNetInflowDate = formatDate(etf.cumNetInflow?.date || etf.cumNetInflowDate);
     const totalNetAssets = parseFloat(etf.totalNetAssets?.value || etf.totalNetAssets || 0) || 0;
-    const totalNetAssetsDate = formatDate(etf.totalNetAssets?.date || etf.totalNetAssetsDate);
-    // Handle totalNetAssetsPercentage - could be number, string, or object
-    let totalNetAssetsPercentage = null;
-    if (etf.totalNetAssetsPercentage !== undefined && etf.totalNetAssetsPercentage !== null) {
-      if (typeof etf.totalNetAssetsPercentage === 'object' && etf.totalNetAssetsPercentage.value !== undefined) {
-        totalNetAssetsPercentage = etf.totalNetAssetsPercentage.value;
-      } else {
-        totalNetAssetsPercentage = etf.totalNetAssetsPercentage;
-      }
-    }
-    // Handle totalTokenHoldings - could be number, string, or object
-    let totalTokenHoldings = null;
-    if (etf.totalTokenHoldings !== undefined && etf.totalTokenHoldings !== null) {
-      if (typeof etf.totalTokenHoldings === 'object' && etf.totalTokenHoldings.value !== undefined) {
-        totalTokenHoldings = etf.totalTokenHoldings.value;
-      } else {
-        totalTokenHoldings = etf.totalTokenHoldings;
-      }
-    }
-    const totalTokenHoldingsDate = formatDate(etf.totalTokenHoldings?.date || etf.totalTokenHoldingsDate);
-    // Handle dailyTotalValueTraded - could be number, string, or object
-    let dailyTotalValueTraded = null;
-    if (etf.dailyTotalValueTraded !== undefined && etf.dailyTotalValueTraded !== null) {
-      if (typeof etf.dailyTotalValueTraded === 'object' && etf.dailyTotalValueTraded.value !== undefined) {
-        dailyTotalValueTraded = etf.dailyTotalValueTraded.value;
-      } else {
-        dailyTotalValueTraded = etf.dailyTotalValueTraded;
-      }
-    }
-    const dailyTotalValueTradedDate = formatDate(etf.dailyTotalValueTraded?.date || etf.dailyTotalValueTradedDate);
     
     const flowColor = dailyNetInflow >= 0 ? '#22c55e' : '#ef4444';
     
     return `
-      <div style="background:rgba(20,20,30,.6);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:24px;margin-bottom:24px;">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.1);">
-          <div style="font-size:20px;">${symbol}</div>
-          <div style="font-size:18px;font-weight:600;color:#fafafa;">${name} ETF</div>
+      <div style="background:rgba(20,20,30,.6);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:20px;flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.1);">
+          <div style="font-size:18px;">${symbol}</div>
+          <div style="font-size:16px;font-weight:600;color:#fafafa;">${name} ETF</div>
         </div>
         
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;">
+        <div style="display:flex;flex-direction:column;gap:12px;">
           <!-- Daily Net Inflow -->
-          <div style="background:rgba(10,14,26,.5);border:1px solid rgba(255,255,255,.05);border-radius:10px;padding:16px;">
-            <div style="font-size:11px;color:#9aa0a6;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">დღის შემოდინება</div>
-            <div style="font-size:24px;font-weight:600;color:${flowColor};margin-bottom:4px;">${formatFlow(dailyNetInflow)}</div>
-            <div style="font-size:10px;color:#71717a;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05);">თარიღი: ${dailyNetInflowDate}</div>
+          <div style="background:rgba(10,14,26,.5);border:1px solid rgba(255,255,255,.05);border-radius:8px;padding:14px;">
+            <div style="font-size:10px;color:#9aa0a6;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">დღის შემოდინება</div>
+            <div style="font-size:20px;font-weight:600;color:${flowColor};margin-bottom:4px;">${formatFlow(dailyNetInflow)}</div>
+            <div style="font-size:9px;color:#71717a;margin-top:6px;">${dailyNetInflowDate}</div>
           </div>
           
           <!-- Cumulative Net Inflow -->
-          <div style="background:rgba(10,14,26,.5);border:1px solid rgba(255,255,255,.05);border-radius:10px;padding:16px;">
-            <div style="font-size:11px;color:#9aa0a6;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">კუმულაციური შემოდინება</div>
-            <div style="font-size:24px;font-weight:600;color:#fafafa;margin-bottom:4px;">${formatFlow(cumNetInflow)}</div>
-            <div style="font-size:10px;color:#71717a;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05);">თარიღი: ${cumNetInflowDate}</div>
+          <div style="background:rgba(10,14,26,.5);border:1px solid rgba(255,255,255,.05);border-radius:8px;padding:14px;">
+            <div style="font-size:10px;color:#9aa0a6;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">კუმულაციური</div>
+            <div style="font-size:20px;font-weight:600;color:#fafafa;margin-bottom:4px;">${formatFlow(cumNetInflow)}</div>
           </div>
           
           <!-- Total Net Assets -->
-          <div style="background:rgba(10,14,26,.5);border:1px solid rgba(255,255,255,.05);border-radius:10px;padding:16px;">
-            <div style="font-size:11px;color:#9aa0a6;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">საერთო აქტივები</div>
-            <div style="font-size:24px;font-weight:600;color:#fafafa;margin-bottom:4px;">${formatAUM(totalNetAssets)}</div>
-            <div style="font-size:10px;color:#71717a;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05);">თარიღი: ${totalNetAssetsDate}</div>
-            ${totalNetAssetsPercentage && !isNaN(parseFloat(totalNetAssetsPercentage)) ? `<div style="font-size:10px;color:#71717a;margin-top:4px;">პროცენტი: ${parseFloat(totalNetAssetsPercentage).toFixed(2)}%</div>` : ''}
+          <div style="background:rgba(10,14,26,.5);border:1px solid rgba(255,255,255,.05);border-radius:8px;padding:14px;">
+            <div style="font-size:10px;color:#9aa0a6;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">საერთო აქტივები</div>
+            <div style="font-size:20px;font-weight:600;color:#fafafa;margin-bottom:4px;">${formatAUM(totalNetAssets)}</div>
           </div>
-          
-          <!-- Total Token Holdings -->
-          ${totalTokenHoldings !== null && totalTokenHoldings !== undefined && totalTokenHoldings !== '' ? `
-          <div style="background:rgba(10,14,26,.5);border:1px solid rgba(255,255,255,.05);border-radius:10px;padding:16px;">
-            <div style="font-size:11px;color:#9aa0a6;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">ტოკენების რაოდენობა</div>
-            <div style="font-size:24px;font-weight:600;color:#fafafa;margin-bottom:4px;">${typeof totalTokenHoldings === 'number' ? totalTokenHoldings.toLocaleString('ka-GE') : String(totalTokenHoldings)}</div>
-            <div style="font-size:10px;color:#71717a;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05);">თარიღი: ${totalTokenHoldingsDate}</div>
-          </div>
-          ` : ''}
-          
-          <!-- Daily Total Value Traded -->
-          ${dailyTotalValueTraded !== null && dailyTotalValueTraded !== undefined && dailyTotalValueTraded !== '' && !isNaN(parseFloat(dailyTotalValueTraded)) ? `
-          <div style="background:rgba(10,14,26,.5);border:1px solid rgba(255,255,255,.05);border-radius:10px;padding:16px;">
-            <div style="font-size:11px;color:#9aa0a6;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">დღის ბრუნვა</div>
-            <div style="font-size:24px;font-weight:600;color:#fafafa;margin-bottom:4px;">${formatAUM(parseFloat(dailyTotalValueTraded))}</div>
-            <div style="font-size:10px;color:#71717a;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05);">თარიღი: ${dailyTotalValueTradedDate}</div>
-          </div>
-          ` : ''}
         </div>
       </div>
     `;
   };
   
-  let html = '<div style="margin-bottom:24px;"><h2 style="font-size:24px;font-weight:600;color:#fafafa;margin-bottom:8px;">კრიპტო ETF მონაცემები</h2><p style="font-size:13px;color:#9aa0a6;">სრული მონაცემები თარიღებით</p></div>';
+  let html = '<div style="margin-bottom:20px;"><h2 style="font-size:22px;font-weight:600;color:#fafafa;margin-bottom:4px;">კრიპტო ETF მონაცემები</h2></div>';
   
-  // Render all ETF data with full details
+  // Render BTC and ETH side by side in two columns
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">';
   html += renderETFDetails(etfData.btc, 'Bitcoin', '₿', '#f7931a');
   html += renderETFDetails(etfData.eth, 'Ethereum', 'Ξ', '#627eea');
-  html += renderETFDetails(etfData.sol, 'Solana', '◎', '#9945ff');
-  html += renderETFDetails(etfData.hbar, 'HBAR', '⚡', '#0080ff');
-  html += renderETFDetails(etfData.ltc, 'Litecoin', 'Ł', '#345d9d');
+  html += '</div>';
   
-  if (html === '<div style="margin-bottom:24px;"><h2 style="font-size:24px;font-weight:600;color:#fafafa;margin-bottom:8px;">კრიპტო ETF მონაცემები</h2><p style="font-size:13px;color:#9aa0a6;">სრული მონაცემები თარიღებით</p></div>') {
+  // Render other ETFs in a row if available
+  const otherETFs = [];
+  if (etfData.sol) otherETFs.push(renderETFDetails(etfData.sol, 'Solana', '◎', '#9945ff'));
+  if (etfData.hbar) otherETFs.push(renderETFDetails(etfData.hbar, 'HBAR', '⚡', '#0080ff'));
+  if (etfData.ltc) otherETFs.push(renderETFDetails(etfData.ltc, 'Litecoin', 'Ł', '#345d9d'));
+  
+  if (otherETFs.length > 0) {
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;">';
+    html += otherETFs.join('');
+    html += '</div>';
+  }
+  
+  if (html === '<div style="margin-bottom:20px;"><h2 style="font-size:22px;font-weight:600;color:#fafafa;margin-bottom:4px;">კრიპტო ETF მონაცემები</h2></div>') {
     container.innerHTML = '<div style="padding:40px;text-align:center;color:#9aa0a6;font-size:13px;">ETF მონაცემები არ არის ხელმისაწვდომი<br><small style="font-size:11px;color:#71717a;margin-top:8px;display:block;">გთხოვთ შეამოწმოთ API გასაღები Vercel-ის გარემოს ცვლადებში</small></div>';
     return;
   }
