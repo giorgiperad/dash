@@ -131,15 +131,40 @@ module.exports = async function handler(req, res) {
       let market, global, fg;
       try {
         [market, global, fg] = await Promise.all([
-          fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&price_change_percentage=24h`).then(r => {
+          fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&price_change_percentage=24h`, {
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (compatible; CryptoCollectiveX/1.0)'
+            }
+          }).then(async r => {
+            if (r.status === 429) {
+              // Rate limited - return cached data or empty array
+              console.warn('CoinGecko rate limited (429), returning empty market data');
+              return [];
+            }
             if (!r.ok) throw new Error(`CoinGecko API error: ${r.status} ${r.statusText}`);
             return r.json();
           }),
-          fetch('https://api.coingecko.com/api/v3/global').then(r => {
+          fetch('https://api.coingecko.com/api/v3/global', {
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (compatible; CryptoCollectiveX/1.0)'
+            }
+          }).then(async r => {
+            if (r.status === 429) {
+              console.warn('CoinGecko Global rate limited (429), returning null');
+              return { data: null };
+            }
             if (!r.ok) throw new Error(`CoinGecko Global API error: ${r.status} ${r.statusText}`);
             return r.json();
           }),
-          fetch('https://api.alternative.me/fng/').then(r => {
+          fetch('https://api.alternative.me/fng/', {
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (compatible; CryptoCollectiveX/1.0)'
+            }
+          }).then(async r => {
+            if (r.status === 429) {
+              console.warn('Fear & Greed API rate limited (429), returning null');
+              return { data: [null] };
+            }
             if (!r.ok) throw new Error(`Fear & Greed API error: ${r.status} ${r.statusText}`);
             return r.json();
           })
@@ -147,9 +172,12 @@ module.exports = async function handler(req, res) {
         console.log('Successfully fetched market data');
       } catch (fetchError) {
         console.error('External API fetch error:', fetchError.message);
-        return res.status(500).json({ 
-          error: 'Failed to fetch market data',
-          message: fetchError.message
+        // Return partial data if available, or empty data
+        return res.status(200).json({ 
+          cryptoData: market || [],
+          globalData: global?.data || null,
+          fearGreed: fg?.data?.[0] || null,
+          warning: 'Some data may be incomplete due to API rate limiting'
         });
       }
 

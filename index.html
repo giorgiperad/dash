@@ -360,7 +360,14 @@ const firebaseConfig = {
   messagingSenderId: "413950601775",
   appId: "1:413950601775:web:53ca78e202ef7ec884b4da"
 };
-firebase.initializeApp(firebaseConfig);
+// Initialize Firebase app
+let app;
+try {
+  app = firebase.initializeApp(firebaseConfig);
+} catch (e) {
+  // App already initialized
+  app = firebase.app();
+}
 const auth = firebase.auth();
 
 /* ---------- GLOBALS ---------- */
@@ -385,7 +392,21 @@ function authModal(mode){
   if(!email) return;
   const password = prompt('Enter password:');
   if(!password) return;
-  (mode==='login'? auth.signInWithEmailAndPassword : auth.createUserWithEmailAndPassword)(email,password)
+  
+  // Ensure Firebase Auth is initialized
+  if (!auth) {
+    try {
+      auth = firebase.auth();
+    } catch (e) {
+      console.error('Firebase Auth initialization error:', e);
+      alert('Authentication service is not available. Please refresh the page.');
+      return;
+    }
+  }
+  
+  const authMethod = mode === 'login' ? auth.signInWithEmailAndPassword : auth.createUserWithEmailAndPassword;
+  
+  authMethod.call(auth, email, password)
     .then(() => {
       if(mode === 'register') {
         alert('Registration successful! You are now logged in.');
@@ -405,6 +426,8 @@ function authModal(mode){
         errorMsg = 'No account found with this email. Please register first.';
       } else if(e.code === 'auth/wrong-password') {
         errorMsg = 'Incorrect password. Please try again.';
+      } else if(e.message && e.message.includes('_delegate')) {
+        errorMsg = 'Authentication service error. Please refresh the page and try again.';
       }
       alert(errorMsg);
     });
@@ -525,11 +548,18 @@ async function fetchAll(){
     
     let data;
     try {
-      data = await res.json();
+      const text = await res.text();
+      if (!text) {
+        data = { cryptoData: [], globalData: null, fearGreed: null };
+      } else {
+        data = JSON.parse(text);
+      }
       console.log('Response data:', data);
     } catch (jsonError) {
       console.error('Failed to parse JSON response:', jsonError);
-      throw new Error(`Server returned invalid response (${res.status} ${res.statusText})`);
+      // Try to show partial error info
+      const text = await res.text().catch(() => 'Unable to read response');
+      throw new Error(`Server returned invalid response (${res.status} ${res.statusText}): ${text.substring(0, 200)}`);
     }
     
     if (!res.ok) {
@@ -553,11 +583,15 @@ async function fetchAll(){
       return;
     }
     
-    // Success - process data
+    // Success - process data (even if some data is missing due to rate limiting)
     cryptoData = data.cryptoData || [];
     cryptoData.forEach(t => prices[t.id] = t.current_price);
     globalData = data.globalData;
     fearGreedData = data.fearGreed;
+    
+    if (data.warning) {
+      console.warn('API Warning:', data.warning);
+    }
     
     console.log(`Loaded ${cryptoData.length} tokens`);
     
@@ -568,7 +602,7 @@ async function fetchAll(){
   } catch (e) {
     console.error('Fetch error:', e);
     console.error('Error details:', e.message, e.stack);
-    err.innerHTML = `<div class="error"><strong>Network Error: ${e.message}</strong><br><br>This could mean:<br>• The API endpoint is not responding<br>• There's a network connectivity issue<br>• The serverless function crashed<br><br><small>Check browser console (F12) and Vercel deployment logs for details</small></div>`;
+    err.innerHTML = `<div class="error"><strong>Network Error: ${e.message}</strong><br><br>This could mean:<br>• The API endpoint is not responding<br>• There's a network connectivity issue<br>• The serverless function crashed<br>• API rate limiting (429 errors)<br><br><small>Check browser console (F12) and Vercel deployment logs for details</small></div>`;
     $('contentGrid').style.display = 'grid';
     $('heroStats').style.display = 'grid';
   } finally {
@@ -588,8 +622,14 @@ async function loadPortfolio(){
     
     let data;
     try {
-      data = await res.json();
+      const text = await res.text();
+      if (!text) {
+        data = {};
+      } else {
+        data = JSON.parse(text);
+      }
     } catch (jsonError) {
+      console.error('Failed to parse portfolio response:', jsonError);
       throw new Error(`Server returned invalid response (${res.status} ${res.statusText})`);
     }
     
@@ -609,7 +649,10 @@ async function loadPortfolio(){
       renderPortfolio(holdings);
     }, (error) => {
       console.error('Database read error:', error);
-      alert('Failed to load portfolio: ' + error.message);
+      // Only show alert if it's a real error, not just empty data
+      if (error.code !== 'PERMISSION_DENIED') {
+        alert('Failed to load portfolio: ' + error.message);
+      }
     });
   } catch (e) {
     alert('Load portfolio error: ' + e.message);
@@ -800,11 +843,32 @@ async function loadAlerts(){
     const res = await fetch('/api/alerts', {
       headers: { Authorization: `Bearer ${token}` }
     });
-    const data = await res.json();
-    if (res.status !== 200) throw new Error(data.error);
+    
+    let data;
+    try {
+      const text = await res.text();
+      if (!text) {
+        data = {};
+      } else {
+        data = JSON.parse(text);
+      }
+    } catch (jsonError) {
+      console.error('Failed to parse alerts response:', jsonError);
+      throw new Error(`Server returned invalid response (${res.status} ${res.statusText}). Response: ${(await res.text()).substring(0, 100)}`);
+    }
+    
+    if (!res.ok) {
+      const errorMsg = data.error || data.message || `HTTP ${res.status}: ${res.statusText}`;
+      throw new Error(errorMsg);
+    }
+    
     renderAlerts(data);
   } catch (e) {
-    alert('Load alerts error: ' + e.message);
+    console.error('Load alerts error:', e);
+    // Don't show alert if it's just empty alerts
+    if (!e.message.includes('404') && !e.message.includes('invalid response')) {
+      alert('Load alerts error: ' + e.message);
+    }
   }
 }
 
@@ -816,10 +880,24 @@ async function addAlert(alert) {
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ alert })
     });
-    if (res.status !== 200) throw new Error('Add failed');
+    
+    let data;
+    try {
+      data = await res.json();
+    } catch (jsonError) {
+      const text = await res.text();
+      throw new Error(`Server returned invalid response (${res.status} ${res.statusText}): ${text.substring(0, 100)}`);
+    }
+    
+    if (!res.ok) {
+      const errorMsg = data.error || data.message || `HTTP ${res.status}: ${res.statusText}`;
+      throw new Error(errorMsg);
+    }
+    
     loadAlerts();
   } catch (e) {
-    alert('Add error: ' + e.message);
+    alert('Add alert error: ' + e.message);
+    console.error('Add alert error:', e);
   }
 }
 
@@ -827,14 +905,28 @@ window.deleteAlert = async (id) => {
   if(!confirm('Delete?')) return;
   try {
     const token = await currentUser.getIdToken();
-    const res = await fetch(`/api/alerts/${id}`, {
+    const res = await fetch(`/api/alerts?id=${encodeURIComponent(id)}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
     });
-    if (res.status !== 200) throw new Error('Delete failed');
+    
+    let data;
+    try {
+      data = await res.json();
+    } catch (jsonError) {
+      const text = await res.text();
+      throw new Error(`Server returned invalid response (${res.status} ${res.statusText}): ${text.substring(0, 100)}`);
+    }
+    
+    if (!res.ok) {
+      const errorMsg = data.error || data.message || `HTTP ${res.status}: ${res.statusText}`;
+      throw new Error(errorMsg);
+    }
+    
     loadAlerts();
   } catch (e) {
-    alert('Delete error: ' + e.message);
+    alert('Delete alert error: ' + e.message);
+    console.error('Delete alert error:', e);
   }
 };
 
