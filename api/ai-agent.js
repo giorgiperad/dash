@@ -29,7 +29,7 @@ module.exports = async (req, res) => {
     }
 
     // ASI:One API endpoint (OpenAI-compatible)
-    // Using asi1-agentic model for agent interactions
+    // Base URL: https://api.asi1.ai/v1
     const apiUrl = 'https://api.asi1.ai/v1/chat/completions';
     
     // Build system prompt with crypto context
@@ -55,45 +55,97 @@ Always be helpful, accurate, and provide actionable insights. If you don't know 
       }
     }
 
-    const requestBody = {
-      model: 'asi1-agentic', // Best model for agent interactions
-      messages: [
-        {
-          role: 'system',
-          content: systemPrompt
-        },
-        {
-          role: 'user',
-          content: message
+    // Try different models in order of preference
+    const models = ['asi1-agentic', 'asi1-extended', 'asi1-mini'];
+    let lastError;
+    let data;
+    
+    for (const model of models) {
+      try {
+        const requestBody = {
+          model: model,
+          messages: [
+            {
+              role: 'system',
+              content: systemPrompt
+            },
+            {
+              role: 'user',
+              content: message
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 1000
+        };
+
+        console.log(`Trying model: ${model}`);
+        console.log('Sending request to ASI:One API:', apiUrl);
+        console.log('Using API key:', apiKey.substring(0, 10) + '...');
+        
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+            'User-Agent': 'CryptoCollectiveX/1.0'
+          },
+          body: JSON.stringify(requestBody),
+          signal: AbortSignal.timeout(30000) // 30 second timeout
+        });
+
+        console.log('ASI:One API response status:', response.status, response.statusText);
+
+        if (response.ok) {
+          data = await response.json();
+          console.log(`Success with model: ${model}`);
+          break; // Success, exit loop
+        } else {
+          let errorText;
+          try {
+            errorText = await response.text();
+          } catch (e) {
+            errorText = `Failed to read error response: ${e.message}`;
+          }
+          
+          console.warn(`Model ${model} failed:`, response.status, errorText);
+          lastError = { status: response.status, message: errorText, model: model };
+          
+          // If it's a 401 (unauthorized) or 404 (not found), don't try other models
+          if (response.status === 401 || response.status === 404) {
+            break;
+          }
+          // Continue to next model
+          continue;
         }
-      ],
-      temperature: 0.7,
-      max_tokens: 1000
-    };
-
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(requestBody),
-      signal: AbortSignal.timeout(30000) // 30 second timeout
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('ASI:One API error:', response.status, errorText);
+      } catch (error) {
+        console.warn(`Model ${model} threw error:`, error.message);
+        lastError = { status: 0, message: error.message, model: model };
+        continue; // Try next model
+      }
+    }
+    
+    if (!data) {
+      // All models failed
+      const errorDetails = lastError || { status: 500, message: 'All models failed' };
+      console.error('ASI:One API error (all models failed):', errorDetails);
       
-      return res.status(response.status).json({
+      // Try to parse error if it's JSON
+      let errorData;
+      try {
+        errorData = JSON.parse(errorDetails.message || '{}');
+      } catch (e) {
+        errorData = { error: { message: errorDetails.message } };
+      }
+      
+      return res.status(errorDetails.status || 500).json({
         success: false,
         error: 'Failed to get AI response',
-        message: errorText,
-        status: response.status
+        message: errorData.error?.message || errorDetails.message || 'All AI models failed',
+        status: errorDetails.status,
+        details: errorDetails.message?.substring(0, 500) || 'No additional details available',
+        triedModels: models
       });
     }
-
-    const data = await response.json();
     
     // Extract the AI response
     const aiMessage = data.choices?.[0]?.message?.content || 'No response from AI';
@@ -107,10 +159,21 @@ Always be helpful, accurate, and provide actionable insights. If you don't know 
 
   } catch (error) {
     console.error('AI Agent API error:', error);
+    console.error('Error stack:', error.stack);
+    
+    // Provide more detailed error information
+    let errorMessage = error.message;
+    if (error.name === 'AbortError') {
+      errorMessage = 'Request timeout - API took too long to respond';
+    } else if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
+      errorMessage = 'Cannot connect to ASI:One API - check network connection';
+    }
+    
     return res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message
+      message: errorMessage,
+      details: error.stack?.substring(0, 500) || 'No additional details available'
     });
   }
 };
