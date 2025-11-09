@@ -1,0 +1,50 @@
+========================================
+VERCEL ENVIRONMENT VARIABLES - COPY & PASTE
+Project: ccx8
+========================================
+
+Go to: https://vercel.com/giorgiperads-projects/ccx8/settings/environment-variables
+
+After logging in, add these 4 variables:
+
+----------------------------------------
+1. FIREBASE_PROJECT_ID
+----------------------------------------
+Key: FIREBASE_PROJECT_ID
+Value: ccx-dashboard
+Environments: ✅ Production ✅ Preview ✅ Development
+
+----------------------------------------
+2. FIREBASE_CLIENT_EMAIL
+----------------------------------------
+Key: FIREBASE_CLIENT_EMAIL
+Value: firebase-adminsdk-fbsvc@ccx-dashboard.iam.gserviceaccount.com
+Environments: ✅ Production ✅ Preview ✅ Development
+
+----------------------------------------
+3. FIREBASE_PRIVATE_KEY
+----------------------------------------
+Key: FIREBASE_PRIVATE_KEY
+Value: (Copy from your JSON file - the "private_key" field)
+Environments: ✅ Production ✅ Preview ✅ Development
+
+Note: You can paste it with actual newlines OR as one line with \n
+
+----------------------------------------
+4. FIREBASE_DATABASE_URL
+----------------------------------------
+Key: FIREBASE_DATABASE_URL
+Value: https://ccx-dashboard-default-rtdb.firebaseio.com/
+Environments: ✅ Production ✅ Preview ✅ Development
+
+========================================
+AFTER SETTING ALL VARIABLES:
+========================================
+1. Go to Deployments tab
+2. Click ⋯ on latest deployment
+3. Click "Redeploy"
+4. Wait for deployment
+5. Test: https://ccx8.vercel.app/
+
+========================================
+
