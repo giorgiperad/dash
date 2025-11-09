@@ -964,15 +964,14 @@ function renderETFData(data) {
   
   let html = '';
   
-  // Bitcoin ETF
+  // Bitcoin ETF - using SoSoValue API format
   if (btcData) {
-    // Try multiple field names for net flow
-    const netFlow = btcData.netFlow || btcData.net_inflow || btcData.flow || 
-                   btcData.todayFlow || btcData.dailyFlow || btcData.netFlowToday || 0;
-    // Try multiple field names for AUM
-    const totalAUM = btcData.totalAUM || btcData.total_assets || btcData.aum || 
-                     btcData.totalAssets || btcData.assets || btcData.marketCap || 0;
-    const flowColor = netFlow >= 0 ? '#22c55e' : '#ef4444';
+    // Extract data from SoSoValue API response structure
+    const dailyNetInflow = btcData.dailyNetInflow?.value || 0;
+    const totalNetAssets = btcData.totalNetAssets?.value || 0;
+    const cumNetInflow = btcData.cumNetInflow?.value || 0;
+    const totalTokenHoldings = btcData.totalTokenHoldings?.value || 0;
+    const flowColor = dailyNetInflow >= 0 ? '#22c55e' : '#ef4444';
     
     html += `
       <div class="etf-item" style="padding:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:10px;margin-bottom:10px;transition:all .25s;">
@@ -982,25 +981,28 @@ function renderETFData(data) {
         </div>
         <div style="margin-bottom:6px;">
           <div style="font-size:10px;color:#9aa0a6;margin-bottom:4px;">წმინდა შემოდინება (დღეს)</div>
-          <div style="font-size:14px;font-weight:600;color:${flowColor};">${formatFlow(netFlow)}</div>
+          <div style="font-size:14px;font-weight:600;color:${flowColor};">${formatFlow(dailyNetInflow)}</div>
+        </div>
+        <div style="margin-bottom:6px;">
+          <div style="font-size:10px;color:#9aa0a6;margin-bottom:4px;">კუმულაციური შემოდინება</div>
+          <div style="font-size:12px;font-weight:600;color:#fafafa;">${formatFlow(cumNetInflow)}</div>
         </div>
         <div>
           <div style="font-size:10px;color:#9aa0a6;margin-bottom:4px;">საერთო აქტივები</div>
-          <div style="font-size:12px;font-weight:600;color:#fafafa;">${formatAUM(totalAUM)}</div>
+          <div style="font-size:12px;font-weight:600;color:#fafafa;">${formatAUM(totalNetAssets)}</div>
         </div>
       </div>
     `;
   }
   
-  // Ethereum ETF
+  // Ethereum ETF - using SoSoValue API format
   if (ethData) {
-    // Try multiple field names for net flow
-    const netFlow = ethData.netFlow || ethData.net_inflow || ethData.flow || 
-                   ethData.todayFlow || ethData.dailyFlow || ethData.netFlowToday || 0;
-    // Try multiple field names for AUM
-    const totalAUM = ethData.totalAUM || ethData.total_assets || ethData.aum || 
-                     ethData.totalAssets || ethData.assets || ethData.marketCap || 0;
-    const flowColor = netFlow >= 0 ? '#22c55e' : '#ef4444';
+    // Extract data from SoSoValue API response structure
+    const dailyNetInflow = ethData.dailyNetInflow?.value || 0;
+    const totalNetAssets = ethData.totalNetAssets?.value || 0;
+    const cumNetInflow = ethData.cumNetInflow?.value || 0;
+    const totalTokenHoldings = ethData.totalTokenHoldings?.value || 0;
+    const flowColor = dailyNetInflow >= 0 ? '#22c55e' : '#ef4444';
     
     html += `
       <div class="etf-item" style="padding:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:10px;transition:all .25s;">
@@ -1010,11 +1012,15 @@ function renderETFData(data) {
         </div>
         <div style="margin-bottom:6px;">
           <div style="font-size:10px;color:#9aa0a6;margin-bottom:4px;">წმინდა შემოდინება (დღეს)</div>
-          <div style="font-size:14px;font-weight:600;color:${flowColor};">${formatFlow(netFlow)}</div>
+          <div style="font-size:14px;font-weight:600;color:${flowColor};">${formatFlow(dailyNetInflow)}</div>
+        </div>
+        <div style="margin-bottom:6px;">
+          <div style="font-size:10px;color:#9aa0a6;margin-bottom:4px;">კუმულაციური შემოდინება</div>
+          <div style="font-size:12px;font-weight:600;color:#fafafa;">${formatFlow(cumNetInflow)}</div>
         </div>
         <div>
           <div style="font-size:10px;color:#9aa0a6;margin-bottom:4px;">საერთო აქტივები</div>
-          <div style="font-size:12px;font-weight:600;color:#fafafa;">${formatAUM(totalAUM)}</div>
+          <div style="font-size:12px;font-weight:600;color:#fafafa;">${formatAUM(totalNetAssets)}</div>
         </div>
       </div>
     `;
