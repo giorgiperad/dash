@@ -501,16 +501,6 @@ body{
         </div>
       </div>
 
-      <!-- Option 8: Market Health Dashboard -->
-      <div class="sidebar-card" style="background:rgba(15,20,30,.6);backdrop-filter:blur(16px) saturate(180%);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,.08);margin-bottom:20px;box-shadow:0 4px 16px rgba(0,0,0,.2);">
-        <div style="font-size:13px;font-weight:600;margin-bottom:18px;text-transform:uppercase;letter-spacing:0.8px;color:#9aa0a6;display:flex;align-items:center;gap:8px;">
-          <span style="opacity:0.8;">💚</span> 
-          <span>ბაზრის მდგომარეობა</span>
-        </div>
-        <div id="marketHealthList" class="market-health-list" style="display:flex;flex-direction:column;gap:12px;">
-          <div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">ჩატვირთვა...</div>
-        </div>
-      </div>
       <div class="sidebar-card" style="background:rgba(15,20,30,.6);backdrop-filter:blur(16px) saturate(180%);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,.08);box-shadow:0 4px 16px rgba(0,0,0,.2);">
         <div style="font-size:13px;font-weight:600;margin-bottom:18px;text-transform:uppercase;letter-spacing:0.8px;color:#9aa0a6;">პარამეტრები</div>
         <div id="settingsPanel" class="settings-panel" style="display:flex;flex-direction:column;gap:16px;">
@@ -893,7 +883,6 @@ function renderAll() {
   if (cryptoData && cryptoData.length > 0) {
     loadETFData();
     renderRecentActivity();
-    renderMarketHealth();
   }
   populateTokenSelect('holdingToken');
   populateTokenSelect('alertToken');
@@ -1261,100 +1250,6 @@ function renderRecentActivity() {
   });
 }
 
-// Option 8: Market Health Dashboard
-function renderMarketHealth() {
-  const healthList = $('marketHealthList');
-  if (!healthList) {
-    console.warn('marketHealthList element not found');
-    return;
-  }
-  
-  if (!cryptoData || cryptoData.length === 0) {
-    healthList.innerHTML = '<div style="padding:20px;text-align:center;color:#9aa0a6;font-size:13px;">ბაზრის მონაცემები მიუწვდომელია</div>';
-    return;
-  }
-  
-  // Calculate health metrics
-  const total = cryptoData.length;
-  const bullish = cryptoData.filter(t => (t.price_change_percentage_24h || 0) > 0).length;
-  const bearish = cryptoData.filter(t => (t.price_change_percentage_24h || 0) < 0).length;
-  const bullishRatio = (bullish / total) * 100;
-  
-  // Market momentum (average change)
-  const avgChange = cryptoData.reduce((sum, t) => sum + (t.price_change_percentage_24h || 0), 0) / total;
-  
-  // Volatility index (standard deviation of changes)
-  const changes = cryptoData.map(t => t.price_change_percentage_24h || 0);
-  const variance = changes.reduce((sum, change) => sum + Math.pow(change - avgChange, 2), 0) / total;
-  const volatility = Math.sqrt(variance);
-  
-  // Liquidity score (based on volume)
-  const totalVolume = cryptoData.reduce((sum, t) => sum + (t.total_volume || 0), 0);
-  const avgVolume = totalVolume / total;
-  const liquidityScore = Math.min(100, (avgVolume / 100000000) * 10); // Normalized score
-  
-  // Overall health score (0-100)
-  const healthScore = Math.max(0, Math.min(100, 
-    (bullishRatio * 0.4) + 
-    (Math.max(0, avgChange + 10) * 2) + 
-    (Math.max(0, 50 - volatility) * 0.3) +
-    (liquidityScore * 0.1)
-  ));
-  
-  const getHealthColor = (score) => {
-    if (score >= 70) return '#22c55e';
-    if (score >= 50) return '#84cc16';
-    if (score >= 30) return '#f59e0b';
-    return '#ef4444';
-  };
-  
-  const getHealthLabel = (score) => {
-    if (score >= 70) return 'შესანიშნავი';
-    if (score >= 50) return 'კარგი';
-    if (score >= 30) return 'საშუალო';
-    return 'სუსტი';
-  };
-  
-  healthList.innerHTML = `
-    <div style="padding:14px;background:rgba(255,255,255,.03);border-radius:10px;border:1px solid rgba(255,255,255,.05);text-align:center;margin-bottom:12px;">
-      <div style="font-size:11px;color:#9aa0a6;margin-bottom:6px;">საერთო ჯანმრთელობის ინდექსი</div>
-      <div style="font-size:32px;font-weight:700;color:${getHealthColor(healthScore)};margin-bottom:4px;">${Math.round(healthScore)}</div>
-      <div style="font-size:12px;color:${getHealthColor(healthScore)};font-weight:500;">${getHealthLabel(healthScore)}</div>
-    </div>
-    
-    <div style="padding:12px;background:rgba(255,255,255,.03);border-radius:10px;border:1px solid rgba(255,255,255,.05);margin-bottom:8px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-        <span style="font-size:12px;color:#9aa0a6;font-weight:500;">🐂/🐻 თანაფარდობა</span>
-        <span style="font-size:13px;font-weight:600;color:#fafafa;">${bullishRatio.toFixed(0)}% / ${(100 - bullishRatio).toFixed(0)}%</span>
-      </div>
-      <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;display:flex;">
-        <div style="height:100%;width:${bullishRatio}%;background:#22c55e;transition:width .3s;"></div>
-        <div style="height:100%;width:${100 - bullishRatio}%;background:#ef4444;transition:width .3s;"></div>
-      </div>
-    </div>
-    
-    <div style="padding:12px;background:rgba(255,255,255,.03);border-radius:10px;border:1px solid rgba(255,255,255,.05);margin-bottom:8px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <span style="font-size:12px;color:#9aa0a6;font-weight:500;">ბაზრის მომენტუმი</span>
-        <span style="font-size:13px;font-weight:600;color:${avgChange >= 0 ? '#22c55e' : '#ef4444'};">${avgChange >= 0 ? '+' : ''}${avgChange.toFixed(2)}%</span>
-      </div>
-    </div>
-    
-    <div style="padding:12px;background:rgba(255,255,255,.03);border-radius:10px;border:1px solid rgba(255,255,255,.05);margin-bottom:8px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <span style="font-size:12px;color:#9aa0a6;font-weight:500;">ვოლატილობის ინდექსი</span>
-        <span style="font-size:13px;font-weight:600;color:#fafafa;">${volatility.toFixed(1)}%</span>
-      </div>
-    </div>
-    
-    <div style="padding:12px;background:rgba(255,255,255,.03);border-radius:10px;border:1px solid rgba(255,255,255,.05);">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <span style="font-size:12px;color:#9aa0a6;font-weight:500;">ლიკვიდურობის ქულა</span>
-        <span style="font-size:13px;font-weight:600;color:#fafafa;">${Math.round(liquidityScore)}/100</span>
-      </div>
-    </div>
-  `;
-}
 
 function renderQuotes() {
   const quotesList = $('quotesList');
@@ -1968,7 +1863,6 @@ async function fetchAll(){
            if (cryptoData && cryptoData.length > 0) {
              loadETFData();
              renderRecentActivity();
-             renderMarketHealth();
              renderTokenOfTheDay();
            }
     $('contentGrid').style.display = 'grid';
