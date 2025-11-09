@@ -511,6 +511,13 @@ auth.onAuthStateChanged(user=>{
     $('userAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email)}&background=8b5cf6&color=fff&size=64`;
     $('userTabs').style.display='flex';
     if(user.email === 'testireba5@gmail.com') $('adminControls').classList.add('show');
+    
+    // Load user data when authenticated
+    // Wait a bit to ensure Firebase is fully initialized
+    setTimeout(() => {
+      loadPortfolio();
+      loadAlerts();
+    }, 500);
   }else{
     $('authContainer').style.display='flex';
     $('userContainer').style.display='none';
@@ -851,7 +858,11 @@ async function fetchAll(){
            }
            $('contentGrid').style.display = 'grid';
            $('heroStats').style.display = 'grid';
-           if(currentUser) { loadPortfolio(); loadAlerts(); }
+           // Load portfolio and alerts after market data is loaded
+           if(currentUser) { 
+             loadPortfolio(); 
+             loadAlerts(); 
+           }
   } catch (e) {
     console.error('Fetch error:', e);
     console.error('Error details:', e.message, e.stack);
@@ -870,45 +881,39 @@ async function fetchAll(){
 
 /* ---------- PORTFOLIO (via Vercel API) ---------- */
 async function loadPortfolio(){
-  if(!currentUser) return;
+  if(!currentUser) {
+    console.log('No user logged in, skipping portfolio load');
+    return;
+  }
+  
   try {
-    const token = await currentUser.getIdToken();
-    const res = await fetch('/api/portfolio', {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    console.log('Loading portfolio for user:', currentUser.uid);
     
-    let data;
-    try {
-      data = await res.json();
-    } catch (jsonError) {
-      throw new Error(`Server returned invalid response (${res.status} ${res.statusText})`);
-    }
-    
-    if (!res.ok) {
-      const errorMsg = data.error || data.message || `HTTP ${res.status}: ${res.statusText}`;
-      throw new Error(errorMsg);
-    }
-    
-    // GET /api/portfolio returns market data, not user holdings
-    // We need to fetch user holdings separately using Firebase Realtime Database
+    // Fetch user holdings directly from Firebase Realtime Database
     const userId = currentUser.uid;
     const db = firebase.database();
     const holdingsRef = db.ref(`users/${userId}/holdings`);
     
     holdingsRef.once('value', (snapshot) => {
       const holdings = snapshot.val() || {};
+      console.log('Portfolio holdings loaded:', Object.keys(holdings).length, 'items');
       renderPortfolio(holdings);
     }, (error) => {
       console.error('Database read error:', error);
       // Only show alert if it's a real error, not just empty data
       if (error.code !== 'PERMISSION_DENIED') {
-        alert('Failed to load portfolio: ' + error.message);
+        console.error('Failed to load portfolio: ' + error.message);
+        // Don't show alert, just log it
+      } else {
+        console.log('Permission denied - user may not have holdings yet');
+        // Render empty portfolio
+        renderPortfolio({});
       }
     });
   } catch (e) {
-    alert('Load portfolio error: ' + e.message);
-    console.error('Portfolio load error:', e);
+    console.error('Load portfolio error:', e);
+    // Don't show alert, just log it and render empty
+    renderPortfolio({});
   }
 }
 
@@ -933,7 +938,8 @@ async function updateHolding(id, field, value) {
       throw new Error(errorMsg);
     }
     
-    loadPortfolio();
+    // Reload portfolio after update
+    await loadPortfolio();
   } catch (e) {
     alert('Update error: ' + e.message);
     console.error('Update holding error:', e);
@@ -985,7 +991,8 @@ window.deleteHolding = async (id) => {
       throw new Error(errorMsg);
     }
     
-    loadPortfolio();
+    // Reload portfolio after delete
+    await loadPortfolio();
   } catch (e) {
     alert('Delete error: ' + e.message);
     console.error('Delete holding error:', e);
@@ -1019,7 +1026,9 @@ $('addHoldingForm').onsubmit = async e => {
     }
     
     e.target.reset();
-    loadPortfolio();
+    // Reload portfolio immediately after adding
+    console.log('Holding added, reloading portfolio...');
+    await loadPortfolio();
   } catch (e) {
     alert('Add error: ' + e.message);
     console.error('Add holding error:', e);
@@ -1080,7 +1089,7 @@ $('editHoldingForm').onsubmit = async e => {
     
     // Close modal and reload portfolio
     $('editHoldingModal').classList.remove('show');
-    loadPortfolio();
+    await loadPortfolio();
   } catch (e) {
     alert('Update error: ' + e.message);
     console.error('Edit holding error:', e);
@@ -1332,8 +1341,25 @@ $('confirmAdd').onclick = async () => {
 /* ---------- RENDER FUNCTIONS (same as before) ---------- */
 function renderPortfolio(holdings) {
   const list = $('holdingsList');
+  if (!list) {
+    console.warn('holdingsList element not found');
+    return;
+  }
+  
   list.innerHTML = '';
   let totalValue = 0, totalCost = 0;
+  
+  if (!holdings || Object.keys(holdings).length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:40px;color:#9aa0a6;font-size:14px;">No holdings yet. Add tokens to your portfolio!</div>';
+    if ($('totalValue')) $('totalValue').textContent = '$0.00';
+    if ($('totalPL')) {
+      $('totalPL').textContent = '$0.00';
+      $('totalPL').style.color = '#9aa0a6';
+    }
+    if ($('roi')) $('roi').textContent = '0%';
+    return;
+  }
+  
   Object.entries(holdings || {}).forEach(([id, h]) => {
     if (!h || !h.tokenId) return; // Skip invalid holdings
     const token = cryptoData.find(t => t.id === h.tokenId) || { 
@@ -1364,11 +1390,14 @@ function renderPortfolio(holdings) {
         </div>
       </div>`;
   });
-  $('totalValue').textContent = `$${totalValue.toFixed(2)}`;
+  
+  if ($('totalValue')) $('totalValue').textContent = `$${totalValue.toFixed(2)}`;
   const pl = totalValue - totalCost;
-  $('totalPL').textContent = pl >= 0 ? `+$${pl.toFixed(2)}` : `-$${Math.abs(pl).toFixed(2)}`;
-  $('totalPL').style.color = pl >= 0 ? '#10b981' : '#ef4444';
-  $('roi').textContent = totalCost > 0 ? `${((totalValue / totalCost - 1) * 100).toFixed(2)}%` : '0%';
+  if ($('totalPL')) {
+    $('totalPL').textContent = pl >= 0 ? `+$${pl.toFixed(2)}` : `-$${Math.abs(pl).toFixed(2)}`;
+    $('totalPL').style.color = pl >= 0 ? '#10b981' : '#ef4444';
+  }
+  if ($('roi')) $('roi').textContent = totalCost > 0 ? `${((totalValue / totalCost - 1) * 100).toFixed(2)}%` : '0%';
   document.querySelectorAll('.editable').forEach(el => el.onclick = () => startEdit(el));
 }
 
