@@ -302,6 +302,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
 <script>
 // Firebase config - Complete web app configuration
@@ -340,7 +341,28 @@ function authModal(mode){
   const password = prompt('Enter password:');
   if(!password) return;
   (mode==='login'? auth.signInWithEmailAndPassword : auth.createUserWithEmailAndPassword)(email,password)
-    .catch(e=>alert(e.message));
+    .then(() => {
+      if(mode === 'register') {
+        alert('Registration successful! You are now logged in.');
+      }
+    })
+    .catch(e => {
+      console.error('Auth error:', e);
+      let errorMsg = e.message;
+      // Provide more helpful error messages
+      if(e.code === 'auth/email-already-in-use') {
+        errorMsg = 'This email is already registered. Please login instead.';
+      } else if(e.code === 'auth/weak-password') {
+        errorMsg = 'Password is too weak. Please use at least 6 characters.';
+      } else if(e.code === 'auth/invalid-email') {
+        errorMsg = 'Invalid email address. Please check and try again.';
+      } else if(e.code === 'auth/user-not-found') {
+        errorMsg = 'No account found with this email. Please register first.';
+      } else if(e.code === 'auth/wrong-password') {
+        errorMsg = 'Incorrect password. Please try again.';
+      }
+      alert(errorMsg);
+    });
 }
 
 auth.onAuthStateChanged(user=>{
@@ -513,14 +535,40 @@ async function fetchAll(){
 async function loadPortfolio(){
   if(!currentUser) return;
   try {
+    const token = await currentUser.getIdToken();
     const res = await fetch('/api/portfolio', {
-      headers: { Authorization: `Bearer ${await currentUser.getIdToken()}` }
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` }
     });
-    const data = await res.json();
-    if (res.status !== 200) throw new Error(data.error);
-    renderPortfolio(data);
+    
+    let data;
+    try {
+      data = await res.json();
+    } catch (jsonError) {
+      throw new Error(`Server returned invalid response (${res.status} ${res.statusText})`);
+    }
+    
+    if (!res.ok) {
+      const errorMsg = data.error || data.message || `HTTP ${res.status}: ${res.statusText}`;
+      throw new Error(errorMsg);
+    }
+    
+    // GET /api/portfolio returns market data, not user holdings
+    // We need to fetch user holdings separately using Firebase Realtime Database
+    const userId = currentUser.uid;
+    const db = firebase.database();
+    const holdingsRef = db.ref(`users/${userId}/holdings`);
+    
+    holdingsRef.once('value', (snapshot) => {
+      const holdings = snapshot.val() || {};
+      renderPortfolio(holdings);
+    }, (error) => {
+      console.error('Database read error:', error);
+      alert('Failed to load portfolio: ' + error.message);
+    });
   } catch (e) {
     alert('Load portfolio error: ' + e.message);
+    console.error('Portfolio load error:', e);
   }
 }
 
@@ -532,10 +580,23 @@ async function updateHolding(id, field, value) {
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ id, field, value })
     });
-    if (res.status !== 200) throw new Error('Update failed');
+    
+    let data;
+    try {
+      data = await res.json();
+    } catch (jsonError) {
+      throw new Error(`Server returned invalid response (${res.status} ${res.statusText})`);
+    }
+    
+    if (!res.ok) {
+      const errorMsg = data.error || data.message || `HTTP ${res.status}: ${res.statusText}`;
+      throw new Error(errorMsg);
+    }
+    
     loadPortfolio();
   } catch (e) {
     alert('Update error: ' + e.message);
+    console.error('Update holding error:', e);
   }
 }
 
@@ -548,10 +609,23 @@ window.deleteHolding = async (id) => {
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ id })
     });
-    if (res.status !== 200) throw new Error('Delete failed');
+    
+    let data;
+    try {
+      data = await res.json();
+    } catch (jsonError) {
+      throw new Error(`Server returned invalid response (${res.status} ${res.statusText})`);
+    }
+    
+    if (!res.ok) {
+      const errorMsg = data.error || data.message || `HTTP ${res.status}: ${res.statusText}`;
+      throw new Error(errorMsg);
+    }
+    
     loadPortfolio();
   } catch (e) {
     alert('Delete error: ' + e.message);
+    console.error('Delete holding error:', e);
   }
 };
 
@@ -568,11 +642,24 @@ $('addHoldingForm').onsubmit = async e => {
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ holding: { tokenId, amount, buyPrice } })
     });
-    if (res.status !== 200) throw new Error('Add failed');
+    
+    let data;
+    try {
+      data = await res.json();
+    } catch (jsonError) {
+      throw new Error(`Server returned invalid response (${res.status} ${res.statusText})`);
+    }
+    
+    if (!res.ok) {
+      const errorMsg = data.error || data.message || `HTTP ${res.status}: ${res.statusText}`;
+      throw new Error(errorMsg);
+    }
+    
     e.target.reset();
     loadPortfolio();
   } catch (e) {
     alert('Add error: ' + e.message);
+    console.error('Add holding error:', e);
   }
 };
 
@@ -644,13 +731,26 @@ $('confirmAdd').onclick = async () => {
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ id })
     });
-    if (res.status !== 200) throw new Error('Add failed');
-    alert(`Added ${id}`);
+    
+    let data;
+    try {
+      data = await res.json();
+    } catch (jsonError) {
+      throw new Error(`Server returned invalid response (${res.status} ${res.statusText})`);
+    }
+    
+    if (!res.ok) {
+      const errorMsg = data.error || data.message || `HTTP ${res.status}: ${res.statusText}`;
+      throw new Error(errorMsg);
+    }
+    
+    alert(data.message || `Added ${id} successfully!`);
     $('newTokenId').value = '';
     $('addTokenModal').classList.remove('show');
     fetchAll();
   } catch (e) {
     alert('Add error: ' + e.message);
+    console.error('Token add error:', e);
   }
 };
 

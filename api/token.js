@@ -80,6 +80,9 @@ module.exports = async function handler(req, res) {
   }
 
   try {
+    // Initialize Firebase Admin (if not already initialized)
+    getDatabase(); // This ensures Firebase Admin is initialized
+    
     // Verify authentication
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -94,7 +97,7 @@ module.exports = async function handler(req, res) {
       decodedToken = await admin.auth().verifyIdToken(idToken);
     } catch (authError) {
       console.error('Token verification error:', authError.message);
-      return res.status(401).json({ error: 'Unauthorized - Invalid token' });
+      return res.status(401).json({ error: 'Unauthorized - Invalid token', details: authError.message });
     }
 
     // Check if user is admin

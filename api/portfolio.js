@@ -71,8 +71,8 @@ function getDatabase() {
 module.exports = async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   // Handle preflight OPTIONS request
   if (req.method === 'OPTIONS') {
@@ -80,84 +80,190 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  if (req.method !== 'GET') {
-    res.status(405).json({ error: 'Method not allowed' });
-    return;
+  // Initialize Firebase Admin (if not already initialized)
+  getDatabase(); // This ensures Firebase Admin is initialized
+
+  // Handle GET - Fetch market data (existing functionality)
+  if (req.method === 'GET') {
+    try {
+      console.log('Portfolio API called');
+      
+      // Try to get database - this will throw if Firebase is not configured
+      let db;
+      try {
+        db = getDatabase();
+        console.log('Database connection successful');
+      } catch (firebaseError) {
+        console.error('Firebase initialization failed:', firebaseError.message);
+        return res.status(500).json({ 
+          error: 'Firebase configuration error',
+          message: firebaseError.message,
+          hint: 'Check your Firebase environment variables in Vercel Dashboard → Settings → Environment Variables',
+          requiredVars: ['FIREBASE_PROJECT_ID', 'FIREBASE_CLIENT_EMAIL', 'FIREBASE_PRIVATE_KEY', 'FIREBASE_DATABASE_URL']
+        });
+      }
+
+      // Fetch tokens from Firebase
+      let tokens = [];
+      try {
+        const snap = await db.ref('tokens').once('value');
+        const tokensData = snap.val() || {};
+        tokens = Object.values(tokensData).map(t => t.id).filter(Boolean);
+        console.log(`Found ${tokens.length} tokens in database`);
+      } catch (dbError) {
+        console.error('Database read error:', dbError.message);
+        return res.status(500).json({ 
+          error: 'Failed to read tokens from database',
+          message: dbError.message
+        });
+      }
+
+      // If no tokens, return empty data
+      if (!tokens.length) {
+        console.log('No tokens found, returning empty data');
+        return res.json({ cryptoData: [], globalData: null, fearGreed: null });
+      }
+
+      // Fetch market data from CoinGecko
+      const ids = tokens.join(',');
+      console.log(`Fetching data for tokens: ${ids}`);
+      
+      let market, global, fg;
+      try {
+        [market, global, fg] = await Promise.all([
+          fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&price_change_percentage=24h`).then(r => {
+            if (!r.ok) throw new Error(`CoinGecko API error: ${r.status} ${r.statusText}`);
+            return r.json();
+          }),
+          fetch('https://api.coingecko.com/api/v3/global').then(r => {
+            if (!r.ok) throw new Error(`CoinGecko Global API error: ${r.status} ${r.statusText}`);
+            return r.json();
+          }),
+          fetch('https://api.alternative.me/fng/').then(r => {
+            if (!r.ok) throw new Error(`Fear & Greed API error: ${r.status} ${r.statusText}`);
+            return r.json();
+          })
+        ]);
+        console.log('Successfully fetched market data');
+      } catch (fetchError) {
+        console.error('External API fetch error:', fetchError.message);
+        return res.status(500).json({ 
+          error: 'Failed to fetch market data',
+          message: fetchError.message
+        });
+      }
+
+      res.json({
+        cryptoData: market || [],
+        globalData: global?.data || null,
+        fearGreed: fg?.data?.[0] || null
+      });
+      return;
+    } catch (error) {
+      console.error('Unexpected Portfolio API error (GET):', error);
+      console.error('Error stack:', error.stack);
+      
+      res.status(500).json({ 
+        error: 'Internal server error',
+        message: error.message || 'Unknown error occurred',
+        ...(process.env.NODE_ENV === 'development' ? { stack: error.stack } : {})
+      });
+      return;
+    }
   }
 
+  // Handle POST, PATCH, DELETE - User portfolio holdings
+  // These require authentication
   try {
-    console.log('Portfolio API called');
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Unauthorized - Missing or invalid token' });
+    }
+
+    const idToken = authHeader.split('Bearer ')[1];
     
-    // Try to get database - this will throw if Firebase is not configured
-    let db;
+    // Verify the Firebase ID token
+    let decodedToken;
     try {
-      db = getDatabase();
-      console.log('Database connection successful');
-    } catch (firebaseError) {
-      console.error('Firebase initialization failed:', firebaseError.message);
-      return res.status(500).json({ 
-        error: 'Firebase configuration error',
-        message: firebaseError.message,
-        hint: 'Check your Firebase environment variables in Vercel Dashboard → Settings → Environment Variables',
-        requiredVars: ['FIREBASE_PROJECT_ID', 'FIREBASE_CLIENT_EMAIL', 'FIREBASE_PRIVATE_KEY', 'FIREBASE_DATABASE_URL']
+      decodedToken = await admin.auth().verifyIdToken(idToken);
+    } catch (authError) {
+      console.error('Token verification error:', authError.message);
+      return res.status(401).json({ error: 'Unauthorized - Invalid token', details: authError.message });
+    }
+
+    const userId = decodedToken.uid;
+    const userEmail = decodedToken.email;
+    const db = getDatabase();
+    const userHoldingsRef = db.ref(`users/${userId}/holdings`);
+
+    // POST - Add new holding
+    if (req.method === 'POST') {
+      const { holding } = req.body;
+      if (!holding || !holding.tokenId || !holding.amount || !holding.buyPrice) {
+        return res.status(400).json({ error: 'Missing required fields: tokenId, amount, buyPrice' });
+      }
+
+      const newHoldingRef = userHoldingsRef.push();
+      await newHoldingRef.set({
+        tokenId: holding.tokenId.toLowerCase(),
+        amount: parseFloat(holding.amount),
+        buyPrice: parseFloat(holding.buyPrice),
+        addedAt: admin.database.ServerValue.TIMESTAMP,
+        addedBy: userEmail
       });
+
+      console.log(`User ${userEmail} added holding: ${holding.tokenId}`);
+      return res.status(200).json({ success: true, message: 'Holding added successfully' });
     }
 
-    // Fetch tokens from Firebase
-    let tokens = [];
-    try {
-      const snap = await db.ref('tokens').once('value');
-      const tokensData = snap.val() || {};
-      tokens = Object.values(tokensData).map(t => t.id).filter(Boolean);
-      console.log(`Found ${tokens.length} tokens in database`);
-    } catch (dbError) {
-      console.error('Database read error:', dbError.message);
-      return res.status(500).json({ 
-        error: 'Failed to read tokens from database',
-        message: dbError.message
-      });
+    // PATCH - Update holding
+    if (req.method === 'PATCH') {
+      const { id, field, value } = req.body;
+      if (!id || !field || value === undefined) {
+        return res.status(400).json({ error: 'Missing required fields: id, field, value' });
+      }
+
+      const holdingRef = userHoldingsRef.child(id);
+      const snapshot = await holdingRef.once('value');
+      if (!snapshot.exists()) {
+        return res.status(404).json({ error: 'Holding not found' });
+      }
+
+      const updateData = {};
+      if (field === 'amount') {
+        updateData.amount = parseFloat(value);
+      } else if (field === 'buyPrice') {
+        updateData.buyPrice = parseFloat(value);
+      } else {
+        return res.status(400).json({ error: 'Invalid field. Allowed: amount, buyPrice' });
+      }
+
+      await holdingRef.update(updateData);
+      console.log(`User ${userEmail} updated holding ${id}: ${field} = ${value}`);
+      return res.status(200).json({ success: true, message: 'Holding updated successfully' });
     }
 
-    // If no tokens, return empty data
-    if (!tokens.length) {
-      console.log('No tokens found, returning empty data');
-      return res.json({ cryptoData: [], globalData: null, fearGreed: null });
+    // DELETE - Remove holding
+    if (req.method === 'DELETE') {
+      const { id } = req.body;
+      if (!id) {
+        return res.status(400).json({ error: 'Missing required field: id' });
+      }
+
+      const holdingRef = userHoldingsRef.child(id);
+      const snapshot = await holdingRef.once('value');
+      if (!snapshot.exists()) {
+        return res.status(404).json({ error: 'Holding not found' });
+      }
+
+      await holdingRef.remove();
+      console.log(`User ${userEmail} deleted holding ${id}`);
+      return res.status(200).json({ success: true, message: 'Holding deleted successfully' });
     }
 
-    // Fetch market data from CoinGecko
-    const ids = tokens.join(',');
-    console.log(`Fetching data for tokens: ${ids}`);
-    
-    let market, global, fg;
-    try {
-      [market, global, fg] = await Promise.all([
-        fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&price_change_percentage=24h`).then(r => {
-          if (!r.ok) throw new Error(`CoinGecko API error: ${r.status} ${r.statusText}`);
-          return r.json();
-        }),
-        fetch('https://api.coingecko.com/api/v3/global').then(r => {
-          if (!r.ok) throw new Error(`CoinGecko Global API error: ${r.status} ${r.statusText}`);
-          return r.json();
-        }),
-        fetch('https://api.alternative.me/fng/').then(r => {
-          if (!r.ok) throw new Error(`Fear & Greed API error: ${r.status} ${r.statusText}`);
-          return r.json();
-        })
-      ]);
-      console.log('Successfully fetched market data');
-    } catch (fetchError) {
-      console.error('External API fetch error:', fetchError.message);
-      return res.status(500).json({ 
-        error: 'Failed to fetch market data',
-        message: fetchError.message
-      });
-    }
+    // Method not supported
+    return res.status(405).json({ error: 'Method not allowed' });
 
-    res.json({
-      cryptoData: market || [],
-      globalData: global?.data || null,
-      fearGreed: fg?.data?.[0] || null
-    });
   } catch (error) {
     console.error('Unexpected Portfolio API error:', error);
     console.error('Error stack:', error.stack);
