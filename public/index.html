@@ -205,8 +205,8 @@ body{
 .modal-header h3{font-size:20px;font-weight:600;color:#e8eaed;letter-spacing:-0.3px;margin:0}
 
 /* Mobile Responsive Styles */
-@media(max-width:1600px){.content-grid{grid-template-columns:340px 1fr}.hero-section{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:1400px){.content-grid{grid-template-columns:1fr}.hero-section{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1600px){.content-grid{grid-template-columns:340px 1fr}}
+@media(max-width:1400px){.content-grid{grid-template-columns:1fr}}
 @media(max-width:1024px){
   .navbar{padding:16px 24px;flex-wrap:wrap;gap:12px}
   .logo-section{gap:12px}
@@ -216,11 +216,11 @@ body{
   .nav-right{gap:12px;flex-wrap:wrap}
   .auth-btn{padding:8px 16px;font-size:12px}
   .container{padding:24px 20px}
-  .hero-section{grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:32px}
-  .hero-stat{padding:16px;min-height:80px}
-  .hero-stat-value{font-size:18px}
-  .hero-stat-label{font-size:9px;margin-bottom:6px}
-  .hero-stat-change{font-size:10px}
+  .hero-carousel-wrapper{padding:0 40px;margin-bottom:24px}
+  .carousel-card{min-width:240px;max-width:240px;padding:16px}
+  .carousel-card-value{font-size:20px}
+  .carousel-card-title{font-size:11px}
+  .carousel-nav{width:36px;height:36px;font-size:18px}
   .content-grid{grid-template-columns:1fr;gap:20px}
   .sidebar-section{order:2}
   .main-section{order:1;padding:24px}
@@ -257,11 +257,12 @@ body{
   .live-text{font-size:11px}
   .time-display{font-size:12px;display:none}
   .container{padding:16px 12px}
-  .hero-section{grid-template-columns:1fr;gap:10px;margin-bottom:24px}
-  .hero-stat{padding:14px 16px;min-height:70px}
-  .hero-stat-value{font-size:16px}
-  .hero-stat-label{font-size:8px;margin-bottom:4px}
-  .hero-stat-change{font-size:9px;margin-top:2px}
+  .hero-carousel-wrapper{padding:0 32px;margin-bottom:20px}
+  .carousel-card{min-width:220px;max-width:220px;padding:14px}
+  .carousel-card-value{font-size:18px}
+  .carousel-card-title{font-size:10px}
+  .carousel-card-subtitle{font-size:10px}
+  .carousel-nav{width:32px;height:32px;font-size:16px;right:4px}
   .content-grid{gap:16px}
   .main-section{padding:20px 16px;border-radius:16px}
   .section-title{font-size:22px}
@@ -314,10 +315,12 @@ body{
   .logo-title{font-size:14px}
   .auth-btn{padding:6px 12px;font-size:11px}
   .container{padding:12px 8px}
-  .hero-stat{padding:12px;min-height:65px}
-  .hero-stat-value{font-size:14px}
-  .hero-stat-label{font-size:7px}
-  .hero-stat-change{font-size:8px}
+  .hero-carousel-wrapper{padding:0 24px;margin-bottom:16px}
+  .carousel-card{min-width:200px;max-width:200px;padding:12px}
+  .carousel-card-value{font-size:16px}
+  .carousel-card-title{font-size:9px}
+  .carousel-card-subtitle{font-size:9px}
+  .carousel-nav{width:28px;height:28px;font-size:14px;right:2px}
   .main-section{padding:16px 12px}
   .section-title{font-size:18px}
   .token-row{grid-template-columns:36px 1fr 1fr;padding:10px;gap:6px}
@@ -343,9 +346,9 @@ body{
 }
 @media(orientation:landscape) and (max-height:600px){
   .navbar{padding:8px 16px}
-  .hero-section{grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:20px}
-  .hero-stat{padding:10px 12px;min-height:60px}
-  .hero-stat-value{font-size:14px}
+  .hero-carousel-wrapper{padding:0 24px;margin-bottom:16px}
+  .carousel-card{min-width:180px;max-width:180px;padding:10px}
+  .carousel-card-value{font-size:14px}
   .container{padding:16px 20px}
 }
 /* Touch-friendly improvements */
@@ -404,7 +407,12 @@ body{
   <div id="loading" class="loading"><div class="spinner"></div><div class="loading-text">ბაზრის მონაცემების ჩატვირთვა...</div></div>
   <div id="error"></div>
 
-  <div class="hero-section" id="heroStats" style="display:none;"></div>
+  <div class="hero-carousel-wrapper" id="heroStats" style="display:none;">
+    <div class="carousel" id="heroCarousel">
+      <!-- Cards will be rendered here -->
+    </div>
+    <button class="carousel-nav carousel-nav-right" id="carouselNext" aria-label="Next cards">→</button>
+  </div>
 
   <!-- Token of the Day Section -->
   <div id="tokenOfTheDay" style="display:none;margin-bottom:32px;background:rgba(20,20,30,.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:24px;position:relative;overflow:hidden;" role="region" aria-label="Token of the day">
@@ -971,7 +979,8 @@ function renderQuotes() {
 
 function renderHeroStats() {
   const hero = $('heroStats');
-  if (!globalData) return;
+  const carousel = $('heroCarousel');
+  if (!globalData || !carousel) return;
   
   const marketCap = globalData.total_market_cap?.usd || 0;
   const volume = globalData.total_volume?.usd || 0;
@@ -994,54 +1003,153 @@ function renderHeroStats() {
     return `${value >= 0 ? '+' : ''}$${value.toFixed(0)}`;
   };
   
-  hero.innerHTML = `
-    <div class="hero-stat">
-      <div class="hero-stat-label">საბაზრო კაპიტალიზაცია</div>
-      <div class="hero-stat-value">$${formatMarketCap(marketCap)}</div>
-      <div class="hero-stat-change ${marketCapChange >= 0 ? 'positive' : 'negative'}">
-        ${marketCapChange >= 0 ? '↑' : '↓'} ${Math.abs(marketCapChange).toFixed(2)}%
+  const getFearGreedColor = (value) => {
+    if (value <= 25) return '#ef4444';
+    if (value <= 45) return '#f59e0b';
+    if (value <= 55) return '#eab308';
+    if (value <= 75) return '#84cc16';
+    return '#22c55e';
+  };
+  
+  carousel.innerHTML = `
+    <div class="carousel-card">
+      <div class="carousel-card-header">
+        <div class="carousel-card-title">საბაზრო კაპიტალიზაცია</div>
+        <span class="carousel-card-arrow">→</span>
+      </div>
+      <div class="carousel-card-value">$${formatMarketCap(marketCap)}</div>
+      <div class="carousel-card-change ${marketCapChange >= 0 ? 'positive' : 'negative'}">
+        <span>${marketCapChange >= 0 ? '↑' : '↓'}</span>
+        <span>${Math.abs(marketCapChange).toFixed(2)}%</span>
       </div>
     </div>
-    <div class="hero-stat">
-      <div class="hero-stat-label">24სთ მოცულობა</div>
-      <div class="hero-stat-value">$${formatMarketCap(volume)}</div>
-      <div class="hero-stat-change" style="color:#9aa0a6;font-size:10px;">
+    
+    <div class="carousel-card">
+      <div class="carousel-card-header">
+        <div class="carousel-card-title">24სთ ბრუნვა</div>
+        <span class="carousel-card-arrow">→</span>
+      </div>
+      <div class="carousel-card-value">$${formatMarketCap(volume)}</div>
+      <div class="carousel-card-subtitle">
         ${volume > 0 ? ((volume / marketCap * 100).toFixed(1) + '% კაპიტალიზაციის') : 'N/A'}
       </div>
     </div>
-    <div class="hero-stat">
-      <div class="hero-stat-label">BTC დომინანტობა</div>
-      <div class="hero-stat-value">${btcDominance.toFixed(1)}%</div>
-      <div class="hero-stat-change" style="color:#9aa0a6;font-size:10px;">
-        ETH: ${ethDominance.toFixed(1)}%
+    
+    <div class="carousel-card">
+      <div class="carousel-card-header">
+        <div class="carousel-card-title">BTC დომინანტობა</div>
+        <span class="carousel-card-arrow">→</span>
       </div>
+      <div class="carousel-card-value">${btcDominance.toFixed(1)}%</div>
+      <div class="carousel-card-subtitle">ETH: ${ethDominance.toFixed(1)}%</div>
     </div>
-    <div class="hero-stat">
-      <div class="hero-stat-label">შიში და სიხარბე</div>
-      <div class="hero-stat-value">${fearGreedValue}</div>
-      <div class="hero-stat-change" style="color:#9aa0a6;font-size:10px;text-transform:capitalize;">
+    
+    <div class="carousel-card">
+      <div class="carousel-card-header">
+        <div class="carousel-card-title">შიში და სიხარბე</div>
+        <span class="carousel-card-arrow">→</span>
+      </div>
+      <div class="carousel-card-value" style="color:${getFearGreedColor(parseInt(fearGreedValue) || 50)};">${fearGreedValue}</div>
+      <div class="carousel-card-subtitle" style="text-transform:capitalize;color:${getFearGreedColor(parseInt(fearGreedValue) || 50)};">
         ${fearGreedClassification}
       </div>
     </div>
-    <div class="hero-stat">
-      <div class="hero-stat-label">ETF ნაკადი (დღეს)</div>
-      <div class="hero-stat-value" style="color:${etfFlowsData ? (etfToday >= 0 ? '#34a853' : '#ea4335') : '#9aa0a6'};">
+    
+    <div class="carousel-card">
+      <div class="carousel-card-header">
+        <div class="carousel-card-title">ETF ნაკადი (დღეს)</div>
+        <span class="carousel-card-arrow">→</span>
+      </div>
+      <div class="carousel-card-value" style="color:${etfFlowsData ? (etfToday >= 0 ? '#22c55e' : '#ef4444') : '#9aa0a6'};">
         ${etfFlowsData ? formatETF(etfToday) : 'N/A'}
       </div>
-      <div class="hero-stat-change" style="color:#9aa0a6;font-size:10px;">
+      <div class="carousel-card-subtitle">
         ${etfFlowsData ? `7დ: ${formatETF(etfWeek)}` : 'ჩატვირთვა...'}
       </div>
     </div>
-    <div class="hero-stat">
-      <div class="hero-stat-label">ETF ნაკადი (საერთო)</div>
-      <div class="hero-stat-value" style="color:${etfFlowsData ? (etfTotal >= 0 ? '#34a853' : '#ea4335') : '#9aa0a6'};">
+    
+    <div class="carousel-card">
+      <div class="carousel-card-header">
+        <div class="carousel-card-title">ETF ნაკადი (საერთო)</div>
+        <span class="carousel-card-arrow">→</span>
+      </div>
+      <div class="carousel-card-value" style="color:${etfFlowsData ? (etfTotal >= 0 ? '#22c55e' : '#ef4444') : '#9aa0a6'};">
         ${etfFlowsData ? formatETF(etfTotal) : 'N/A'}
       </div>
-      <div class="hero-stat-change" style="color:#9aa0a6;font-size:10px;">
+      <div class="carousel-card-subtitle">
         ${etfFlowsData ? (etfTotal >= 0 ? 'წმინდა შემოდინება' : 'წმინდა გადინება') : 'ჩატვირთვა...'}
       </div>
     </div>
+    
+    <div class="carousel-card">
+      <div class="carousel-card-header">
+        <div class="carousel-card-title">აქტივური კრიპტო</div>
+        <span class="carousel-card-arrow">→</span>
+      </div>
+      <div class="carousel-card-value">${(globalData.active_cryptocurrencies || 0).toLocaleString()}</div>
+      <div class="carousel-card-subtitle">ბაზრები: ${(globalData.markets || 0).toLocaleString()}</div>
+    </div>
   `;
+  
+  // Setup carousel navigation
+  setupCarouselNavigation();
+}
+
+function setupCarouselNavigation() {
+  const carousel = $('heroCarousel');
+  const nextBtn = $('carouselNext');
+  
+  if (!carousel || !nextBtn) return;
+  
+  // Scroll right on button click
+  nextBtn.onclick = () => {
+    carousel.scrollBy({ left: 300, behavior: 'smooth' });
+  };
+  
+  // Show/hide navigation based on scroll position
+  const updateNavVisibility = () => {
+    const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+    if (maxScroll <= 0) {
+      nextBtn.style.display = 'none';
+    } else {
+      nextBtn.style.display = 'flex';
+    }
+  };
+  
+  carousel.addEventListener('scroll', updateNavVisibility);
+  updateNavVisibility();
+  
+  // Touch/swipe support for mobile
+  let isDown = false;
+  let startX;
+  let scrollLeft;
+  
+  carousel.addEventListener('mousedown', (e) => {
+    isDown = true;
+    startX = e.pageX - carousel.offsetLeft;
+    scrollLeft = carousel.scrollLeft;
+    carousel.style.cursor = 'grabbing';
+  });
+  
+  carousel.addEventListener('mouseleave', () => {
+    isDown = false;
+    carousel.style.cursor = 'grab';
+  });
+  
+  carousel.addEventListener('mouseup', () => {
+    isDown = false;
+    carousel.style.cursor = 'grab';
+  });
+  
+  carousel.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - carousel.offsetLeft;
+    const walk = (x - startX) * 2;
+    carousel.scrollLeft = scrollLeft - walk;
+  });
+  
+  carousel.style.cursor = 'grab';
 }
 
 function renderTokens() {
