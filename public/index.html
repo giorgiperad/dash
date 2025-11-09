@@ -3361,8 +3361,27 @@ function updatePortfolioAnalytics(holdings, totalValue) {
   const stablesDiff = Math.abs(stablesPercentage - STABLES_TARGET);
   
   // Weighted penalty (core allocation is most important)
+  // Normalize deviations to 0-1 scale, then apply weights
   const totalDeviation = (coreDiff * 2.0) + (growthDiff * 1.5) + (highRiskDiff * 1.0) + (stablesDiff * 0.5);
-  const diversificationScore = Math.max(0, Math.min(100, 100 - (totalDeviation * 100)));
+  
+  // Maximum possible deviation (if all categories are 100% off target)
+  // Core: 0.6*2.0 = 1.2, Growth: 0.25*1.5 = 0.375, HighRisk: 0.1*1.0 = 0.1, Stables: 0.05*0.5 = 0.025
+  // Total max = 1.7
+  const maxPossibleDeviation = 1.7;
+  
+  // Calculate score: 100 * (1 - normalized deviation)
+  const normalizedDeviation = Math.min(1, totalDeviation / maxPossibleDeviation);
+  const diversificationScore = Math.max(0, Math.min(100, Math.round(100 * (1 - normalizedDeviation))));
+  
+  // Debug logging
+  console.log('Diversification Calculation:', {
+    core: `${(corePercentage * 100).toFixed(1)}% (target: ${(CORE_ASSETS_TARGET * 100).toFixed(1)}%)`,
+    growth: `${(growthPercentage * 100).toFixed(1)}% (target: ${(GROWTH_ASSETS_TARGET * 100).toFixed(1)}%)`,
+    highRisk: `${(highRiskPercentage * 100).toFixed(1)}% (target: ${(HIGH_RISK_TARGET * 100).toFixed(1)}%)`,
+    stables: `${(stablesPercentage * 100).toFixed(1)}% (target: ${(STABLES_TARGET * 100).toFixed(1)}%)`,
+    totalDeviation,
+    score: diversificationScore
+  });
   
   if ($('diversificationScore')) $('diversificationScore').textContent = `${Math.round(diversificationScore)}/100`;
   if ($('diversificationBar')) $('diversificationBar').style.width = `${diversificationScore}%`;
