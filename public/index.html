@@ -1126,32 +1126,30 @@ body{overflow-x:hidden}
             </div>
             
             <!-- Premium Analytics Grid -->
-            <div style="display:grid;grid-template-columns:1.2fr 0.8fr;gap:24px;position:relative;" id="analyticsGrid">
-              <!-- Left: Advanced Allocation Visualization -->
-              <div style="background:linear-gradient(135deg, rgba(15,23,42,0.8) 0%, rgba(30,41,59,0.6) 100%);border:1px solid rgba(99,102,241,0.2);border-radius:20px;padding:28px;position:relative;box-shadow:0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);backdrop-filter:blur(20px);overflow:hidden;">
-                <!-- Animated Background Gradient -->
-                <div style="position:absolute;top:-50%;right:-50%;width:200%;height:200%;background:radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);animation:rotateGradient 20s linear infinite;pointer-events:none;"></div>
+            <div style="display:grid;grid-template-columns:1fr 0.9fr;gap:20px;position:relative;" id="analyticsGrid">
+              <!-- Left: Compact Elegant Allocation Visualization -->
+              <div style="background:rgba(15,23,42,0.95);border:1px solid rgba(99,102,241,0.3);border-radius:16px;padding:20px;position:relative;box-shadow:0 4px 20px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05) inset, 0 0 60px rgba(99,102,241,0.15);backdrop-filter:blur(16px);overflow:visible;">
+                <!-- Subtle Glow Background -->
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:140px;height:140px;background:radial-gradient(circle, rgba(99,102,241,0.25) 0%, rgba(139,92,246,0.15) 40%, transparent 70%);border-radius:50%;pointer-events:none;filter:blur(20px);z-index:0;"></div>
                 
-                <div style="position:relative;z-index:1;">
-                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+                <div style="position:relative;z-index:2;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
                     <div>
-                      <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:8px;text-transform:uppercase;letter-spacing:1.2px;font-weight:600;">აქტივების განაწილება</div>
-                      <div style="font-size:13px;color:var(--text-secondary);font-weight:500;">Portfolio Allocation Breakdown</div>
-                    </div>
-                    <div style="width:40px;height:40px;background:linear-gradient(135deg, rgba(99,102,241,0.2) 0%, rgba(139,92,246,0.2) 100%);border-radius:12px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(99,102,241,0.3);">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#8b5cf6;">
-                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                      </svg>
+                      <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-bottom:4px;text-transform:uppercase;letter-spacing:1px;font-weight:600;">აქტივების განაწილება</div>
+                      <div style="font-size:11px;color:rgba(255,255,255,0.4);font-weight:500;">Allocation</div>
                     </div>
                   </div>
                   
-                  <div style="display:flex;justify-content:center;align-items:center;margin-bottom:24px;position:relative;">
-                    <canvas id="allocationChart" width="220" height="220" style="max-width:100%;height:auto;filter:drop-shadow(0 8px 16px rgba(99,102,241,0.2));" aria-label="პორტფოლიოს განაწილების დიაგრამა" role="img"></canvas>
-                    <!-- Center Glow Effect -->
-                    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:80px;height:80px;background:radial-gradient(circle, rgba(99,102,241,0.2) 0%, transparent 70%);border-radius:50%;pointer-events:none;z-index:-1;"></div>
+                  <!-- Compact Chart Container -->
+                  <div style="display:flex;justify-content:center;align-items:center;margin-bottom:16px;position:relative;height:140px;">
+                    <canvas id="allocationChart" width="140" height="140" style="max-width:140px;max-height:140px;filter:drop-shadow(0 0 20px rgba(99,102,241,0.4)) drop-shadow(0 0 40px rgba(139,92,246,0.2));" aria-label="პორტფოლიოს განაწილების დიაგრამა" role="img"></canvas>
+                    <!-- Elegant Center Glow -->
+                    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:60px;height:60px;background:radial-gradient(circle, rgba(99,102,241,0.3) 0%, rgba(139,92,246,0.2) 50%, transparent 80%);border-radius:50%;pointer-events:none;z-index:-1;animation:pulse 3s ease-in-out infinite;"></div>
+                    <!-- Outer Glow Ring -->
+                    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:160px;height:160px;border:1px solid rgba(99,102,241,0.2);border-radius:50%;pointer-events:none;z-index:-2;"></div>
                   </div>
                   
-                  <div id="allocationLegend" style="display:flex;flex-direction:column;gap:10px;position:relative;z-index:1;" role="list" aria-label="ტოკენების განაწილების პროცენტები"></div>
+                  <div id="allocationLegend" style="display:flex;flex-direction:column;gap:8px;position:relative;z-index:2;" role="list" aria-label="ტოკენების განაწილების პროცენტები"></div>
                 </div>
               </div>
               
@@ -4074,14 +4072,14 @@ function updatePortfolioAnalytics(holdings, totalValue) {
     }
   });
   
-  // Draw modern donut chart
+  // Draw elegant compact donut chart with glow
   const canvas = $('allocationChart');
   if (canvas && totalAllocation > 0) {
     const ctx = canvas.getContext('2d');
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    const radius = Math.min(centerX, centerY) - 15;
-    const innerRadius = radius * 0.5; // Donut chart
+    const radius = Math.min(centerX, centerY) - 8;
+    const innerRadius = radius * 0.55; // More compact donut
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
@@ -4097,90 +4095,96 @@ function updatePortfolioAnalytics(holdings, totalValue) {
         const percentage = (value / totalAllocation) * 100;
         const sliceAngle = (value / totalAllocation) * 2 * Math.PI;
         
-        // Draw outer arc with premium gradient
-        const gradient = ctx.createLinearGradient(
-          centerX + Math.cos(currentAngle) * radius,
-          centerY + Math.sin(currentAngle) * radius,
-          centerX + Math.cos(currentAngle + sliceAngle) * radius,
-          centerY + Math.sin(currentAngle + sliceAngle) * radius
-        );
+        // Draw elegant solid arc with glow effect
         const baseColor = colors[idx % colors.length];
-        gradient.addColorStop(0, baseColor);
-        gradient.addColorStop(0.5, baseColor + 'CC');
-        gradient.addColorStop(1, baseColor);
+        
+        // Create radial gradient for glow
+        const midAngle = currentAngle + sliceAngle / 2;
+        const glowX = centerX + Math.cos(midAngle) * (radius + innerRadius) / 2;
+        const glowY = centerY + Math.sin(midAngle) * (radius + innerRadius) / 2;
+        const glowGradient = ctx.createRadialGradient(glowX, glowY, 0, glowX, glowY, radius);
+        glowGradient.addColorStop(0, baseColor + 'FF');
+        glowGradient.addColorStop(0.6, baseColor + 'E6');
+        glowGradient.addColorStop(1, baseColor + 'CC');
         
         ctx.beginPath();
         ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
         ctx.arc(centerX, centerY, innerRadius, currentAngle + sliceAngle, currentAngle, true);
         ctx.closePath();
-        ctx.fillStyle = gradient;
+        ctx.fillStyle = glowGradient;
         ctx.fill();
         
-        // Add premium stroke with glow
-        ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+        // Add elegant border with glow
+        ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        
+        // Add inner glow highlight
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, innerRadius + 2, currentAngle, currentAngle + sliceAngle);
+        ctx.strokeStyle = baseColor + '40';
         ctx.lineWidth = 2;
         ctx.stroke();
         
-        // Add inner highlight
+        // Add outer glow highlight
         ctx.beginPath();
-        ctx.arc(centerX, centerY, radius - 2, currentAngle, currentAngle + sliceAngle);
-        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+        ctx.arc(centerX, centerY, radius - 1, currentAngle, currentAngle + sliceAngle);
+        ctx.strokeStyle = baseColor + '60';
         ctx.lineWidth = 1;
         ctx.stroke();
         
-        // Add premium legend
+        // Add elegant compact legend
         if (legendDiv && percentage > 1) {
           const legendItem = document.createElement('div');
           legendItem.style.display = 'flex';
           legendItem.style.alignItems = 'center';
-          legendItem.style.gap = '12px';
-          legendItem.style.padding = '12px 16px';
-          legendItem.style.background = 'rgba(0,0,0,0.2)';
-          legendItem.style.borderRadius = '12px';
-          legendItem.style.transition = 'all 0.3s cubic-bezier(0.4,0,0.2,1)';
+          legendItem.style.gap = '10px';
+          legendItem.style.padding = '8px 12px';
+          legendItem.style.background = 'rgba(0,0,0,0.3)';
+          legendItem.style.borderRadius = '10px';
+          legendItem.style.transition = 'all 0.25s cubic-bezier(0.4,0,0.2,1)';
           legendItem.style.cursor = 'pointer';
-          legendItem.style.border = '1px solid rgba(99,102,241,0.1)';
-          legendItem.style.backdropFilter = 'blur(10px)';
+          legendItem.style.border = `1px solid ${colors[idx % colors.length]}30`;
+          legendItem.style.backdropFilter = 'blur(8px)';
           
           const colorBox = document.createElement('div');
-          colorBox.style.width = '14px';
-          colorBox.style.height = '14px';
-          colorBox.style.borderRadius = '4px';
+          colorBox.style.width = '12px';
+          colorBox.style.height = '12px';
+          colorBox.style.borderRadius = '3px';
           colorBox.style.background = colors[idx % colors.length];
           colorBox.style.flexShrink = '0';
-          colorBox.style.boxShadow = `0 0 12px ${colors[idx % colors.length]}40`;
-          colorBox.style.border = '1px solid rgba(255,255,255,0.1)';
+          colorBox.style.boxShadow = `0 0 8px ${colors[idx % colors.length]}, 0 0 16px ${colors[idx % colors.length]}60`;
+          colorBox.style.border = '1px solid rgba(255,255,255,0.15)';
           
           const tokenName = document.createElement('span');
-          tokenName.style.color = 'rgba(255,255,255,0.8)';
-          tokenName.style.fontSize = '13px';
+          tokenName.style.color = 'rgba(255,255,255,0.85)';
+          tokenName.style.fontSize = '12px';
           tokenName.style.fontWeight = '600';
-          tokenName.style.letterSpacing = '0.2px';
+          tokenName.style.letterSpacing = '0.1px';
           tokenName.textContent = token;
           
           const tokenPercent = document.createElement('span');
           tokenPercent.style.color = 'rgba(255,255,255,0.95)';
           tokenPercent.style.marginLeft = 'auto';
           tokenPercent.style.fontWeight = '700';
-          tokenPercent.style.fontSize = '13px';
+          tokenPercent.style.fontSize = '12px';
           tokenPercent.style.fontVariantNumeric = 'tabular-nums';
-          tokenPercent.style.background = 'linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%)';
-          tokenPercent.style.webkitBackgroundClip = 'text';
-          tokenPercent.style.backgroundClip = 'text';
-          tokenPercent.style.webkitTextFillColor = 'transparent';
+          tokenPercent.style.textShadow = `0 0 8px ${colors[idx % colors.length]}80`;
           tokenPercent.textContent = `${percentage.toFixed(1)}%`;
           
           legendItem.onmouseenter = function() {
-            this.style.background = 'rgba(99,102,241,0.15)';
-            this.style.borderColor = 'rgba(99,102,241,0.3)';
-            this.style.transform = 'translateX(4px)';
-            this.style.boxShadow = '0 4px 16px rgba(99,102,241,0.2)';
+            this.style.background = `rgba(${colors[idx % colors.length].substring(1).match(/.{2}/g).map(x => parseInt(x, 16)).join(',')}, 0.15)`;
+            this.style.borderColor = colors[idx % colors.length] + '60';
+            this.style.transform = 'translateX(3px)';
+            this.style.boxShadow = `0 4px 12px ${colors[idx % colors.length]}40`;
+            colorBox.style.boxShadow = `0 0 12px ${colors[idx % colors.length]}, 0 0 24px ${colors[idx % colors.length]}80`;
           };
           legendItem.onmouseleave = function() {
-            this.style.background = 'rgba(0,0,0,0.2)';
-            this.style.borderColor = 'rgba(99,102,241,0.1)';
+            this.style.background = 'rgba(0,0,0,0.3)';
+            this.style.borderColor = colors[idx % colors.length] + '30';
             this.style.transform = 'translateX(0)';
             this.style.boxShadow = 'none';
+            colorBox.style.boxShadow = `0 0 8px ${colors[idx % colors.length]}, 0 0 16px ${colors[idx % colors.length]}60`;
           };
           
           legendItem.appendChild(colorBox);
