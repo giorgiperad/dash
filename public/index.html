@@ -1296,7 +1296,8 @@ auth.onAuthStateChanged(user=>{
     $('userContainer').style.display='flex';
     $('userName').textContent = user.email.split('@')[0];
     $('userAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email)}&background=8b5cf6&color=fff&size=64`;
-    $('userTabs').style.display='flex';
+    const userTabs = $('userTabs');
+    if (userTabs) userTabs.style.display='flex';
     if(user.email === 'testireba5@gmail.com') $('adminControls').classList.add('show');
     
     // Load user data when authenticated
