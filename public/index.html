@@ -1112,15 +1112,18 @@ body{overflow-x:hidden}
           <!-- Portfolio Analytics Section - Premium Professional Design -->
           <div id="portfolioAnalytics" style="display:none;margin-bottom:32px;position:relative;">
             <!-- Premium Header with Gradient Accent -->
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;padding-bottom:20px;border-bottom:2px solid transparent;background:linear-gradient(to right, rgba(99,102,241,0.1) 0%, transparent 100%);border-image:linear-gradient(90deg, rgba(99,102,241,0.4) 0%, rgba(139,92,246,0.2) 50%, transparent 100%) 1;position:relative;">
-              <div style="display:flex;align-items:center;gap:16px;">
-                <div style="width:4px;height:32px;background:linear-gradient(180deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);border-radius:2px;box-shadow:0 0 12px rgba(99,102,241,0.5);"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;padding:20px 24px;background:linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(30,41,59,0.8) 100%);border:1px solid rgba(99,102,241,0.3);border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);backdrop-filter:blur(20px);position:relative;overflow:hidden;">
+              <!-- Animated Background Gradient -->
+              <div style="position:absolute;top:0;right:0;width:200px;height:100%;background:radial-gradient(ellipse at center, rgba(99,102,241,0.15) 0%, transparent 70%);pointer-events:none;"></div>
+              
+              <div style="display:flex;align-items:center;gap:16px;position:relative;z-index:1;">
+                <div style="width:4px;height:40px;background:linear-gradient(180deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);border-radius:2px;box-shadow:0 0 16px rgba(99,102,241,0.6);"></div>
                 <div>
-                  <h3 style="font-size:22px;font-weight:700;color:var(--text-primary);margin:0;letter-spacing:-0.3px;background:linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">📊 პორტფოლიოს ანალიტიკა</h3>
-                  <div style="font-size:12px;color:var(--text-tertiary);margin-top:4px;font-weight:500;letter-spacing:0.3px;text-transform:uppercase;">Advanced Portfolio Insights</div>
+                  <h3 style="font-size:24px;font-weight:700;color:var(--text-primary);margin:0;letter-spacing:-0.4px;background:linear-gradient(135deg, #ffffff 0%, #e0e7ff 50%, #c7d2fe 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-shadow:0 2px 8px rgba(99,102,241,0.3);">📊 პორტფოლიოს ანალიტიკა</h3>
+                  <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:6px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;">Advanced Portfolio Insights</div>
                 </div>
               </div>
-              <button id="toggleAnalytics" style="background:linear-gradient(135deg, rgba(99,102,241,0.15) 0%, rgba(139,92,246,0.1) 100%);border:1px solid rgba(99,102,241,0.3);color:var(--text-primary);padding:10px 20px;border-radius:10px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);letter-spacing:0.5px;backdrop-filter:blur(10px);position:relative;overflow:hidden;" aria-label="ანალიტიკის ხილვის გადართვა" aria-expanded="true" onmouseenter="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(99,102,241,0.3)';this.style.borderColor='rgba(99,102,241,0.5)'" onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='none';this.style.borderColor='rgba(99,102,241,0.3)'">
+              <button id="toggleAnalytics" style="background:linear-gradient(135deg, rgba(99,102,241,0.2) 0%, rgba(139,92,246,0.15) 100%);border:1px solid rgba(99,102,241,0.4);color:var(--text-primary);padding:12px 24px;border-radius:12px;cursor:pointer;font-size:12px;font-weight:700;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);letter-spacing:0.5px;backdrop-filter:blur(10px);position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(99,102,241,0.2);" aria-label="ანალიტიკის ხილვის გადართვა" aria-expanded="true" onmouseenter="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(99,102,241,0.4)';this.style.borderColor='rgba(99,102,241,0.6)';this.style.background='linear-gradient(135deg, rgba(99,102,241,0.3) 0%, rgba(139,92,246,0.2) 100%)'" onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='0 2px 8px rgba(99,102,241,0.2)';this.style.borderColor='rgba(99,102,241,0.4)';this.style.background='linear-gradient(135deg, rgba(99,102,241,0.2) 0%, rgba(139,92,246,0.15) 100%)'">
                 <span style="position:relative;z-index:1;">დამალვა</span>
               </button>
             </div>
@@ -1134,10 +1137,13 @@ body{overflow-x:hidden}
                     <div style="font-size:11px;color:rgba(255,255,255,0.4);font-weight:500;">Portfolio Allocation</div>
                   </div>
                   <!-- Portfolio 24h Change -->
-                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;padding:10px 16px;background:rgba(0,0,0,0.3);border-radius:10px;border:1px solid rgba(99,102,241,0.2);backdrop-filter:blur(8px);">
-                    <div style="font-size:9px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.8px;font-weight:500;">24h Change</div>
-                    <div id="portfolio24hChange" style="font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;transition:all 0.3s ease;line-height:1;">
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;padding:12px 18px;background:rgba(0,0,0,0.4);border-radius:12px;border:1px solid rgba(99,102,241,0.3);backdrop-filter:blur(10px);box-shadow:0 2px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);">
+                    <div style="font-size:9px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:2px;">24h Change</div>
+                    <div id="portfolio24hChange" style="font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;transition:all 0.3s ease;line-height:1.2;margin-bottom:4px;">
                       <span style="color:rgba(255,255,255,0.6);">-</span>
+                    </div>
+                    <div id="portfolio24hChangeUSD" style="font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;transition:all 0.3s ease;line-height:1;">
+                      <span style="color:rgba(255,255,255,0.5);">-</span>
                     </div>
                   </div>
                 </div>
@@ -1145,7 +1151,7 @@ body{overflow-x:hidden}
                 <!-- Token Legend - 4 Column Grid -->
                 <div id="allocationLegend" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;position:relative;z-index:2;align-content:start;" role="list" aria-label="ტოკენების განაწილების პროცენტები"></div>
               </div>
-            </div>
+          </div>
         </div>
 
         <div class="holdings-list" id="holdingsList"></div>
@@ -4039,10 +4045,18 @@ function updatePortfolioAnalytics(holdings, totalValue) {
   
   // Update Portfolio 24h Change Display
   const portfolio24hChangeEl = $('portfolio24hChange');
+  const portfolio24hChangeUSDEl = $('portfolio24hChangeUSD');
+  
   if (portfolio24hChangeEl) {
     const changeSign = total24hChange >= 0 ? '+' : '';
     const changeColor = total24hChange >= 0 ? '#22c55e' : '#ef4444';
     portfolio24hChangeEl.innerHTML = `<span style="color:${changeColor};text-shadow:0 0 12px ${changeColor}80;">${changeSign}${total24hChange.toFixed(2)}%</span>`;
+  }
+  
+  if (portfolio24hChangeUSDEl) {
+    const changeSignUSD = total24hPNL >= 0 ? '+' : '';
+    const changeColorUSD = total24hPNL >= 0 ? '#22c55e' : '#ef4444';
+    portfolio24hChangeUSDEl.innerHTML = `<span style="color:${changeColorUSD};text-shadow:0 0 8px ${changeColorUSD}60;">${changeSignUSD}$${formatPrice(Math.abs(total24hPNL))}</span>`;
   }
   
   // Render token legend only (no chart)
@@ -4284,15 +4298,18 @@ if ($('toggleAnalytics')) {
   $('toggleAnalytics').onclick = () => {
     analyticsVisible = !analyticsVisible;
     const analyticsDiv = $('portfolioAnalytics');
-    if (analyticsDiv) {
+    const toggleBtn = $('toggleAnalytics');
+    if (analyticsDiv && toggleBtn) {
       if (analyticsVisible) {
         analyticsDiv.style.display = 'block';
-        $('toggleAnalytics').textContent = 'დამალვა';
-        $('toggleAnalytics').setAttribute('aria-expanded', 'true');
+        const span = toggleBtn.querySelector('span');
+        if (span) span.textContent = 'დამალვა';
+        toggleBtn.setAttribute('aria-expanded', 'true');
       } else {
         analyticsDiv.style.display = 'none';
-        $('toggleAnalytics').textContent = 'ჩვენება';
-        $('toggleAnalytics').setAttribute('aria-expanded', 'false');
+        const span = toggleBtn.querySelector('span');
+        if (span) span.textContent = 'ჩვენება';
+        toggleBtn.setAttribute('aria-expanded', 'false');
       }
     }
   };
