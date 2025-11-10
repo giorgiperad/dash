@@ -1149,8 +1149,8 @@ body{overflow-x:hidden}
                     <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:160px;height:160px;border:1px solid rgba(99,102,241,0.2);border-radius:50%;pointer-events:none;z-index:-2;"></div>
                   </div>
                   
-                  <!-- Right: Token Legend - Multi Column Grid -->
-                  <div id="allocationLegend" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;flex:1;max-width:400px;position:relative;z-index:2;align-content:start;" role="list" aria-label="ტოკენების განაწილების პროცენტები"></div>
+                  <!-- Right: Token Legend - 4 Column Grid -->
+                  <div id="allocationLegend" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;flex:1;max-width:600px;position:relative;z-index:2;align-content:start;" role="list" aria-label="ტოკენების განაწილების პროცენტები"></div>
                 </div>
               </div>
           </div>
@@ -4006,6 +4006,7 @@ function updatePortfolioAnalytics(holdings, totalValue) {
   // Calculate allocation with token IDs for categorization
   const allocation = {};
   const allocationByTokenId = {}; // Store by tokenId for categorization
+  const token24hPNL = {}; // Store 24h PNL for each token
   let totalAllocation = 0;
   
   Object.entries(holdings).forEach(([id, h]) => {
@@ -4018,6 +4019,14 @@ function updatePortfolioAnalytics(holdings, totalValue) {
       allocation[tokenName] = (allocation[tokenName] || 0) + value;
       allocationByTokenId[h.tokenId] = (allocationByTokenId[h.tokenId] || 0) + value;
       totalAllocation += value;
+      
+      // Calculate 24h PNL
+      const priceChange24h = token?.price_change_percentage_24h || 0;
+      const pnl24h = value * (priceChange24h / 100);
+      if (!token24hPNL[tokenName]) {
+        token24hPNL[tokenName] = { value: value, pnl: 0, token: token };
+      }
+      token24hPNL[tokenName].pnl += pnl24h;
     }
   });
   
@@ -4043,6 +4052,7 @@ function updatePortfolioAnalytics(holdings, totalValue) {
       .forEach(([token, value], idx) => {
         const percentage = (value / totalAllocation) * 100;
         const sliceAngle = (value / totalAllocation) * 2 * Math.PI;
+        const pnl24h = token24hPNL[token]?.pnl || 0;
         
         // Draw elegant solid arc with glow effect
         const baseColor = colors[idx % colors.length];
@@ -4082,19 +4092,25 @@ function updatePortfolioAnalytics(holdings, totalValue) {
         ctx.lineWidth = 1;
         ctx.stroke();
         
-        // Add compact multi-column legend
+        // Add compact 4-column legend with 24h PNL
         if (legendDiv && percentage > 1) {
           const legendItem = document.createElement('div');
           legendItem.style.display = 'flex';
-          legendItem.style.alignItems = 'center';
-          legendItem.style.gap = '8px';
-          legendItem.style.padding = '7px 10px';
+          legendItem.style.flexDirection = 'column';
+          legendItem.style.gap = '6px';
+          legendItem.style.padding = '8px 10px';
           legendItem.style.background = 'rgba(0,0,0,0.3)';
           legendItem.style.borderRadius = '8px';
           legendItem.style.transition = 'all 0.25s cubic-bezier(0.4,0,0.2,1)';
           legendItem.style.cursor = 'pointer';
           legendItem.style.border = `1px solid ${colors[idx % colors.length]}30`;
           legendItem.style.backdropFilter = 'blur(8px)';
+          
+          // Top row: Color box, Token name, Percentage
+          const topRow = document.createElement('div');
+          topRow.style.display = 'flex';
+          topRow.style.alignItems = 'center';
+          topRow.style.gap = '6px';
           
           const colorBox = document.createElement('div');
           colorBox.style.width = '10px';
@@ -4126,6 +4142,41 @@ function updatePortfolioAnalytics(holdings, totalValue) {
           tokenPercent.style.flexShrink = '0';
           tokenPercent.textContent = `${percentage.toFixed(1)}%`;
           
+          topRow.appendChild(colorBox);
+          topRow.appendChild(tokenName);
+          topRow.appendChild(tokenPercent);
+          
+          // Bottom row: 24h PNL
+          const pnlRow = document.createElement('div');
+          pnlRow.style.display = 'flex';
+          pnlRow.style.alignItems = 'center';
+          pnlRow.style.justifyContent = 'space-between';
+          pnlRow.style.marginTop = '2px';
+          
+          const pnlLabel = document.createElement('span');
+          pnlLabel.style.color = 'rgba(255,255,255,0.5)';
+          pnlLabel.style.fontSize = '9px';
+          pnlLabel.style.fontWeight = '500';
+          pnlLabel.style.textTransform = 'uppercase';
+          pnlLabel.style.letterSpacing = '0.5px';
+          pnlLabel.textContent = '24h PNL';
+          
+          const pnlValue = document.createElement('span');
+          const pnlSign = pnl24h >= 0 ? '+' : '';
+          const pnlColor = pnl24h >= 0 ? '#22c55e' : '#ef4444';
+          pnlValue.style.color = pnlColor;
+          pnlValue.style.fontSize = '10px';
+          pnlValue.style.fontWeight = '700';
+          pnlValue.style.fontVariantNumeric = 'tabular-nums';
+          pnlValue.style.textShadow = `0 0 6px ${pnlColor}80`;
+          pnlValue.textContent = `${pnlSign}$${formatPrice(Math.abs(pnl24h))}`;
+          
+          pnlRow.appendChild(pnlLabel);
+          pnlRow.appendChild(pnlValue);
+          
+          legendItem.appendChild(topRow);
+          legendItem.appendChild(pnlRow);
+          
           legendItem.onmouseenter = function() {
             this.style.background = `rgba(${colors[idx % colors.length].substring(1).match(/.{2}/g).map(x => parseInt(x, 16)).join(',')}, 0.15)`;
             this.style.borderColor = colors[idx % colors.length] + '60';
@@ -4141,9 +4192,6 @@ function updatePortfolioAnalytics(holdings, totalValue) {
             colorBox.style.boxShadow = `0 0 6px ${colors[idx % colors.length]}, 0 0 12px ${colors[idx % colors.length]}60`;
           };
           
-          legendItem.appendChild(colorBox);
-          legendItem.appendChild(tokenName);
-          legendItem.appendChild(tokenPercent);
           legendDiv.appendChild(legendItem);
         }
         
