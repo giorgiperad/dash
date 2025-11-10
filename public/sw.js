@@ -90,8 +90,17 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // 3. Everything else → network only
-  event.respondWith(fetch(event.request));
+  // 3. Everything else → network only with error handling
+  event.respondWith(
+    fetch(event.request).catch(() => {
+      // Return a basic response on network failure
+      return new Response('Network error', { 
+        status: 503, 
+        statusText: 'Service Unavailable',
+        headers: { 'Content-Type': 'text/plain' }
+      });
+    })
+  );
 });
 
 // Optional: Listen for update prompt

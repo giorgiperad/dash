@@ -2510,7 +2510,17 @@ async function fetchAll(){
   try {
     console.log('Fetching market data from /api/portfolio...');
     
-    const res = await fetch('/api/portfolio');
+    const res = await fetch('/api/portfolio', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-cache'
+    }).catch(fetchError => {
+      console.error('Network fetch error:', fetchError);
+      throw new Error('Network error: Unable to reach the server. Please check your internet connection.');
+    });
+    
     console.log('Response status:', res.status, res.statusText);
     
     let data;
@@ -2608,10 +2618,12 @@ async function fetchAll(){
     console.error('Fetch error:', e);
     console.error('Error details:', e.message, e.stack);
     // Check if it's a rate limit error (503)
-    if (e.message && e.message.includes('503')) {
+    if (e.message && (e.message.includes('503') || e.message.includes('Rate Limit'))) {
       err.innerHTML = `<div class="error"><strong>⚠️ Rate Limit Exceeded</strong><br><br>CoinGecko API rate limit has been exceeded. Please wait a minute and refresh the page.<br><br><small>The system will automatically retry, but you may need to wait a bit longer.</small></div>`;
+    } else if (e.message && e.message.includes('Network error')) {
+      err.innerHTML = `<div class="error"><strong>🌐 Network Error</strong><br><br>${e.message}<br><br>Please check:<br>• Your internet connection<br>• If the server is accessible<br>• Try refreshing the page<br><br><small>If the problem persists, check browser console (F12) for more details</small></div>`;
     } else {
-      err.innerHTML = `<div class="error"><strong>Network Error: ${e.message}</strong><br><br>This could mean:<br>• The API endpoint is not responding<br>• There's a network connectivity issue<br>• The serverless function crashed<br>• API rate limiting (429 errors)<br><br><small>Check browser console (F12) and Vercel deployment logs for details</small></div>`;
+      err.innerHTML = `<div class="error"><strong>❌ Error: ${e.message || 'Unknown error'}</strong><br><br>This could mean:<br>• The API endpoint is not responding<br>• There's a network connectivity issue<br>• The serverless function crashed<br>• API rate limiting (429 errors)<br><br><small>Check browser console (F12) and Vercel deployment logs for details</small></div>`;
     }
     $('contentGrid').style.display = 'grid';
     $('heroStats').style.display = 'grid';
