@@ -902,6 +902,8 @@ const auth = firebase.auth();
 let cryptoData = [], prices = {}, globalData = null, fearGreedData = null, etfFlowsData = null;
 let sortColumn = 'change', sortDirection = 'desc';
 let currentUser = null;
+let sellTargets = {}; // Initialize early to prevent "before initialization" errors
+let portfolioHoldings = {}; // Store portfolio holdings for buy price calculation
 
 /* ---------- HELPERS ---------- */
 function $(id){return document.getElementById(id);}
@@ -2820,8 +2822,7 @@ $('changePasswordForm').onsubmit = async (e) => {
 };
 
 /* ---------- SELL TARGETS MANAGEMENT ---------- */
-let sellTargets = {};
-let portfolioHoldings = {}; // Store portfolio holdings for buy price calculation
+// sellTargets and portfolioHoldings are declared in GLOBALS section above
 
 async function loadTargets() {
   if (!currentUser) return;
@@ -2849,6 +2850,11 @@ async function loadTargets() {
 function renderTargets() {
   const container = $('targetsList');
   if (!container) return;
+  
+  // Ensure sellTargets is initialized
+  if (!sellTargets) {
+    sellTargets = {};
+  }
   
   const targetsArray = Object.entries(sellTargets).map(([id, target]) => ({ id, ...target }));
   
@@ -3020,8 +3026,15 @@ async function deleteTarget(targetId) {
 }
 
 window.editTarget = function(targetId) {
+  // Ensure sellTargets is initialized
+  if (!sellTargets) {
+    sellTargets = {};
+  }
   const target = sellTargets[targetId];
-  if (!target) return;
+  if (!target) {
+    alert('მიზანი ვერ მოიძებნა');
+    return;
+  }
   
   const newPrice = prompt('შეიყვანეთ ახალი სამიზნე ფასი:', target.targetPrice);
   if (newPrice === null || isNaN(parseFloat(newPrice))) return;
