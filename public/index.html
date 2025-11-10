@@ -986,9 +986,9 @@ body{overflow-x:hidden}
 </aside>
 
 <div class="main-content">
-  <div class="container">
+<div class="container">
     <div id="loading" class="loading"><div class="spinner"></div><div class="loading-text">ბაზრის მონაცემების ჩატვირთვა...</div></div>
-    <div id="error"></div>
+  <div id="error"></div>
 
     <div class="hero-carousel-wrapper" id="heroStats" style="display:none;margin-bottom:24px;">
       <div class="carousel" id="heroCarousel">
@@ -1060,51 +1060,51 @@ body{overflow-x:hidden}
       <div id="asiTokensGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;position:relative;z-index:2;max-width:calc(100% - 220px);">
         <!-- ASI tokens will be rendered here -->
       </div>
-    </div>
+      </div>
 
     <div class="content-grid" id="contentGrid" style="display:none;">
       <!-- Market Page Content -->
       <div id="marketPage" class="page-content active">
         <div class="main-section" style="width:100%;">
-          <div class="section-header">
+        <div class="section-header">
             <div class="section-title">კრიპტო აქტივები</div>
-            <div class="filter-tabs">
+          <div class="filter-tabs">
               <button class="filter-tab" onclick="sortBy('name')" id="sortName">სახელი</button>
               <button class="filter-tab" onclick="sortBy('price')" id="sortPrice">ფასი</button>
               <button class="filter-tab active" onclick="sortBy('change')" id="sortChange">24სთ</button>
               <button class="filter-tab" onclick="sortBy('mcap')" id="sortMcap">კაპიტალიზაცია</button>
-            </div>
           </div>
+        </div>
 
-          <div class="table-header">
-            <div class="table-header-cell">#</div>
+        <div class="table-header">
+          <div class="table-header-cell">#</div>
             <div class="table-header-cell">აქტივი</div>
             <div class="table-header-cell">ფასი</div>
             <div class="table-header-cell">24სთ ცვლილება</div>
             <div class="table-header-cell">საბაზრო კაპიტალიზაცია</div>
-          </div>
+        </div>
 
-          <div class="tokens-list" id="tokensList"></div>
+        <div class="tokens-list" id="tokensList"></div>
         </div>
       </div>
 
       <!-- Portfolio Page Content -->
       <div id="portfolioPage" class="page-content">
         <div class="main-section" style="width:100%;">
-          <div class="portfolio-summary">
+        <div class="portfolio-summary">
             <div class="summary-card" id="totalValueCard">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
                 <div class="summary-label">საერთო ღირებულება</div>
                 <button id="toggleVisibility" style="background:transparent;border:none;color:#71717a;cursor:pointer;padding:4px;font-size:16px;transition:all .2s;opacity:0.7;" title="ხილვადობის გადართვა" aria-label="პორტფოლიოს ხილვადობის გადართვა">👁️</button>
-              </div>
+          </div>
               <div class="summary-value" id="totalValue" aria-live="polite">$0.00</div>
             </div>
             <div class="summary-card" id="totalPLCard">
               <div class="summary-label">PNL</div>
               <div class="summary-value" id="totalPL" aria-live="polite">$0.00</div>
-            </div>
-            <div class="summary-card">
-              <div class="summary-label">ROI</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">ROI</div>
               <div class="summary-value" id="roi" aria-live="polite">0%</div>
             </div>
           </div>
@@ -1149,21 +1149,21 @@ body{overflow-x:hidden}
                     <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:160px;height:160px;border:1px solid rgba(99,102,241,0.2);border-radius:50%;pointer-events:none;z-index:-2;"></div>
                   </div>
                   
-                  <!-- Right: Token Legend -->
-                  <div id="allocationLegend" style="display:flex;flex-direction:column;gap:8px;flex:1;max-width:300px;position:relative;z-index:2;" role="list" aria-label="ტოკენების განაწილების პროცენტები"></div>
+                  <!-- Right: Token Legend - Multi Column Grid -->
+                  <div id="allocationLegend" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;flex:1;max-width:400px;position:relative;z-index:2;align-content:start;" role="list" aria-label="ტოკენების განაწილების პროცენტები"></div>
                 </div>
               </div>
-            </div>
           </div>
+        </div>
 
-          <div class="holdings-list" id="holdingsList"></div>
+        <div class="holdings-list" id="holdingsList"></div>
 
-          <form class="add-holding-form" id="addHoldingForm">
-            <select id="holdingToken" required></select>
+        <form class="add-holding-form" id="addHoldingForm">
+          <select id="holdingToken" required></select>
             <input type="number" step="any" placeholder="რაოდენობა" id="holdingAmount" required>
             <input type="number" step="any" placeholder="შესყიდვის ფასი" id="buyPrice" required>
             <button type="submit">დამატება</button>
-          </form>
+        </form>
         </div>
       </div>
 
@@ -1206,27 +1206,27 @@ body{overflow-x:hidden}
             <div class="section-title">შეტყობინებები</div>
           </div>
 
-          <div class="alerts-list" id="alertsList"></div>
+        <div class="alerts-list" id="alertsList"></div>
 
-          <form class="add-alert-form" id="addAlertForm">
-            <select id="alertToken" required></select>
-            <select id="alertCondition" required>
+        <form class="add-alert-form" id="addAlertForm">
+          <select id="alertToken" required></select>
+          <select id="alertCondition" required>
               <option value="above">ზემოთ</option>
               <option value="below">ქვემოთ</option>
-            </select>
+          </select>
             <input type="number" step="any" placeholder="სამიზნე ფასი" id="targetPrice" required>
             <input type="text" placeholder="შეტყობინება (არასავალდებულო)" id="alertMessage">
             <button type="submit">დაყენება</button>
-          </form>
-        </div>
+        </form>
       </div>
+    </div>
 
       <!-- Profile Page Content -->
       <div id="profilePage" class="page-content">
         <div class="main-section" style="width:100%;">
           <div class="section-header">
             <div class="section-title">პროფილის მართვა</div>
-          </div>
+  </div>
 
           <!-- Change Name Section -->
           <div style="background:rgba(20,20,30,.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:24px;margin-bottom:24px;">
@@ -1240,7 +1240,7 @@ body{overflow-x:hidden}
               <button type="submit" style="padding:12px 24px;background:#6366f1;border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all .2s;white-space:nowrap;">შეცვლა</button>
             </form>
             <div id="nameStatus" style="margin-top:12px;padding:12px;border-radius:8px;display:none;font-size:13px;"></div>
-          </div>
+</div>
 
           <!-- Change Email Section -->
           <div style="background:rgba(20,20,30,.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:24px;margin-bottom:24px;">
@@ -1311,8 +1311,8 @@ body{overflow-x:hidden}
       <div class="form-group">
         <label>შესყიდვის ფასი (USD)</label>
         <input type="number" step="any" id="editHoldingBuyPrice" required>
-      </div>
-      <div class="modal-actions">
+    </div>
+    <div class="modal-actions">
         <button type="button" class="modal-btn cancel" onclick="$('editHoldingModal').classList.remove('show')">გაუქმება</button>
         <button type="submit" class="modal-btn save">ცვლილებების შენახვა</button>
       </div>
@@ -4082,16 +4082,16 @@ function updatePortfolioAnalytics(holdings, totalValue) {
         ctx.lineWidth = 1;
         ctx.stroke();
         
-        // Add compact elegant legend
+        // Add compact multi-column legend
         if (legendDiv && percentage > 1) {
           const legendItem = document.createElement('div');
           legendItem.style.display = 'flex';
           legendItem.style.alignItems = 'center';
           legendItem.style.gap = '8px';
-          legendItem.style.padding = '6px 10px';
+          legendItem.style.padding = '7px 10px';
           legendItem.style.background = 'rgba(0,0,0,0.3)';
           legendItem.style.borderRadius = '8px';
-          legendItem.style.transition = 'all 0.2s cubic-bezier(0.4,0,0.2,1)';
+          legendItem.style.transition = 'all 0.25s cubic-bezier(0.4,0,0.2,1)';
           legendItem.style.cursor = 'pointer';
           legendItem.style.border = `1px solid ${colors[idx % colors.length]}30`;
           legendItem.style.backdropFilter = 'blur(8px)';
@@ -4110,28 +4110,33 @@ function updatePortfolioAnalytics(holdings, totalValue) {
           tokenName.style.fontSize = '11px';
           tokenName.style.fontWeight = '600';
           tokenName.style.letterSpacing = '0.05px';
+          tokenName.style.flex = '1';
+          tokenName.style.minWidth = '0';
+          tokenName.style.overflow = 'hidden';
+          tokenName.style.textOverflow = 'ellipsis';
+          tokenName.style.whiteSpace = 'nowrap';
           tokenName.textContent = token;
           
           const tokenPercent = document.createElement('span');
           tokenPercent.style.color = 'rgba(255,255,255,0.95)';
-          tokenPercent.style.marginLeft = 'auto';
           tokenPercent.style.fontWeight = '700';
           tokenPercent.style.fontSize = '11px';
           tokenPercent.style.fontVariantNumeric = 'tabular-nums';
           tokenPercent.style.textShadow = `0 0 6px ${colors[idx % colors.length]}80`;
+          tokenPercent.style.flexShrink = '0';
           tokenPercent.textContent = `${percentage.toFixed(1)}%`;
           
           legendItem.onmouseenter = function() {
             this.style.background = `rgba(${colors[idx % colors.length].substring(1).match(/.{2}/g).map(x => parseInt(x, 16)).join(',')}, 0.15)`;
             this.style.borderColor = colors[idx % colors.length] + '60';
-            this.style.transform = 'translateX(2px)';
-            this.style.boxShadow = `0 3px 10px ${colors[idx % colors.length]}40`;
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = `0 4px 12px ${colors[idx % colors.length]}40`;
             colorBox.style.boxShadow = `0 0 10px ${colors[idx % colors.length]}, 0 0 20px ${colors[idx % colors.length]}80`;
           };
           legendItem.onmouseleave = function() {
             this.style.background = 'rgba(0,0,0,0.3)';
             this.style.borderColor = colors[idx % colors.length] + '30';
-            this.style.transform = 'translateX(0)';
+            this.style.transform = 'translateY(0)';
             this.style.boxShadow = 'none';
             colorBox.style.boxShadow = `0 0 6px ${colors[idx % colors.length]}, 0 0 12px ${colors[idx % colors.length]}60`;
           };
