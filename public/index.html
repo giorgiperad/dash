@@ -137,22 +137,13 @@ body{
 }
 .grain-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");opacity:0.03;pointer-events:none;z-index:1}
 [data-theme="light"] .grain-overlay{opacity:0.01}
-.navbar{background:var(--bg-secondary);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border-secondary);padding:0 32px;display:flex;justify-content:space-between;align-items:center;position:fixed;top:0;left:80px;right:0;z-index:100;box-shadow:var(--shadow-sm);transition:background-color 0.3s ease, border-color 0.3s ease;height:70px}
+.navbar{background:var(--bg-secondary);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border-secondary);padding:0 32px;display:flex;justify-content:space-between;align-items:center;position:fixed;top:0;left:70px;right:0;z-index:100;box-shadow:var(--shadow-sm);transition:background-color 0.3s ease, border-color 0.3s ease;height:70px}
 .logo-section{display:flex;align-items:center;gap:16px}
 .logo-icon{width:40px;height:40px;min-width:40px;min-height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:24px;overflow:hidden;position:relative;flex-shrink:0}
 .logo-icon img{width:100%;height:100%;object-fit:contain;max-width:40px;max-height:40px;filter:none}
 .logo-text{display:flex;flex-direction:column}
 .logo-title{font-size:18px;font-weight:600;letter-spacing:-0.3px;color:var(--text-primary);transition:color 0.3s ease}
 .logo-subtitle{font-size:9px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:1px;font-weight:500;transition:color 0.3s ease}
-.nav-center{flex:1;display:flex;justify-content:center;padding:0 32px}
-.search-bar{display:flex;align-items:center;background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:var(--radius-md);padding:0 16px;width:100%;max-width:600px;transition:all 0.2s ease}
-.search-bar:focus-within{border-color:var(--accent-primary);box-shadow:0 0 0 3px rgba(139,92,246,0.1)}
-.search-icon{font-size:18px;color:var(--text-tertiary);margin-right:12px;flex-shrink:0}
-.search-input{flex:1;background:transparent;border:none;outline:none;color:var(--text-primary);font-size:14px;padding:12px 0;font-weight:400}
-.search-input::placeholder{color:var(--text-tertiary)}
-.search-actions{display:flex;align-items:center;gap:8px;padding-left:12px;border-left:1px solid var(--border-secondary)}
-.search-slash,.search-star{font-size:14px;color:var(--text-tertiary);cursor:pointer;padding:4px 8px;border-radius:4px;transition:all 0.2s}
-.search-slash:hover,.search-star:hover{background:var(--bg-tertiary);color:var(--text-primary)}
 .nav-right{display:flex;align-items:center;gap:16px}
 .theme-toggle{width:40px;height:40px;border-radius:10px;background:var(--bg-card);border:1px solid var(--border-primary);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;font-size:18px;color:var(--text-secondary);position:relative;overflow:hidden}
 .theme-toggle:hover{background:var(--bg-card-hover);border-color:var(--accent-primary);transform:scale(1.05);color:var(--accent-primary)}
@@ -175,25 +166,25 @@ body{
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.1)}}
 .live-text{font-size:12px;color:var(--success);font-weight:600;text-transform:uppercase;letter-spacing:0.8px;transition:color 0.3s ease}
 .time-display{font-size:14px;color:var(--text-tertiary);font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:0.5px;transition:color 0.3s ease}
-/* SIDEBAR MENU - Vision UI Style */
-.sidebar{position:fixed;left:0;top:0;width:80px;height:100vh;background:var(--bg-secondary);border-right:1px solid var(--border-secondary);padding:20px 0;overflow-y:auto;overflow-x:hidden;z-index:90;transition:all 0.3s ease;display:flex;flex-direction:column;align-items:center}
-.sidebar::-webkit-scrollbar{width:4px}
+/* SIDEBAR MENU - Modern Clean Style */
+.sidebar{position:fixed;left:0;top:0;width:70px;height:100vh;background:var(--bg-secondary);border-right:1px solid var(--border-secondary);padding:16px 0;overflow-y:auto;overflow-x:hidden;z-index:90;transition:all 0.3s ease;display:flex;flex-direction:column;align-items:center;gap:4px}
+.sidebar::-webkit-scrollbar{width:3px}
 .sidebar::-webkit-scrollbar-track{background:transparent}
 .sidebar::-webkit-scrollbar-thumb{background:var(--border-primary);border-radius:2px}
 .sidebar::-webkit-scrollbar-thumb:hover{background:var(--border-accent)}
-.sidebar-menu{display:flex;flex-direction:column;gap:8px;padding:0;width:100%;align-items:center}
-.sidebar-item{display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:12px;color:var(--text-secondary);font-size:20px;cursor:pointer;transition:all 0.2s ease;text-decoration:none;position:relative;border:1px solid transparent;background:transparent;margin:0 auto}
-.sidebar-item:hover{background:var(--bg-tertiary);color:var(--text-primary);transform:scale(1.05)}
-.sidebar-item.active{background:var(--accent-primary);color:#fff;box-shadow:0 4px 12px rgba(139,92,246,0.4);border-color:var(--accent-primary)}
+.sidebar-menu{display:flex;flex-direction:column;gap:6px;padding:0;width:100%;align-items:center}
+.sidebar-item{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:10px;color:var(--text-tertiary);font-size:18px;cursor:pointer;transition:all 0.2s ease;text-decoration:none;position:relative;border:none;background:transparent;margin:0}
+.sidebar-item:hover{background:var(--bg-tertiary);color:var(--text-primary)}
+.sidebar-item.active{background:var(--accent-primary);color:#fff;box-shadow:0 2px 8px rgba(139,92,246,0.3)}
 .sidebar-item.active::before{display:none}
-.sidebar-icon{font-size:22px;text-align:center;line-height:1}
+.sidebar-icon{font-size:20px;text-align:center;line-height:1}
 .sidebar-text{display:none}
-.sidebar-divider{height:1px;background:var(--border-secondary);margin:12px 16px;width:32px}
+.sidebar-divider{height:1px;background:var(--border-secondary);margin:8px 12px;width:28px}
 .sidebar-section-title{display:none}
 
 /* MAIN CONTENT WITH SIDEBAR - Vision UI Style */
 .main-layout{display:flex;min-height:100vh;margin-top:0}
-.main-content{flex:1;margin-left:80px;padding:32px;transition:margin-left 0.3s ease;min-height:100vh;max-width:calc(100vw - 80px);padding-top:102px}
+.main-content{flex:1;margin-left:70px;padding:32px;transition:margin-left 0.3s ease;min-height:100vh;max-width:calc(100vw - 70px);padding-top:102px}
 .container{max-width:100%;margin:0;padding:0;position:relative;z-index:2;width:100%;box-sizing:border-box}
 .hero-section{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:32px;grid-auto-rows:minmax(90px,auto)}
 .hero-stat{background:var(--bg-card);backdrop-filter:var(--blur);border-radius:var(--radius-md);padding:16px 20px;border:1px solid var(--border-secondary);transition:all .2s;display:flex;flex-direction:column;justify-content:space-between;min-height:90px;box-shadow:var(--shadow-sm)}
@@ -261,6 +252,16 @@ body{
 .carousel{display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;scroll-behavior:smooth;scrollbar-width:none;-ms-overflow-style:none;padding:4px 0 8px;-webkit-overflow-scrolling:touch;justify-content:center;max-width:100%}
 .carousel::-webkit-scrollbar{display:none}
 .carousel-card{min-width:200px;width:200px;background:var(--bg-card);backdrop-filter:var(--blur);border-radius:var(--radius-md);padding:12px 14px;border:1px solid var(--border-secondary);transition:all .25s cubic-bezier(.4,0,.2,1);flex-shrink:0;display:flex;flex-direction:column;position:relative;overflow:hidden}
+
+/* Activity Carousel - Extra Compact */
+.activity-carousel-wrapper{position:relative;margin-bottom:16px;width:100%;padding:0 2px;display:flex;justify-content:center;align-items:center}
+.activity-carousel{display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;scroll-behavior:smooth;scrollbar-width:none;-ms-overflow-style:none;padding:2px 0 4px;-webkit-overflow-scrolling:touch;justify-content:flex-start;max-width:100%}
+.activity-carousel::-webkit-scrollbar{display:none}
+.activity-carousel .carousel-card{min-width:140px;width:140px;padding:8px 10px;border-radius:var(--radius-sm)}
+.activity-carousel .carousel-card-value{font-size:13px;margin-bottom:2px}
+.activity-carousel .carousel-card-title{font-size:8px;margin-bottom:4px}
+.activity-carousel .carousel-card-change{font-size:9px}
+.activity-carousel .carousel-card-subtitle{font-size:8px;margin-top:1px}
 .carousel-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--border-primary),transparent);opacity:0;transition:opacity .3s}
 .carousel-card:hover{background:var(--bg-card-hover);border-color:var(--border-primary);transform:translateY(-1px);box-shadow:var(--shadow-md)}
 .carousel-card:hover::before{opacity:1}
@@ -398,12 +399,11 @@ body{
 
 /* Responsive Sidebar */
 @media(max-width:1024px){
-  .sidebar{transform:translateX(-100%);width:80px;transition:transform 0.3s ease}
-  .nav-center{display:none}
+  .sidebar{transform:translateX(-100%);width:70px;transition:transform 0.3s ease}
   .sidebar.open{transform:translateX(0);box-shadow:var(--shadow-lg)}
   .main-content{margin-left:0!important;padding:20px 16px}
   #sidebarToggle{display:flex!important}
-  .navbar{padding:0 16px}
+  .navbar{padding:0 16px;left:0!important}
   .sidebar-overlay.active{display:block}
 }
 @media(max-width:768px){
@@ -723,16 +723,6 @@ body{overflow-x:hidden}
     </div>
   </div>
 
-  <div class="nav-center">
-    <div class="search-bar">
-      <span class="search-icon">🔍</span>
-      <input type="text" placeholder="Search by project, quest, exchange, wallet or token" class="search-input" id="globalSearch">
-      <div class="search-actions">
-        <span class="search-slash">/</span>
-        <span class="search-star">⭐</span>
-      </div>
-    </div>
-  </div>
   <div class="nav-right">
     <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" title="Toggle menu">
       <span>☰</span>
@@ -822,9 +812,9 @@ body{overflow-x:hidden}
       </div>
     </div>
 
-    <!-- Recent Activity Carousel -->
-    <div class="hero-carousel-wrapper" id="activityCarouselWrapper" style="display:none;margin-bottom:24px;">
-      <div class="carousel" id="activityCarousel">
+    <!-- Recent Activity Carousel - Compact -->
+    <div class="activity-carousel-wrapper" id="activityCarouselWrapper" style="display:none;margin-bottom:16px;">
+      <div class="activity-carousel" id="activityCarousel">
         <!-- Activity cards will be rendered here -->
       </div>
       <button class="carousel-nav carousel-nav-right" id="activityCarouselNext" aria-label="Next cards">→</button>
@@ -1640,33 +1630,22 @@ function renderRecentActivity() {
     return;
   }
   
-  // Render as carousel cards
+  // Render as compact carousel cards
   carousel.innerHTML = activityFeed.map(activity => {
     const timeAgo = Math.floor((Date.now() - activity.timestamp) / 60000);
-    const timeText = timeAgo < 1 ? 'ახლახან' : timeAgo < 60 ? `${timeAgo}წთ` : `${Math.floor(timeAgo / 60)}სთ`;
+    const timeText = timeAgo < 1 ? 'ახლა' : timeAgo < 60 ? `${timeAgo}წთ` : `${Math.floor(timeAgo / 60)}სთ`;
     const changeColor = activity.type === 'surge' ? '#22c55e' : '#ef4444';
     const icon = activity.type === 'surge' ? '📈' : '📉';
     
     return `
       <div class="carousel-card">
-        <div class="carousel-card-header">
+        <div class="carousel-card-header" style="margin-bottom:6px;">
           <div class="carousel-card-title">${icon} ${activity.token}</div>
-          <span class="carousel-card-arrow">→</span>
         </div>
         <div class="carousel-card-value" style="color:${changeColor};">
           ${activity.change >= 0 ? '+' : ''}${activity.change.toFixed(2)}%
         </div>
-        <div class="carousel-card-subtitle">${activity.type === 'surge' ? 'მნიშვნელოვანი ზრდა' : 'მნიშვნელოვანი დაცემა'}</div>
-        <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;font-size:11px;">
-          <div>
-            <div style="color:#9aa0a6;margin-bottom:4px;">ფასი</div>
-            <div style="color:#fafafa;font-weight:600;">$${formatPrice(activity.price)}</div>
-          </div>
-          <div style="text-align:right;">
-            <div style="color:#9aa0a6;margin-bottom:4px;">დრო</div>
-            <div style="color:#fafafa;font-weight:600;">${timeText}</div>
-          </div>
-        </div>
+        <div class="carousel-card-subtitle" style="margin-top:2px;">$${formatPrice(activity.price)} • ${timeText}</div>
       </div>
     `;
   }).join('');
