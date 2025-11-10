@@ -4006,10 +4006,10 @@ function updatePortfolioAnalytics(holdings, totalValue) {
   const allocationByTokenId = {}; // Store by tokenId for categorization
   const token24hPNL = {}; // Store 24h PNL for each token
   let totalAllocation = 0;
-  let total24hPNL = 0; // Total portfolio 24h PNL
-  let total24hChange = 0; // Total portfolio 24h change percentage (weighted average)
+  let total24hPNL = 0; // Total portfolio 24h PNL (sum of all token gains/losses)
+  let total24hChange = 0; // Total portfolio 24h change percentage (calculated from total PNL)
   
-  // First pass: Calculate total allocation and 24h PNL
+  // Calculate total allocation and 24h PNL from all holdings
   Object.entries(holdings).forEach(([id, h]) => {
     if (!h || !h.tokenId) return;
     const price = prices[h.tokenId] || 0;
@@ -4022,34 +4022,24 @@ function updatePortfolioAnalytics(holdings, totalValue) {
       totalAllocation += value;
       
       // Calculate 24h PNL for each holding
+      // PNL = current_value * (price_change_percentage / 100)
       const priceChange24h = token?.price_change_percentage_24h || 0;
-      const pnl24h = value * (priceChange24h / 100);
-      total24hPNL += pnl24h;
-      
-      if (!token24hPNL[tokenName]) {
-        token24hPNL[tokenName] = { value: value, pnl: 0, token: token };
+      if (!isNaN(priceChange24h) && isFinite(priceChange24h)) {
+        const pnl24h = value * (priceChange24h / 100);
+        total24hPNL += pnl24h;
+        
+        if (!token24hPNL[tokenName]) {
+          token24hPNL[tokenName] = { value: value, pnl: 0, token: token };
+        }
+        token24hPNL[tokenName].pnl += pnl24h;
       }
-      token24hPNL[tokenName].pnl += pnl24h;
     }
   });
   
-  // Second pass: Calculate weighted average 24h change from all individual holdings
-  // This ensures every holding contributes correctly, even if same token appears multiple times
+  // Calculate portfolio 24h change percentage from total PNL
+  // This is the actual portfolio gain/loss percentage: (total_PNL / total_value) * 100
   if (totalAllocation > 0) {
-    Object.entries(holdings).forEach(([id, h]) => {
-      if (!h || !h.tokenId) return;
-      const price = prices[h.tokenId] || 0;
-      const value = h.amount * price;
-      if (value > 0) {
-        const token = cryptoData.find(t => t.id === h.tokenId);
-        const priceChange24h = token?.price_change_percentage_24h || 0;
-        // Include all valid price changes (including 0% changes)
-        if (!isNaN(priceChange24h) && isFinite(priceChange24h)) {
-          const weight = value / totalAllocation;
-          total24hChange += weight * priceChange24h;
-        }
-      }
-    });
+    total24hChange = (total24hPNL / totalAllocation) * 100;
   }
   
   // Update Portfolio 24h Change Display
