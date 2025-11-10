@@ -3956,31 +3956,6 @@ function renderDiversificationChart(score) {
   ctx.font = 'bold 14px Inter, sans-serif';
   ctx.textAlign = 'center';
   ctx.fillText(`${score}/100`, width / 2, barY - 8);
-  
-  // Component breakdown (mini bars)
-  const componentHeight = 4;
-  const componentY = barY + barHeight + 8;
-  const components = [
-    { label: 'C', value: score * 0.25, color: '#8b5cf6' },
-    { label: 'V', value: score * 0.25, color: '#6366f1' },
-    { label: 'R', value: score * 0.20, color: '#a78bfa' },
-    { label: 'D', value: score * 0.15, color: '#ec4899' },
-    { label: 'S', value: score * 0.15, color: '#f59e0b' }
-  ];
-  
-  const componentWidth = (barWidth - 20) / components.length;
-  components.forEach((comp, idx) => {
-    const x = barX + idx * componentWidth + 4;
-    const w = (comp.value / 100) * (componentWidth - 8);
-    ctx.fillStyle = comp.color;
-    ctx.fillRect(x, componentY, w, componentHeight);
-    
-    // Label
-    ctx.fillStyle = textTertiary;
-    ctx.font = '10px Inter, sans-serif';
-    ctx.textAlign = 'left';
-    ctx.fillText(comp.label, x, componentY + componentHeight + 10);
-  });
 }
 
 // Toggle analytics visibility
