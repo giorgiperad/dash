@@ -32,3 +32,4 @@ And update the `@font-face` declaration in `index.html` to point to the correct 
 The font is already configured in the CSS and will be applied to the Georgian quote text:
 "წარმატება მოდის იმათთან, ვინც დარჩა, როცა სხვები წავიდნენ!"
 
+
