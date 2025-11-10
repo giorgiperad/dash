@@ -743,10 +743,12 @@ body{
   .setting-item{flex-direction:column;align-items:flex-start;gap:8px}
   .alert-row{grid-template-columns:40px 1fr 1fr 60px;gap:10px;padding:14px;font-size:12px}
   .alert-row>div:nth-child(3){display:none}
-  #portfolioAnalytics{padding:20px}
-  #analyticsGrid{grid-template-columns:1fr!important;gap:20px}
-  #portfolioAnalytics>div:first-child{flex-direction:column;align-items:flex-start;gap:12px}
+  #portfolioAnalytics{padding:16px}
+  #portfolioAnalytics>div:last-child{grid-template-columns:1fr!important;gap:20px}
+  #portfolioAnalytics>div:last-child>div:first-child{margin-bottom:20px}
+  #portfolioAnalytics>div:last-child>div:last-child{position:relative!important;top:auto!important}
   #allocationChart{max-width:100%!important;height:auto!important}
+  #pulseDonutChart{max-width:100%!important;height:auto!important}
   #tokenOfTheDay{padding:20px}
   #todStatsGrid{grid-template-columns:1fr!important;gap:12px}
 }
@@ -1107,43 +1109,71 @@ body{overflow-x:hidden}
             </div>
           </div>
 
-          <!-- Portfolio Analytics Section - Compact -->
-          <div id="portfolioAnalytics" style="display:none;margin-bottom:24px;background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:var(--radius-lg);padding:20px;position:relative;box-shadow:var(--shadow-md);">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border-secondary);">
-              <h3 style="font-size:16px;font-weight:600;color:var(--text-primary);margin:0;">📊 პორტფოლიოს ანალიტიკა</h3>
+          <!-- Portfolio Analytics Section - OpenSea Style -->
+          <div id="portfolioAnalytics" style="display:none;margin-bottom:24px;position:relative;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+              <h3 style="font-size:20px;font-weight:600;color:var(--text-primary);margin:0;">📊 პორტფოლიოს ანალიტიკა</h3>
               <button id="toggleAnalytics" style="background:var(--bg-tertiary);border:1px solid var(--border-primary);color:var(--text-secondary);padding:6px 12px;border-radius:var(--radius-sm);cursor:pointer;font-size:11px;font-weight:500;transition:all .2s;" aria-label="ანალიტიკის ხილვის გადართვა" aria-expanded="true">დამალვა</button>
             </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;position:relative;" id="analyticsGrid">
-              <div style="background:var(--bg-tertiary);border:1px solid var(--border-secondary);border-radius:var(--radius-md);padding:16px;position:relative;">
-                <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;font-weight:600;">აქტივების განაწილება</div>
-                <div style="display:flex;justify-content:center;margin-bottom:12px;">
-                  <canvas id="allocationChart" width="160" height="160" style="max-width:100%;height:auto;" aria-label="პორტფოლიოს განაწილების დიაგრამა" role="img"></canvas>
+            <div style="display:grid;grid-template-columns:1fr 320px;gap:24px;position:relative;">
+              <!-- Main Content Area -->
+              <div style="background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:var(--radius-lg);padding:24px;position:relative;box-shadow:var(--shadow-md);">
+                <div style="font-size:12px;color:var(--text-tertiary);margin-bottom:16px;text-transform:uppercase;letter-spacing:1px;font-weight:600;">აქტივების განაწილება</div>
+                <div style="display:flex;justify-content:center;margin-bottom:20px;">
+                  <canvas id="allocationChart" width="200" height="200" style="max-width:100%;height:auto;" aria-label="პორტფოლიოს განაწილების დიაგრამა" role="img"></canvas>
                 </div>
-                <div id="allocationLegend" style="display:flex;flex-direction:column;gap:8px;" role="list" aria-label="ტოკენების განაწილების პროცენტები"></div>
+                <div id="allocationLegend" style="display:flex;flex-direction:column;gap:10px;" role="list" aria-label="ტოკენების განაწილების პროცენტები"></div>
+                
+                <!-- Risk Metrics -->
+                <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border-secondary);">
+                  <div style="font-size:12px;color:var(--text-tertiary);margin-bottom:16px;text-transform:uppercase;letter-spacing:1px;font-weight:600;">რისკის მეტრიკები</div>
+                  <div id="riskMetrics" style="display:flex;flex-direction:column;gap:12px;" role="list" aria-label="პორტფოლიოს რისკის მეტრიკები">
+                    <div style="padding:16px;background:var(--bg-tertiary);border:1px solid var(--border-secondary);border-radius:var(--radius-md);transition:all .2s;">
+                      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                        <span style="font-size:13px;color:var(--text-secondary);font-weight:500;">დივერსიფიკაციის ქულა</span>
+                        <span id="diversificationScore" style="font-size:18px;font-weight:700;color:var(--accent-primary);font-variant-numeric:tabular-nums;">-</span>
+                      </div>
+                      <div style="height:8px;background:var(--bg-primary);border-radius:4px;overflow:hidden;">
+                        <div id="diversificationBar" style="height:100%;background:var(--gradient-primary);width:0%;transition:width .4s ease;border-radius:4px;"></div>
+                      </div>
+                    </div>
+                    <div style="padding:16px;background:var(--bg-tertiary);border:1px solid var(--border-secondary);border-radius:var(--radius-md);transition:all .2s;">
+                      <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <span style="font-size:13px;color:var(--text-secondary);font-weight:500;">უდიდესი პოზიცია</span>
+                        <span id="largestPosition" style="font-size:15px;font-weight:600;color:var(--text-primary);font-variant-numeric:tabular-nums;">-</span>
+                      </div>
+                    </div>
+                    <div style="padding:16px;background:var(--bg-tertiary);border:1px solid var(--border-secondary);border-radius:var(--radius-md);transition:all .2s;">
+                      <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <span style="font-size:13px;color:var(--text-secondary);font-weight:500;">ტოკენების რაოდენობა</span>
+                        <span id="tokenCount" style="font-size:15px;font-weight:600;color:var(--text-primary);font-variant-numeric:tabular-nums;">-</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div style="position:relative;">
-                <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;font-weight:600;">რისკის მეტრიკები</div>
-                <div id="riskMetrics" style="display:flex;flex-direction:column;gap:12px;" role="list" aria-label="პორტფოლიოს რისკის მეტრიკები">
-                  <div style="padding:14px;background:var(--bg-tertiary);border:1px solid var(--border-secondary);border-radius:var(--radius-md);transition:all .2s;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-                      <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">დივერსიფიკაციის ქულა</span>
-                      <span id="diversificationScore" style="font-size:16px;font-weight:700;color:var(--accent-primary);font-variant-numeric:tabular-nums;">-</span>
-                    </div>
-                    <div style="height:6px;background:var(--bg-primary);border-radius:3px;overflow:hidden;">
-                      <div id="diversificationBar" style="height:100%;background:var(--gradient-primary);width:0%;transition:width .4s ease;border-radius:3px;"></div>
-                    </div>
-                  </div>
-                  <div style="padding:14px;background:var(--bg-tertiary);border:1px solid var(--border-secondary);border-radius:var(--radius-md);transition:all .2s;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;">
-                      <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">უდიდესი პოზიცია</span>
-                      <span id="largestPosition" style="font-size:14px;font-weight:600;color:var(--text-primary);font-variant-numeric:tabular-nums;">-</span>
+              
+              <!-- Pulse Check Sidebar -->
+              <div style="background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:var(--radius-lg);padding:24px;position:sticky;top:20px;height:fit-content;box-shadow:var(--shadow-md);">
+                <div style="font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:20px;">Pulse Check</div>
+                
+                <!-- Total Value Donut Chart -->
+                <div style="margin-bottom:32px;">
+                  <div style="position:relative;display:flex;justify-content:center;align-items:center;margin-bottom:16px;">
+                    <canvas id="pulseDonutChart" width="180" height="180" style="max-width:100%;height:auto;"></canvas>
+                    <div style="position:absolute;text-align:center;pointer-events:none;">
+                      <div id="pulseTotalValue" style="font-size:18px;font-weight:700;color:var(--text-primary);margin-bottom:4px;">$0.00</div>
+                      <div style="font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.8px;">TOTAL VALUE</div>
                     </div>
                   </div>
-                  <div style="padding:14px;background:var(--bg-tertiary);border:1px solid var(--border-secondary);border-radius:var(--radius-md);transition:all .2s;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;">
-                      <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">ტოკენების რაოდენობა</span>
-                      <span id="tokenCount" style="font-size:14px;font-weight:600;color:var(--text-primary);font-variant-numeric:tabular-nums;">-</span>
-                    </div>
+                  <div id="pulseDonutLegend" style="display:flex;flex-direction:column;gap:8px;font-size:12px;"></div>
+                </div>
+                
+                <!-- Highest Movers in 24H -->
+                <div>
+                  <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">Highest Movers in 24H</div>
+                  <div id="highestMovers" style="display:flex;flex-direction:column;gap:12px;">
+                    <!-- Will be populated by JavaScript -->
                   </div>
                 </div>
               </div>
@@ -4123,6 +4153,258 @@ function updatePortfolioAnalytics(holdings, totalValue) {
   
   if ($('largestPosition')) $('largestPosition').textContent = largestPosition ? `${largestPosition[0]} (${largestPercentage.toFixed(1)}%)` : '-';
   if ($('tokenCount')) $('tokenCount').textContent = tokenCount;
+  
+  // Render Pulse Check Donut Chart
+  renderPulseDonutChart(totalAllocation, allocation);
+  
+  // Render Highest Movers
+  renderHighestMovers(holdings, allocationByTokenId);
+}
+
+/* ---------- PULSE CHECK DONUT CHART ---------- */
+function renderPulseDonutChart(totalValue, allocation) {
+  const canvas = $('pulseDonutChart');
+  const totalValueEl = $('pulseTotalValue');
+  const legendDiv = $('pulseDonutLegend');
+  
+  if (!canvas || !totalValueEl) return;
+  
+  // Update total value
+  if (totalValueEl) {
+    totalValueEl.textContent = `$${formatPrice(totalValue)}`;
+  }
+  
+  if (totalValue <= 0 || !allocation || Object.keys(allocation).length === 0) {
+    // Draw empty state
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (legendDiv) legendDiv.innerHTML = '<div style="color:var(--text-tertiary);font-size:12px;text-align:center;">No holdings</div>';
+    return;
+  }
+  
+  const ctx = canvas.getContext('2d');
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+  const radius = Math.min(centerX, centerY) - 20;
+  const innerRadius = radius * 0.65; // Larger inner radius for OpenSea style
+  
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  // Sort by value
+  const sortedAllocation = Object.entries(allocation).sort((a, b) => b[1] - a[1]);
+  
+  // Calculate percentages
+  const percentages = sortedAllocation.map(([token, value]) => ({
+    token,
+    value,
+    percentage: (value / totalValue) * 100
+  }));
+  
+  // Colors - use gradient colors
+  const colors = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#ef4444', '#a78bfa'];
+  
+  let currentAngle = -Math.PI / 2;
+  
+  // Draw donut chart
+  percentages.forEach((item, idx) => {
+    if (item.percentage < 0.5) return; // Skip very small slices
+    
+    const sliceAngle = (item.value / totalValue) * 2 * Math.PI;
+    
+    // Draw arc
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
+    ctx.arc(centerX, centerY, innerRadius, currentAngle + sliceAngle, currentAngle, true);
+    ctx.closePath();
+    ctx.fillStyle = colors[idx % colors.length];
+    ctx.fill();
+    
+    // Add subtle stroke
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    currentAngle += sliceAngle;
+  });
+  
+  // Update legend
+  if (legendDiv) {
+    legendDiv.innerHTML = '';
+    percentages.slice(0, 5).forEach((item, idx) => {
+      if (item.percentage < 0.5) return;
+      const legendItem = document.createElement('div');
+      legendItem.style.display = 'flex';
+      legendItem.style.alignItems = 'center';
+      legendItem.style.gap = '8px';
+      legendItem.style.padding = '6px 0';
+      
+      const colorBox = document.createElement('div');
+      colorBox.style.width = '12px';
+      colorBox.style.height = '12px';
+      colorBox.style.borderRadius = '3px';
+      colorBox.style.background = colors[idx % colors.length];
+      colorBox.style.flexShrink = '0';
+      
+      const tokenName = document.createElement('span');
+      tokenName.style.color = 'var(--text-secondary)';
+      tokenName.style.fontSize = '12px';
+      tokenName.style.fontWeight = '500';
+      tokenName.textContent = item.token;
+      
+      const tokenPercent = document.createElement('span');
+      tokenPercent.style.color = 'var(--text-primary)';
+      tokenPercent.style.marginLeft = 'auto';
+      tokenPercent.style.fontWeight = '600';
+      tokenPercent.style.fontSize = '12px';
+      tokenPercent.style.fontVariantNumeric = 'tabular-nums';
+      tokenPercent.textContent = `${item.percentage.toFixed(1)}%`;
+      
+      legendItem.appendChild(colorBox);
+      legendItem.appendChild(tokenName);
+      legendItem.appendChild(tokenPercent);
+      legendDiv.appendChild(legendItem);
+    });
+  }
+}
+
+/* ---------- HIGHEST MOVERS IN 24H ---------- */
+function renderHighestMovers(holdings, allocationByTokenId) {
+  const container = $('highestMovers');
+  if (!container || !holdings || Object.keys(holdings).length === 0) {
+    if (container) container.innerHTML = '<div style="color:var(--text-tertiary);font-size:12px;text-align:center;padding:20px;">No holdings</div>';
+    return;
+  }
+  
+  // Calculate 24h changes for each holding
+  const movers = [];
+  
+  Object.entries(holdings).forEach(([id, h]) => {
+    if (!h || !h.tokenId) return;
+    const token = cryptoData.find(t => t.id === h.tokenId);
+    if (!token) return;
+    
+    const priceChange = token.price_change_percentage_24h || 0;
+    const value = allocationByTokenId[h.tokenId] || 0;
+    const changeValue = value * (priceChange / 100);
+    
+    if (Math.abs(priceChange) > 0.1) { // Only show significant movers
+      movers.push({
+        tokenId: h.tokenId,
+        token,
+        amount: h.amount,
+        value,
+        priceChange,
+        changeValue,
+        image: token.image
+      });
+    }
+  });
+  
+  // Sort by absolute change value (biggest movers)
+  movers.sort((a, b) => Math.abs(b.changeValue) - Math.abs(a.changeValue));
+  
+  // Take top 5
+  const topMovers = movers.slice(0, 5);
+  
+  if (topMovers.length === 0) {
+    container.innerHTML = '<div style="color:var(--text-tertiary);font-size:12px;text-align:center;padding:20px;">No significant movers</div>';
+    return;
+  }
+  
+  container.innerHTML = topMovers.map((mover, idx) => {
+    const changeColor = mover.priceChange >= 0 ? '#22c55e' : '#ef4444';
+    const changeSign = mover.priceChange >= 0 ? '+' : '';
+    const formattedChange = `${changeSign}$${formatPrice(Math.abs(mover.changeValue))}`;
+    const formattedAmount = mover.amount >= 1000 ? `${(mover.amount / 1000).toFixed(1)}K` : mover.amount.toFixed(2);
+    
+    // Generate mini line graph data (simulated price trend)
+    const graphData = generateMiniGraphData(mover.priceChange);
+    const graphId = `moverGraph${idx}`;
+    
+    return `
+      <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg-tertiary);border:1px solid var(--border-secondary);border-radius:var(--radius-md);transition:all .2s;" onmouseenter="this.style.background='var(--bg-card-hover)';this.style.borderColor='var(--border-primary)'" onmouseleave="this.style.background='var(--bg-tertiary)';this.style.borderColor='var(--border-secondary)'">
+        <div style="width:40px;height:40px;border-radius:8px;overflow:hidden;flex-shrink:0;border:1px solid var(--border-secondary);background:var(--bg-primary);display:flex;align-items:center;justify-content:center;">
+          ${mover.image ? `<img src="${mover.image}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.innerHTML='💰';">` : '💰'}
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${mover.token.name || mover.tokenId}</div>
+          <div style="font-size:11px;color:var(--text-tertiary);font-weight:500;">HELD: ${formattedAmount}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-size:13px;font-weight:600;color:${changeColor};margin-bottom:4px;">${formattedChange}</div>
+          <canvas id="${graphId}" width="60" height="24" style="width:60px;height:24px;border-radius:4px;"></canvas>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  // Draw mini graphs
+  topMovers.forEach((mover, idx) => {
+    const graphId = `moverGraph${idx}`;
+    const canvas = document.getElementById(graphId);
+    if (canvas) {
+      drawMiniGraph(canvas, generateMiniGraphData(mover.priceChange), mover.priceChange >= 0);
+    }
+  });
+}
+
+function generateMiniGraphData(priceChange) {
+  // Generate 20 data points simulating price movement
+  const points = 20;
+  const data = [];
+  const isPositive = priceChange >= 0;
+  const volatility = Math.abs(priceChange) / 100;
+  
+  for (let i = 0; i < points; i++) {
+    const progress = i / (points - 1);
+    // Simulate trend with some randomness
+    const trend = isPositive ? progress * 0.6 + 0.2 : 0.8 - progress * 0.6;
+    const random = (Math.random() - 0.5) * 0.3;
+    data.push(Math.max(0, Math.min(1, trend + random)));
+  }
+  
+  return data;
+}
+
+function drawMiniGraph(canvas, data, isPositive) {
+  const ctx = canvas.getContext('2d');
+  const width = canvas.width;
+  const height = canvas.height;
+  const padding = 2;
+  
+  ctx.clearRect(0, 0, width, height);
+  
+  // Draw background
+  ctx.fillStyle = 'rgba(0,0,0,0.2)';
+  ctx.fillRect(0, 0, width, height);
+  
+  // Draw line
+  ctx.strokeStyle = isPositive ? '#22c55e' : '#ef4444';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  
+  const stepX = (width - padding * 2) / (data.length - 1);
+  const stepY = height - padding * 2;
+  
+  data.forEach((value, idx) => {
+    const x = padding + idx * stepX;
+    const y = padding + (1 - value) * stepY;
+    
+    if (idx === 0) {
+      ctx.moveTo(x, y);
+    } else {
+      ctx.lineTo(x, y);
+    }
+  });
+  
+  ctx.stroke();
+  
+  // Fill area under line
+  ctx.fillStyle = isPositive ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)';
+  ctx.lineTo(padding + (data.length - 1) * stepX, height - padding);
+  ctx.lineTo(padding, height - padding);
+  ctx.closePath();
+  ctx.fill();
 }
 
 /* ---------- DIVERSIFICATION SCORE CALCULATION ---------- */
