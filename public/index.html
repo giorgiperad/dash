@@ -1321,7 +1321,7 @@ body{overflow-x:hidden}
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   📱 COMPLETE MOBILE VERSION - COMPACT & USER-FRIENDLY
+   📱 MOBILE-SPECIFIC THEME
    ═══════════════════════════════════════════════════════════════ */
 @media(max-width:768px){
   /* Mobile Theme Variables */
@@ -1338,481 +1338,78 @@ body{overflow-x:hidden}
   /* Mobile-optimized body */
   body{
     background:var(--mobile-bg-primary)!important;
-    font-size:14px!important;
-    line-height:1.5!important;
-    -webkit-text-size-adjust:100%!important;
+    font-size:15px!important;
+    line-height:1.6!important;
   }
   
-  /* Compact Mobile Navbar */
+  /* Mobile navbar */
   .navbar{
-    background:linear-gradient(180deg, #141920 0%, #0f1419 100%)!important;
+    background:var(--mobile-bg-secondary)!important;
     backdrop-filter:blur(20px)!important;
-    border-bottom:1px solid rgba(99,102,241,0.2)!important;
-    box-shadow:0 2px 12px rgba(0,0,0,0.5)!important;
-    height:60px!important;
-    padding:0 12px!important;
-  }
-  
-  .logo-section{
-    gap:10px!important;
-  }
-  
-  .logo-icon{
-    width:36px!important;
-    height:36px!important;
-    min-width:36px!important;
-    min-height:36px!important;
-  }
-  
-  .logo-title{
-    font-size:13px!important;
-    letter-spacing:-0.2px!important;
-  }
-  
-  .logo-subtitle{
-    display:none!important;
-  }
-  
-  .nav-right{
-    gap:8px!important;
-  }
-  
-  .theme-toggle{
-    width:36px!important;
-    height:36px!important;
-    font-size:16px!important;
-  }
-  
-  .live-indicator{
-    padding:4px 8px!important;
-    font-size:9px!important;
-  }
-  
-  .live-text{
-    font-size:9px!important;
-  }
-  
-  .time-display{
-    display:none!important;
-  }
-  
-  /* Compact Main Content */
-  .main-content{
-    padding:12px 8px!important;
-    padding-top:72px!important;
-  }
-  
-  .container{
-    padding:0!important;
-    max-width:100%!important;
-  }
-  
-  /* Compact Hero Stats - Single Column Stack */
-  .hero-section{
-    display:flex!important;
-    flex-direction:column!important;
-    gap:8px!important;
-    margin-bottom:16px!important;
-  }
-  
-  .hero-stat{
-    padding:12px 14px!important;
-    min-height:auto!important;
-    border-radius:12px!important;
-    background:linear-gradient(135deg, #1a1f2e 0%, #141920 100%)!important;
-    border:1px solid rgba(99,102,241,0.15)!important;
+    border-bottom:1px solid var(--mobile-border)!important;
     box-shadow:0 2px 8px rgba(0,0,0,0.3)!important;
   }
   
-  .hero-stat-label{
-    font-size:8px!important;
-    margin-bottom:4px!important;
-    opacity:0.7!important;
-  }
-  
-  .hero-stat-value{
-    font-size:16px!important;
-    font-weight:700!important;
-    line-height:1.2!important;
-  }
-  
-  .hero-stat-change{
-    font-size:10px!important;
-    padding:2px 6px!important;
-    margin-top:4px!important;
-  }
-  
-  /* Compact Carousel */
-  .hero-carousel-wrapper{
-    padding:0 8px!important;
-    margin-bottom:16px!important;
-  }
-  
-  .carousel-card{
-    min-width:140px!important;
-    max-width:140px!important;
-    padding:10px 12px!important;
-    border-radius:12px!important;
-    background:linear-gradient(135deg, #1a1f2e 0%, #141920 100%)!important;
-    border:1px solid rgba(99,102,241,0.15)!important;
-  }
-  
-  .carousel-card-value{
-    font-size:15px!important;
-    font-weight:700!important;
-  }
-  
-  .carousel-card-title{
-    font-size:8px!important;
-    opacity:0.8!important;
-  }
-  
-  .carousel-nav{
-    width:28px!important;
-    height:28px!important;
-    font-size:14px!important;
-  }
-  
-  /* Compact Main Sections */
-  .main-section{
-    padding:14px 12px!important;
-    border-radius:14px!important;
-    background:linear-gradient(135deg, #1a1f2e 0%, #141920 100%)!important;
-    border:1px solid rgba(99,102,241,0.15)!important;
-    box-shadow:0 2px 12px rgba(0,0,0,0.4)!important;
-    margin-bottom:12px!important;
-  }
-  
-  .section-header{
-    margin-bottom:12px!important;
-    padding-bottom:10px!important;
-    border-bottom:1px solid rgba(255,255,255,0.08)!important;
-  }
-  
-  .section-title{
-    font-size:16px!important;
-    font-weight:700!important;
-    letter-spacing:-0.3px!important;
-  }
-  
-  /* Compact Token Rows - Simplified */
-  .token-row{
-    display:flex!important;
-    align-items:center!important;
-    gap:10px!important;
-    padding:10px 12px!important;
-    border-radius:10px!important;
-    background:rgba(0,0,0,0.2)!important;
-    border:1px solid rgba(255,255,255,0.05)!important;
-    margin-bottom:6px!important;
-  }
-  
-  .token-icon-col{
-    width:36px!important;
-    height:36px!important;
-    flex-shrink:0!important;
-  }
-  
-  .token-icon{
-    width:36px!important;
-    height:36px!important;
-    border-radius:8px!important;
-  }
-  
-  .token-name-col{
-    flex:1!important;
-    min-width:0!important;
-  }
-  
-  .token-name-col h3{
-    font-size:13px!important;
-    font-weight:600!important;
-    margin-bottom:2px!important;
-  }
-  
-  .token-symbol{
-    font-size:10px!important;
-    opacity:0.7!important;
-  }
-  
-  .token-price-col{
-    font-size:14px!important;
-    font-weight:600!important;
-    text-align:right!important;
-    flex-shrink:0!important;
-  }
-  
-  .token-change-col,
-  .token-mcap-col{
-    display:none!important;
-  }
-  
-  /* Compact Portfolio Summary */
-  .portfolio-summary{
-    display:grid!important;
-    grid-template-columns:1fr!important;
-    gap:8px!important;
-    margin-bottom:16px!important;
-  }
-  
+  /* Mobile cards */
+  .main-section,
+  .featured-card,
+  .hero-stat,
   .summary-card{
-    padding:12px 14px!important;
-    border-radius:12px!important;
-    background:linear-gradient(135deg, #1a1f2e 0%, #141920 100%)!important;
-    border:1px solid rgba(99,102,241,0.15)!important;
+    background:var(--mobile-bg-card)!important;
+    border:1px solid var(--mobile-border)!important;
+    box-shadow:0 2px 12px rgba(0,0,0,0.4)!important;
   }
   
-  .summary-value{
-    font-size:18px!important;
-    font-weight:700!important;
-    margin-bottom:4px!important;
-  }
-  
-  .summary-label{
-    font-size:9px!important;
-    opacity:0.7!important;
-    text-transform:uppercase!important;
-    letter-spacing:0.5px!important;
-  }
-  
-  /* Compact Holdings */
-  .holdings-list{
-    display:flex!important;
-    flex-direction:column!important;
-    gap:8px!important;
-  }
-  
-  .holding-row{
-    padding:12px 14px!important;
-    border-radius:12px!important;
-    background:rgba(0,0,0,0.2)!important;
-    border:1px solid rgba(255,255,255,0.05)!important;
-    flex-direction:column!important;
-    gap:10px!important;
-  }
-  
-  .holding-header{
-    display:flex!important;
-    align-items:center!important;
-    gap:10px!important;
-    padding-bottom:8px!important;
-    border-bottom:1px solid rgba(255,255,255,0.05)!important;
-  }
-  
-  .holding-icon-wrapper{
-    width:40px!important;
-    height:40px!important;
-  }
-  
+  /* Mobile text */
+  .section-title,
+  .token-name-col h3,
   .holding-name{
-    font-size:14px!important;
-    font-weight:600!important;
-    flex:1!important;
-  }
-  
-  .holding-stats{
-    display:grid!important;
-    grid-template-columns:repeat(2,1fr)!important;
-    gap:8px!important;
-    width:100%!important;
-  }
-  
-  .holding-stat{
-    padding:8px 10px!important;
-    border-radius:8px!important;
-    background:rgba(0,0,0,0.2)!important;
-  }
-  
-  .holding-stat-label{
-    font-size:8px!important;
-    opacity:0.7!important;
-    margin-bottom:4px!important;
-  }
-  
-  .holding-stat-value{
-    font-size:12px!important;
-    font-weight:600!important;
-  }
-  
-  /* Compact Portfolio Analytics */
-  #portfolioAnalytics{
-    margin-bottom:16px!important;
-  }
-  
-  #portfolioAnalytics > div:first-child{
-    padding:14px 12px!important;
-    margin-bottom:12px!important;
-    border-radius:12px!important;
-    background:linear-gradient(135deg, #1a1f2e 0%, #141920 100%)!important;
-    border:1px solid rgba(99,102,241,0.15)!important;
-    flex-direction:column!important;
-    gap:10px!important;
-  }
-  
-  #portfolioAnalytics > div:first-child h3{
-    font-size:16px!important;
-  }
-  
-  #toggleAnalytics{
-    width:100%!important;
-    padding:10px 14px!important;
-    font-size:11px!important;
-    border-radius:10px!important;
-  }
-  
-  #portfolioAnalytics > div:last-child{
-    padding:12px 10px!important;
-    border-radius:12px!important;
-  }
-  
-  #allocationLegend{
-    grid-template-columns:1fr!important;
-    gap:6px!important;
-  }
-  
-  #allocationLegend > div{
-    padding:8px 10px!important;
-    font-size:11px!important;
-  }
-  
-  /* Compact Forms */
-  .add-holding-form,
-  .add-alert-form,
-  #addTargetForm{
-    display:flex!important;
-    flex-direction:column!important;
-    gap:10px!important;
-    padding:14px 12px!important;
-    background:rgba(0,0,0,0.2)!important;
-    border-radius:12px!important;
-    border:1px solid rgba(255,255,255,0.05)!important;
-  }
-  
-  input,select,textarea{
-    font-size:16px!important;
-    padding:12px 14px!important;
-    border-radius:10px!important;
-    background:rgba(0,0,0,0.3)!important;
-    border:1px solid rgba(255,255,255,0.1)!important;
     color:var(--mobile-text-primary)!important;
   }
   
-  button[type="submit"]{
-    padding:12px 20px!important;
-    font-size:14px!important;
-    font-weight:600!important;
-    border-radius:10px!important;
+  /* Mobile buttons */
+  .auth-btn,
+  .top-nav-tab,
+  .filter-tab,
+  button{
+    background:var(--mobile-bg-card)!important;
+    border:1px solid var(--mobile-border)!important;
+    color:var(--mobile-text-primary)!important;
+  }
+  
+  .auth-btn.primary,
+  .top-nav-tab.active,
+  .filter-tab.active{
     background:var(--mobile-accent)!important;
-    border:none!important;
+    border-color:var(--mobile-accent)!important;
     color:#fff!important;
   }
   
-  /* Compact Buttons */
-  .auth-btn{
-    padding:10px 16px!important;
-    font-size:12px!important;
-    border-radius:10px!important;
-    min-height:44px!important;
-  }
-  
-  .edit-btn,.delete-btn{
-    padding:8px 12px!important;
-    font-size:11px!important;
-    border-radius:8px!important;
-    min-height:40px!important;
-  }
-  
-  /* Compact Filters */
-  .filter-tabs{
-    display:flex!important;
-    gap:6px!important;
-    padding:4px!important;
-    background:rgba(0,0,0,0.2)!important;
-    border-radius:10px!important;
-    overflow-x:auto!important;
-    -webkit-overflow-scrolling:touch!important;
-  }
-  
-  .filter-tab{
-    padding:8px 12px!important;
-    font-size:11px!important;
-    border-radius:8px!important;
-    white-space:nowrap!important;
-    flex-shrink:0!important;
-    min-height:36px!important;
-  }
-  
-  /* Compact Sidebar */
+  /* Mobile sidebar */
   .sidebar{
-    background:linear-gradient(180deg, #141920 0%, #0f1419 100%)!important;
-    border-right:1px solid rgba(99,102,241,0.2)!important;
-    box-shadow:4px 0 24px rgba(0,0,0,0.5)!important;
+    background:var(--mobile-bg-secondary)!important;
+    border-right:1px solid var(--mobile-border)!important;
   }
   
   .sidebar-item{
-    padding:14px 16px!important;
-    border-radius:10px!important;
-    font-size:15px!important;
-    min-height:48px!important;
-    margin-bottom:4px!important;
+    background:transparent!important;
+    color:var(--mobile-text-secondary)!important;
+  }
+  
+  .sidebar-item:hover{
+    background:var(--mobile-bg-card)!important;
+    color:var(--mobile-text-primary)!important;
   }
   
   .sidebar-item.active{
     background:var(--mobile-accent)!important;
-    box-shadow:0 2px 8px rgba(99,102,241,0.3)!important;
+    color:#fff!important;
   }
   
-  /* Compact Modals */
-  .modal-content{
-    width:95vw!important;
-    max-width:95vw!important;
-    padding:20px 16px!important;
-    border-radius:16px!important;
-    background:linear-gradient(135deg, #1a1f2e 0%, #141920 100%)!important;
-    border:1px solid rgba(99,102,241,0.2)!important;
-  }
-  
-  .modal-title{
-    font-size:18px!important;
-    margin-bottom:16px!important;
-  }
-  
-  /* Compact ASI Panel */
-  #asiAlliancePanel{
-    padding:14px 12px!important;
-    margin-bottom:16px!important;
-    border-radius:12px!important;
-    min-height:auto!important;
-  }
-  
-  #asiTokensGrid{
-    grid-template-columns:1fr!important;
-    gap:8px!important;
-  }
-  
-  /* Remove unnecessary spacing */
-  .content-grid{
-    gap:12px!important;
-  }
-  
-  /* Compact Empty States */
-  .empty-state{
-    padding:40px 20px!important;
-  }
-  
-  .empty-state-icon{
-    font-size:48px!important;
-    margin-bottom:12px!important;
-  }
-  
-  .empty-state-title{
-    font-size:16px!important;
-    margin-bottom:8px!important;
-  }
-  
-  .empty-state-text{
-    font-size:12px!important;
-    opacity:0.7!important;
+  /* Mobile overlay */
+  .sidebar-overlay{
+    background:rgba(0,0,0,0.7)!important;
+    backdrop-filter:blur(4px)!important;
   }
 }
 </style>
