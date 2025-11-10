@@ -914,7 +914,7 @@ body{overflow-x:hidden}
       💼 პორტფოლიო
     </button>
     <button class="top-nav-tab" data-page="targets" style="padding:8px 16px;background:transparent;border:none;color:var(--text-tertiary);font-size:14px;font-weight:500;cursor:pointer;border-radius:var(--radius-sm);transition:all 0.2s ease;position:relative;">
-      🎯 მიზნები
+      🎯 Trade
     </button>
     <button class="top-nav-tab" data-page="alerts" style="padding:8px 16px;background:transparent;border:none;color:var(--text-tertiary);font-size:14px;font-weight:500;cursor:pointer;border-radius:var(--radius-sm);transition:all 0.2s ease;position:relative;">
       🔔 შეტყობინებები
@@ -972,7 +972,7 @@ body{overflow-x:hidden}
     </div>
     <div class="sidebar-item" data-page="targets">
       <span class="sidebar-icon">🎯</span>
-      <span class="sidebar-text">გასაყიდი მიზნები</span>
+      <span class="sidebar-text"></span>
     </div>
     <div class="sidebar-item" data-page="alerts">
       <span class="sidebar-icon">🔔</span>
@@ -1120,7 +1120,7 @@ body{overflow-x:hidden}
                 <div style="width:4px;height:40px;background:linear-gradient(180deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);border-radius:2px;box-shadow:0 0 16px rgba(99,102,241,0.6);"></div>
                 <div>
                   <h3 style="font-size:24px;font-weight:700;color:var(--text-primary);margin:0;letter-spacing:-0.4px;background:linear-gradient(135deg, #ffffff 0%, #e0e7ff 50%, #c7d2fe 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-shadow:0 2px 8px rgba(99,102,241,0.3);">📊 პორტფოლიოს ანალიტიკა</h3>
-                  <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:6px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;">Advanced Portfolio Insights</div>
+                  <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:6px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;"></div>
                 </div>
               </div>
               <button id="toggleAnalytics" style="background:linear-gradient(135deg, rgba(99,102,241,0.2) 0%, rgba(139,92,246,0.15) 100%);border:1px solid rgba(99,102,241,0.4);color:var(--text-primary);padding:12px 24px;border-radius:12px;cursor:pointer;font-size:12px;font-weight:700;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);letter-spacing:0.5px;backdrop-filter:blur(10px);position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(99,102,241,0.2);" aria-label="ანალიტიკის ხილვის გადართვა" aria-expanded="true" onmouseenter="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(99,102,241,0.4)';this.style.borderColor='rgba(99,102,241,0.6)';this.style.background='linear-gradient(135deg, rgba(99,102,241,0.3) 0%, rgba(139,92,246,0.2) 100%)'" onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='0 2px 8px rgba(99,102,241,0.2)';this.style.borderColor='rgba(99,102,241,0.4)';this.style.background='linear-gradient(135deg, rgba(99,102,241,0.2) 0%, rgba(139,92,246,0.15) 100%)'">
@@ -1134,7 +1134,7 @@ body{overflow-x:hidden}
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
                   <div>
                     <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-bottom:4px;text-transform:uppercase;letter-spacing:1px;font-weight:600;">აქტივების განაწილება</div>
-                    <div style="font-size:11px;color:rgba(255,255,255,0.4);font-weight:500;">Portfolio Allocation</div>
+                    <div style="font-size:11px;color:rgba(255,255,255,0.4);font-weight:500;"></div>
                   </div>
                   <!-- Portfolio Daily Change -->
                   <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;padding:12px 18px;background:rgba(0,0,0,0.4);border-radius:12px;border:1px solid rgba(99,102,241,0.3);backdrop-filter:blur(10px);box-shadow:0 2px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);">
@@ -1173,7 +1173,7 @@ body{overflow-x:hidden}
           </div>
 
           <div style="background:rgba(20,20,30,.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:24px;margin-bottom:24px;">
-            <h3 style="font-size:16px;font-weight:600;color:#fafafa;margin-bottom:16px;">ახალი მიზნის დამატება</h3>
+            <h3 style="font-size:16px;font-weight:600;color:#fafafa;margin-bottom:16px;">ახალი ორდერის დამატება</h3>
             <form id="addTargetForm" style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:12px;align-items:flex-end;">
               <div>
                 <label style="display:block;font-size:11px;color:#9aa0a6;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;font-weight:500;">ტოკენი</label>
@@ -3397,8 +3397,8 @@ function renderTargets() {
     container.innerHTML = `
       <div class="empty-state">
         <div class="empty-state-icon">🎯</div>
-        <div class="empty-state-title">გასაყიდი მიზნები არ არის</div>
-        <div class="empty-state-text">დაამატეთ გასაყიდი მიზნები თქვენი ტოკენებისთვის, რათა თვალი ადევნოთ სამიზნე ფასებს</div>
+        <div class="empty-state-title">გასაყიდი ტოკენი არ არის</div>
+        <div class="empty-state-text">დაამატეთ გასაყიდი თარგეთი თქვენი ტოკენებისთვის, რათა თვალი ადევნოთ სამიზნე ფასებს</div>
       </div>
     `;
     return;
@@ -3469,7 +3469,7 @@ function renderTargets() {
             <div style="font-weight:600;font-size:14px;color:#fafafa;">$${formatPrice(target.targetPrice)}</div>
           </div>
           <div>
-            <div style="font-size:11px;color:#9aa0a6;margin-bottom:4px;">თარგეთი</div>
+            <div style="font-size:11px;color:#9aa0a6;margin-bottom:4px;">PNL</div>
             <div style="font-weight:600;font-size:14px;color:${distanceColor};">${distanceText}</div>
           </div>
           <div>
