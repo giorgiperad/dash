@@ -166,38 +166,38 @@ body{
 .user-content{display:none}
 .user-content.active{display:block}
 
-/* PORTFOLIO - Modern Compact Design */
+/* PORTFOLIO - Modern Compact Design with Comfortable Colors */
 .portfolio-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
-.summary-card{background:linear-gradient(135deg,rgba(20,20,30,.6) 0%,rgba(26,10,46,.4) 100%);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:18px 20px;backdrop-filter:blur(12px);transition:all .25s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
-.summary-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(139,92,246,.5),transparent);opacity:0;transition:opacity .3s}
-.summary-card:hover{background:linear-gradient(135deg,rgba(20,20,30,.8) 0%,rgba(26,10,46,.6) 100%);border-color:rgba(139,92,246,.3);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.summary-card{background:linear-gradient(135deg,rgba(30,30,40,.7) 0%,rgba(35,30,45,.5) 100%);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:18px 20px;backdrop-filter:blur(12px);transition:all .25s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
+.summary-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(139,92,246,.4),transparent);opacity:0;transition:opacity .3s}
+.summary-card:hover{background:linear-gradient(135deg,rgba(35,35,45,.8) 0%,rgba(40,35,50,.6) 100%);border-color:rgba(139,92,246,.25);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
 .summary-card:hover::before{opacity:1}
-.summary-value{font-size:22px;font-weight:700;margin:6px 0;color:#fafafa;letter-spacing:-0.5px;line-height:1.2;font-variant-numeric:tabular-nums}
-.summary-label{font-size:10px;color:#9aa0a6;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:4px}
+.summary-value{font-size:22px;font-weight:700;margin:6px 0;color:#e8e8f0;letter-spacing:-0.5px;line-height:1.2;font-variant-numeric:tabular-nums}
+.summary-label{font-size:10px;color:#a0a0b0;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:4px}
 .holdings-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;margin-bottom:24px}
-.holding-row{display:flex;flex-direction:column;gap:12px;padding:16px;background:linear-gradient(135deg,rgba(20,20,30,.5) 0%,rgba(15,15,25,.4) 100%);border:1px solid rgba(255,255,255,.06);border-radius:14px;transition:all .25s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;backdrop-filter:blur(8px)}
-.holding-row::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);opacity:0;transition:opacity .3s}
-.holding-row:hover{background:linear-gradient(135deg,rgba(20,20,30,.7) 0%,rgba(15,15,25,.6) 100%);border-color:rgba(139,92,246,.25);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.25)}
+.holding-row{display:flex;flex-direction:column;gap:12px;padding:16px;background:linear-gradient(135deg,rgba(30,30,40,.6) 0%,rgba(25,25,35,.5) 100%);border:1px solid rgba(255,255,255,.08);border-radius:14px;transition:all .25s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;backdrop-filter:blur(8px)}
+.holding-row::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);opacity:0;transition:opacity .3s}
+.holding-row:hover{background:linear-gradient(135deg,rgba(35,35,45,.75) 0%,rgba(30,30,40,.65) 100%);border-color:rgba(139,92,246,.2);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.2)}
 .holding-row:hover::before{opacity:1}
-.holding-header{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.05)}
-.holding-icon-wrapper{width:44px;height:44px;border-radius:12px;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+.holding-header{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.06)}
+.holding-icon-wrapper{width:44px;height:44px;border-radius:12px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
 .holding-icon-wrapper img{width:100%;height:100%;object-fit:cover}
 .holding-info{flex:1;min-width:0}
-.holding-name{font-size:15px;font-weight:600;color:#fafafa;letter-spacing:-0.2px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.holding-symbol{font-size:11px;color:#9aa0a6;text-transform:uppercase;letter-spacing:0.5px;font-weight:500}
+.holding-name{font-size:15px;font-weight:600;color:#e8e8f0;letter-spacing:-0.2px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.holding-symbol{font-size:11px;color:#a0a0b0;text-transform:uppercase;letter-spacing:0.5px;font-weight:500}
 .holding-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .holding-stat{display:flex;flex-direction:column;gap:4px}
-.holding-stat-label{font-size:9px;color:#71717a;text-transform:uppercase;letter-spacing:0.8px;font-weight:600}
-.holding-stat-value{font-size:13px;font-weight:600;color:#e8eaed;letter-spacing:-0.1px;font-variant-numeric:tabular-nums}
-.holding-stat-value.positive{color:#22c55e}
-.holding-stat-value.negative{color:#ef4444}
-.holding-actions{display:flex;gap:6px;padding-top:12px;border-top:1px solid rgba(255,255,255,.05);justify-content:flex-end}
-.edit-btn{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);color:#818cf8;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:11px;font-weight:600;transition:all .2s;flex:1;text-align:center}
-.edit-btn:hover{background:rgba(99,102,241,.2);border-color:rgba(99,102,241,.35);color:#a5b4fc;transform:translateY(-1px)}
-.delete-btn{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:#f87171;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:11px;font-weight:600;transition:all .2s;flex:1;text-align:center}
-.delete-btn:hover{background:rgba(239,68,68,.2);border-color:rgba(239,68,68,.35);color:#fca5a5;transform:translateY(-1px)}
+.holding-stat-label{font-size:9px;color:#9090a0;text-transform:uppercase;letter-spacing:0.8px;font-weight:600}
+.holding-stat-value{font-size:13px;font-weight:600;color:#d8d8e0;letter-spacing:-0.1px;font-variant-numeric:tabular-nums}
+.holding-stat-value.positive{color:#4ade80}
+.holding-stat-value.negative{color:#f87171}
+.holding-actions{display:flex;gap:6px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06);justify-content:flex-end}
+.edit-btn{background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);color:#a5b4fc;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:11px;font-weight:600;transition:all .2s;flex:1;text-align:center}
+.edit-btn:hover{background:rgba(99,102,241,.18);border-color:rgba(99,102,241,.3);color:#c7d2fe;transform:translateY(-1px)}
+.delete-btn{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#fca5a5;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:11px;font-weight:600;transition:all .2s;flex:1;text-align:center}
+.delete-btn:hover{background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.3);color:#fecaca;transform:translateY(-1px)}
 .editable{cursor:pointer;padding:2px 4px;border-radius:4px;transition:all .2s;display:inline-block}
-.editable:hover{background:rgba(139,92,246,.15);border:1px dashed rgba(139,92,246,.4)}
+.editable:hover{background:rgba(139,92,246,.12);border:1px dashed rgba(139,92,246,.3)}
 .add-holding-form{display:grid;grid-template-columns:1fr 1fr 1fr 80px;gap:12px;margin-top:24px}
 .add-holding-form input,.add-holding-form select{padding:10px 14px;background:rgba(20,20,30,.4);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#e4e4e7;font-size:13px;transition:all .2s}
 .add-holding-form input:focus,.add-holding-form select:focus{outline:none;border-color:#6366f1;background:rgba(20,20,30,.6)}
@@ -656,39 +656,41 @@ body{overflow-x:hidden}
         </div>
 
         <!-- Portfolio Analytics Section -->
-        <div id="portfolioAnalytics" style="display:none;margin-bottom:32px;background:rgba(20,20,30,.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:24px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-            <h3 style="font-size:18px;font-weight:600;color:#fafafa;letter-spacing:-0.3px;">პორტფოლიოს ანალიტიკა</h3>
-            <button id="toggleAnalytics" style="background:transparent;border:1px solid rgba(255,255,255,.1);color:#71717a;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;transition:all .2s;" aria-label="ანალიტიკის ხილვის გადართვა" aria-expanded="true">დამალვა</button>
+        <div id="portfolioAnalytics" style="display:none;margin-bottom:32px;background:linear-gradient(135deg,rgba(30,30,40,.7) 0%,rgba(35,30,45,.5) 100%);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:24px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.06);">
+            <h3 style="font-size:20px;font-weight:600;color:#e8e8f0;letter-spacing:-0.3px;margin:0;">📊 პორტფოლიოს ანალიტიკა</h3>
+            <button id="toggleAnalytics" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#a0a0b0;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;transition:all .2s;" aria-label="ანალიტიკის ხილვის გადართვა" aria-expanded="true" onmouseover="this.style.background='rgba(255,255,255,.08)';this.style.color='#d8d8e0'" onmouseout="this.style.background='rgba(255,255,255,.05)';this.style.color='#a0a0b0'">დამალვა</button>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;" id="analyticsGrid">
-            <div>
-              <div style="font-size:12px;color:#71717a;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.8px;font-weight:500;" role="heading" aria-level="4">აქტივების განაწილება</div>
-              <canvas id="allocationChart" width="200" height="200" style="max-width:100%;height:auto;" aria-label="პორტფოლიოს განაწილების ნამდვილი დიაგრამა" role="img"></canvas>
-              <div id="allocationLegend" style="margin-top:16px;display:flex;flex-direction:column;gap:8px;" role="list" aria-label="ტოკენების განაწილების პროცენტები"></div>
+            <div style="background:rgba(25,25,35,.4);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:20px;">
+              <div style="font-size:11px;color:#9090a0;margin-bottom:16px;text-transform:uppercase;letter-spacing:1px;font-weight:600;" role="heading" aria-level="4">აქტივების განაწილება</div>
+              <div style="display:flex;justify-content:center;margin-bottom:20px;">
+                <canvas id="allocationChart" width="220" height="220" style="max-width:100%;height:auto;filter:drop-shadow(0 4px 8px rgba(0,0,0,.2));" aria-label="პორტფოლიოს განაწილების ნამდვილი დიაგრამა" role="img"></canvas>
+              </div>
+              <div id="allocationLegend" style="display:flex;flex-direction:column;gap:10px;" role="list" aria-label="ტოკენების განაწილების პროცენტები"></div>
             </div>
             <div>
-              <div style="font-size:12px;color:#71717a;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.8px;font-weight:500;" role="heading" aria-level="4"></div>
+              <div style="font-size:11px;color:#9090a0;margin-bottom:16px;text-transform:uppercase;letter-spacing:1px;font-weight:600;" role="heading" aria-level="4">რისკის მეტრიკები</div>
               <div id="riskMetrics" style="display:flex;flex-direction:column;gap:12px;" role="list" aria-label="პორტფოლიოს რისკის მეტრიკები">
-                <div style="padding:12px;background:rgba(20,20,30,.3);border-radius:8px;border:1px solid rgba(255,255,255,.05);">
-                  <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-                    <span style="font-size:12px;color:#71717a;">დივერსიფიკაციის ქულა</span>
-                    <span id="diversificationScore" style="font-size:14px;font-weight:600;color:#fafafa;">-</span>
+                <div style="padding:16px;background:rgba(25,25,35,.5);border:1px solid rgba(255,255,255,.06);border-radius:12px;transition:all .2s;" onmouseover="this.style.background='rgba(30,30,40,.6)';this.style.borderColor='rgba(255,255,255,.1)'" onmouseout="this.style.background='rgba(25,25,35,.5)';this.style.borderColor='rgba(255,255,255,.06)'">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                    <span style="font-size:12px;color:#a0a0b0;font-weight:500;">დივერსიფიკაციის ქულა</span>
+                    <span id="diversificationScore" style="font-size:16px;font-weight:700;color:#e8e8f0;font-variant-numeric:tabular-nums;">-</span>
                   </div>
-                  <div style="height:4px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;">
-                    <div id="diversificationBar" style="height:100%;background:#6366f1;width:0%;transition:width .3s;"></div>
-                  </div>
-                </div>
-                <div style="padding:12px;background:rgba(20,20,30,.3);border-radius:8px;border:1px solid rgba(255,255,255,.05);">
-                  <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-                    <span style="font-size:12px;color:#71717a;">უდიდესი პოზიცია</span>
-                    <span id="largestPosition" style="font-size:14px;font-weight:600;color:#fafafa;">-</span>
+                  <div style="height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;position:relative;">
+                    <div id="diversificationBar" style="height:100%;background:linear-gradient(90deg,#6366f1,#8b5cf6);width:0%;transition:width .5s cubic-bezier(.4,0,.2,1);border-radius:3px;box-shadow:0 0 8px rgba(99,102,241,.4);"></div>
                   </div>
                 </div>
-                <div style="padding:12px;background:rgba(20,20,30,.3);border-radius:8px;border:1px solid rgba(255,255,255,.05);">
-                  <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-                    <span style="font-size:12px;color:#71717a;">ტოკენების რაოდენობა</span>
-                    <span id="tokenCount" style="font-size:14px;font-weight:600;color:#fafafa;">-</span>
+                <div style="padding:16px;background:rgba(25,25,35,.5);border:1px solid rgba(255,255,255,.06);border-radius:12px;transition:all .2s;" onmouseover="this.style.background='rgba(30,30,40,.6)';this.style.borderColor='rgba(255,255,255,.1)'" onmouseout="this.style.background='rgba(25,25,35,.5)';this.style.borderColor='rgba(255,255,255,.06)'">
+                  <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <span style="font-size:12px;color:#a0a0b0;font-weight:500;">უდიდესი პოზიცია</span>
+                    <span id="largestPosition" style="font-size:16px;font-weight:700;color:#e8e8f0;font-variant-numeric:tabular-nums;">-</span>
+                  </div>
+                </div>
+                <div style="padding:16px;background:rgba(25,25,35,.5);border:1px solid rgba(255,255,255,.06);border-radius:12px;transition:all .2s;" onmouseover="this.style.background='rgba(30,30,40,.6)';this.style.borderColor='rgba(255,255,255,.1)'" onmouseout="this.style.background='rgba(25,25,35,.5)';this.style.borderColor='rgba(255,255,255,.06)'">
+                  <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <span style="font-size:12px;color:#a0a0b0;font-weight:500;">ტოკენების რაოდენობა</span>
+                    <span id="tokenCount" style="font-size:16px;font-weight:700;color:#e8e8f0;font-variant-numeric:tabular-nums;">-</span>
                   </div>
                 </div>
               </div>
@@ -3107,7 +3109,7 @@ function renderPortfolio(holdings) {
   let totalValue = 0, totalCost = 0;
   
   if (!holdings || Object.keys(holdings).length === 0) {
-    list.innerHTML = '<div style="text-align:center;padding:60px 40px;color:#9aa0a6;font-size:14px;background:rgba(20,20,30,.3);border:1px dashed rgba(255,255,255,.1);border-radius:14px;"><div style="font-size:48px;margin-bottom:16px;opacity:0.5;">💼</div><div style="font-weight:500;margin-bottom:8px;">პოზიციები ჯერ არ არის</div><div style="font-size:12px;color:#71717a;">დაამატეთ ტოკენები თქვენს პორტფოლიოში</div></div>';
+    list.innerHTML = '<div style="text-align:center;padding:60px 40px;color:#a0a0b0;font-size:14px;background:rgba(30,30,40,.4);border:1px dashed rgba(255,255,255,.08);border-radius:14px;"><div style="font-size:48px;margin-bottom:16px;opacity:0.6;">💼</div><div style="font-weight:500;margin-bottom:8px;color:#d8d8e0;">პოზიციები ჯერ არ არის</div><div style="font-size:12px;color:#9090a0;">დაამატეთ ტოკენები თქვენს პორტფოლიოში</div></div>';
     if ($('totalValue')) $('totalValue').textContent = '$0.00';
     if ($('totalPL')) {
       $('totalPL').textContent = '$0.00';
@@ -3168,7 +3170,7 @@ function renderPortfolio(holdings) {
         <div class="holding-header">
           <div class="holding-icon-wrapper">
             <img src="${token.image || 'https://via.placeholder.com/44'}" onerror="this.parentElement.innerHTML='<span style=\\'font-size:20px;color:#6366f1\\'>💰</span>'">
-          </div>
+        </div>
           <div class="holding-info">
             <div class="holding-name">${token.name || h.tokenId || 'Unknown'}</div>
             <div class="holding-symbol">${token.symbol ? token.symbol.toUpperCase() : (h.tokenId ? h.tokenId.toUpperCase().substring(0, 6) : 'UNK')}</div>
@@ -3353,13 +3355,40 @@ function updatePortfolioAnalytics(holdings, totalValue) {
           const legendItem = document.createElement('div');
           legendItem.style.display = 'flex';
           legendItem.style.alignItems = 'center';
-          legendItem.style.gap = '8px';
-          legendItem.style.fontSize = '12px';
-          legendItem.innerHTML = `
-            <div style="width:12px;height:12px;border-radius:3px;background:${colors[idx % colors.length]};"></div>
-            <span style="color:#71717a;">${token}</span>
-            <span style="color:#fafafa;margin-left:auto;font-weight:500;">${percentage.toFixed(1)}%</span>
-          `;
+          legendItem.style.gap = '10px';
+          legendItem.style.padding = '8px 12px';
+          legendItem.style.background = 'rgba(25,25,35,.3)';
+          legendItem.style.borderRadius = '8px';
+          legendItem.style.border = '1px solid rgba(255,255,255,.04)';
+          legendItem.style.transition = 'all .2s';
+          legendItem.style.cursor = 'pointer';
+          legendItem.onmouseover = function() { this.style.background = 'rgba(30,30,40,.5)'; this.style.borderColor = 'rgba(255,255,255,.08)'; };
+          legendItem.onmouseout = function() { this.style.background = 'rgba(25,25,35,.3)'; this.style.borderColor = 'rgba(255,255,255,.04)'; };
+          
+          const colorBox = document.createElement('div');
+          colorBox.style.width = '14px';
+          colorBox.style.height = '14px';
+          colorBox.style.borderRadius = '4px';
+          colorBox.style.background = colors[idx % colors.length];
+          colorBox.style.boxShadow = '0 2px 4px rgba(0,0,0,.2)';
+          
+          const tokenName = document.createElement('span');
+          tokenName.style.color = '#a0a0b0';
+          tokenName.style.fontSize = '13px';
+          tokenName.style.fontWeight = '500';
+          tokenName.textContent = token;
+          
+          const tokenPercent = document.createElement('span');
+          tokenPercent.style.color = '#e8e8f0';
+          tokenPercent.style.marginLeft = 'auto';
+          tokenPercent.style.fontWeight = '600';
+          tokenPercent.style.fontSize = '13px';
+          tokenPercent.style.fontVariantNumeric = 'tabular-nums';
+          tokenPercent.textContent = `${percentage.toFixed(1)}%`;
+          
+          legendItem.appendChild(colorBox);
+          legendItem.appendChild(tokenName);
+          legendItem.appendChild(tokenPercent);
           legendDiv.appendChild(legendItem);
         }
         
