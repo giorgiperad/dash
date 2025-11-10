@@ -166,24 +166,38 @@ body{
 .user-content{display:none}
 .user-content.active{display:block}
 
-/* PORTFOLIO */
-.portfolio-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:32px}
-.summary-card{background:rgba(20,20,30,.4);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:24px;text-align:center;backdrop-filter:blur(12px);transition:all .2s}
-.summary-card:hover{background:rgba(20,20,30,.6);border-color:rgba(255,255,255,.1)}
-.summary-value{font-size:24px;font-weight:600;margin:8px 0;color:#fafafa;letter-spacing:-0.4px}
-.summary-label{font-size:12px;color:#9aa0a6;text-transform:uppercase;letter-spacing:0.8px;font-weight:500}
-.holdings-list{display:flex;flex-direction:column;gap:10px}
-.holding-row{display:grid;grid-template-columns:80px 2fr 1fr 1fr 1fr 120px;gap:16px;padding:16px 20px;background:rgba(20,20,30,.3);border:1px solid rgba(255,255,255,.05);border-radius:12px;align-items:center;transition:all .2s}
-.holding-row:hover{background:rgba(20,20,30,.5);border-color:rgba(255,255,255,.1);transform:translateX(4px)}
-.holding-name{font-weight:600}
-.token-symbol{color:#666;font-size:12px}
-.editable{cursor:pointer;padding:4px 8px;border-radius:6px;transition:all .2s}
-.editable:hover{background:rgba(139,92,246,.1);border:1px dashed #8b5cf6}
-.holding-actions{display:flex;gap:8px;align-items:center;justify-content:flex-end}
-.edit-btn{background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);color:#818cf8;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;transition:all .2s}
-.edit-btn:hover{background:rgba(99,102,241,.2);border-color:rgba(99,102,241,.3);color:#a5b4fc}
-.delete-btn{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#f87171;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;transition:all .2s}
-.delete-btn:hover{background:rgba(239,68,68,.2);border-color:rgba(239,68,68,.3);color:#fca5a5}
+/* PORTFOLIO - Modern Compact Design */
+.portfolio-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.summary-card{background:linear-gradient(135deg,rgba(20,20,30,.6) 0%,rgba(26,10,46,.4) 100%);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:18px 20px;backdrop-filter:blur(12px);transition:all .25s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
+.summary-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(139,92,246,.5),transparent);opacity:0;transition:opacity .3s}
+.summary-card:hover{background:linear-gradient(135deg,rgba(20,20,30,.8) 0%,rgba(26,10,46,.6) 100%);border-color:rgba(139,92,246,.3);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.summary-card:hover::before{opacity:1}
+.summary-value{font-size:22px;font-weight:700;margin:6px 0;color:#fafafa;letter-spacing:-0.5px;line-height:1.2;font-variant-numeric:tabular-nums}
+.summary-label{font-size:10px;color:#9aa0a6;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:4px}
+.holdings-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;margin-bottom:24px}
+.holding-row{display:flex;flex-direction:column;gap:12px;padding:16px;background:linear-gradient(135deg,rgba(20,20,30,.5) 0%,rgba(15,15,25,.4) 100%);border:1px solid rgba(255,255,255,.06);border-radius:14px;transition:all .25s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;backdrop-filter:blur(8px)}
+.holding-row::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);opacity:0;transition:opacity .3s}
+.holding-row:hover{background:linear-gradient(135deg,rgba(20,20,30,.7) 0%,rgba(15,15,25,.6) 100%);border-color:rgba(139,92,246,.25);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.25)}
+.holding-row:hover::before{opacity:1}
+.holding-header{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.05)}
+.holding-icon-wrapper{width:44px;height:44px;border-radius:12px;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+.holding-icon-wrapper img{width:100%;height:100%;object-fit:cover}
+.holding-info{flex:1;min-width:0}
+.holding-name{font-size:15px;font-weight:600;color:#fafafa;letter-spacing:-0.2px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.holding-symbol{font-size:11px;color:#9aa0a6;text-transform:uppercase;letter-spacing:0.5px;font-weight:500}
+.holding-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.holding-stat{display:flex;flex-direction:column;gap:4px}
+.holding-stat-label{font-size:9px;color:#71717a;text-transform:uppercase;letter-spacing:0.8px;font-weight:600}
+.holding-stat-value{font-size:13px;font-weight:600;color:#e8eaed;letter-spacing:-0.1px;font-variant-numeric:tabular-nums}
+.holding-stat-value.positive{color:#22c55e}
+.holding-stat-value.negative{color:#ef4444}
+.holding-actions{display:flex;gap:6px;padding-top:12px;border-top:1px solid rgba(255,255,255,.05);justify-content:flex-end}
+.edit-btn{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);color:#818cf8;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:11px;font-weight:600;transition:all .2s;flex:1;text-align:center}
+.edit-btn:hover{background:rgba(99,102,241,.2);border-color:rgba(99,102,241,.35);color:#a5b4fc;transform:translateY(-1px)}
+.delete-btn{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:#f87171;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:11px;font-weight:600;transition:all .2s;flex:1;text-align:center}
+.delete-btn:hover{background:rgba(239,68,68,.2);border-color:rgba(239,68,68,.35);color:#fca5a5;transform:translateY(-1px)}
+.editable{cursor:pointer;padding:2px 4px;border-radius:4px;transition:all .2s;display:inline-block}
+.editable:hover{background:rgba(139,92,246,.15);border:1px dashed rgba(139,92,246,.4)}
 .add-holding-form{display:grid;grid-template-columns:1fr 1fr 1fr 80px;gap:12px;margin-top:24px}
 .add-holding-form input,.add-holding-form select{padding:10px 14px;background:rgba(20,20,30,.4);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#e4e4e7;font-size:13px;transition:all .2s}
 .add-holding-form input:focus,.add-holding-form select:focus{outline:none;border-color:#6366f1;background:rgba(20,20,30,.6)}
@@ -299,8 +313,10 @@ body{
   .user-tabs{flex-wrap:wrap;gap:8px}
   .user-tab{padding:10px 16px;font-size:12px}
   .portfolio-summary{grid-template-columns:1fr;gap:12px}
-  .holding-row{grid-template-columns:50px 1fr 1fr 1fr 100px;gap:10px;padding:14px;font-size:13px}
-  .holding-row .editable{font-size:12px}
+  .holdings-list{grid-template-columns:1fr;gap:10px}
+  .holding-row{padding:14px;gap:10px}
+  .holding-stats{grid-template-columns:repeat(2,1fr);gap:8px}
+  .holding-stat-value{font-size:12px}
   .add-holding-form{grid-template-columns:1fr;gap:10px}
   .add-alert-form{grid-template-columns:1fr;gap:10px}
   .modal-content{width:95vw;max-width:500px;padding:24px}
@@ -342,10 +358,15 @@ body{
   .portfolio-summary{grid-template-columns:1fr;gap:10px;margin-bottom:24px}
   .summary-card{padding:16px}
   .summary-value{font-size:20px}
-  .holding-row{grid-template-columns:40px 1fr 1fr 80px;gap:8px;padding:12px;font-size:12px}
-  .holding-name{font-size:13px}
-  .holding-actions{flex-direction:column;gap:4px}
-  .edit-btn,.delete-btn{padding:6px 10px;font-size:11px}
+  .holdings-list{grid-template-columns:1fr;gap:10px}
+  .holding-row{padding:14px;gap:10px}
+  .holding-header{gap:10px;padding-bottom:10px}
+  .holding-icon-wrapper{width:40px;height:40px}
+  .holding-name{font-size:14px}
+  .holding-stats{grid-template-columns:repeat(2,1fr);gap:8px}
+  .holding-stat-value{font-size:12px}
+  .holding-actions{flex-direction:row;gap:6px;padding-top:10px}
+  .edit-btn,.delete-btn{padding:8px 12px;font-size:11px}
   .add-holding-form{grid-template-columns:1fr;gap:8px;margin-top:20px}
   .add-alert-form{grid-template-columns:1fr;gap:8px;margin-top:20px}
   .modal-content{width:95vw;padding:20px;border-radius:16px}
@@ -391,9 +412,15 @@ body{
   .token-price-col{font-size:13px}
   .filter-tab{padding:6px 10px;font-size:10px}
   .user-tab{padding:8px 12px;font-size:10px}
-  .holding-row{grid-template-columns:36px 1fr 70px;gap:6px;padding:10px}
-  .holding-name{font-size:12px}
-  .editable{font-size:11px}
+  .holdings-list{grid-template-columns:1fr;gap:8px}
+  .holding-row{padding:12px;gap:8px}
+  .holding-header{gap:8px;padding-bottom:8px}
+  .holding-icon-wrapper{width:36px;height:36px}
+  .holding-name{font-size:13px}
+  .holding-stats{grid-template-columns:repeat(2,1fr);gap:6px}
+  .holding-stat-value{font-size:11px}
+  .holding-actions{flex-direction:row;gap:4px;padding-top:8px}
+  .edit-btn,.delete-btn{padding:6px 10px;font-size:10px}
   .modal-content{width:98vw;padding:16px}
   .modal-header{padding:16px}
   .modal-title{font-size:16px}
@@ -3080,7 +3107,7 @@ function renderPortfolio(holdings) {
   let totalValue = 0, totalCost = 0;
   
   if (!holdings || Object.keys(holdings).length === 0) {
-    list.innerHTML = '<div style="text-align:center;padding:40px;color:#9aa0a6;font-size:14px;">პოზიციები ჯერ არ არის. დაამატეთ ტოკენები თქვენს პორტფოლიოში!</div>';
+    list.innerHTML = '<div style="text-align:center;padding:60px 40px;color:#9aa0a6;font-size:14px;background:rgba(20,20,30,.3);border:1px dashed rgba(255,255,255,.1);border-radius:14px;"><div style="font-size:48px;margin-bottom:16px;opacity:0.5;">💼</div><div style="font-weight:500;margin-bottom:8px;">პოზიციები ჯერ არ არის</div><div style="font-size:12px;color:#71717a;">დაამატეთ ტოკენები თქვენს პორტფოლიოში</div></div>';
     if ($('totalValue')) $('totalValue').textContent = '$0.00';
     if ($('totalPL')) {
       $('totalPL').textContent = '$0.00';
@@ -3133,19 +3160,49 @@ function renderPortfolio(holdings) {
     totalCost += cost;
     const pl = value - cost;
     const plPct = cost > 0 ? (pl / cost * 100) : 0;
-    const symbolDisplay = token.symbol ? `(${token.symbol.toUpperCase()})` : '';
+    const plClass = pl >= 0 ? 'positive' : 'negative';
+    const plSign = pl >= 0 ? '+' : '';
+    
     list.innerHTML += `
       <div class="holding-row" data-id="${id}">
-        <div class="token-icon-col"><img src="${token.image || 'https://via.placeholder.com/32'}" class="token-icon" onerror="this.src='https://via.placeholder.com/32?text=?'"></div>
-        <div class="holding-name">${token.name || h.tokenId || 'Unknown'} ${symbolDisplay}</div>
-        <div class="editable" data-field="amount" data-value="${h.amount}">${h.amount}</div>
-        <div class="editable" data-field="buyPrice" data-value="${h.buyPrice}">$${formatPrice(h.buyPrice)}</div>
-        <div style="color:${pl >= 0 ? '#10b981' : '#ef4444'}">
-          ${pl >= 0 ? '+' : ''}${formatPrice(pl)}<br><small>(${plPct.toFixed(2)}%)</small>
+        <div class="holding-header">
+          <div class="holding-icon-wrapper">
+            <img src="${token.image || 'https://via.placeholder.com/44'}" onerror="this.parentElement.innerHTML='<span style=\\'font-size:20px;color:#6366f1\\'>💰</span>'">
+          </div>
+          <div class="holding-info">
+            <div class="holding-name">${token.name || h.tokenId || 'Unknown'}</div>
+            <div class="holding-symbol">${token.symbol ? token.symbol.toUpperCase() : (h.tokenId ? h.tokenId.toUpperCase().substring(0, 6) : 'UNK')}</div>
+          </div>
+        </div>
+        <div class="holding-stats">
+          <div class="holding-stat">
+            <div class="holding-stat-label">რაოდენობა</div>
+            <div class="holding-stat-value editable" data-field="amount" data-value="${h.amount}">${formatPrice(h.amount)}</div>
+          </div>
+          <div class="holding-stat">
+            <div class="holding-stat-label">შესყიდვის ფასი</div>
+            <div class="holding-stat-value editable" data-field="buyPrice" data-value="${h.buyPrice}">$${formatPrice(h.buyPrice)}</div>
+          </div>
+          <div class="holding-stat">
+            <div class="holding-stat-label">მიმდინარე ფასი</div>
+            <div class="holding-stat-value">$${formatPrice(price)}</div>
+          </div>
+          <div class="holding-stat">
+            <div class="holding-stat-label">ღირებულება</div>
+            <div class="holding-stat-value">$${formatPrice(value)}</div>
+          </div>
+          <div class="holding-stat">
+            <div class="holding-stat-label">PNL</div>
+            <div class="holding-stat-value ${plClass}">${plSign}$${formatPrice(Math.abs(pl))}</div>
+          </div>
+          <div class="holding-stat">
+            <div class="holding-stat-label">ROI</div>
+            <div class="holding-stat-value ${plClass}">${plSign}${plPct.toFixed(2)}%</div>
+          </div>
         </div>
         <div class="holding-actions">
-          <button class="edit-btn" onclick="editHolding('${id}', '${h.tokenId}', ${h.amount}, ${h.buyPrice})" title="Edit">✏️</button>
-          <button class="delete-btn" onclick="deleteHolding('${id}')" title="Delete">X</button>
+          <button class="edit-btn" onclick="editHolding('${id}', '${h.tokenId}', ${h.amount}, ${h.buyPrice})" title="რედაქტირება">✏️ რედაქტირება</button>
+          <button class="delete-btn" onclick="deleteHolding('${id}')" title="წაშლა">🗑️ წაშლა</button>
         </div>
       </div>`;
   });
