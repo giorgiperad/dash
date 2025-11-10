@@ -1710,9 +1710,9 @@ body{overflow-x:hidden}
             <div style="background:rgba(15,23,42,0.95);border:1px solid rgba(99,102,241,0.3);border-radius:14px;padding:20px;margin-bottom:24px;">
               <div style="margin-bottom:16px;">
                 <label style="display:block;font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;">Wallet Address</label>
-                <div style="display:flex;gap:12px;align-items:flex-start;">
+                <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;">
                   <input type="text" id="walletAddress" placeholder="Enter wallet address (0x...)" 
-                    style="flex:1;padding:12px 16px;background:rgba(0,0,0,0.3);border:1px solid rgba(99,102,241,0.3);border-radius:10px;color:var(--text-primary);font-size:14px;font-family:monospace;">
+                    style="flex:1;min-width:200px;padding:12px 16px;background:rgba(0,0,0,0.3);border:1px solid rgba(99,102,241,0.3);border-radius:10px;color:var(--text-primary);font-size:14px;font-family:monospace;">
                   <select id="walletChain" style="padding:12px 16px;background:rgba(0,0,0,0.3);border:1px solid rgba(99,102,241,0.3);border-radius:10px;color:var(--text-primary);font-size:14px;cursor:pointer;">
                     <option value="ethereum">Ethereum</option>
                     <option value="bsc">BSC</option>
@@ -1723,6 +1723,18 @@ body{overflow-x:hidden}
                   </select>
                   <button id="loadWalletBtn" style="padding:12px 24px;background:linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);border:none;color:#fff;border-radius:10px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;white-space:nowrap;">Load Wallet</button>
                 </div>
+                <div style="margin-top:12px;padding:10px;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);border-radius:8px;font-size:11px;color:rgba(255,255,255,0.6);">
+                  💡 <strong>Tip:</strong> Using <a href="https://docs.cloud.debank.com/en/readme/api-pro-reference" target="_blank" style="color:#6366f1;text-decoration:underline;">DeBank Cloud API</a>. For better rate limits, get a free AccessKey from DeBank Cloud. If loading fails, use "Add Tokens Manually" button.
+                </div>
+                <details style="margin-top:8px;">
+                  <summary style="cursor:pointer;font-size:11px;color:rgba(255,255,255,0.5);user-select:none;">🔑 Optional: Add DeBank Cloud AccessKey (for higher rate limits)</summary>
+                  <input type="text" id="debankAccessKey" placeholder="Enter your DeBank Cloud AccessKey (optional)" 
+                    style="width:100%;margin-top:8px;padding:10px 14px;background:rgba(0,0,0,0.3);border:1px solid rgba(99,102,241,0.3);border-radius:8px;color:var(--text-primary);font-size:12px;font-family:monospace;"
+                    onchange="localStorage.setItem('debankAccessKey', this.value)">
+                  <div style="margin-top:6px;font-size:10px;color:rgba(255,255,255,0.5);">
+                    Get your free AccessKey at <a href="https://cloud.debank.com" target="_blank" style="color:#6366f1;">cloud.debank.com</a>
+                  </div>
+                </details>
                 <div id="walletStatus" style="margin-top:12px;padding:12px;border-radius:8px;display:none;font-size:13px;"></div>
               </div>
             </div>
@@ -5433,7 +5445,28 @@ async function loadWalletData() {
   $('loadWalletBtn').textContent = 'Loading...';
   
   try {
-    // Try DeBank API first (no key needed, public API)
+    // Try DeBank Cloud Pro API first (requires AccessKey)
+    // Documentation: https://docs.cloud.debank.com/en/readme/api-pro-reference
+    // Endpoint: GET /v1/user/token_list
+    const accessKey = localStorage.getItem('debankAccessKey') || '';
+    if (accessKey) {
+      const debankProResponse = await fetch(`https://pro-openapi.debank.com/v1/user/token_list?id=${address}&is_all=true`, {
+        headers: {
+          'Accept': 'application/json',
+          'AccessKey': accessKey,
+        }
+      });
+      
+      if (debankProResponse.ok) {
+        const debankProData = await debankProResponse.json();
+        if (debankProData && Array.isArray(debankProData) && debankProData.length > 0) {
+          processWalletTokensDebank(debankProData, address);
+          return;
+        }
+      }
+    }
+    
+    // Fallback: Try public DeBank API (legacy, no key needed)
     const debankResponse = await fetch(`https://api.debank.com/token/balance_list?user_addr=${address}&is_all=true`, {
       headers: {
         'Accept': 'application/json',
@@ -5902,6 +5935,11 @@ if (document.readyState === 'loading') {
         addManualToken();
       };
     }
+    // Load saved DeBank AccessKey if exists
+    const savedKey = localStorage.getItem('debankAccessKey');
+    if (savedKey && $('debankAccessKey')) {
+      $('debankAccessKey').value = savedKey;
+    }
   });
 } else {
   initPortfolioTabs();
@@ -5912,6 +5950,11 @@ if (document.readyState === 'loading') {
       e.preventDefault();
       addManualToken();
     };
+  }
+  // Load saved DeBank AccessKey if exists
+  const savedKey = localStorage.getItem('debankAccessKey');
+  if (savedKey && $('debankAccessKey')) {
+    $('debankAccessKey').value = savedKey;
   }
 }
 </script>
