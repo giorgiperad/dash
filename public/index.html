@@ -137,7 +137,7 @@ body{
 }
 .grain-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");opacity:0.03;pointer-events:none;z-index:1}
 [data-theme="light"] .grain-overlay{opacity:0.01}
-.navbar{background:var(--bg-secondary);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border-secondary);padding:0 32px;display:flex;justify-content:space-between;align-items:center;position:fixed;top:0;left:70px;right:0;z-index:100;box-shadow:var(--shadow-sm);transition:background-color 0.3s ease, border-color 0.3s ease;height:70px}
+.navbar{background:var(--bg-secondary);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border-secondary);padding:0 32px;display:flex;justify-content:space-between;align-items:center;position:fixed;top:0;left:72px;right:0;z-index:100;box-shadow:var(--shadow-sm);transition:background-color 0.3s ease, border-color 0.3s ease;height:70px}
 .logo-section{display:flex;align-items:center;gap:16px}
 .logo-icon{width:40px;height:40px;min-width:40px;min-height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:24px;overflow:hidden;position:relative;flex-shrink:0}
 .logo-icon img{width:100%;height:100%;object-fit:contain;max-width:40px;max-height:40px;filter:none}
@@ -166,25 +166,25 @@ body{
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.1)}}
 .live-text{font-size:12px;color:var(--success);font-weight:600;text-transform:uppercase;letter-spacing:0.8px;transition:color 0.3s ease}
 .time-display{font-size:14px;color:var(--text-tertiary);font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:0.5px;transition:color 0.3s ease}
-/* SIDEBAR MENU - Modern Clean Style */
-.sidebar{position:fixed;left:0;top:0;width:70px;height:100vh;background:var(--bg-secondary);border-right:1px solid var(--border-secondary);padding:16px 0;overflow-y:auto;overflow-x:hidden;z-index:90;transition:all 0.3s ease;display:flex;flex-direction:column;align-items:center;gap:4px}
-.sidebar::-webkit-scrollbar{width:3px}
+/* SIDEBAR MENU - Modern Solid Elegant Style */
+.sidebar{position:fixed;left:0;top:0;width:72px;height:100vh;background:var(--bg-secondary);border-right:1px solid var(--border-secondary);padding:20px 0;overflow-y:auto;overflow-x:hidden;z-index:90;transition:all 0.3s ease}
+.sidebar::-webkit-scrollbar{width:2px}
 .sidebar::-webkit-scrollbar-track{background:transparent}
-.sidebar::-webkit-scrollbar-thumb{background:var(--border-primary);border-radius:2px}
-.sidebar::-webkit-scrollbar-thumb:hover{background:var(--border-accent)}
-.sidebar-menu{display:flex;flex-direction:column;gap:6px;padding:0;width:100%;align-items:center}
-.sidebar-item{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:10px;color:var(--text-tertiary);font-size:18px;cursor:pointer;transition:all 0.2s ease;text-decoration:none;position:relative;border:none;background:transparent;margin:0}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border-primary);border-radius:1px}
+.sidebar::-webkit-scrollbar-thumb:hover{background:var(--text-tertiary)}
+.sidebar-menu{display:flex;flex-direction:column;gap:4px;padding:0 12px;width:100%}
+.sidebar-item{display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:8px;color:var(--text-tertiary);font-size:20px;cursor:pointer;transition:all 0.15s ease;text-decoration:none;position:relative;border:none;background:transparent;margin:0 auto}
 .sidebar-item:hover{background:var(--bg-tertiary);color:var(--text-primary)}
-.sidebar-item.active{background:var(--accent-primary);color:#fff;box-shadow:0 2px 8px rgba(139,92,246,0.3)}
+.sidebar-item.active{background:var(--accent-primary);color:#fff}
 .sidebar-item.active::before{display:none}
-.sidebar-icon{font-size:20px;text-align:center;line-height:1}
+.sidebar-icon{font-size:20px;text-align:center;line-height:1;display:flex;align-items:center;justify-content:center}
 .sidebar-text{display:none}
-.sidebar-divider{height:1px;background:var(--border-secondary);margin:8px 12px;width:28px}
+.sidebar-divider{height:1px;background:var(--border-secondary);margin:8px 0;width:100%}
 .sidebar-section-title{display:none}
 
 /* MAIN CONTENT WITH SIDEBAR - Vision UI Style */
 .main-layout{display:flex;min-height:100vh;margin-top:0}
-.main-content{flex:1;margin-left:70px;padding:32px;transition:margin-left 0.3s ease;min-height:100vh;max-width:calc(100vw - 70px);padding-top:102px}
+.main-content{flex:1;margin-left:72px;padding:32px;transition:margin-left 0.3s ease;min-height:100vh;max-width:calc(100vw - 72px);padding-top:102px}
 .container{max-width:100%;margin:0;padding:0;position:relative;z-index:2;width:100%;box-sizing:border-box}
 .hero-section{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:32px;grid-auto-rows:minmax(90px,auto)}
 .hero-stat{background:var(--bg-card);backdrop-filter:var(--blur);border-radius:var(--radius-md);padding:16px 20px;border:1px solid var(--border-secondary);transition:all .2s;display:flex;flex-direction:column;justify-content:space-between;min-height:90px;box-shadow:var(--shadow-sm)}
@@ -399,7 +399,7 @@ body{
 
 /* Responsive Sidebar */
 @media(max-width:1024px){
-  .sidebar{transform:translateX(-100%);width:70px;transition:transform 0.3s ease}
+  .sidebar{transform:translateX(-100%);width:72px;transition:transform 0.3s ease}
   .sidebar.open{transform:translateX(0);box-shadow:var(--shadow-lg)}
   .main-content{margin-left:0!important;padding:20px 16px}
   #sidebarToggle{display:flex!important}
@@ -891,6 +891,9 @@ body{overflow-x:hidden}
                     </div>
                     <div style="height:6px;background:var(--bg-primary);border-radius:3px;overflow:hidden;">
                       <div id="diversificationBar" style="height:100%;background:var(--gradient-primary);width:0%;transition:width .4s ease;border-radius:3px;"></div>
+                    </div>
+                    <div style="margin-top:12px;">
+                      <canvas id="diversificationChart" width="200" height="80" style="width:100%;height:80px;border-radius:var(--radius-sm);"></canvas>
                     </div>
                   </div>
                   <div style="padding:14px;background:var(--bg-tertiary);border:1px solid var(--border-secondary);border-radius:var(--radius-md);transition:all .2s;">
@@ -3796,92 +3799,188 @@ function updatePortfolioAnalytics(holdings, totalValue) {
   const largestPosition = Object.entries(allocation).sort((a, b) => b[1] - a[1])[0];
   const largestPercentage = largestPosition ? (largestPosition[1] / totalAllocation * 100) : 0;
   
-  // Core-Satellite Model Target Allocations
-  const CORE_ASSETS_TARGET = 0.60;      // Large-cap, long-term store of value
-  const GROWTH_ASSETS_TARGET = 0.25;    // Mid-cap, ecosystem or infrastructure plays
-  const HIGH_RISK_TARGET = 0.10;        // Small-cap, narrative or experimental tokens
-  const STABLES_TARGET = 0.05;          // Stablecoins for liquidity and dip-buying
-  
-  // Define token categories by CoinGecko ID
-  const CORE_ASSETS_IDS = ['bitcoin', 'ethereum'];
-  const GROWTH_ASSETS_IDS = ['solana', 'chainlink', 'avalanche-2', 'arbitrum', 'cosmos', 'polkadot', 'matic-network', 'cardano', 'ripple', 'binancecoin', 'polygon', 'optimism-ethereum', 'near', 'aptos', 'sui', 'sei-network', 'injective-protocol', 'render-token'];
-  const STABLES_IDS = ['usd-coin', 'tether', 'dai', 'binance-usd', 'true-usd', 'paxos-standard'];
-  
-  // Calculate actual allocations by category using token IDs
-  let coreValue = 0;
-  let growthValue = 0;
-  let highRiskValue = 0;
-  let stablesValue = 0;
-  
-  Object.entries(allocationByTokenId).forEach(([tokenId, value]) => {
-    const tokenIdLower = tokenId.toLowerCase();
-    // Check if token matches any category (exact or partial match)
-    if (CORE_ASSETS_IDS.some(id => tokenIdLower === id || tokenIdLower.includes(id))) {
-      coreValue += value;
-    } else if (STABLES_IDS.some(id => tokenIdLower === id || tokenIdLower.includes(id))) {
-      stablesValue += value;
-    } else if (GROWTH_ASSETS_IDS.some(id => tokenIdLower === id || tokenIdLower.includes(id))) {
-      growthValue += value;
-    } else {
-      // Everything else is considered HIGH_RISK
-      highRiskValue += value;
-    }
-  });
-  
-  // Calculate percentages
-  const corePercentage = totalAllocation > 0 ? coreValue / totalAllocation : 0;
-  const growthPercentage = totalAllocation > 0 ? growthValue / totalAllocation : 0;
-  const highRiskPercentage = totalAllocation > 0 ? highRiskValue / totalAllocation : 0;
-  const stablesPercentage = totalAllocation > 0 ? stablesValue / totalAllocation : 0;
-  
-  // Calculate diversification score based on how close actual is to target
-  // Score = 100 - (sum of absolute differences from target * penalty factor)
-  const coreDiff = Math.abs(corePercentage - CORE_ASSETS_TARGET);
-  const growthDiff = Math.abs(growthPercentage - GROWTH_ASSETS_TARGET);
-  const highRiskDiff = Math.abs(highRiskPercentage - HIGH_RISK_TARGET);
-  const stablesDiff = Math.abs(stablesPercentage - STABLES_TARGET);
-  
-  // Weighted penalty (core allocation is most important)
-  // Normalize deviations to 0-1 scale, then apply weights
-  const totalDeviation = (coreDiff * 2.0) + (growthDiff * 1.5) + (highRiskDiff * 1.0) + (stablesDiff * 0.5);
-  
-  // Maximum possible deviation (if all categories are 100% off target)
-  // Core: 0.6*2.0 = 1.2, Growth: 0.25*1.5 = 0.375, HighRisk: 0.1*1.0 = 0.1, Stables: 0.05*0.5 = 0.025
-  // Total max = 1.7
-  const maxPossibleDeviation = 1.7;
-  
-  // Calculate score: 100 * (1 - normalized deviation)
-  const normalizedDeviation = Math.min(1, totalDeviation / maxPossibleDeviation);
-  const diversificationScore = Math.max(0, Math.min(100, Math.round(100 * (1 - normalizedDeviation))));
-  
-  // Debug logging
-  console.log('Diversification Calculation:', {
-    core: `${(corePercentage * 100).toFixed(1)}% (target: ${(CORE_ASSETS_TARGET * 100).toFixed(1)}%)`,
-    growth: `${(growthPercentage * 100).toFixed(1)}% (target: ${(GROWTH_ASSETS_TARGET * 100).toFixed(1)}%)`,
-    highRisk: `${(highRiskPercentage * 100).toFixed(1)}% (target: ${(HIGH_RISK_TARGET * 100).toFixed(1)}%)`,
-    stables: `${(stablesPercentage * 100).toFixed(1)}% (target: ${(STABLES_TARGET * 100).toFixed(1)}%)`,
-    totalDeviation,
-    score: diversificationScore
-  });
+  // Calculate proper diversification score
+  const diversificationScore = computeDiversificationScore(holdings, totalAllocation, allocationByTokenId);
   
   if ($('diversificationScore')) {
     $('diversificationScore').textContent = `${Math.round(diversificationScore)}/100`;
-    // Ensure it's visible
-    if ($('diversificationScore').textContent === '-') {
-      $('diversificationScore').textContent = `${Math.round(diversificationScore)}/100`;
-    }
   }
   if ($('diversificationBar')) {
     $('diversificationBar').style.width = `${diversificationScore}%`;
-    // Ensure bar is visible
     setTimeout(() => {
       if ($('diversificationBar')) {
         $('diversificationBar').style.width = `${diversificationScore}%`;
       }
     }, 100);
   }
+  
+  // Render diversification chart
+  renderDiversificationChart(diversificationScore);
   if ($('largestPosition')) $('largestPosition').textContent = largestPosition ? `${largestPosition[0]} (${largestPercentage.toFixed(1)}%)` : '-';
   if ($('tokenCount')) $('tokenCount').textContent = tokenCount;
+}
+
+/* ---------- DIVERSIFICATION SCORE CALCULATION ---------- */
+function computeDiversificationScore(holdings, totalAllocation, allocationByTokenId) {
+  if (!holdings || Object.keys(holdings).length === 0 || totalAllocation <= 0) {
+    return 0;
+  }
+  
+  // Prepare assets array with weights
+  const assets = [];
+  const categories = {};
+  const stables = ['usd-coin', 'tether', 'dai', 'binance-usd', 'true-usd', 'paxos-standard', 'tether-gold'];
+  
+  Object.entries(holdings).forEach(([id, h]) => {
+    if (!h || !h.tokenId) return;
+    const value = allocationByTokenId[h.tokenId] || 0;
+    const weight = value / totalAllocation;
+    if (weight <= 0) return;
+    
+    const token = cryptoData.find(t => t.id === h.tokenId);
+    const tokenIdLower = h.tokenId.toLowerCase();
+    
+    // Determine category
+    let category = 'Other';
+    if (stables.some(s => tokenIdLower.includes(s))) {
+      category = 'Stablecoin';
+    } else if (['bitcoin', 'ethereum'].some(c => tokenIdLower.includes(c))) {
+      category = 'Layer1';
+    } else if (['solana', 'cardano', 'polkadot', 'avalanche', 'cosmos', 'near', 'aptos', 'sui'].some(c => tokenIdLower.includes(c))) {
+      category = 'Layer1';
+    } else if (['polygon', 'arbitrum', 'optimism', 'base', 'matic-network'].some(c => tokenIdLower.includes(c))) {
+      category = 'Layer2';
+    } else if (['uniswap', 'aave', 'compound', 'maker', 'curve', 'pancakeswap'].some(c => tokenIdLower.includes(c))) {
+      category = 'DeFi';
+    }
+    
+    // Estimate volatility (use historical price change as proxy)
+    const priceChange = Math.abs(token?.price_change_percentage_24h || 0) / 100;
+    const volatility = Math.min(1.5, Math.max(0.1, priceChange * 365)); // Annualized estimate
+    
+    assets.push({
+      symbol: token?.symbol?.toUpperCase() || h.tokenId.toUpperCase(),
+      weight: weight,
+      volatility: volatility,
+      category: category,
+      isStable: stables.some(s => tokenIdLower.includes(s))
+    });
+    
+    categories[category] = (categories[category] || 0) + weight;
+  });
+  
+  if (assets.length === 0) return 0;
+  
+  const n = assets.length;
+  const params = { sigmaTarget: 0.6, stableTarget: 0.10 };
+  
+  // 1. Concentration (S_c) - Herfindahl Index
+  const H = assets.reduce((sum, a) => sum + Math.pow(a.weight, 2), 0);
+  const H_min = 1 / n;
+  const S_c = n > 1 ? Math.max(0, Math.min(1, 1 - ((H - H_min) / (1 - H_min)))) : 0;
+  
+  // 2. Portfolio Volatility (S_v)
+  // Simplified: use weighted average volatility
+  const sigma_p = Math.sqrt(assets.reduce((sum, a) => sum + Math.pow(a.weight * a.volatility, 2), 0));
+  const S_v = Math.max(0, Math.min(1, 1 - sigma_p / params.sigmaTarget));
+  
+  // 3. Correlation (S_rho) - Simplified average correlation
+  // For crypto, assume average correlation of 0.5-0.7
+  const avgCorr = 0.6; // Typical crypto correlation
+  const S_rho = Math.max(0, Math.min(1, 1 - (avgCorr + 1) / 2));
+  
+  // 4. Category Diversity (S_d)
+  const categoryKeys = Object.keys(categories);
+  const K = categoryKeys.length;
+  let S_d = 0;
+  if (K > 1) {
+    const H_cat = -categoryKeys.reduce((sum, cat) => {
+      const p_k = categories[cat];
+      return sum + (p_k > 0 ? p_k * Math.log(p_k) : 0);
+    }, 0);
+    S_d = Math.max(0, Math.min(1, H_cat / Math.log(K)));
+  }
+  
+  // 5. Stablecoin Buffer (S_s)
+  const w_stable = assets.filter(a => a.isStable).reduce((sum, a) => sum + a.weight, 0);
+  const S_s = Math.max(0, Math.min(1, w_stable / params.stableTarget));
+  
+  // Final Score
+  const score = 100 * (0.25 * S_c + 0.25 * S_v + 0.20 * S_rho + 0.15 * S_d + 0.15 * S_s);
+  
+  return Math.max(0, Math.min(100, Math.round(score)));
+}
+
+/* ---------- DIVERSIFICATION CHART VISUALIZATION ---------- */
+function renderDiversificationChart(score) {
+  const canvas = $('diversificationChart');
+  if (!canvas) return;
+  
+  const ctx = canvas.getContext('2d');
+  const width = canvas.width;
+  const height = canvas.height;
+  
+  ctx.clearRect(0, 0, width, height);
+  
+  // Get computed styles for colors
+  const computedStyle = getComputedStyle(document.documentElement);
+  const bgPrimary = computedStyle.getPropertyValue('--bg-primary').trim() || '#0f1419';
+  const textPrimary = computedStyle.getPropertyValue('--text-primary').trim() || '#ffffff';
+  const textTertiary = computedStyle.getPropertyValue('--text-tertiary').trim() || '#a0aec0';
+  
+  // Background
+  ctx.fillStyle = bgPrimary;
+  ctx.fillRect(0, 0, width, height);
+  
+  // Draw score bar
+  const barWidth = width - 20;
+  const barHeight = 12;
+  const barX = 10;
+  const barY = height / 2 - barHeight / 2;
+  
+  // Background bar
+  ctx.fillStyle = 'rgba(255,255,255,0.1)';
+  ctx.fillRect(barX, barY, barWidth, barHeight);
+  
+  // Score bar with gradient
+  const scoreWidth = (score / 100) * barWidth;
+  const gradient = ctx.createLinearGradient(barX, barY, barX + scoreWidth, barY);
+  gradient.addColorStop(0, '#8b5cf6');
+  gradient.addColorStop(0.5, '#6366f1');
+  gradient.addColorStop(1, '#ec4899');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(barX, barY, scoreWidth, barHeight);
+  
+  // Score text
+  ctx.fillStyle = textPrimary;
+  ctx.font = 'bold 14px Inter, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(`${score}/100`, width / 2, barY - 8);
+  
+  // Component breakdown (mini bars)
+  const componentHeight = 4;
+  const componentY = barY + barHeight + 8;
+  const components = [
+    { label: 'C', value: score * 0.25, color: '#8b5cf6' },
+    { label: 'V', value: score * 0.25, color: '#6366f1' },
+    { label: 'R', value: score * 0.20, color: '#a78bfa' },
+    { label: 'D', value: score * 0.15, color: '#ec4899' },
+    { label: 'S', value: score * 0.15, color: '#f59e0b' }
+  ];
+  
+  const componentWidth = (barWidth - 20) / components.length;
+  components.forEach((comp, idx) => {
+    const x = barX + idx * componentWidth + 4;
+    const w = (comp.value / 100) * (componentWidth - 8);
+    ctx.fillStyle = comp.color;
+    ctx.fillRect(x, componentY, w, componentHeight);
+    
+    // Label
+    ctx.fillStyle = textTertiary;
+    ctx.font = '10px Inter, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(comp.label, x, componentY + componentHeight + 10);
+  });
 }
 
 // Toggle analytics visibility
