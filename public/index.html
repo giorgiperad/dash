@@ -25,95 +25,93 @@
    ═══════════════════════════════════════════════════════════════ */
 * { margin:0; padding:0; box-sizing:border-box; }
 
-/* ──── THEME VARIABLES ──── */
+/* ──── NEW MODERN THEME VARIABLES ──── */
 :root {
-  /* Dark Theme (Default) - Professional & Comfortable */
-  --bg-primary: #0a0e1a;
-  --bg-secondary: #141b2d;
-  --bg-tertiary: #1e2838;
-  --bg-card: rgba(20, 27, 45, 0.85);
-  --bg-card-hover: rgba(30, 40, 56, 0.95);
-  --bg-overlay: rgba(10, 14, 26, 0.98);
-  --bg-input: rgba(20, 27, 45, 0.6);
-  --bg-input-focus: rgba(30, 40, 56, 0.8);
+  /* Dark Theme - Modern & Vibrant */
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #21262d;
+  --bg-card: #1c2128;
+  --bg-card-hover: #252a32;
+  --bg-overlay: rgba(13, 17, 23, 0.95);
+  --bg-input: #0d1117;
+  --bg-input-focus: #161b22;
   
-  --text-primary: #e8ecf1;
-  --text-secondary: #b8c5d3;
-  --text-tertiary: #8a9ba8;
-  --text-muted: #6b7a8a;
+  --text-primary: #f0f6fc;
+  --text-secondary: #c9d1d9;
+  --text-tertiary: #8b949e;
+  --text-muted: #6e7681;
   
-  --border-primary: rgba(255, 255, 255, 0.12);
-  --border-secondary: rgba(255, 255, 255, 0.08);
-  --border-accent: rgba(99, 102, 241, 0.4);
+  --border-primary: rgba(240, 246, 252, 0.1);
+  --border-secondary: rgba(240, 246, 252, 0.06);
+  --border-accent: rgba(88, 166, 255, 0.3);
   
-  --accent-primary: #6366f1;
-  --accent-secondary: #818cf8;
-  --accent-hover: #4f46e5;
+  --accent-primary: #58a6ff;
+  --accent-secondary: #79c0ff;
+  --accent-hover: #4493f8;
   
-  --success: #10b981;
-  --success-bg: rgba(16, 185, 129, 0.15);
-  --error: #f43f5e;
-  --error-bg: rgba(244, 63, 94, 0.15);
-  --warning: #f59e0b;
-  --warning-bg: rgba(245, 158, 11, 0.15);
+  --success: #3fb950;
+  --success-bg: rgba(63, 185, 80, 0.1);
+  --error: #f85149;
+  --error-bg: rgba(248, 81, 73, 0.1);
+  --warning: #d29922;
+  --warning-bg: rgba(210, 153, 34, 0.1);
   
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.25);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  --shadow-glow: 0 0 20px rgba(88, 166, 255, 0.3);
   
-  --gradient-primary: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
-  --gradient-card: linear-gradient(145deg, #141b2d 0%, #0a0e1a 100%);
-  --gradient-text: linear-gradient(135deg, #ffffff 0%, #e8ecf1 100%);
+  --gradient-primary: linear-gradient(135deg, #58a6ff 0%, #79c0ff 100%);
+  --gradient-card: linear-gradient(145deg, #1c2128 0%, #161b22 100%);
+  --gradient-text: linear-gradient(135deg, #f0f6fc 0%, #c9d1d9 100%);
   
-  --blur: blur(16px);
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
-  
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  --blur: blur(12px);
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
 }
 
 [data-theme="light"] {
-  /* Light Theme - Professional & Comfortable */
-  --bg-primary: #fafbfc;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #f5f7fa;
-  --bg-card: rgba(255, 255, 255, 0.95);
-  --bg-card-hover: rgba(250, 251, 252, 1);
+  /* Light Theme - Clean & Modern */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f6f8fa;
+  --bg-tertiary: #f0f3f6;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f6f8fa;
   --bg-overlay: rgba(255, 255, 255, 0.98);
-  --bg-input: rgba(255, 255, 255, 0.8);
-  --bg-input-focus: rgba(250, 251, 252, 1);
+  --bg-input: #ffffff;
+  --bg-input-focus: #f6f8fa;
   
-  --text-primary: #1a202c;
-  --text-secondary: #2d3748;
-  --text-tertiary: #4a5568;
-  --text-muted: #718096;
+  --text-primary: #24292f;
+  --text-secondary: #57606a;
+  --text-tertiary: #8c959f;
+  --text-muted: #6e7781;
   
-  --border-primary: rgba(0, 0, 0, 0.08);
-  --border-secondary: rgba(0, 0, 0, 0.05);
-  --border-accent: rgba(99, 102, 241, 0.25);
+  --border-primary: rgba(27, 31, 36, 0.12);
+  --border-secondary: rgba(27, 31, 36, 0.08);
+  --border-accent: rgba(9, 105, 218, 0.3);
   
-  --accent-primary: #6366f1;
-  --accent-secondary: #818cf8;
-  --accent-hover: #4f46e5;
+  --accent-primary: #0969da;
+  --accent-secondary: #218bff;
+  --accent-hover: #0860ca;
   
-  --success: #059669;
-  --success-bg: rgba(5, 150, 105, 0.1);
-  --error: #dc2626;
-  --error-bg: rgba(220, 38, 38, 0.1);
-  --warning: #d97706;
-  --warning-bg: rgba(217, 119, 6, 0.1);
+  --success: #1a7f37;
+  --success-bg: rgba(26, 127, 55, 0.1);
+  --error: #cf222e;
+  --error-bg: rgba(207, 34, 46, 0.1);
+  --warning: #9a6700;
+  --warning-bg: rgba(154, 103, 0, 0.1);
   
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
-  --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.15);
+  --shadow-sm: 0 1px 3px rgba(27, 31, 36, 0.12);
+  --shadow-md: 0 3px 6px rgba(27, 31, 36, 0.15);
+  --shadow-lg: 0 8px 24px rgba(27, 31, 36, 0.2);
+  --shadow-glow: 0 0 16px rgba(9, 105, 218, 0.2);
   
-  --gradient-primary: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
-  --gradient-card: linear-gradient(145deg, #ffffff 0%, #f5f7fa 100%);
-  --gradient-text: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+  --gradient-primary: linear-gradient(135deg, #0969da 0%, #218bff 100%);
+  --gradient-card: linear-gradient(145deg, #ffffff 0%, #f6f8fa 100%);
+  --gradient-text: linear-gradient(135deg, #24292f 0%, #57606a 100%);
 }
 
 /* ──── ANIMATIONS ──── */
@@ -137,7 +135,7 @@ body{
 }
 .grain-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");opacity:0.03;pointer-events:none;z-index:1}
 [data-theme="light"] .grain-overlay{opacity:0.01}
-.navbar{background:var(--bg-secondary);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border-secondary);padding:12px 24px;display:flex;justify-content:space-between;align-items:center;position:fixed;top:0;left:0;right:0;z-index:100;box-shadow:var(--shadow-sm);transition:background-color 0.3s ease, border-color 0.3s ease;height:60px}
+.navbar{background:var(--bg-secondary);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border-secondary);padding:0 24px;display:flex;justify-content:space-between;align-items:center;position:fixed;top:0;left:0;right:0;z-index:100;box-shadow:var(--shadow-sm);transition:background-color 0.3s ease, border-color 0.3s ease;height:60px}
 .logo-section{display:flex;align-items:center;gap:16px}
 .logo-icon{width:40px;height:40px;min-width:40px;min-height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:24px;overflow:hidden;position:relative;flex-shrink:0}
 .logo-icon img{width:100%;height:100%;object-fit:contain;max-width:40px;max-height:40px;filter:none}
@@ -167,21 +165,25 @@ body{
 .live-text{font-size:12px;color:var(--success);font-weight:600;text-transform:uppercase;letter-spacing:0.8px;transition:color 0.3s ease}
 .time-display{font-size:14px;color:var(--text-tertiary);font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:0.5px;transition:color 0.3s ease}
 /* SIDEBAR MENU */
-.sidebar{position:fixed;left:0;top:60px;width:240px;height:calc(100vh - 60px);background:var(--bg-secondary);border-right:1px solid var(--border-secondary);padding:16px 0;overflow-y:auto;overflow-x:hidden;z-index:90;transition:all 0.3s ease;box-shadow:var(--shadow-sm)}
+.sidebar{position:fixed;left:0;top:60px;width:260px;height:calc(100vh - 60px);background:var(--bg-secondary);border-right:1px solid var(--border-secondary);padding:20px 0;overflow-y:auto;overflow-x:hidden;z-index:90;transition:all 0.3s ease}
+.sidebar::-webkit-scrollbar{width:6px}
+.sidebar::-webkit-scrollbar-track{background:transparent}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border-primary);border-radius:3px}
+.sidebar::-webkit-scrollbar-thumb:hover{background:var(--border-accent)}
 .sidebar-menu{display:flex;flex-direction:column;gap:4px;padding:0 12px}
-.sidebar-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:var(--radius-md);color:var(--text-tertiary);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s ease;text-decoration:none;position:relative}
-.sidebar-item:hover{background:var(--bg-card);color:var(--text-primary)}
-.sidebar-item.active{background:var(--accent-primary);color:#fff;box-shadow:var(--shadow-sm)}
-.sidebar-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:#fff;border-radius:0 3px 3px 0}
-.sidebar-icon{font-size:18px;width:24px;text-align:center;flex-shrink:0}
-.sidebar-text{flex:1;white-space:nowrap}
+.sidebar-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--radius-md);color:var(--text-secondary);font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s ease;text-decoration:none;position:relative;border:1px solid transparent}
+.sidebar-item:hover{background:var(--bg-tertiary);color:var(--text-primary);border-color:var(--border-primary)}
+.sidebar-item.active{background:var(--accent-primary);color:#fff;box-shadow:var(--shadow-sm);border-color:var(--accent-primary)}
+.sidebar-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:70%;background:#fff;border-radius:0 3px 3px 0}
+.sidebar-icon{font-size:20px;width:24px;text-align:center;flex-shrink:0;line-height:1}
+.sidebar-text{flex:1;white-space:nowrap;font-weight:500}
 .sidebar-divider{height:1px;background:var(--border-secondary);margin:12px 16px}
-.sidebar-section-title{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);padding:8px 16px;font-weight:700;margin-top:8px}
+.sidebar-section-title{font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);padding:8px 16px;font-weight:600;margin-top:8px}
 
 /* MAIN CONTENT WITH SIDEBAR */
 .main-layout{display:flex;min-height:calc(100vh - 60px);margin-top:60px}
-.main-content{flex:1;margin-left:240px;padding:24px 32px;transition:margin-left 0.3s ease}
-.container{max-width:1920px;margin:0 auto;padding:24px 32px;position:relative;z-index:2;width:100%;box-sizing:border-box}
+.main-content{flex:1;margin-left:260px;padding:24px;transition:margin-left 0.3s ease;min-height:calc(100vh - 60px)}
+.container{max-width:100%;margin:0;padding:0;position:relative;z-index:2;width:100%;box-sizing:border-box}
 .hero-section{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:32px;grid-auto-rows:minmax(90px,auto)}
 .hero-stat{background:var(--bg-card);backdrop-filter:var(--blur);border-radius:var(--radius-md);padding:12px 16px;border:1px solid var(--border-secondary);transition:all .2s;display:flex;flex-direction:column;justify-content:space-between;min-height:70px}
 .hero-stat:hover{background:var(--bg-card-hover);border-color:var(--border-primary)}
@@ -214,8 +216,8 @@ body{
 .progress-value{color:var(--success);font-size:18px;transition:color 0.3s ease}
 .progress-value.negative{color:var(--error)}
 .progress-value.gold{color:var(--warning)}
-.main-section{background:var(--bg-card);backdrop-filter:var(--blur);border:1px solid var(--border-secondary);border-radius:var(--radius-lg);padding:20px;min-height:600px;transition:background-color 0.3s ease, border-color 0.3s ease}
-.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border-secondary);transition:border-color 0.3s ease}
+.main-section{background:var(--bg-card);backdrop-filter:var(--blur);border:1px solid var(--border-secondary);border-radius:var(--radius-lg);padding:20px;min-height:400px;transition:background-color 0.3s ease, border-color 0.3s ease;box-shadow:var(--shadow-sm)}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border-secondary);transition:border-color 0.3s ease;flex-wrap:wrap;gap:12px}
 .section-title{font-size:18px;font-weight:600;color:var(--text-primary);letter-spacing:-0.4px;transition:color 0.3s ease}
 .filter-tabs{display:flex;gap:6px;background:var(--bg-tertiary);padding:4px;border-radius:10px;border:1px solid var(--border-secondary);transition:background-color 0.3s ease}
 .filter-tab{padding:8px 16px;border:none;background:transparent;color:var(--text-tertiary);font-size:12px;font-weight:500;cursor:pointer;border-radius:var(--radius-sm);transition:all .2s}
@@ -372,21 +374,39 @@ body{
 .form-group small{display:block;margin-top:6px;font-size:11px;color:var(--text-muted);transition:color 0.3s ease}
 .modal-header h3{font-size:20px;font-weight:600;color:var(--text-primary);letter-spacing:-0.3px;margin:0;transition:color 0.3s ease}
 
+/* Sidebar Overlay for Mobile */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:85;backdrop-filter:blur(4px);transition:opacity 0.3s ease}
+.sidebar-overlay.active{display:block}
+
+.sidebar-toggle{display:none;width:40px;height:40px;background:var(--bg-card);border:1px solid var(--border-primary);border-radius:var(--radius-md);align-items:center;justify-content:center;cursor:pointer;color:var(--text-primary);font-size:20px;box-shadow:var(--shadow-sm);transition:all 0.3s ease}
+.sidebar-toggle:hover{background:var(--bg-card-hover);border-color:var(--accent-primary);color:var(--accent-primary);transform:scale(1.05)}
+
 /* Responsive Sidebar */
 @media(max-width:1024px){
-  .sidebar{transform:translateX(-100%);width:220px;transition:transform 0.3s ease}
-  .sidebar.open{transform:translateX(0)}
-  .main-content{margin-left:0;padding:20px 16px}
-  .container{padding:20px 16px}
+  .sidebar{transform:translateX(-100%);width:240px;transition:transform 0.3s ease}
+  .sidebar.open{transform:translateX(0);box-shadow:var(--shadow-lg)}
+  .main-content{margin-left:0!important;padding:20px 16px}
   #sidebarToggle{display:flex!important}
+  .navbar{padding:0 16px}
+  .sidebar-overlay.active{display:block}
 }
 @media(max-width:768px){
-  .sidebar{width:200px}
+  .sidebar{width:220px}
   .main-content{padding:16px 12px}
-  .container{padding:16px 12px}
   .hero-stat{padding:10px 12px;min-height:60px}
   .hero-stat-value{font-size:14px}
   .hero-stat-label{font-size:9px}
+  .logo-title{font-size:16px}
+  .logo-icon{width:36px;height:36px;min-width:36px;min-height:36px}
+  .nav-right{gap:12px}
+  .auth-btn{padding:8px 16px;font-size:12px}
+}
+@media(max-width:480px){
+  .sidebar{width:200px}
+  .main-content{padding:12px 8px}
+  .main-section{padding:16px}
+  .portfolio-summary{grid-template-columns:1fr;gap:8px}
+  .holdings-list{grid-template-columns:1fr}
 }
 
 /* Responsive Styles for All Screen Sizes */
@@ -688,7 +708,7 @@ body{overflow-x:hidden}
   </div>
 
   <div class="nav-right">
-    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" title="Toggle menu" style="display:none;position:relative;width:40px;height:40px;border-radius:10px;background:var(--bg-card);border:1px solid var(--border-primary);align-items:center;justify-content:center;cursor:pointer;transition:all .3s;font-size:18px;color:var(--text-secondary);margin-right:12px">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" title="Toggle menu">
       <span>☰</span>
     </button>
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Theme toggle">
@@ -722,65 +742,68 @@ body{overflow-x:hidden}
   </div>
 </nav>
 
-<div class="container">
-  <div id="loading" class="loading"><div class="spinner"></div><div class="loading-text">ბაზრის მონაცემების ჩატვირთვა...</div></div>
-  <div id="error"></div>
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <div class="hero-carousel-wrapper" id="heroStats" style="display:none;">
-    <div class="carousel" id="heroCarousel">
-      <!-- Cards will be rendered here -->
+<!-- Sidebar Menu -->
+<aside class="sidebar" id="sidebar">
+  <nav class="sidebar-menu">
+    <div class="sidebar-item active" data-tab="market">
+      <span class="sidebar-icon">📊</span>
+      <span class="sidebar-text">ბაზარი</span>
     </div>
-    <button class="carousel-nav carousel-nav-right" id="carouselNext" aria-label="Next cards">→</button>
-  </div>
+    <div class="sidebar-item" data-tab="portfolio">
+      <span class="sidebar-icon">💼</span>
+      <span class="sidebar-text">პორტფოლიო</span>
+    </div>
+    <div class="sidebar-item" data-tab="targets">
+      <span class="sidebar-icon">🎯</span>
+      <span class="sidebar-text">გასაყიდი მიზნები</span>
+    </div>
+    <div class="sidebar-item" data-tab="alerts">
+      <span class="sidebar-icon">🔔</span>
+      <span class="sidebar-text">შეტყობინებები</span>
+    </div>
+    <div class="sidebar-item" data-tab="profile">
+      <span class="sidebar-icon">👤</span>
+      <span class="sidebar-text">პროფილი</span>
+    </div>
+  </nav>
+</aside>
 
-  <!-- Quotes Section -->
-  <div id="quotesSection" style="display:none;margin-bottom:32px;background:var(--bg-card);backdrop-filter:var(--blur);border:1px solid var(--border-secondary);border-radius:10px;padding:20px;position:relative;overflow:hidden;transition:background-color 0.3s ease, border-color 0.3s ease;" role="region" aria-label="Quotes">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-      <div class="carousel-card-title" style="margin:0;">💬 ციტატა</div>
-      <button id="refreshQuote" style="background:transparent;border:1px solid var(--border-primary);color:var(--text-tertiary);padding:6px 12px;border-radius:var(--radius-sm);font-size:11px;cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='var(--accent-primary)';this.style.color='var(--accent-primary)';" onmouseout="this.style.borderColor='var(--border-primary)';this.style.color='var(--text-tertiary)';">🔄</button>
-    </div>
-    <div id="quoteContent" style="font-size:15px;color:var(--text-primary);font-weight:500;line-height:1.6;font-style:italic;transition:color 0.3s ease;">
-      <div style="color:var(--text-muted);font-size:13px;">ციტატების ჩატვირთვა...</div>
-    </div>
-    <div id="quoteAuthor" style="margin-top:12px;font-size:12px;color:var(--text-tertiary);text-align:right;font-weight:500;transition:color 0.3s ease;">
-    </div>
-  </div>
+<div class="main-content">
+  <div class="container">
+    <div id="loading" class="loading"><div class="spinner"></div><div class="loading-text">ბაზრის მონაცემების ჩატვირთვა...</div></div>
+    <div id="error"></div>
 
-  <!-- Recent Activity Carousel -->
-  <div class="hero-carousel-wrapper" id="activityCarouselWrapper" style="display:none;margin-bottom:32px;">
-    <div class="carousel" id="activityCarousel">
-      <!-- Activity cards will be rendered here -->
+    <div class="hero-carousel-wrapper" id="heroStats" style="display:none;margin-bottom:24px;">
+      <div class="carousel" id="heroCarousel">
+        <!-- Cards will be rendered here -->
+      </div>
+      <button class="carousel-nav carousel-nav-right" id="carouselNext" aria-label="Next cards">→</button>
     </div>
-    <button class="carousel-nav carousel-nav-right" id="activityCarouselNext" aria-label="Next cards">→</button>
-  </div>
 
-  <!-- Sidebar Menu -->
-  <aside class="sidebar" id="sidebar">
-    <nav class="sidebar-menu">
-      <div class="sidebar-item active" data-tab="market">
-        <span class="sidebar-icon">📊</span>
-        <span class="sidebar-text">ბაზარი</span>
+    <!-- Quotes Section -->
+    <div id="quotesSection" style="display:none;margin-bottom:24px;background:var(--bg-card);backdrop-filter:var(--blur);border:1px solid var(--border-secondary);border-radius:var(--radius-lg);padding:16px;position:relative;overflow:hidden;transition:background-color 0.3s ease, border-color 0.3s ease;" role="region" aria-label="Quotes">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div class="carousel-card-title" style="margin:0;">💬 ციტატა</div>
+        <button id="refreshQuote" style="background:transparent;border:1px solid var(--border-primary);color:var(--text-tertiary);padding:6px 12px;border-radius:var(--radius-sm);font-size:11px;cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='var(--accent-primary)';this.style.color='var(--accent-primary)';" onmouseout="this.style.borderColor='var(--border-primary)';this.style.color='var(--text-tertiary)';">🔄</button>
       </div>
-      <div class="sidebar-item" data-tab="portfolio">
-        <span class="sidebar-icon">💼</span>
-        <span class="sidebar-text">პორტფოლიო</span>
+      <div id="quoteContent" style="font-size:14px;color:var(--text-primary);font-weight:500;line-height:1.6;font-style:italic;transition:color 0.3s ease;">
+        <div style="color:var(--text-muted);font-size:13px;">ციტატების ჩატვირთვა...</div>
       </div>
-      <div class="sidebar-item" data-tab="targets">
-        <span class="sidebar-icon">🎯</span>
-        <span class="sidebar-text">გასაყიდი მიზნები</span>
+      <div id="quoteAuthor" style="margin-top:12px;font-size:12px;color:var(--text-tertiary);text-align:right;font-weight:500;transition:color 0.3s ease;">
       </div>
-      <div class="sidebar-item" data-tab="alerts">
-        <span class="sidebar-icon">🔔</span>
-        <span class="sidebar-text">შეტყობინებები</span>
-      </div>
-      <div class="sidebar-item" data-tab="profile">
-        <span class="sidebar-icon">👤</span>
-        <span class="sidebar-text">პროფილი</span>
-      </div>
-    </nav>
-  </aside>
+    </div>
 
-  <div class="main-content">
+    <!-- Recent Activity Carousel -->
+    <div class="hero-carousel-wrapper" id="activityCarouselWrapper" style="display:none;margin-bottom:24px;">
+      <div class="carousel" id="activityCarousel">
+        <!-- Activity cards will be rendered here -->
+      </div>
+      <button class="carousel-nav carousel-nav-right" id="activityCarouselNext" aria-label="Next cards">→</button>
+    </div>
+
     <div class="content-grid" id="contentGrid" style="display:none;">
       <div class="main-section" style="width:100%;">
 
@@ -1022,6 +1045,7 @@ body{overflow-x:hidden}
         </div>
       </div>
     </div>
+  </div>
   </div>
 </div>
 
@@ -2097,6 +2121,8 @@ if (document.readyState === 'loading') {
 function initSidebar() {
   const sidebarItems = document.querySelectorAll('.sidebar-item');
   const contentSections = document.querySelectorAll('.user-content');
+  const sidebar = $('sidebar');
+  const sidebarOverlay = $('sidebarOverlay');
   
   sidebarItems.forEach(item => {
     item.addEventListener('click', () => {
@@ -2117,6 +2143,12 @@ function initSidebar() {
         targetSection.classList.add('active');
         targetSection.style.display = 'block';
       }
+      
+      // Close sidebar on mobile after selection
+      if (window.innerWidth <= 1024 && sidebar) {
+        sidebar.classList.remove('open');
+        if (sidebarOverlay) sidebarOverlay.classList.remove('active');
+      }
     });
   });
 }
@@ -2130,14 +2162,41 @@ if (document.readyState === 'loading') {
 
 // Sidebar toggle for mobile
 const sidebarToggle = $('sidebarToggle');
+const sidebarOverlay = $('sidebarOverlay');
 if (sidebarToggle) {
   sidebarToggle.onclick = () => {
     const sidebar = $('sidebar');
     if (sidebar) {
       sidebar.classList.toggle('open');
+      if (sidebarOverlay) {
+        sidebarOverlay.classList.toggle('active');
+      }
     }
   };
 }
+
+// Close sidebar when clicking overlay
+if (sidebarOverlay) {
+  sidebarOverlay.onclick = () => {
+    const sidebar = $('sidebar');
+    if (sidebar) {
+      sidebar.classList.remove('open');
+      sidebarOverlay.classList.remove('active');
+    }
+  };
+}
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', (e) => {
+  const sidebar = $('sidebar');
+  const sidebarToggle = $('sidebarToggle');
+  if (window.innerWidth <= 1024 && sidebar && sidebarToggle) {
+    if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target) && sidebar.classList.contains('open')) {
+      sidebar.classList.remove('open');
+      if (sidebarOverlay) sidebarOverlay.classList.remove('active');
+    }
+  }
+});
 
 if ($('toggleVisibility')) {
   $('toggleVisibility').onclick = () => {
