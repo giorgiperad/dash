@@ -1125,35 +1125,27 @@ body{overflow-x:hidden}
               </button>
             </div>
             
-            <!-- Allocation Section - Chart and Tokens Side by Side -->
+            <!-- Allocation Section - Tokens Only with Portfolio 24h Change -->
             <div style="background:rgba(15,23,42,0.95);border:1px solid rgba(99,102,241,0.3);border-radius:14px;padding:20px;position:relative;box-shadow:0 3px 16px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05) inset, 0 0 50px rgba(99,102,241,0.15);backdrop-filter:blur(16px);overflow:visible;">
-              <!-- Subtle Glow Background -->
-              <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:140px;height:140px;background:radial-gradient(circle, rgba(99,102,241,0.25) 0%, rgba(139,92,246,0.15) 40%, transparent 70%);border-radius:50%;pointer-events:none;filter:blur(16px);z-index:0;"></div>
-              
               <div style="position:relative;z-index:2;">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
                   <div>
                     <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-bottom:4px;text-transform:uppercase;letter-spacing:1px;font-weight:600;">აქტივების განაწილება</div>
                     <div style="font-size:11px;color:rgba(255,255,255,0.4);font-weight:500;">Portfolio Allocation</div>
                   </div>
+                  <!-- Portfolio 24h Change -->
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;padding:10px 16px;background:rgba(0,0,0,0.3);border-radius:10px;border:1px solid rgba(99,102,241,0.2);backdrop-filter:blur(8px);">
+                    <div style="font-size:9px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.8px;font-weight:500;">24h Change</div>
+                    <div id="portfolio24hChange" style="font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;transition:all 0.3s ease;line-height:1;">
+                      <span style="color:rgba(255,255,255,0.6);">-</span>
+                    </div>
+                  </div>
                 </div>
                 
-                <!-- Side by Side Layout: Chart and Legend -->
-                <div style="display:flex;align-items:center;gap:24px;justify-content:center;">
-                  <!-- Left: Chart -->
-                  <div style="display:flex;justify-content:center;align-items:center;position:relative;flex-shrink:0;">
-                    <canvas id="allocationChart" width="140" height="140" style="max-width:140px;max-height:140px;filter:drop-shadow(0 0 20px rgba(99,102,241,0.4)) drop-shadow(0 0 40px rgba(139,92,246,0.2));" aria-label="პორტფოლიოს განაწილების დიაგრამა" role="img"></canvas>
-                    <!-- Elegant Center Glow -->
-                    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:60px;height:60px;background:radial-gradient(circle, rgba(99,102,241,0.3) 0%, rgba(139,92,246,0.2) 50%, transparent 80%);border-radius:50%;pointer-events:none;z-index:-1;animation:pulse 3s ease-in-out infinite;"></div>
-                    <!-- Outer Glow Ring -->
-                    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:160px;height:160px;border:1px solid rgba(99,102,241,0.2);border-radius:50%;pointer-events:none;z-index:-2;"></div>
-                  </div>
-                  
-                  <!-- Right: Token Legend - 4 Column Grid -->
-                  <div id="allocationLegend" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;flex:1;max-width:600px;position:relative;z-index:2;align-content:start;" role="list" aria-label="ტოკენების განაწილების პროცენტები"></div>
-                </div>
+                <!-- Token Legend - 4 Column Grid -->
+                <div id="allocationLegend" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;position:relative;z-index:2;align-content:start;" role="list" aria-label="ტოკენების განაწილების პროცენტები"></div>
               </div>
-          </div>
+            </div>
         </div>
 
         <div class="holdings-list" id="holdingsList"></div>
@@ -4008,6 +4000,8 @@ function updatePortfolioAnalytics(holdings, totalValue) {
   const allocationByTokenId = {}; // Store by tokenId for categorization
   const token24hPNL = {}; // Store 24h PNL for each token
   let totalAllocation = 0;
+  let total24hPNL = 0; // Total portfolio 24h PNL
+  let total24hChange = 0; // Total portfolio 24h change percentage
   
   Object.entries(holdings).forEach(([id, h]) => {
     if (!h || !h.tokenId) return;
@@ -4023,6 +4017,7 @@ function updatePortfolioAnalytics(holdings, totalValue) {
       // Calculate 24h PNL
       const priceChange24h = token?.price_change_percentage_24h || 0;
       const pnl24h = value * (priceChange24h / 100);
+      total24hPNL += pnl24h;
       if (!token24hPNL[tokenName]) {
         token24hPNL[tokenName] = { value: value, pnl: 0, token: token };
       }
@@ -4030,67 +4025,38 @@ function updatePortfolioAnalytics(holdings, totalValue) {
     }
   });
   
-  // Draw elegant donut chart with glow
-  const canvas = $('allocationChart');
-  if (canvas && totalAllocation > 0) {
-    const ctx = canvas.getContext('2d');
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    const radius = Math.min(centerX, centerY) - 8;
-    const innerRadius = radius * 0.55; // Elegant donut
-    
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+  // Calculate weighted average 24h change for portfolio
+  if (totalAllocation > 0) {
+    Object.entries(allocation).forEach(([token, value]) => {
+      const tokenData = token24hPNL[token];
+      if (tokenData && tokenData.token) {
+        const weight = value / totalAllocation;
+        const priceChange24h = tokenData.token.price_change_percentage_24h || 0;
+        total24hChange += weight * priceChange24h;
+      }
+    });
+  }
+  
+  // Update Portfolio 24h Change Display
+  const portfolio24hChangeEl = $('portfolio24hChange');
+  if (portfolio24hChangeEl) {
+    const changeSign = total24hChange >= 0 ? '+' : '';
+    const changeColor = total24hChange >= 0 ? '#22c55e' : '#ef4444';
+    portfolio24hChangeEl.innerHTML = `<span style="color:${changeColor};text-shadow:0 0 12px ${changeColor}80;">${changeSign}${total24hChange.toFixed(2)}%</span>`;
+  }
+  
+  // Render token legend only (no chart)
+  const legendDiv = $('allocationLegend');
+  if (legendDiv) legendDiv.innerHTML = '';
+  
+  if (totalAllocation > 0) {
     const colors = ['#8b5cf6', '#6366f1', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#ef4444', '#a78bfa'];
-    let currentAngle = -Math.PI / 2;
-    
-    const legendDiv = $('allocationLegend');
-    if (legendDiv) legendDiv.innerHTML = '';
     
     Object.entries(allocation)
       .sort((a, b) => b[1] - a[1])
       .forEach(([token, value], idx) => {
         const percentage = (value / totalAllocation) * 100;
-        const sliceAngle = (value / totalAllocation) * 2 * Math.PI;
         const pnl24h = token24hPNL[token]?.pnl || 0;
-        
-        // Draw elegant solid arc with glow effect
-        const baseColor = colors[idx % colors.length];
-        
-        // Create radial gradient for glow
-        const midAngle = currentAngle + sliceAngle / 2;
-        const glowX = centerX + Math.cos(midAngle) * (radius + innerRadius) / 2;
-        const glowY = centerY + Math.sin(midAngle) * (radius + innerRadius) / 2;
-        const glowGradient = ctx.createRadialGradient(glowX, glowY, 0, glowX, glowY, radius);
-        glowGradient.addColorStop(0, baseColor + 'FF');
-        glowGradient.addColorStop(0.6, baseColor + 'E6');
-        glowGradient.addColorStop(1, baseColor + 'CC');
-        
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
-        ctx.arc(centerX, centerY, innerRadius, currentAngle + sliceAngle, currentAngle, true);
-        ctx.closePath();
-        ctx.fillStyle = glowGradient;
-        ctx.fill();
-        
-        // Add elegant border with glow
-        ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-        
-        // Add inner glow highlight
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, innerRadius + 2, currentAngle, currentAngle + sliceAngle);
-        ctx.strokeStyle = baseColor + '40';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-        
-        // Add outer glow highlight
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius - 1, currentAngle, currentAngle + sliceAngle);
-        ctx.strokeStyle = baseColor + '60';
-        ctx.lineWidth = 1;
-        ctx.stroke();
         
         // Add compact 4-column legend with 24h PNL
         if (legendDiv && percentage > 1) {
@@ -4194,8 +4160,6 @@ function updatePortfolioAnalytics(holdings, totalValue) {
           
           legendDiv.appendChild(legendItem);
         }
-        
-        currentAngle += sliceAngle;
       });
   }
   
