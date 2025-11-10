@@ -820,6 +820,22 @@ body{overflow-x:hidden}
       <button class="carousel-nav carousel-nav-right" id="activityCarouselNext" aria-label="Next cards">→</button>
     </div>
 
+    <!-- Artificial Superintelligence Alliance Panel -->
+    <div id="asiAlliancePanel" style="display:none;margin-bottom:24px;background:var(--bg-card);backdrop-filter:var(--blur);border:1px solid var(--border-secondary);border-radius:var(--radius-lg);padding:20px;position:relative;overflow:hidden;box-shadow:var(--shadow-md);transition:all 0.3s ease;" role="region" aria-label="Artificial Superintelligence Alliance">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border-secondary);">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:40px;height:40px;border-radius:var(--radius-md);background:linear-gradient(135deg, #8b5cf6 0%, #6366f1 50%, #ec4899 100%);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 12px rgba(139,92,246,0.3);">🤖</div>
+          <div>
+            <h3 style="font-size:18px;font-weight:600;color:var(--text-primary);margin:0;letter-spacing:-0.3px;">Artificial Superintelligence Alliance</h3>
+            <p style="font-size:12px;color:var(--text-tertiary);margin:4px 0 0 0;">ASI Ecosystem Tokens</p>
+          </div>
+        </div>
+      </div>
+      <div id="asiTokensGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">
+        <!-- ASI tokens will be rendered here -->
+      </div>
+    </div>
+
     <div class="content-grid" id="contentGrid" style="display:none;">
       <!-- Market Page Content -->
       <div id="marketPage" class="page-content active">
@@ -1292,6 +1308,7 @@ document.querySelectorAll('.user-tab').forEach(tab=>{
 function renderAll() {
   renderHeroStats();
   renderTokens();
+  renderASIAlliance();
   if (cryptoData && cryptoData.length > 0) {
     loadETFData();
     renderRecentActivity();
@@ -2051,6 +2068,96 @@ function renderTokens() {
       </div>
     `;
   });
+}
+
+/* ---------- ARTIFICIAL SUPERINTELLIGENCE ALLIANCE PANEL ---------- */
+function renderASIAlliance() {
+  const panel = $('asiAlliancePanel');
+  const grid = $('asiTokensGrid');
+  if (!panel || !grid) return;
+  
+  if (!cryptoData || cryptoData.length === 0) {
+    panel.style.display = 'none';
+    return;
+  }
+  
+  // ASI Alliance token IDs (CoinGecko IDs)
+  const asiTokens = [
+    { id: 'fetch', symbol: 'FET', name: 'Fetch.ai' },
+    { id: 'singularitynet', symbol: 'AGIX', name: 'SingularityNET' },
+    { id: 'ocean-protocol', symbol: 'OCEAN', name: 'Ocean Protocol' },
+    { id: 'rejuve-ai', symbol: 'RJV', name: 'Rejuve.AI' },
+    { id: 'sophiaverse', symbol: 'SOPH', name: 'SophiaVerse' },
+    { id: 'saffron-finance', symbol: 'SFI', name: 'Saffron Finance' },
+    { id: 'nunet', symbol: 'NTX', name: 'NuNet' },
+    { id: 'twin-protocol', symbol: 'TWIN', name: 'Twin Protocol' },
+    { id: 'hypercycle', symbol: 'HYPC', name: 'HyperCycle' }
+  ];
+  
+  // Find tokens in cryptoData
+  const foundTokens = [];
+  asiTokens.forEach(tokenDef => {
+    const token = cryptoData.find(t => 
+      t.id === tokenDef.id || 
+      t.symbol?.toLowerCase() === tokenDef.symbol.toLowerCase() ||
+      t.name?.toLowerCase().includes(tokenDef.name.toLowerCase())
+    );
+    if (token) {
+      foundTokens.push({
+        ...tokenDef,
+        ...token,
+        symbol: token.symbol || tokenDef.symbol
+      });
+    }
+  });
+  
+  if (foundTokens.length === 0) {
+    panel.style.display = 'none';
+    return;
+  }
+  
+  panel.style.display = 'block';
+  grid.innerHTML = foundTokens.map(token => {
+    const change = token.price_change_percentage_24h || 0;
+    const changeColor = change >= 0 ? '#22c55e' : '#ef4444';
+    const changeBg = change >= 0 ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)';
+    
+    return `
+      <div style="background:var(--bg-tertiary);border:1px solid var(--border-secondary);border-radius:var(--radius-md);padding:16px;transition:all 0.2s ease;position:relative;overflow:hidden;cursor:pointer;" 
+           onmouseenter="this.style.background='var(--bg-card-hover)';this.style.borderColor='var(--border-primary)';this.style.transform='translateY(-2px)';this.style.boxShadow='var(--shadow-md)'"
+           onmouseleave="this.style.background='var(--bg-tertiary)';this.style.borderColor='var(--border-secondary)';this.style.transform='translateY(0)';this.style.boxShadow='none'">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+          <div style="width:40px;height:40px;border-radius:var(--radius-sm);overflow:hidden;flex-shrink:0;border:1px solid var(--border-secondary);background:var(--bg-primary);display:flex;align-items:center;justify-content:center;">
+            ${token.image ? `<img src="${token.image}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='🤖'">` : '🤖'}
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${token.name}</div>
+            <div style="font-size:11px;color:var(--text-tertiary);font-weight:500;">${token.symbol.toUpperCase()}</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div>
+            <div style="font-size:10px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">ფასი</div>
+            <div style="font-size:16px;font-weight:700;color:var(--text-primary);font-variant-numeric:tabular-nums;">$${formatPrice(token.current_price || 0)}</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid var(--border-secondary);">
+            <div>
+              <div style="font-size:10px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">24სთ</div>
+              <div style="font-size:13px;font-weight:600;color:${changeColor};padding:4px 8px;border-radius:6px;background:${changeBg};display:inline-block;">
+                ${change >= 0 ? '↑' : '↓'} ${Math.abs(change).toFixed(2)}%
+              </div>
+            </div>
+            ${token.market_cap ? `
+            <div style="text-align:right;">
+              <div style="font-size:10px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">კაპიტალიზაცია</div>
+              <div style="font-size:11px;font-weight:600;color:var(--text-secondary);font-variant-numeric:tabular-nums;">$${formatMarketCap(token.market_cap)}</div>
+            </div>
+            ` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 window.sortBy = function(col) {
