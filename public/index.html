@@ -756,26 +756,26 @@ body{overflow-x:hidden}
 <!-- Sidebar Menu -->
 <aside class="sidebar" id="sidebar">
   <nav class="sidebar-menu">
-    <div class="sidebar-item active" data-tab="market">
+    <a href="/" class="sidebar-item active">
       <span class="sidebar-icon">📊</span>
       <span class="sidebar-text">ბაზარი</span>
-    </div>
-    <div class="sidebar-item" data-tab="portfolio">
+    </a>
+    <a href="/portfolio.html" class="sidebar-item">
       <span class="sidebar-icon">💼</span>
       <span class="sidebar-text">პორტფოლიო</span>
-    </div>
-    <div class="sidebar-item" data-tab="targets">
+    </a>
+    <a href="/targets.html" class="sidebar-item">
       <span class="sidebar-icon">🎯</span>
       <span class="sidebar-text">გასაყიდი მიზნები</span>
-    </div>
-    <div class="sidebar-item" data-tab="alerts">
+    </a>
+    <a href="/alerts.html" class="sidebar-item">
       <span class="sidebar-icon">🔔</span>
       <span class="sidebar-text">შეტყობინებები</span>
-    </div>
-    <div class="sidebar-item" data-tab="profile">
+    </a>
+    <a href="/profile.html" class="sidebar-item">
       <span class="sidebar-icon">👤</span>
       <span class="sidebar-text">პროფილი</span>
-    </div>
+    </a>
   </nav>
 </aside>
 
@@ -814,10 +814,8 @@ body{overflow-x:hidden}
 
     <div class="content-grid" id="contentGrid" style="display:none;">
       <div class="main-section" style="width:100%;">
-
-      <div id="marketContent" class="user-content active" style="display:block;">
         <div class="section-header">
-          <div class="section-title"></div>
+          <div class="section-title">ბაზრის მიმოხილვა</div>
           <div class="filter-tabs">
             <button class="filter-tab" onclick="sortBy('name')" id="sortName">სახელი</button>
             <button class="filter-tab" onclick="sortBy('price')" id="sortPrice">ფასი</button>
@@ -836,227 +834,11 @@ body{overflow-x:hidden}
 
         <div class="tokens-list" id="tokensList"></div>
       </div>
-
-      <div id="portfolioContent" class="user-content">
-        <div class="portfolio-summary">
-          <div class="summary-card" id="totalValueCard">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-              <div class="summary-label">საერთო ღირებულება</div>
-              <button id="toggleVisibility" style="background:transparent;border:none;color:#71717a;cursor:pointer;padding:4px;font-size:16px;transition:all .2s;opacity:0.7;" title="ხილვადობის გადართვა" aria-label="პორტფოლიოს ხილვადობის გადართვა">👁️</button>
-          </div>
-            <div class="summary-value" id="totalValue" aria-live="polite">$0.00</div>
-          </div>
-          <div class="summary-card" id="totalPLCard">
-            <div class="summary-label">PNL</div>
-            <div class="summary-value" id="totalPL" aria-live="polite">$0.00</div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-label">ROI</div>
-            <div class="summary-value" id="roi" aria-live="polite">0%</div>
-          </div>
-        </div>
-
-        <!-- Portfolio Analytics Section -->
-        <div id="portfolioAnalytics" style="display:none;margin-bottom:36px;background:linear-gradient(145deg,#0f172a 0%,#1e293b 50%,#334155 100%);border:2px solid rgba(99,102,241,.3);border-radius:24px;padding:28px;position:relative;overflow:hidden;box-shadow:0 15px 50px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.05);">
-          <div style="position:absolute;top:-50%;right:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(99,102,241,.15) 0%,transparent 70%);pointer-events:none;animation:rotate 20s linear infinite;"></div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;padding-bottom:20px;border-bottom:2px solid rgba(99,102,241,.2);position:relative;z-index:1;">
-            <h3 style="font-size:24px;font-weight:800;background:linear-gradient(135deg,#ffffff 0%,#e0e7ff 50%,#c7d2fe 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.5px;margin:0;text-shadow:0 0 30px rgba(99,102,241,.5);filter:drop-shadow(0 2px 4px rgba(0,0,0,.3));">📊 პორტფოლიოს ანალიტიკა</h3>
-            <button id="toggleAnalytics" style="background:linear-gradient(135deg,rgba(99,102,241,.2),rgba(139,92,246,.15));border:2px solid rgba(99,102,241,.3);color:#a5b4fc;padding:10px 18px;border-radius:12px;cursor:pointer;font-size:12px;font-weight:700;transition:all .3s;text-transform:uppercase;letter-spacing:0.5px;box-shadow:0 4px 12px rgba(99,102,241,.2),inset 0 1px 0 rgba(255,255,255,.1);position:relative;z-index:1;" aria-label="ანალიტიკის ხილვის გადართვა" aria-expanded="true" onmouseover="this.style.background='linear-gradient(135deg,rgba(99,102,241,.3),rgba(139,92,246,.25))';this.style.borderColor='rgba(99,102,241,.5)';this.style.color='#c7d2fe';this.style.transform='translateY(-2px) scale(1.05)';this.style.boxShadow='0 6px 20px rgba(99,102,241,.3),inset 0 1px 0 rgba(255,255,255,.15)'" onmouseout="this.style.background='linear-gradient(135deg,rgba(99,102,241,.2),rgba(139,92,246,.15))';this.style.borderColor='rgba(99,102,241,.3)';this.style.color='#a5b4fc';this.style.transform='translateY(0) scale(1)';this.style.boxShadow='0 4px 12px rgba(99,102,241,.2),inset 0 1px 0 rgba(255,255,255,.1)'">დამალვა</button>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;position:relative;z-index:1;" id="analyticsGrid">
-            <div style="background:linear-gradient(145deg,#1e293b 0%,#0f172a 100%);border:2px solid rgba(99,102,241,.25);border-radius:20px;padding:24px;box-shadow:0 10px 30px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05);position:relative;overflow:hidden;">
-              <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(99,102,241,.05),transparent);pointer-events:none;"></div>
-              <div style="font-size:12px;color:#94a3b8;margin-bottom:20px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;position:relative;z-index:1;text-shadow:0 1px 2px rgba(0,0,0,.3);">აქტივების განაწილება</div>
-              <div style="display:flex;justify-content:center;margin-bottom:24px;position:relative;z-index:1;">
-                <canvas id="allocationChart" width="240" height="240" style="max-width:100%;height:auto;filter:drop-shadow(0 8px 16px rgba(99,102,241,.3));" aria-label="პორტფოლიოს განაწილების ნამდვილი დიაგრამა" role="img"></canvas>
-              </div>
-              <div id="allocationLegend" style="display:flex;flex-direction:column;gap:12px;position:relative;z-index:1;" role="list" aria-label="ტოკენების განაწილების პროცენტები"></div>
-            </div>
-            <div style="position:relative;z-index:1;">
-              <div style="font-size:12px;color:#94a3b8;margin-bottom:20px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;text-shadow:0 1px 2px rgba(0,0,0,.3);">რისკის მეტრიკები</div>
-              <div id="riskMetrics" style="display:flex;flex-direction:column;gap:16px;" role="list" aria-label="პორტფოლიოს რისკის მეტრიკები">
-                <div style="padding:20px;background:linear-gradient(145deg,#1e293b 0%,#0f172a 100%);border:2px solid rgba(99,102,241,.25);border-radius:16px;transition:all .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 25px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05);position:relative;overflow:hidden;" onmouseover="this.style.background='linear-gradient(145deg,#334155 0%,#1e293b 100%)';this.style.borderColor='rgba(99,102,241,.4)';this.style.transform='translateY(-4px) scale(1.02)';this.style.boxShadow='0 12px 35px rgba(99,102,241,.25),inset 0 1px 0 rgba(255,255,255,.1)'" onmouseout="this.style.background='linear-gradient(145deg,#1e293b 0%,#0f172a 100%)';this.style.borderColor='rgba(99,102,241,.25)';this.style.transform='translateY(0) scale(1)';this.style.boxShadow='0 8px 25px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05)'">
-                  <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(99,102,241,.05),transparent);opacity:0;transition:opacity .3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'"></div>
-                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;position:relative;z-index:1;">
-                    <span style="font-size:13px;color:#cbd5e1;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,.3);">დივერსიფიკაციის ქულა</span>
-                    <span id="diversificationScore" style="font-size:20px;font-weight:800;background:linear-gradient(135deg,#ffffff 0%,#e0e7ff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-variant-numeric:tabular-nums;text-shadow:0 0 20px rgba(99,102,241,.5);filter:drop-shadow(0 2px 4px rgba(0,0,0,.3));">-</span>
-                  </div>
-                  <div style="height:8px;background:rgba(15,23,42,.6);border-radius:4px;overflow:hidden;position:relative;z-index:1;box-shadow:inset 0 2px 4px rgba(0,0,0,.3);">
-                    <div id="diversificationBar" style="height:100%;background:linear-gradient(90deg,#6366f1,#8b5cf6,#ec4899);width:0%;transition:width .6s cubic-bezier(.34,1.56,.64,1);border-radius:4px;box-shadow:0 0 15px rgba(99,102,241,.6),inset 0 1px 0 rgba(255,255,255,.2);position:relative;overflow:hidden;">
-                      <div style="position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:shimmer 2s infinite;"></div>
-                    </div>
-                  </div>
-                </div>
-                <div style="padding:20px;background:linear-gradient(145deg,#1e293b 0%,#0f172a 100%);border:2px solid rgba(99,102,241,.25);border-radius:16px;transition:all .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 25px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05);position:relative;overflow:hidden;" onmouseover="this.style.background='linear-gradient(145deg,#334155 0%,#1e293b 100%)';this.style.borderColor='rgba(99,102,241,.4)';this.style.transform='translateY(-4px) scale(1.02)';this.style.boxShadow='0 12px 35px rgba(99,102,241,.25),inset 0 1px 0 rgba(255,255,255,.1)'" onmouseout="this.style.background='linear-gradient(145deg,#1e293b 0%,#0f172a 100%)';this.style.borderColor='rgba(99,102,241,.25)';this.style.transform='translateY(0) scale(1)';this.style.boxShadow='0 8px 25px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05)'">
-                  <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(99,102,241,.05),transparent);opacity:0;transition:opacity .3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'"></div>
-                  <div style="display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1;">
-                    <span style="font-size:13px;color:#cbd5e1;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,.3);">უდიდესი პოზიცია</span>
-                    <span id="largestPosition" style="font-size:20px;font-weight:800;background:linear-gradient(135deg,#ffffff 0%,#e0e7ff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-variant-numeric:tabular-nums;text-shadow:0 0 20px rgba(99,102,241,.5);filter:drop-shadow(0 2px 4px rgba(0,0,0,.3));">-</span>
-                  </div>
-                </div>
-                <div style="padding:20px;background:linear-gradient(145deg,#1e293b 0%,#0f172a 100%);border:2px solid rgba(99,102,241,.25);border-radius:16px;transition:all .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 25px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05);position:relative;overflow:hidden;" onmouseover="this.style.background='linear-gradient(145deg,#334155 0%,#1e293b 100%)';this.style.borderColor='rgba(99,102,241,.4)';this.style.transform='translateY(-4px) scale(1.02)';this.style.boxShadow='0 12px 35px rgba(99,102,241,.25),inset 0 1px 0 rgba(255,255,255,.1)'" onmouseout="this.style.background='linear-gradient(145deg,#1e293b 0%,#0f172a 100%)';this.style.borderColor='rgba(99,102,241,.25)';this.style.transform='translateY(0) scale(1)';this.style.boxShadow='0 8px 25px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05)'">
-                  <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(99,102,241,.05),transparent);opacity:0;transition:opacity .3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'"></div>
-                  <div style="display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1;">
-                    <span style="font-size:13px;color:#cbd5e1;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,.3);">ტოკენების რაოდენობა</span>
-                    <span id="tokenCount" style="font-size:20px;font-weight:800;background:linear-gradient(135deg,#ffffff 0%,#e0e7ff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-variant-numeric:tabular-nums;text-shadow:0 0 20px rgba(99,102,241,.5);filter:drop-shadow(0 2px 4px rgba(0,0,0,.3));">-</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="holdings-list" id="holdingsList"></div>
-
-        <form class="add-holding-form" id="addHoldingForm">
-          <select id="holdingToken" required></select>
-          <input type="number" step="any" placeholder="რაოდენობა" id="holdingAmount" required>
-          <input type="number" step="any" placeholder="შესყიდვის ფასი" id="buyPrice" required>
-          <button type="submit">დამატება</button>
-        </form>
-      </div>
-
-      <!-- Edit Holding Modal -->
-      <div id="editHoldingModal" class="modal">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h3>პოზიციის რედაქტირება</h3>
-            <button class="modal-close" onclick="$('editHoldingModal').classList.remove('show')">×</button>
-          </div>
-          <form id="editHoldingForm">
-            <input type="hidden" id="editHoldingId">
-            <div class="form-group">
-              <label>ტოკენი</label>
-              <select id="editHoldingToken" required disabled></select>
-              <small style="color: #888;">ტოკენი ვერ შეიცვლება</small>
-            </div>
-            <div class="form-group">
-              <label>რაოდენობა</label>
-              <input type="number" step="any" id="editHoldingAmount" required>
-            </div>
-            <div class="form-group">
-              <label>შესყიდვის ფასი (USD)</label>
-              <input type="number" step="any" id="editHoldingBuyPrice" required>
-            </div>
-            <div class="modal-actions">
-              <button type="button" class="modal-btn cancel" onclick="$('editHoldingModal').classList.remove('show')">გაუქმება</button>
-              <button type="submit" class="modal-btn save">ცვლილებების შენახვა</button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <div id="alertsContent" class="user-content">
-        <div class="alerts-list" id="alertsList"></div>
-
-        <form class="add-alert-form" id="addAlertForm">
-          <select id="alertToken" required></select>
-          <select id="alertCondition" required>
-            <option value="above">ზემოთ</option>
-            <option value="below">ქვემოთ</option>
-          </select>
-          <input type="number" step="any" placeholder="სამიზნე ფასი" id="targetPrice" required>
-          <input type="text" placeholder="შეტყობინება (არასავალდებულო)" id="alertMessage">
-          <button type="submit"> დაყენება</button>
-        </form>
-      </div>
-
-      <div id="targetsContent" class="user-content">
-        <div class="section-header">
-          <div class="section-title">გასაყიდი მიზნები</div>
     </div>
-
-        <div style="background:rgba(20,20,30,.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:24px;margin-bottom:24px;">
-          <h3 style="font-size:16px;font-weight:600;color:#fafafa;margin-bottom:16px;">ახალი მიზნის დამატება</h3>
-          <form id="addTargetForm" style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:12px;align-items:flex-end;">
-            <div>
-              <label style="display:block;font-size:11px;color:#9aa0a6;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;font-weight:500;">ტოკენი</label>
-              <select id="targetToken" required style="width:100%;padding:10px 14px;background:rgba(10,14,26,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#e8eaed;font-size:13px;">
-                <option value="">აირჩიეთ ტოკენი</option>
-              </select>
-            </div>
-            <div>
-              <label style="display:block;font-size:11px;color:#9aa0a6;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;font-weight:500;">სამიზნე ფასი</label>
-              <input type="number" step="any" id="targetSellPrice" placeholder="0.00" required style="width:100%;padding:10px 14px;background:rgba(10,14,26,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#e8eaed;font-size:13px;">
-            </div>
-            <div>
-              <label style="display:block;font-size:11px;color:#9aa0a6;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;font-weight:500;">გასაყიდი %</label>
-              <input type="number" step="any" min="0" max="100" id="targetSellPercentage" placeholder="0" required style="width:100%;padding:10px 14px;background:rgba(10,14,26,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#e8eaed;font-size:13px;">
-            </div>
-            <button type="submit" style="padding:10px 20px;background:#6366f1;border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;transition:all .2s;white-space:nowrap;height:fit-content;">დამატება</button>
-          </form>
-        </div>
-
-        <div id="targetsList" style="display:flex;flex-direction:column;gap:8px;"></div>
-      </div>
-
-      <div id="profileContent" class="user-content">
-        <div class="section-header">
-          <div class="section-title">პროფილის მართვა</div>
-        </div>
-
-        <!-- Change Name Section -->
-        <div style="background:rgba(20,20,30,.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:24px;margin-bottom:24px;">
-          <h3 style="font-size:18px;font-weight:600;color:#fafafa;margin-bottom:16px;">სახელის შეცვლა</h3>
-          <form id="changeNameForm" style="display:flex;gap:12px;align-items:flex-end;">
-            <div style="flex:1;">
-              <label style="display:block;font-size:12px;color:#9aa0a6;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.8px;font-weight:500;">ახალი სახელი</label>
-              <input type="text" id="newName" placeholder="შეიყვანეთ ახალი სახელი" required
-                style="width:100%;padding:12px 16px;background:rgba(10,14,26,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#e8eaed;font-size:14px;">
-            </div>
-            <button type="submit" style="padding:12px 24px;background:#6366f1;border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all .2s;white-space:nowrap;">შეცვლა</button>
-          </form>
-          <div id="nameStatus" style="margin-top:12px;padding:12px;border-radius:8px;display:none;font-size:13px;"></div>
-        </div>
-
-        <!-- Change Email Section -->
-        <div style="background:rgba(20,20,30,.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:24px;margin-bottom:24px;">
-          <h3 style="font-size:18px;font-weight:600;color:#fafafa;margin-bottom:16px;">ელფოსტის შეცვლა</h3>
-          <form id="changeEmailForm" style="display:flex;flex-direction:column;gap:12px;">
-            <div>
-              <label style="display:block;font-size:12px;color:#9aa0a6;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.8px;font-weight:500;">ახალი ელფოსტა</label>
-              <input type="email" id="newEmail" placeholder="შეიყვანეთ ახალი ელფოსტა" required
-                style="width:100%;padding:12px 16px;background:rgba(10,14,26,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#e8eaed;font-size:14px;">
-            </div>
-            <div>
-              <label style="display:block;font-size:12px;color:#9aa0a6;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.8px;font-weight:500;">მიმდინარე პაროლი</label>
-              <input type="password" id="emailPassword" placeholder="დაადასტურეთ პაროლით" required
-                style="width:100%;padding:12px 16px;background:rgba(10,14,26,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#e8eaed;font-size:14px;">
-            </div>
-            <button type="submit" style="padding:12px 24px;background:#6366f1;border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all .2s;align-self:flex-start;">შეცვლა</button>
-          </form>
-          <div id="emailStatus" style="margin-top:12px;padding:12px;border-radius:8px;display:none;font-size:13px;"></div>
-        </div>
-
-        <!-- Change Password Section -->
-        <div style="background:rgba(20,20,30,.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:24px;">
-          <h3 style="font-size:18px;font-weight:600;color:#fafafa;margin-bottom:16px;">პაროლის შეცვლა</h3>
-          <form id="changePasswordForm" style="display:flex;flex-direction:column;gap:12px;">
-            <div>
-              <label style="display:block;font-size:12px;color:#9aa0a6;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.8px;font-weight:500;">მიმდინარე პაროლი</label>
-              <input type="password" id="currentPassword" placeholder="შეიყვანეთ მიმდინარე პაროლი" required
-                style="width:100%;padding:12px 16px;background:rgba(10,14,26,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#e8eaed;font-size:14px;">
-            </div>
-            <div>
-              <label style="display:block;font-size:12px;color:#9aa0a6;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.8px;font-weight:500;">ახალი პაროლი</label>
-              <input type="password" id="newPassword" placeholder="შეიყვანეთ ახალი პაროლი" required minlength="6"
-                style="width:100%;padding:12px 16px;background:rgba(10,14,26,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#e8eaed;font-size:14px;">
-            </div>
-            <div>
-              <label style="display:block;font-size:12px;color:#9aa0a6;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.8px;font-weight:500;">დაადასტურეთ ახალი პაროლი</label>
-              <input type="password" id="confirmPassword" placeholder="გაიმეორეთ ახალი პაროლი" required minlength="6"
-                style="width:100%;padding:12px 16px;background:rgba(10,14,26,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#e8eaed;font-size:14px;">
-            </div>
-            <button type="submit" style="padding:12px 24px;background:#6366f1;border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all .2s;align-self:flex-start;">შეცვლა</button>
-          </form>
-          <div id="passwordStatus" style="margin-top:12px;padding:12px;border-radius:8px;display:none;font-size:13px;"></div>
-        </div>
-      </div>
-    </div>
-  </div>
   </div>
 </div>
 
+<!-- Modals and other shared components -->
 <div id="addTokenModal" class="modal">
   <div class="modal-content" style="max-width:600px;width:90vw;">
     <div class="modal-header" style="background:rgba(15,20,30,.95);backdrop-filter:blur(24px) saturate(180%);padding:24px;border-radius:20px 20px 0 0;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.08);">
@@ -2381,6 +2163,28 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(liveRegion);
   }
 });
+
+/* ---------- SIDEBAR ACTIVE STATE ---------- */
+// Set active sidebar item based on current page
+function setActiveSidebarItem() {
+  const currentPath = window.location.pathname;
+  const sidebarItems = document.querySelectorAll('.sidebar-item');
+  
+  sidebarItems.forEach(item => {
+    item.classList.remove('active');
+    const href = item.getAttribute('href');
+    if (href) {
+      if (currentPath === '/' && href === '/') {
+        item.classList.add('active');
+      } else if (currentPath.includes(href.replace('.html', ''))) {
+        item.classList.add('active');
+      }
+    }
+  });
+}
+
+// Set active state on page load
+setActiveSidebarItem();
 
 /* ---------- INITIAL LOAD ---------- */
 // Load data on page load
