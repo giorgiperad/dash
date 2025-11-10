@@ -1616,6 +1616,14 @@ body{overflow-x:hidden}
 
       <!-- Portfolio Page Content -->
       <div id="portfolioPage" class="page-content">
+        <!-- Portfolio Tabs -->
+        <div class="user-tabs" style="display:flex;gap:8px;margin-bottom:24px;border-bottom:1px solid var(--border-secondary);padding-bottom:12px;">
+          <button class="user-tab active" data-portfolio-tab="main" style="padding:10px 20px;background:var(--accent-primary);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:all 0.2s;">💼 მთავარი პორტფოლიო</button>
+          <button class="user-tab" data-portfolio-tab="wallet" style="padding:10px 20px;background:transparent;border:1px solid var(--border-primary);color:var(--text-secondary);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:all 0.2s;">🔗 Wallet Portfolio</button>
+        </div>
+
+        <!-- Main Portfolio Tab -->
+        <div id="mainPortfolioTab" class="portfolio-tab-content">
         <div class="main-section" style="width:100%;">
         <div class="portfolio-summary">
             <div class="summary-card" id="totalValueCard">
@@ -1688,6 +1696,66 @@ body{overflow-x:hidden}
             <input type="number" step="any" placeholder="შესყიდვის ფასი" id="buyPrice" required>
             <button type="submit">დამატება</button>
         </form>
+        </div>
+        </div>
+
+        <!-- Wallet Portfolio Tab -->
+        <div id="walletPortfolioTab" class="portfolio-tab-content" style="display:none;">
+          <div class="main-section" style="width:100%;">
+            <div class="section-header">
+              <div class="section-title">🔗 Wallet Portfolio</div>
+            </div>
+
+            <!-- Wallet Address Input -->
+            <div style="background:rgba(15,23,42,0.95);border:1px solid rgba(99,102,241,0.3);border-radius:14px;padding:20px;margin-bottom:24px;">
+              <div style="margin-bottom:16px;">
+                <label style="display:block;font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;">Wallet Address</label>
+                <div style="display:flex;gap:12px;align-items:flex-start;">
+                  <input type="text" id="walletAddress" placeholder="Enter wallet address (0x...)" 
+                    style="flex:1;padding:12px 16px;background:rgba(0,0,0,0.3);border:1px solid rgba(99,102,241,0.3);border-radius:10px;color:var(--text-primary);font-size:14px;font-family:monospace;">
+                  <select id="walletChain" style="padding:12px 16px;background:rgba(0,0,0,0.3);border:1px solid rgba(99,102,241,0.3);border-radius:10px;color:var(--text-primary);font-size:14px;cursor:pointer;">
+                    <option value="ethereum">Ethereum</option>
+                    <option value="bsc">BSC</option>
+                    <option value="polygon">Polygon</option>
+                    <option value="avalanche">Avalanche</option>
+                    <option value="arbitrum">Arbitrum</option>
+                    <option value="optimism">Optimism</option>
+                  </select>
+                  <button id="loadWalletBtn" style="padding:12px 24px;background:linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);border:none;color:#fff;border-radius:10px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;white-space:nowrap;">Load Wallet</button>
+                </div>
+                <div id="walletStatus" style="margin-top:12px;padding:12px;border-radius:8px;display:none;font-size:13px;"></div>
+              </div>
+            </div>
+
+            <!-- Wallet Portfolio Summary -->
+            <div class="portfolio-summary" id="walletPortfolioSummary" style="display:none;">
+              <div class="summary-card">
+                <div class="summary-label">Wallet Value</div>
+                <div class="summary-value" id="walletTotalValue">$0.00</div>
+              </div>
+              <div class="summary-card">
+                <div class="summary-label">Tokens</div>
+                <div class="summary-value" id="walletTokenCount">0</div>
+              </div>
+            </div>
+
+            <!-- Wallet Tokens List -->
+            <div id="walletTokensList" style="display:none;">
+              <div class="section-header" style="margin-top:24px;margin-bottom:16px;">
+                <div class="section-title" style="font-size:16px;">Wallet Tokens</div>
+                <button id="saveWalletPortfolioBtn" style="padding:8px 16px;background:linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:12px;">💾 Save to Portfolio</button>
+              </div>
+              <div id="walletTokensContainer"></div>
+            </div>
+
+            <!-- Saved Wallet Portfolios -->
+            <div style="margin-top:32px;">
+              <div class="section-header">
+                <div class="section-title" style="font-size:18px;">Saved Wallet Portfolios</div>
+              </div>
+              <div id="savedWalletsList" style="display:grid;gap:12px;margin-top:16px;"></div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -5265,6 +5333,380 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initTopNavigation);
 } else {
   initTopNavigation();
+}
+
+/* ---------- WALLET PORTFOLIO FUNCTIONALITY ---------- */
+let walletPortfolioData = {}; // Store current wallet data
+let savedWalletPortfolios = {}; // Store saved wallet portfolios
+
+// Initialize Portfolio Tabs
+function initPortfolioTabs() {
+  const tabs = document.querySelectorAll('[data-portfolio-tab]');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const tabName = tab.dataset.portfolioTab;
+      // Update tab styles
+      tabs.forEach(t => {
+        if (t.dataset.portfolioTab === tabName) {
+          t.classList.add('active');
+          t.style.background = 'var(--accent-primary)';
+          t.style.color = '#fff';
+          t.style.border = 'none';
+        } else {
+          t.classList.remove('active');
+          t.style.background = 'transparent';
+          t.style.color = 'var(--text-secondary)';
+          t.style.border = '1px solid var(--border-primary)';
+        }
+      });
+      
+      // Show/hide content
+      if (tabName === 'main') {
+        $('mainPortfolioTab').style.display = 'block';
+        $('walletPortfolioTab').style.display = 'none';
+      } else {
+        $('mainPortfolioTab').style.display = 'none';
+        $('walletPortfolioTab').style.display = 'block';
+        loadSavedWallets();
+      }
+    });
+  });
+}
+
+// Load Wallet Data
+async function loadWalletData() {
+  const address = $('walletAddress').value.trim();
+  const chain = $('walletChain').value;
+  const statusEl = $('walletStatus');
+  
+  if (!address) {
+    statusEl.style.display = 'block';
+    statusEl.style.background = 'rgba(244,63,94,0.15)';
+    statusEl.style.color = '#f43f5e';
+    statusEl.style.border = '1px solid rgba(244,63,94,0.3)';
+    statusEl.textContent = 'Please enter a wallet address';
+    return;
+  }
+  
+  // Validate Ethereum address format
+  if (!/^0x[a-fA-F0-9]{40}$/.test(address)) {
+    statusEl.style.display = 'block';
+    statusEl.style.background = 'rgba(244,63,94,0.15)';
+    statusEl.style.color = '#f43f5e';
+    statusEl.style.border = '1px solid rgba(244,63,94,0.3)';
+    statusEl.textContent = 'Invalid wallet address format';
+    return;
+  }
+  
+  statusEl.style.display = 'block';
+  statusEl.style.background = 'rgba(99,102,241,0.15)';
+  statusEl.style.color = '#6366f1';
+  statusEl.style.border = '1px solid rgba(99,102,241,0.3)';
+  statusEl.textContent = 'Loading wallet data...';
+  
+  $('loadWalletBtn').disabled = true;
+  $('loadWalletBtn').textContent = 'Loading...';
+  
+  try {
+    // Use Moralis API (free tier) or similar service
+    // For demo, we'll use a proxy approach with CoinGecko API for token prices
+    const response = await fetch(`https://api.covalenthq.com/v1/${getChainId(chain)}/address/${address}/balances_v2/?key=ckey_72cd3b74b4a048c9ae4f32736c83`);
+    
+    if (!response.ok) {
+      // Fallback: Use a simpler approach with Etherscan-like API
+      await loadWalletDataFallback(address, chain);
+      return;
+    }
+    
+    const data = await response.json();
+    if (data.data && data.data.items) {
+      processWalletTokens(data.data.items, chain, address);
+    } else {
+      throw new Error('No token data found');
+    }
+  } catch (error) {
+    console.error('Wallet load error:', error);
+    await loadWalletDataFallback(address, chain);
+  }
+}
+
+// Fallback method using multiple APIs
+async function loadWalletDataFallback(address, chain) {
+  const statusEl = $('walletStatus');
+  
+  try {
+    // Try using DeBank API (public, no key needed for basic info)
+    const debankResponse = await fetch(`https://api.debank.com/token/balance_list?user_addr=${address}&is_all=true`);
+    
+    if (debankResponse.ok) {
+      const debankData = await debankResponse.json();
+      if (debankData && debankData.length > 0) {
+        processWalletTokensDebank(debankData, address);
+        return;
+      }
+    }
+    
+    // If DeBank fails, show manual input option
+    statusEl.style.background = 'rgba(245,158,11,0.15)';
+    statusEl.style.color = '#f59e0b';
+    statusEl.style.border = '1px solid rgba(245,158,11,0.3)';
+    statusEl.innerHTML = 'API limit reached. Please manually add tokens or try again later.';
+    $('loadWalletBtn').disabled = false;
+    $('loadWalletBtn').textContent = 'Load Wallet';
+  } catch (err) {
+    statusEl.style.background = 'rgba(244,63,94,0.15)';
+    statusEl.style.color = '#f43f5e';
+    statusEl.style.border = '1px solid rgba(244,63,94,0.3)';
+    statusEl.textContent = 'Error loading wallet. Please check the address and try again.';
+    $('loadWalletBtn').disabled = false;
+    $('loadWalletBtn').textContent = 'Load Wallet';
+  }
+}
+
+function getChainId(chain) {
+  const chainMap = {
+    'ethereum': '1',
+    'bsc': '56',
+    'polygon': '137',
+    'avalanche': '43114',
+    'arbitrum': '42161',
+    'optimism': '10'
+  };
+  return chainMap[chain] || '1';
+}
+
+function processWalletTokens(tokens, chain, address) {
+  walletPortfolioData = {
+    address: address,
+    chain: chain,
+    tokens: [],
+    totalValue: 0
+  };
+  
+  let totalValue = 0;
+  const tokenList = [];
+  
+  tokens.forEach(item => {
+    if (parseFloat(item.balance) > 0) {
+      const balance = parseFloat(item.balance) / Math.pow(10, item.contract_decimals || 18);
+      const value = balance * (item.quote || 0);
+      totalValue += value;
+      
+      tokenList.push({
+        symbol: item.contract_ticker_symbol,
+        name: item.contract_name,
+        balance: balance,
+        value: value,
+        price: item.quote || 0,
+        contractAddress: item.contract_address,
+        logoUrl: item.logo_url
+      });
+    }
+  });
+  
+  walletPortfolioData.tokens = tokenList;
+  walletPortfolioData.totalValue = totalValue;
+  
+  displayWalletTokens(tokenList, totalValue);
+  
+  $('walletStatus').style.display = 'none';
+  $('loadWalletBtn').disabled = false;
+  $('loadWalletBtn').textContent = 'Load Wallet';
+}
+
+function processWalletTokensDebank(tokens, address) {
+  walletPortfolioData = {
+    address: address,
+    chain: 'ethereum',
+    tokens: [],
+    totalValue: 0
+  };
+  
+  let totalValue = 0;
+  const tokenList = [];
+  
+  tokens.forEach(item => {
+    if (item.amount > 0) {
+      const balance = item.amount;
+      const value = balance * (item.price || 0);
+      totalValue += value;
+      
+      tokenList.push({
+        symbol: item.symbol,
+        name: item.name,
+        balance: balance,
+        value: value,
+        price: item.price || 0,
+        contractAddress: item.id,
+        logoUrl: item.logo_url
+      });
+    }
+  });
+  
+  walletPortfolioData.tokens = tokenList;
+  walletPortfolioData.totalValue = totalValue;
+  
+  displayWalletTokens(tokenList, totalValue);
+  
+  $('walletStatus').style.display = 'none';
+  $('loadWalletBtn').disabled = false;
+  $('loadWalletBtn').textContent = 'Load Wallet';
+}
+
+function displayWalletTokens(tokens, totalValue) {
+  // Show summary
+  $('walletPortfolioSummary').style.display = 'grid';
+  $('walletTotalValue').textContent = formatPrice(totalValue);
+  $('walletTokenCount').textContent = tokens.length;
+  
+  // Display tokens
+  const container = $('walletTokensContainer');
+  container.innerHTML = '';
+  
+  if (tokens.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-tertiary);">No tokens found in this wallet</div>';
+    return;
+  }
+  
+  tokens.forEach(token => {
+    const tokenCard = document.createElement('div');
+    tokenCard.style.cssText = 'display:flex;align-items:center;gap:12px;padding:14px;background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.05);border-radius:10px;margin-bottom:8px;';
+    
+    tokenCard.innerHTML = `
+      <img src="${token.logoUrl || 'https://via.placeholder.com/40'}" style="width:40px;height:40px;border-radius:8px;" onerror="this.src='https://via.placeholder.com/40'">
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:600;font-size:14px;color:var(--text-primary);margin-bottom:2px;">${token.name || token.symbol}</div>
+        <div style="font-size:11px;color:var(--text-tertiary);">${token.symbol}</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-weight:600;font-size:14px;color:var(--text-primary);">${formatPrice(token.value)}</div>
+        <div style="font-size:11px;color:var(--text-tertiary);">${token.balance.toFixed(4)} ${token.symbol}</div>
+      </div>
+    `;
+    
+    container.appendChild(tokenCard);
+  });
+  
+  $('walletTokensList').style.display = 'block';
+}
+
+// Save Wallet Portfolio
+async function saveWalletPortfolio() {
+  if (!currentUser) {
+    alert('Please login to save wallet portfolio');
+    return;
+  }
+  
+  if (!walletPortfolioData.address || walletPortfolioData.tokens.length === 0) {
+    alert('No wallet data to save. Please load a wallet first.');
+    return;
+  }
+  
+  try {
+    const walletKey = `wallet_${walletPortfolioData.address}_${walletPortfolioData.chain}`;
+    const walletData = {
+      address: walletPortfolioData.address,
+      chain: walletPortfolioData.chain,
+      tokens: walletPortfolioData.tokens,
+      totalValue: walletPortfolioData.totalValue,
+      savedAt: Date.now(),
+      name: `${walletPortfolioData.chain.toUpperCase()} - ${walletPortfolioData.address.substring(0, 6)}...${walletPortfolioData.address.substring(38)}`
+    };
+    
+    await database.ref(`users/${currentUser.uid}/walletPortfolios/${walletKey}`).set(walletData);
+    
+    alert('Wallet portfolio saved successfully!');
+    loadSavedWallets();
+  } catch (error) {
+    console.error('Save wallet error:', error);
+    alert('Error saving wallet portfolio');
+  }
+}
+
+// Load Saved Wallets
+async function loadSavedWallets() {
+  if (!currentUser) return;
+  
+  try {
+    const snapshot = await database.ref(`users/${currentUser.uid}/walletPortfolios`).once('value');
+    const wallets = snapshot.val() || {};
+    savedWalletPortfolios = wallets;
+    
+    const container = $('savedWalletsList');
+    container.innerHTML = '';
+    
+    if (Object.keys(wallets).length === 0) {
+      container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-tertiary);">No saved wallet portfolios</div>';
+      return;
+    }
+    
+    Object.entries(wallets).forEach(([key, wallet]) => {
+      const walletCard = document.createElement('div');
+      walletCard.style.cssText = 'padding:16px;background:rgba(15,23,42,0.95);border:1px solid rgba(99,102,241,0.3);border-radius:12px;';
+      
+      walletCard.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px;">
+          <div>
+            <div style="font-weight:600;font-size:14px;color:var(--text-primary);margin-bottom:4px;">${wallet.name || 'Wallet Portfolio'}</div>
+            <div style="font-size:11px;color:var(--text-tertiary);font-family:monospace;">${wallet.address}</div>
+            <div style="font-size:10px;color:var(--text-tertiary);margin-top:4px;text-transform:uppercase;">${wallet.chain}</div>
+          </div>
+          <button onclick="deleteWalletPortfolio('${key}')" style="padding:6px 12px;background:rgba(244,63,94,0.15);border:1px solid rgba(244,63,94,0.3);color:#f43f5e;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600;">Delete</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px;">
+          <div>
+            <div style="font-size:10px;color:var(--text-tertiary);margin-bottom:4px;">Total Value</div>
+            <div style="font-weight:600;font-size:14px;color:var(--text-primary);">${formatPrice(wallet.totalValue || 0)}</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--text-tertiary);margin-bottom:4px;">Tokens</div>
+            <div style="font-weight:600;font-size:14px;color:var(--text-primary);">${(wallet.tokens || []).length}</div>
+          </div>
+        </div>
+        <button onclick="loadSavedWallet('${key}')" style="width:100%;margin-top:12px;padding:10px;background:linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:12px;">Load Wallet</button>
+      `;
+      
+      container.appendChild(walletCard);
+    });
+  } catch (error) {
+    console.error('Load saved wallets error:', error);
+  }
+}
+
+async function deleteWalletPortfolio(key) {
+  if (!currentUser) return;
+  if (!confirm('Are you sure you want to delete this wallet portfolio?')) return;
+  
+  try {
+    await database.ref(`users/${currentUser.uid}/walletPortfolios/${key}`).remove();
+    loadSavedWallets();
+  } catch (error) {
+    console.error('Delete wallet error:', error);
+    alert('Error deleting wallet portfolio');
+  }
+}
+
+function loadSavedWallet(key) {
+  const wallet = savedWalletPortfolios[key];
+  if (!wallet) return;
+  
+  $('walletAddress').value = wallet.address;
+  $('walletChain').value = wallet.chain;
+  walletPortfolioData = wallet;
+  displayWalletTokens(wallet.tokens, wallet.totalValue);
+}
+
+// Initialize wallet portfolio
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    initPortfolioTabs();
+    if ($('loadWalletBtn')) $('loadWalletBtn').onclick = loadWalletData;
+    if ($('saveWalletPortfolioBtn')) $('saveWalletPortfolioBtn').onclick = saveWalletPortfolio;
+  });
+} else {
+  initPortfolioTabs();
+  if ($('loadWalletBtn')) $('loadWalletBtn').onclick = loadWalletData;
+  if ($('saveWalletPortfolioBtn')) $('saveWalletPortfolioBtn').onclick = saveWalletPortfolio;
 }
 </script>
 
