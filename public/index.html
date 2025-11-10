@@ -19,8 +19,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
 <!-- ALKDots Font - Local from GitHub -->
 <link rel="stylesheet" href="/fonts/alkdots.min.css">
-<!-- BPG ExtraSquare Mtavruli Font -->
-<link rel="stylesheet" href="https://web-fonts.ge/bpgextrasquaremtavruli/bpgextrasquaremtavruli.css">
+<!-- BPG ExtraSquare Mtavruli Font - Local from GitHub -->
+<link rel="stylesheet" href="/fonts/bpgextrasquaremtavruli.css">
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/icon-192.png">
 <style>
@@ -41,6 +41,23 @@
        url('/public/fonts/alkdots-webfont.woff') format('woff'),
        url('/public/fonts/alkdots-webfont.ttf') format('truetype');
   font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* BPG ExtraSquare Mtavruli Font - From GitHub Repository (Fallback if CSS file doesn't load) */
+@font-face {
+  font-family: 'BPG ExtraSquare Mtavruli';
+  src: url('/fonts/bpgextrasquaremtavruli-webfont.eot');
+  src: url('/fonts/bpgextrasquaremtavruli-webfont.eot?#iefix') format('embedded-opentype'),
+       url('/fonts/bpgextrasquaremtavruli-webfont.woff2') format('woff2'),
+       url('/fonts/bpgextrasquaremtavruli-webfont.woff') format('woff'),
+       url('/fonts/bpgextrasquaremtavruli-webfont.ttf') format('truetype'),
+       url('/fonts/bpgextrasquaremtavruli-webfont.svg#BPGExtraSquareMtavruli') format('svg'),
+       url('/public/fonts/bpgextrasquaremtavruli-webfont.woff2') format('woff2'),
+       url('/public/fonts/bpgextrasquaremtavruli-webfont.woff') format('woff'),
+       url('/public/fonts/bpgextrasquaremtavruli-webfont.ttf') format('truetype');
+  font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
