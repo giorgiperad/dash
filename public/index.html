@@ -4007,8 +4007,9 @@ function updatePortfolioAnalytics(holdings, totalValue) {
   const token24hPNL = {}; // Store 24h PNL for each token
   let totalAllocation = 0;
   let total24hPNL = 0; // Total portfolio 24h PNL
-  let total24hChange = 0; // Total portfolio 24h change percentage
+  let total24hChange = 0; // Total portfolio 24h change percentage (weighted average)
   
+  // First pass: Calculate total allocation and 24h PNL
   Object.entries(holdings).forEach(([id, h]) => {
     if (!h || !h.tokenId) return;
     const price = prices[h.tokenId] || 0;
@@ -4020,10 +4021,11 @@ function updatePortfolioAnalytics(holdings, totalValue) {
       allocationByTokenId[h.tokenId] = (allocationByTokenId[h.tokenId] || 0) + value;
       totalAllocation += value;
       
-      // Calculate 24h PNL
+      // Calculate 24h PNL for each holding
       const priceChange24h = token?.price_change_percentage_24h || 0;
       const pnl24h = value * (priceChange24h / 100);
       total24hPNL += pnl24h;
+      
       if (!token24hPNL[tokenName]) {
         token24hPNL[tokenName] = { value: value, pnl: 0, token: token };
       }
@@ -4031,14 +4033,21 @@ function updatePortfolioAnalytics(holdings, totalValue) {
     }
   });
   
-  // Calculate weighted average 24h change for portfolio
+  // Second pass: Calculate weighted average 24h change from all individual holdings
+  // This ensures every holding contributes correctly, even if same token appears multiple times
   if (totalAllocation > 0) {
-    Object.entries(allocation).forEach(([token, value]) => {
-      const tokenData = token24hPNL[token];
-      if (tokenData && tokenData.token) {
-        const weight = value / totalAllocation;
-        const priceChange24h = tokenData.token.price_change_percentage_24h || 0;
-        total24hChange += weight * priceChange24h;
+    Object.entries(holdings).forEach(([id, h]) => {
+      if (!h || !h.tokenId) return;
+      const price = prices[h.tokenId] || 0;
+      const value = h.amount * price;
+      if (value > 0) {
+        const token = cryptoData.find(t => t.id === h.tokenId);
+        const priceChange24h = token?.price_change_percentage_24h || 0;
+        // Include all valid price changes (including 0% changes)
+        if (!isNaN(priceChange24h) && isFinite(priceChange24h)) {
+          const weight = value / totalAllocation;
+          total24hChange += weight * priceChange24h;
+        }
       }
     });
   }
