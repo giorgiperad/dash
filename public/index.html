@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
 <meta name="description" content="Professional crypto dashboard with real-time market data, portfolio tracking, and price alerts">
-<meta name="theme-color" content="#8b5cf6">
+<meta name="theme-color" content="#6366f1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="CCX">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="msapplication-TileColor" content="#8b5cf6">
+<meta name="msapplication-TileColor" content="#6366f1">
 <meta name="msapplication-config" content="/browserconfig.xml">
 <meta name="application-name" content="CCX">
 <meta name="format-detection" content="telephone=no">
@@ -25,95 +25,95 @@
    ═══════════════════════════════════════════════════════════════ */
 * { margin:0; padding:0; box-sizing:border-box; }
 
-/* ──── UPGRADED VISION UI DASHBOARD CHAKRA THEME ──── */
+/* ──── MODERN PREMIUM CRYPTO THEME ──── */
 :root {
-  /* Dark Theme - Enhanced Vision UI Dashboard Style */
-  --bg-primary: #0f1419;
-  --bg-secondary: #1a202c;
-  --bg-tertiary: #2d3748;
-  --bg-card: #1a202c;
-  --bg-card-hover: #2d3748;
-  --bg-overlay: rgba(15, 20, 25, 0.98);
-  --bg-input: #1a202c;
-  --bg-input-focus: #2d3748;
+  /* Dark Theme - Premium Modern Style */
+  --bg-primary: #0a0e14;
+  --bg-secondary: #141920;
+  --bg-tertiary: #1e2530;
+  --bg-card: #141920;
+  --bg-card-hover: #1e2530;
+  --bg-overlay: rgba(10, 14, 20, 0.98);
+  --bg-input: #141920;
+  --bg-input-focus: #1e2530;
   
-  --text-primary: #ffffff;
-  --text-secondary: #e2e8f0;
-  --text-tertiary: #a0aec0;
-  --text-muted: #718096;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-tertiary: #94a3b8;
+  --text-muted: #64748b;
   
-  --border-primary: rgba(255, 255, 255, 0.1);
-  --border-secondary: rgba(255, 255, 255, 0.06);
-  --border-accent: rgba(139, 92, 246, 0.5);
+  --border-primary: rgba(255, 255, 255, 0.12);
+  --border-secondary: rgba(255, 255, 255, 0.08);
+  --border-accent: rgba(99, 102, 241, 0.4);
   
-  --accent-primary: #8b5cf6;
-  --accent-secondary: #a78bfa;
-  --accent-hover: #7c3aed;
+  --accent-primary: #6366f1;
+  --accent-secondary: #818cf8;
+  --accent-hover: #4f46e5;
   
-  --success: #10b981;
-  --success-bg: rgba(16, 185, 129, 0.15);
-  --error: #ef4444;
-  --error-bg: rgba(239, 68, 68, 0.15);
+  --success: #22c55e;
+  --success-bg: rgba(34, 197, 94, 0.12);
+  --error: #f43f5e;
+  --error-bg: rgba(244, 63, 94, 0.12);
   --warning: #f59e0b;
-  --warning-bg: rgba(245, 158, 11, 0.15);
+  --warning-bg: rgba(245, 158, 11, 0.12);
   
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
-  --shadow-glow: 0 0 20px rgba(139, 92, 246, 0.3);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.25);
   
-  --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 50%, #ec4899 100%);
-  --gradient-card: linear-gradient(145deg, #1a202c 0%, #0f1419 100%);
-  --gradient-text: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
-  --gradient-accent: linear-gradient(135deg, #8b5cf6, #ec4899, #f59e0b);
+  --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+  --gradient-card: linear-gradient(145deg, #141920 0%, #0a0e14 100%);
+  --gradient-text: linear-gradient(135deg, #f8fafc 0%, #cbd5e1 100%);
+  --gradient-accent: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
   
-  --blur: blur(20px);
-  --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 18px;
-  --radius-xl: 22px;
+  --blur: blur(16px);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
 }
 
 [data-theme="light"] {
-  /* Light Theme - Vision UI Dashboard Style */
-  --bg-primary: #f7fafc;
+  /* Light Theme - Clean Modern Style */
+  --bg-primary: #f8fafc;
   --bg-secondary: #ffffff;
-  --bg-tertiary: #edf2f7;
+  --bg-tertiary: #f1f5f9;
   --bg-card: #ffffff;
-  --bg-card-hover: #f7fafc;
-  --bg-overlay: rgba(255, 255, 255, 0.95);
+  --bg-card-hover: #f8fafc;
+  --bg-overlay: rgba(255, 255, 255, 0.98);
   --bg-input: #ffffff;
-  --bg-input-focus: #f7fafc;
+  --bg-input-focus: #f8fafc;
   
-  --text-primary: #1a202c;
-  --text-secondary: #2d3748;
-  --text-tertiary: #4a5568;
-  --text-muted: #718096;
+  --text-primary: #0f172a;
+  --text-secondary: #1e293b;
+  --text-tertiary: #475569;
+  --text-muted: #64748b;
   
-  --border-primary: rgba(0, 0, 0, 0.12);
-  --border-secondary: rgba(0, 0, 0, 0.08);
-  --border-accent: rgba(139, 92, 246, 0.5);
+  --border-primary: rgba(0, 0, 0, 0.1);
+  --border-secondary: rgba(0, 0, 0, 0.06);
+  --border-accent: rgba(99, 102, 241, 0.3);
   
-  --accent-primary: #8b5cf6;
-  --accent-secondary: #a78bfa;
-  --accent-hover: #7c3aed;
+  --accent-primary: #6366f1;
+  --accent-secondary: #818cf8;
+  --accent-hover: #4f46e5;
   
-  --success: #059669;
-  --success-bg: rgba(5, 150, 105, 0.15);
-  --error: #dc2626;
-  --error-bg: rgba(220, 38, 38, 0.15);
-  --warning: #d97706;
-  --warning-bg: rgba(217, 119, 6, 0.15);
+  --success: #16a34a;
+  --success-bg: rgba(22, 163, 74, 0.1);
+  --error: #e11d48;
+  --error-bg: rgba(225, 29, 72, 0.1);
+  --warning: #ea580c;
+  --warning-bg: rgba(234, 88, 12, 0.1);
   
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
-  --shadow-glow: 0 0 20px rgba(139, 92, 246, 0.25);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.2);
   
-  --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 50%, #ec4899 100%);
-  --gradient-card: linear-gradient(145deg, #ffffff 0%, #f7fafc 100%);
-  --gradient-text: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
-  --gradient-accent: linear-gradient(135deg, #8b5cf6, #ec4899, #f59e0b);
+  --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+  --gradient-card: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  --gradient-text: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  --gradient-accent: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
 }
 
 /* ──── ANIMATIONS ──── */
@@ -399,30 +399,122 @@ body{
 .sidebar-toggle{display:none;width:40px;height:40px;background:var(--bg-card);border:1px solid var(--border-primary);border-radius:var(--radius-md);align-items:center;justify-content:center;cursor:pointer;color:var(--text-primary);font-size:20px;box-shadow:var(--shadow-sm);transition:all 0.3s ease}
 .sidebar-toggle:hover{background:var(--bg-card-hover);border-color:var(--accent-primary);color:var(--accent-primary);transform:scale(1.05)}
 
-/* Responsive Sidebar */
+/* ──── RESPONSIVE DESIGN ──── */
+
+/* Tablet and Below (1024px and below) */
 @media(max-width:1024px){
-  .top-nav-tabs{flex-wrap:wrap;gap:4px;padding:0 16px}
-  .top-nav-tab{font-size:12px;padding:6px 12px}
-  .main-content{padding:20px 16px}
-  .navbar{padding:0 16px}
+  .navbar{height:64px;padding:0 20px}
+  .top-nav-tabs{flex-wrap:wrap;gap:4px;padding:0 12px;justify-content:flex-start;overflow-x:auto}
+  .top-nav-tab{font-size:12px;padding:6px 12px;flex-shrink:0}
+  .main-content{padding:20px 16px;padding-top:88px}
+  .logo-title{font-size:16px}
+  .logo-icon{width:36px;height:36px}
+  .nav-right{gap:12px}
+  .live-indicator{padding:6px 12px;font-size:11px}
+  .time-display{font-size:12px}
+  .hero-section{grid-template-columns:repeat(3,1fr);gap:10px}
+  .hero-stat{padding:12px 16px;min-height:80px}
+  .carousel-card{min-width:180px;padding:10px 12px}
+  .content-grid{margin-bottom:32px}
 }
+
+/* Mobile Landscape and Below (768px and below) */
 @media(max-width:768px){
-  .sidebar{width:220px}
-  .main-content{padding:16px 12px}
-  .hero-stat{padding:10px 12px;min-height:60px}
+  .navbar{height:60px;padding:0 12px}
+  .top-nav-tabs{gap:2px;padding:0 8px}
+  .top-nav-tab{font-size:11px;padding:6px 10px}
+  .main-content{padding:16px 12px;padding-top:84px}
+  .logo-title{font-size:14px}
+  .logo-icon{width:32px;height:32px}
+  .nav-right{gap:8px}
+  .theme-toggle{width:36px;height:36px;font-size:16px}
+  .auth-btn{padding:8px 14px;font-size:12px}
+  .live-indicator{padding:4px 10px;font-size:10px}
+  .time-display{font-size:11px;display:none}
+  .hero-section{grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:20px}
+  .hero-stat{padding:10px 12px;min-height:70px}
   .hero-stat-value{font-size:14px}
   .hero-stat-label{font-size:9px}
-  .logo-title{font-size:16px}
-  .logo-icon{width:36px;height:36px;min-width:36px;min-height:36px}
-  .nav-right{gap:12px}
-  .auth-btn{padding:8px 16px;font-size:12px}
-}
-@media(max-width:480px){
-  .sidebar{width:200px}
-  .main-content{padding:12px 8px}
+  .carousel-card{min-width:160px;padding:8px 10px}
+  .carousel-card-value{font-size:14px}
+  .carousel-card-title{font-size:9px}
+  .section-title{font-size:18px}
+  .section-header{flex-direction:column;align-items:flex-start;gap:12px}
+  .filter-tabs{flex-wrap:wrap;gap:4px}
+  .filter-tab{font-size:11px;padding:6px 10px}
+  .token-row{padding:12px;gap:8px}
+  .token-icon-col{width:32px;height:32px}
+  .token-name-col h3{font-size:14px}
+  .token-symbol{font-size:11px}
+  .summary-card{padding:12px 14px}
+  .summary-value{font-size:16px}
+  .summary-label{font-size:9px}
   .main-section{padding:16px}
+  .portfolio-summary{grid-template-columns:repeat(2,1fr);gap:10px}
+  .holdings-list{grid-template-columns:1fr}
+  .holding-row{padding:12px}
+  .activity-carousel-wrapper{margin-bottom:12px}
+  .activity-carousel .carousel-card{min-width:120px;padding:6px 8px}
+  #asiAlliancePanel{padding:16px}
+  #asiTokensGrid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+}
+
+/* Mobile Portrait (480px and below) */
+@media(max-width:480px){
+  .navbar{height:56px;padding:0 8px}
+  .top-nav-tabs{gap:2px;padding:0 4px}
+  .top-nav-tab{font-size:10px;padding:5px 8px}
+  .main-content{padding:12px 8px;padding-top:80px}
+  .logo-title{font-size:12px}
+  .logo-icon{width:28px;height:28px}
+  .nav-right{gap:6px}
+  .theme-toggle{width:32px;height:32px;font-size:14px}
+  .auth-btn{padding:6px 12px;font-size:11px}
+  .live-indicator{padding:4px 8px;font-size:9px}
+  .live-text{font-size:9px}
+  .hero-section{grid-template-columns:1fr;gap:8px;margin-bottom:16px}
+  .hero-stat{padding:10px;min-height:65px}
+  .hero-stat-value{font-size:13px}
+  .hero-stat-label{font-size:8px}
+  .carousel-card{min-width:140px;padding:8px}
+  .carousel-card-value{font-size:13px}
+  .carousel-card-title{font-size:8px}
+  .section-title{font-size:16px}
+  .filter-tabs{gap:3px}
+  .filter-tab{font-size:10px;padding:5px 8px}
+  .table-header{display:none}
+  .token-row{flex-direction:column;align-items:flex-start;gap:8px;padding:10px}
+  .token-icon-col{width:28px;height:28px}
+  .token-name-col h3{font-size:13px}
+  .token-symbol{font-size:10px}
+  .summary-card{padding:10px 12px}
+  .summary-value{font-size:14px}
+  .summary-label{font-size:8px}
+  .main-section{padding:12px}
   .portfolio-summary{grid-template-columns:1fr;gap:8px}
   .holdings-list{grid-template-columns:1fr}
+  .holding-row{padding:10px;flex-direction:column}
+  .holding-stats{grid-template-columns:repeat(2,1fr);gap:8px}
+  .activity-carousel-wrapper{margin-bottom:10px}
+  .activity-carousel .carousel-card{min-width:110px;padding:6px}
+  #asiAlliancePanel{padding:12px;margin-bottom:16px}
+  #asiTokensGrid{grid-template-columns:1fr;gap:8px}
+  .container{padding:0}
+}
+
+/* Small Mobile (360px and below) */
+@media(max-width:360px){
+  .navbar{height:52px;padding:0 6px}
+  .top-nav-tab{font-size:9px;padding:4px 6px}
+  .main-content{padding:10px 6px;padding-top:76px}
+  .logo-title{font-size:11px}
+  .logo-icon{width:24px;height:24px}
+  .hero-stat{padding:8px;min-height:60px}
+  .carousel-card{min-width:120px;padding:6px}
+  .section-title{font-size:14px}
+  .summary-card{padding:8px 10px}
+  .summary-value{font-size:13px}
+  #asiAlliancePanel{padding:10px}
 }
 
 /* Responsive Styles for All Screen Sizes */
