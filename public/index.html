@@ -815,19 +815,6 @@ body{overflow-x:hidden}
       <button class="carousel-nav carousel-nav-right" id="carouselNext" aria-label="Next cards">→</button>
     </div>
 
-    <!-- Quotes Section -->
-    <div id="quotesSection" style="display:none;margin-bottom:24px;background:var(--bg-card);backdrop-filter:var(--blur);border:1px solid var(--border-secondary);border-radius:var(--radius-lg);padding:16px;position:relative;overflow:hidden;transition:background-color 0.3s ease, border-color 0.3s ease;" role="region" aria-label="Quotes">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-        <div class="carousel-card-title" style="margin:0;">💬 ციტატა</div>
-        <button id="refreshQuote" style="background:transparent;border:1px solid var(--border-primary);color:var(--text-tertiary);padding:6px 12px;border-radius:var(--radius-sm);font-size:11px;cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='var(--accent-primary)';this.style.color='var(--accent-primary)';" onmouseout="this.style.borderColor='var(--border-primary)';this.style.color='var(--text-tertiary)';">🔄</button>
-      </div>
-      <div id="quoteContent" style="font-size:14px;color:var(--text-primary);font-weight:500;line-height:1.6;font-style:italic;transition:color 0.3s ease;">
-        <div style="color:var(--text-muted);font-size:13px;">ციტატების ჩატვირთვა...</div>
-      </div>
-      <div id="quoteAuthor" style="margin-top:12px;font-size:12px;color:var(--text-tertiary);text-align:right;font-weight:500;transition:color 0.3s ease;">
-      </div>
-    </div>
-
     <!-- Recent Activity Carousel - Compact -->
     <div class="activity-carousel-wrapper" id="activityCarouselWrapper" style="display:none;margin-bottom:16px;">
       <div class="activity-carousel" id="activityCarousel">
@@ -845,7 +832,7 @@ body{overflow-x:hidden}
           </div>
           <div>
             <h3 style="font-size:18px;font-weight:600;color:var(--text-primary);margin:0;letter-spacing:-0.3px;">Artificial Superintelligence Alliance</h3>
-            <p style="font-size:12px;color:var(--text-tertiary);margin:4px 0 0 0;">ASI Ecosystem Tokens</p>
+            <p style="font-size:12px;color:var(--text-tertiary);margin:4px 0 0 0;">წარმატება მოდის იმათთან, ვინც დარჩა, როცა სხვები წავიდნენ</p>
           </div>
         </div>
       </div>
@@ -4246,115 +4233,13 @@ function startAutoRefresh() {
   }, refreshIntervalMs);
 }
 
-// Load quotes function
-let quotesData = [
-  // Default quotes (always available)
-  { text: 'წარმატება მოდის იმათთან, ვინც დარჩა, როცა სხვები წავიდნენ', author: '' }
-];
-
-function loadQuotes() {
-  try {
-    if (typeof firebase === 'undefined' || !firebase.database) {
-      console.warn('Firebase not available for quotes');
-      // Use default quotes
-      if (quotesData.length > 0) {
-        displayRandomQuote();
-        if ($('quotesSection')) $('quotesSection').style.display = 'block';
-      }
-      return;
-    }
-    
-    const db = firebase.database();
-    if (!db) {
-      // Use default quotes if no database
-      if (quotesData.length > 0) {
-        displayRandomQuote();
-        if ($('quotesSection')) $('quotesSection').style.display = 'block';
-      }
-      return;
-    }
-    
-    db.ref('quotes').once('value').then(snapshot => {
-      const quotes = snapshot.val() || {};
-      const firebaseQuotes = Object.values(quotes).filter(q => q && q.text);
-      
-      // Combine Firebase quotes with default quotes
-      const defaultQuote = { text: 'წარმატება მოდის იმათთან, ვინც დარჩა, როცა სხვები წავიდნენ', author: '' };
-      quotesData = [defaultQuote, ...firebaseQuotes];
-      
-      if (quotesData.length > 0) {
-        displayRandomQuote();
-        if ($('quotesSection')) $('quotesSection').style.display = 'block';
-      } else {
-        if ($('quotesSection')) $('quotesSection').style.display = 'none';
-      }
-    }).catch(error => {
-      console.error('Error loading quotes:', error);
-      // Use default quotes on error
-      if (quotesData.length > 0) {
-        displayRandomQuote();
-        if ($('quotesSection')) $('quotesSection').style.display = 'block';
-      }
-    });
-  } catch (e) {
-    console.error('Error in loadQuotes:', e);
-    // Use default quotes on error
-    if (quotesData.length > 0) {
-      displayRandomQuote();
-      if ($('quotesSection')) $('quotesSection').style.display = 'block';
-    }
-  }
-}
-
-function displayRandomQuote() {
-  if (!quotesData || quotesData.length === 0) {
-    $('quoteContent').innerHTML = '<div style="color:#6b7280;font-size:13px;">ციტატები არ მოიძებნა</div>';
-    $('quoteAuthor').textContent = '';
-    return;
-  }
-  
-  const randomQuote = quotesData[Math.floor(Math.random() * quotesData.length)];
-  $('quoteContent').innerHTML = `"${randomQuote.text}"`;
-  $('quoteAuthor').textContent = randomQuote.author ? `— ${randomQuote.author}` : '';
-}
-
-// Setup refresh quote button
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    const refreshBtn = $('refreshQuote');
-    if (refreshBtn) {
-      refreshBtn.onclick = displayRandomQuote;
-    }
-  });
-} else {
-  const refreshBtn = $('refreshQuote');
-  if (refreshBtn) {
-    refreshBtn.onclick = displayRandomQuote;
-  }
-}
+// Quotes section removed
 
 // Load settings and start auto-refresh
 fetchAll();
 startAutoRefresh();
 
-// Load quotes after Firebase is initialized
-if (typeof firebase !== 'undefined' && firebase.database) {
-  // Wait for Firebase to be ready
-  setTimeout(() => {
-    try {
-      const db = firebase.database();
-      if (db) {
-        loadQuotes();
-        // Listen for new quotes
-        db.ref('quotes').on('value', () => {
-          loadQuotes();
-        });
-      }
-    } catch (e) {
-      console.error('Firebase database not available:', e);
-    }
-  }, 1000);
-}
+// Quotes section removed - no longer loading quotes
 
 // Settings handler - ensure it's attached after DOM is ready
 function initSettings() {
