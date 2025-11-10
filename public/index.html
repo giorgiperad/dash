@@ -4219,20 +4219,40 @@ function startAutoRefresh() {
 }
 
 // Load quotes function
-let quotesData = [];
+let quotesData = [
+  // Default quotes (always available)
+  { text: 'წარმატება მოდის იმათთან, ვინც დარჩა, როცა სხვები წავიდნენ', author: '' }
+];
+
 function loadQuotes() {
   try {
     if (typeof firebase === 'undefined' || !firebase.database) {
       console.warn('Firebase not available for quotes');
+      // Use default quotes
+      if (quotesData.length > 0) {
+        displayRandomQuote();
+        if ($('quotesSection')) $('quotesSection').style.display = 'block';
+      }
       return;
     }
     
     const db = firebase.database();
-    if (!db) return;
+    if (!db) {
+      // Use default quotes if no database
+      if (quotesData.length > 0) {
+        displayRandomQuote();
+        if ($('quotesSection')) $('quotesSection').style.display = 'block';
+      }
+      return;
+    }
     
     db.ref('quotes').once('value').then(snapshot => {
       const quotes = snapshot.val() || {};
-      quotesData = Object.values(quotes).filter(q => q && q.text);
+      const firebaseQuotes = Object.values(quotes).filter(q => q && q.text);
+      
+      // Combine Firebase quotes with default quotes
+      const defaultQuote = { text: 'წარმატება მოდის იმათთან, ვინც დარჩა, როცა სხვები წავიდნენ', author: '' };
+      quotesData = [defaultQuote, ...firebaseQuotes];
       
       if (quotesData.length > 0) {
         displayRandomQuote();
@@ -4242,10 +4262,19 @@ function loadQuotes() {
       }
     }).catch(error => {
       console.error('Error loading quotes:', error);
-      if ($('quotesSection')) $('quotesSection').style.display = 'none';
+      // Use default quotes on error
+      if (quotesData.length > 0) {
+        displayRandomQuote();
+        if ($('quotesSection')) $('quotesSection').style.display = 'block';
+      }
     });
   } catch (e) {
     console.error('Error in loadQuotes:', e);
+    // Use default quotes on error
+    if (quotesData.length > 0) {
+      displayRandomQuote();
+      if ($('quotesSection')) $('quotesSection').style.display = 'block';
+    }
   }
 }
 
