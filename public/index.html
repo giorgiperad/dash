@@ -226,16 +226,20 @@ body{
 .top-nav-tab.active{color:var(--accent-primary);background:var(--bg-tertiary)}
 .top-nav-tab.active::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:60%;height:2px;background:var(--accent-primary);border-radius:2px 2px 0 0}
 
-/* SIDEBAR MENU - Hidden */
-.sidebar{display:none!important}
-.sidebar-menu{display:none!important}
-.sidebar-item{display:none!important}
-.sidebar-icon{display:none!important}
-.sidebar-text{display:none!important}
-.sidebar-divider{display:none!important}
-.sidebar-section-title{display:none!important}
-.sidebar-overlay{display:none!important}
-.sidebar-toggle{display:none!important}
+/* SIDEBAR MENU - Hidden on Desktop, Visible on Mobile */
+.sidebar{display:none}
+.sidebar-menu{display:flex;flex-direction:column;gap:8px;padding:20px}
+.sidebar-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--radius-md);cursor:pointer;transition:all 0.2s ease;color:var(--text-secondary);background:transparent;border:none;width:100%;text-align:left;font-size:15px;font-weight:500}
+.sidebar-item:hover{background:var(--bg-tertiary);color:var(--text-primary)}
+.sidebar-item.active{background:var(--accent-primary);color:#fff}
+.sidebar-icon{font-size:20px;width:24px;text-align:center}
+.sidebar-text{flex:1}
+.sidebar-divider{display:none}
+.sidebar-section-title{display:none}
+.sidebar-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);z-index:999;opacity:0;transition:opacity 0.3s ease}
+.sidebar-overlay.active{display:block;opacity:1}
+.sidebar-toggle{display:none;width:40px;height:40px;border-radius:10px;background:var(--bg-card);border:1px solid var(--border-primary);align-items:center;justify-content:center;cursor:pointer;transition:all .3s;font-size:20px;color:var(--text-secondary);flex-shrink:0}
+.sidebar-toggle:hover{background:var(--bg-card-hover);border-color:var(--accent-primary);color:var(--accent-primary)}
 
 /* MAIN CONTENT WITH SIDEBAR - Vision UI Style */
 .main-layout{display:flex;min-height:100vh;margin-top:0}
@@ -1002,25 +1006,78 @@ body{overflow-x:hidden}
   }
 }
 
-/* Top Navigation - Mobile Optimization */
+/* Mobile Menu - Show/Hide Based on Screen Size */
 @media(max-width:768px){
+  /* Hide top nav tabs on mobile, show hamburger */
   .top-nav-tabs{
-    overflow-x:auto!important;
-    -webkit-overflow-scrolling:touch!important;
-    scrollbar-width:none!important;
-    -ms-overflow-style:none!important;
-    padding:0 8px!important;
-    gap:2px!important;
-    justify-content:flex-start!important;
-  }
-  .top-nav-tabs::-webkit-scrollbar{
     display:none!important;
   }
-  .top-nav-tab{
-    font-size:11px!important;
-    padding:8px 12px!important;
-    white-space:nowrap!important;
-    flex-shrink:0!important;
+  .sidebar-toggle{
+    display:flex!important;
+  }
+  
+  /* Show mobile sidebar */
+  .sidebar{
+    display:block!important;
+    position:fixed!important;
+    top:0!important;
+    left:0!important;
+    width:280px!important;
+    max-width:85vw!important;
+    height:100vh!important;
+    background:var(--bg-secondary)!important;
+    backdrop-filter:blur(20px)!important;
+    border-right:1px solid var(--border-secondary)!important;
+    z-index:1000!important;
+    transform:translateX(-100%)!important;
+    transition:transform 0.3s cubic-bezier(0.4,0,0.2,1)!important;
+    box-shadow:4px 0 24px rgba(0,0,0,0.3)!important;
+    overflow-y:auto!important;
+    padding-top:70px!important;
+  }
+  .sidebar.active{
+    transform:translateX(0)!important;
+  }
+  .sidebar-menu{
+    display:flex!important;
+    flex-direction:column!important;
+    gap:8px!important;
+    padding:20px 16px!important;
+  }
+  .sidebar-item{
+    display:flex!important;
+    align-items:center!important;
+    gap:12px!important;
+    padding:14px 16px!important;
+    border-radius:12px!important;
+    font-size:15px!important;
+    font-weight:500!important;
+    min-height:48px!important;
+  }
+  .sidebar-icon{
+    display:inline-block!important;
+    font-size:20px!important;
+    width:24px!important;
+    text-align:center!important;
+  }
+  .sidebar-text{
+    display:inline-block!important;
+    flex:1!important;
+  }
+  .sidebar-overlay{
+    display:block!important;
+  }
+}
+
+@media(min-width:769px){
+  .sidebar-toggle{
+    display:none!important;
+  }
+  .sidebar{
+    display:none!important;
+  }
+  .sidebar-overlay{
+    display:none!important;
   }
 }
 
@@ -1262,6 +1319,99 @@ body{overflow-x:hidden}
     max-width:100%!important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   📱 MOBILE-SPECIFIC THEME
+   ═══════════════════════════════════════════════════════════════ */
+@media(max-width:768px){
+  /* Mobile Theme Variables */
+  :root{
+    --mobile-bg-primary:#0a0e14;
+    --mobile-bg-secondary:#141920;
+    --mobile-bg-card:#1a1f2e;
+    --mobile-text-primary:#f8fafc;
+    --mobile-text-secondary:#cbd5e1;
+    --mobile-accent:#6366f1;
+    --mobile-border:rgba(255,255,255,0.1);
+  }
+  
+  /* Mobile-optimized body */
+  body{
+    background:var(--mobile-bg-primary)!important;
+    font-size:15px!important;
+    line-height:1.6!important;
+  }
+  
+  /* Mobile navbar */
+  .navbar{
+    background:var(--mobile-bg-secondary)!important;
+    backdrop-filter:blur(20px)!important;
+    border-bottom:1px solid var(--mobile-border)!important;
+    box-shadow:0 2px 8px rgba(0,0,0,0.3)!important;
+  }
+  
+  /* Mobile cards */
+  .main-section,
+  .featured-card,
+  .hero-stat,
+  .summary-card{
+    background:var(--mobile-bg-card)!important;
+    border:1px solid var(--mobile-border)!important;
+    box-shadow:0 2px 12px rgba(0,0,0,0.4)!important;
+  }
+  
+  /* Mobile text */
+  .section-title,
+  .token-name-col h3,
+  .holding-name{
+    color:var(--mobile-text-primary)!important;
+  }
+  
+  /* Mobile buttons */
+  .auth-btn,
+  .top-nav-tab,
+  .filter-tab,
+  button{
+    background:var(--mobile-bg-card)!important;
+    border:1px solid var(--mobile-border)!important;
+    color:var(--mobile-text-primary)!important;
+  }
+  
+  .auth-btn.primary,
+  .top-nav-tab.active,
+  .filter-tab.active{
+    background:var(--mobile-accent)!important;
+    border-color:var(--mobile-accent)!important;
+    color:#fff!important;
+  }
+  
+  /* Mobile sidebar */
+  .sidebar{
+    background:var(--mobile-bg-secondary)!important;
+    border-right:1px solid var(--mobile-border)!important;
+  }
+  
+  .sidebar-item{
+    background:transparent!important;
+    color:var(--mobile-text-secondary)!important;
+  }
+  
+  .sidebar-item:hover{
+    background:var(--mobile-bg-card)!important;
+    color:var(--mobile-text-primary)!important;
+  }
+  
+  .sidebar-item.active{
+    background:var(--mobile-accent)!important;
+    color:#fff!important;
+  }
+  
+  /* Mobile overlay */
+  .sidebar-overlay{
+    background:rgba(0,0,0,0.7)!important;
+    backdrop-filter:blur(4px)!important;
+  }
+}
 </style>
 </head>
 <body>
@@ -1270,6 +1420,10 @@ body{overflow-x:hidden}
 
 <nav class="navbar">
   <div class="logo-section">
+    <!-- Mobile Menu Toggle (Hamburger) -->
+    <button class="sidebar-toggle" id="mobileMenuToggle" aria-label="Toggle menu" style="display:none;">
+      <span id="menuIcon">☰</span>
+    </button>
     <div class="logo-icon"><img src="https://ta3bviqjtxy1kv7x.public.blob.vercel-storage.com/sticker.webp" alt="Logo"></div>
     <div class="logo-text">
       <div class="logo-title">CRYPTO COLLECTIVE X</div>
@@ -1331,7 +1485,7 @@ body{overflow-x:hidden}
 <!-- Sidebar Overlay -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<!-- Sidebar Menu -->
+<!-- Mobile Sidebar Menu -->
 <aside class="sidebar" id="sidebar">
   <nav class="sidebar-menu">
     <div class="sidebar-item active" data-page="market">
@@ -1344,7 +1498,7 @@ body{overflow-x:hidden}
     </div>
     <div class="sidebar-item" data-page="targets">
       <span class="sidebar-icon">🎯</span>
-      <span class="sidebar-text"></span>
+      <span class="sidebar-text">Trade</span>
     </div>
     <div class="sidebar-item" data-page="alerts">
       <span class="sidebar-icon">🔔</span>
@@ -5002,6 +5156,116 @@ document.addEventListener('touchend', (e) => {
   }
   lastTouchEnd = now;
 }, false);
+
+/* ---------- MOBILE MENU HANDLERS ---------- */
+function initMobileMenu() {
+  const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+  const sidebar = document.getElementById('sidebar');
+  const sidebarOverlay = document.getElementById('sidebarOverlay');
+  const menuIcon = document.getElementById('menuIcon');
+  
+  if (!mobileMenuToggle || !sidebar || !sidebarOverlay) return;
+  
+  // Toggle mobile menu
+  function toggleMobileMenu() {
+    const isOpen = sidebar.classList.contains('active');
+    if (isOpen) {
+      closeMobileMenu();
+    } else {
+      openMobileMenu();
+    }
+  }
+  
+  function openMobileMenu() {
+    sidebar.classList.add('active');
+    sidebarOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    if (menuIcon) menuIcon.textContent = '✕';
+  }
+  
+  function closeMobileMenu() {
+    sidebar.classList.remove('active');
+    sidebarOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+    if (menuIcon) menuIcon.textContent = '☰';
+  }
+  
+  // Menu toggle button
+  mobileMenuToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleMobileMenu();
+  });
+  
+  // Close on overlay click
+  sidebarOverlay.addEventListener('click', closeMobileMenu);
+  
+  // Close on sidebar item click (mobile)
+  const sidebarItems = sidebar.querySelectorAll('.sidebar-item');
+  sidebarItems.forEach(item => {
+    item.addEventListener('click', (e) => {
+      const page = item.dataset.page;
+      if (page) {
+        // Navigate to page
+        showPage(page);
+        // Update active states
+        document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+        document.querySelectorAll('.top-nav-tab').forEach(t => t.classList.remove('active'));
+        item.classList.add('active');
+        const topNavTab = document.querySelector(`.top-nav-tab[data-page="${page}"]`);
+        if (topNavTab) topNavTab.classList.add('active');
+        // Close menu after navigation
+        setTimeout(closeMobileMenu, 300);
+      }
+    });
+  });
+  
+  // Close on escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+      closeMobileMenu();
+    }
+  });
+  
+  // Handle window resize
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768 && sidebar.classList.contains('active')) {
+      closeMobileMenu();
+    }
+  });
+}
+
+// Initialize mobile menu when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initMobileMenu);
+} else {
+  initMobileMenu();
+}
+
+// Ensure top nav tabs also work (for desktop)
+function initTopNavigation() {
+  const topNavTabs = document.querySelectorAll('.top-nav-tab');
+  topNavTabs.forEach(tab => {
+    tab.addEventListener('click', (e) => {
+      const page = tab.dataset.page;
+      if (page) {
+        showPage(page);
+        // Update active states
+        topNavTabs.forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+        tab.classList.add('active');
+        const sidebarItem = document.querySelector(`.sidebar-item[data-page="${page}"]`);
+        if (sidebarItem) sidebarItem.classList.add('active');
+      }
+    });
+  });
+}
+
+// Initialize top navigation
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initTopNavigation);
+} else {
+  initTopNavigation();
+}
 </script>
 
 </body>
