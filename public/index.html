@@ -166,38 +166,53 @@ body{
 .user-content{display:none}
 .user-content.active{display:block}
 
-/* PORTFOLIO - Modern Compact Design with Comfortable Colors */
-.portfolio-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
-.summary-card{background:linear-gradient(135deg,rgba(30,30,40,.7) 0%,rgba(35,30,45,.5) 100%);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:18px 20px;backdrop-filter:blur(12px);transition:all .25s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
-.summary-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(139,92,246,.4),transparent);opacity:0;transition:opacity .3s}
-.summary-card:hover{background:linear-gradient(135deg,rgba(35,35,45,.8) 0%,rgba(40,35,50,.6) 100%);border-color:rgba(139,92,246,.25);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
-.summary-card:hover::before{opacity:1}
-.summary-value{font-size:22px;font-weight:700;margin:6px 0;color:#e8e8f0;letter-spacing:-0.5px;line-height:1.2;font-variant-numeric:tabular-nums}
-.summary-label{font-size:10px;color:#a0a0b0;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:4px}
-.holdings-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;margin-bottom:24px}
-.holding-row{display:flex;flex-direction:column;gap:12px;padding:16px;background:linear-gradient(135deg,rgba(30,30,40,.6) 0%,rgba(25,25,35,.5) 100%);border:1px solid rgba(255,255,255,.08);border-radius:14px;transition:all .25s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;backdrop-filter:blur(8px)}
-.holding-row::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);opacity:0;transition:opacity .3s}
-.holding-row:hover{background:linear-gradient(135deg,rgba(35,35,45,.75) 0%,rgba(30,30,40,.65) 100%);border-color:rgba(139,92,246,.2);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.2)}
-.holding-row:hover::before{opacity:1}
-.holding-header{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.06)}
-.holding-icon-wrapper{width:44px;height:44px;border-radius:12px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
-.holding-icon-wrapper img{width:100%;height:100%;object-fit:cover}
+/* PORTFOLIO - Bold Vibrant Design with Dynamic Effects */
+.portfolio-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px}
+.summary-card{background:linear-gradient(145deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);border:2px solid transparent;border-radius:20px;padding:22px 24px;position:relative;overflow:hidden;transition:all .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 10px 30px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.1)}
+.summary-card::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(99,102,241,.3) 0%,transparent 70%);opacity:0;transition:opacity .6s;pointer-events:none}
+.summary-card::after{content:'';position:absolute;inset:0;border-radius:20px;padding:2px;background:linear-gradient(135deg,#6366f1,#8b5cf6,#ec4899,#f59e0b);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;opacity:0;transition:opacity .4s}
+.summary-card:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 20px 50px rgba(99,102,241,.3),0 0 40px rgba(139,92,246,.2),inset 0 1px 0 rgba(255,255,255,.15)}
+.summary-card:hover::before{opacity:1;animation:rotate 8s linear infinite}
+.summary-card:hover::after{opacity:1}
+@keyframes rotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.summary-value{font-size:26px;font-weight:800;margin:8px 0;background:linear-gradient(135deg,#ffffff 0%,#e0e7ff 50%,#c7d2fe 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.6px;line-height:1.1;font-variant-numeric:tabular-nums;text-shadow:0 0 30px rgba(99,102,241,.5);filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
+.summary-label{font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:6px;text-shadow:0 1px 2px rgba(0,0,0,.3)}
+.holdings-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-bottom:28px}
+.holding-row{display:flex;flex-direction:column;gap:14px;padding:20px;background:linear-gradient(145deg,#1e293b 0%,#0f172a 100%);border:2px solid rgba(99,102,241,.2);border-radius:18px;transition:all .4s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden;box-shadow:0 8px 25px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05)}
+.holding-row::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);transition:left .6s}
+.holding-row:hover{background:linear-gradient(145deg,#334155 0%,#1e293b 100%);border-color:rgba(99,102,241,.5);transform:translateY(-4px) scale(1.01);box-shadow:0 15px 40px rgba(99,102,241,.25),0 0 30px rgba(139,92,246,.15),inset 0 1px 0 rgba(255,255,255,.1)}
+.holding-row:hover::before{left:100%}
+.holding-header{display:flex;align-items:center;gap:14px;padding-bottom:14px;border-bottom:2px solid rgba(99,102,241,.15);position:relative}
+.holding-header::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:2px;background:linear-gradient(90deg,#6366f1,#8b5cf6);transition:width .4s}
+.holding-row:hover .holding-header::after{width:100%}
+.holding-icon-wrapper{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,rgba(99,102,241,.2) 0%,rgba(139,92,246,.15) 100%);border:2px solid rgba(99,102,241,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;box-shadow:0 4px 12px rgba(99,102,241,.2),inset 0 1px 0 rgba(255,255,255,.1);transition:all .3s}
+.holding-row:hover .holding-icon-wrapper{transform:rotate(5deg) scale(1.1);border-color:rgba(99,102,241,.5);box-shadow:0 6px 20px rgba(99,102,241,.3),inset 0 1px 0 rgba(255,255,255,.15)}
+.holding-icon-wrapper img{width:100%;height:100%;object-fit:cover;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
 .holding-info{flex:1;min-width:0}
-.holding-name{font-size:15px;font-weight:600;color:#e8e8f0;letter-spacing:-0.2px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.holding-symbol{font-size:11px;color:#a0a0b0;text-transform:uppercase;letter-spacing:0.5px;font-weight:500}
-.holding-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.holding-stat{display:flex;flex-direction:column;gap:4px}
-.holding-stat-label{font-size:9px;color:#9090a0;text-transform:uppercase;letter-spacing:0.8px;font-weight:600}
-.holding-stat-value{font-size:13px;font-weight:600;color:#d8d8e0;letter-spacing:-0.1px;font-variant-numeric:tabular-nums}
-.holding-stat-value.positive{color:#4ade80}
-.holding-stat-value.negative{color:#f87171}
-.holding-actions{display:flex;gap:6px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06);justify-content:flex-end}
-.edit-btn{background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);color:#a5b4fc;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:11px;font-weight:600;transition:all .2s;flex:1;text-align:center}
-.edit-btn:hover{background:rgba(99,102,241,.18);border-color:rgba(99,102,241,.3);color:#c7d2fe;transform:translateY(-1px)}
-.delete-btn{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#fca5a5;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:11px;font-weight:600;transition:all .2s;flex:1;text-align:center}
-.delete-btn:hover{background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.3);color:#fecaca;transform:translateY(-1px)}
-.editable{cursor:pointer;padding:2px 4px;border-radius:4px;transition:all .2s;display:inline-block}
-.editable:hover{background:rgba(139,92,246,.12);border:1px dashed rgba(139,92,246,.3)}
+.holding-name{font-size:16px;font-weight:700;background:linear-gradient(135deg,#f1f5f9 0%,#cbd5e1 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.3px;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 2px 4px rgba(0,0,0,.2)}
+.holding-symbol{font-size:12px;color:#64748b;text-transform:uppercase;letter-spacing:1px;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,.2)}
+.holding-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.holding-stat{display:flex;flex-direction:column;gap:6px;padding:10px;background:rgba(15,23,42,.4);border:1px solid rgba(99,102,241,.1);border-radius:12px;transition:all .3s;position:relative;overflow:hidden}
+.holding-stat::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(99,102,241,.05),transparent);opacity:0;transition:opacity .3s}
+.holding-stat:hover{background:rgba(15,23,42,.6);border-color:rgba(99,102,241,.25);transform:translateY(-2px)}
+.holding-stat:hover::before{opacity:1}
+.holding-stat-label{font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:1.2px;font-weight:700;text-shadow:0 1px 2px rgba(0,0,0,.2)}
+.holding-stat-value{font-size:14px;font-weight:700;color:#e2e8f0;letter-spacing:-0.2px;font-variant-numeric:tabular-nums;text-shadow:0 2px 4px rgba(0,0,0,.3)}
+.holding-stat-value.positive{color:#34d399;text-shadow:0 0 10px rgba(52,211,153,.4),0 2px 4px rgba(0,0,0,.3)}
+.holding-stat-value.negative{color:#f87171;text-shadow:0 0 10px rgba(248,113,113,.4),0 2px 4px rgba(0,0,0,.3)}
+.holding-actions{display:flex;gap:8px;padding-top:14px;border-top:2px solid rgba(99,102,241,.15);justify-content:flex-end;position:relative}
+.holding-actions::before{content:'';position:absolute;top:-2px;left:0;width:0;height:2px;background:linear-gradient(90deg,#6366f1,#8b5cf6);transition:width .4s}
+.holding-row:hover .holding-actions::before{width:100%}
+.edit-btn{background:linear-gradient(135deg,rgba(99,102,241,.2) 0%,rgba(139,92,246,.15) 100%);border:2px solid rgba(99,102,241,.3);color:#a5b4fc;padding:8px 16px;border-radius:12px;cursor:pointer;font-size:12px;font-weight:700;transition:all .3s;flex:1;text-align:center;text-transform:uppercase;letter-spacing:0.5px;box-shadow:0 4px 12px rgba(99,102,241,.15),inset 0 1px 0 rgba(255,255,255,.1);position:relative;overflow:hidden}
+.edit-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(99,102,241,.3),rgba(139,92,246,.2));opacity:0;transition:opacity .3s}
+.edit-btn:hover{background:linear-gradient(135deg,rgba(99,102,241,.3) 0%,rgba(139,92,246,.25) 100%);border-color:rgba(99,102,241,.5);color:#c7d2fe;transform:translateY(-2px) scale(1.05);box-shadow:0 6px 20px rgba(99,102,241,.3),inset 0 1px 0 rgba(255,255,255,.15)}
+.edit-btn:hover::before{opacity:1}
+.delete-btn{background:linear-gradient(135deg,rgba(239,68,68,.2) 0%,rgba(220,38,38,.15) 100%);border:2px solid rgba(239,68,68,.3);color:#fca5a5;padding:8px 16px;border-radius:12px;cursor:pointer;font-size:12px;font-weight:700;transition:all .3s;flex:1;text-align:center;text-transform:uppercase;letter-spacing:0.5px;box-shadow:0 4px 12px rgba(239,68,68,.15),inset 0 1px 0 rgba(255,255,255,.1);position:relative;overflow:hidden}
+.delete-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(239,68,68,.3),rgba(220,38,38,.2));opacity:0;transition:opacity .3s}
+.delete-btn:hover{background:linear-gradient(135deg,rgba(239,68,68,.3) 0%,rgba(220,38,38,.25) 100%);border-color:rgba(239,68,68,.5);color:#fecaca;transform:translateY(-2px) scale(1.05);box-shadow:0 6px 20px rgba(239,68,68,.3),inset 0 1px 0 rgba(255,255,255,.15)}
+.delete-btn:hover::before{opacity:1}
+.editable{cursor:pointer;padding:4px 8px;border-radius:8px;transition:all .3s;display:inline-block;position:relative}
+.editable:hover{background:linear-gradient(135deg,rgba(99,102,241,.15),rgba(139,92,246,.1));border:2px dashed rgba(99,102,241,.4);transform:scale(1.05);box-shadow:0 4px 12px rgba(99,102,241,.2)}
 .add-holding-form{display:grid;grid-template-columns:1fr 1fr 1fr 80px;gap:12px;margin-top:24px}
 .add-holding-form input,.add-holding-form select{padding:10px 14px;background:rgba(20,20,30,.4);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#e4e4e7;font-size:13px;transition:all .2s}
 .add-holding-form input:focus,.add-holding-form select:focus{outline:none;border-color:#6366f1;background:rgba(20,20,30,.6)}
@@ -656,41 +671,48 @@ body{overflow-x:hidden}
         </div>
 
         <!-- Portfolio Analytics Section -->
-        <div id="portfolioAnalytics" style="display:none;margin-bottom:32px;background:linear-gradient(135deg,rgba(30,30,40,.7) 0%,rgba(35,30,45,.5) 100%);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:24px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.06);">
-            <h3 style="font-size:20px;font-weight:600;color:#e8e8f0;letter-spacing:-0.3px;margin:0;">📊 პორტფოლიოს ანალიტიკა</h3>
-            <button id="toggleAnalytics" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#a0a0b0;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;transition:all .2s;" aria-label="ანალიტიკის ხილვის გადართვა" aria-expanded="true" onmouseover="this.style.background='rgba(255,255,255,.08)';this.style.color='#d8d8e0'" onmouseout="this.style.background='rgba(255,255,255,.05)';this.style.color='#a0a0b0'">დამალვა</button>
+        <div id="portfolioAnalytics" style="display:none;margin-bottom:36px;background:linear-gradient(145deg,#0f172a 0%,#1e293b 50%,#334155 100%);border:2px solid rgba(99,102,241,.3);border-radius:24px;padding:28px;position:relative;overflow:hidden;box-shadow:0 15px 50px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.05);">
+          <div style="position:absolute;top:-50%;right:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(99,102,241,.15) 0%,transparent 70%);pointer-events:none;animation:rotate 20s linear infinite;"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;padding-bottom:20px;border-bottom:2px solid rgba(99,102,241,.2);position:relative;z-index:1;">
+            <h3 style="font-size:24px;font-weight:800;background:linear-gradient(135deg,#ffffff 0%,#e0e7ff 50%,#c7d2fe 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.5px;margin:0;text-shadow:0 0 30px rgba(99,102,241,.5);filter:drop-shadow(0 2px 4px rgba(0,0,0,.3));">📊 პორტფოლიოს ანალიტიკა</h3>
+            <button id="toggleAnalytics" style="background:linear-gradient(135deg,rgba(99,102,241,.2),rgba(139,92,246,.15));border:2px solid rgba(99,102,241,.3);color:#a5b4fc;padding:10px 18px;border-radius:12px;cursor:pointer;font-size:12px;font-weight:700;transition:all .3s;text-transform:uppercase;letter-spacing:0.5px;box-shadow:0 4px 12px rgba(99,102,241,.2),inset 0 1px 0 rgba(255,255,255,.1);position:relative;z-index:1;" aria-label="ანალიტიკის ხილვის გადართვა" aria-expanded="true" onmouseover="this.style.background='linear-gradient(135deg,rgba(99,102,241,.3),rgba(139,92,246,.25))';this.style.borderColor='rgba(99,102,241,.5)';this.style.color='#c7d2fe';this.style.transform='translateY(-2px) scale(1.05)';this.style.boxShadow='0 6px 20px rgba(99,102,241,.3),inset 0 1px 0 rgba(255,255,255,.15)'" onmouseout="this.style.background='linear-gradient(135deg,rgba(99,102,241,.2),rgba(139,92,246,.15))';this.style.borderColor='rgba(99,102,241,.3)';this.style.color='#a5b4fc';this.style.transform='translateY(0) scale(1)';this.style.boxShadow='0 4px 12px rgba(99,102,241,.2),inset 0 1px 0 rgba(255,255,255,.1)'">დამალვა</button>
           </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;" id="analyticsGrid">
-            <div style="background:rgba(25,25,35,.4);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:20px;">
-              <div style="font-size:11px;color:#9090a0;margin-bottom:16px;text-transform:uppercase;letter-spacing:1px;font-weight:600;" role="heading" aria-level="4">აქტივების განაწილება</div>
-              <div style="display:flex;justify-content:center;margin-bottom:20px;">
-                <canvas id="allocationChart" width="220" height="220" style="max-width:100%;height:auto;filter:drop-shadow(0 4px 8px rgba(0,0,0,.2));" aria-label="პორტფოლიოს განაწილების ნამდვილი დიაგრამა" role="img"></canvas>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;position:relative;z-index:1;" id="analyticsGrid">
+            <div style="background:linear-gradient(145deg,#1e293b 0%,#0f172a 100%);border:2px solid rgba(99,102,241,.25);border-radius:20px;padding:24px;box-shadow:0 10px 30px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05);position:relative;overflow:hidden;">
+              <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(99,102,241,.05),transparent);pointer-events:none;"></div>
+              <div style="font-size:12px;color:#94a3b8;margin-bottom:20px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;position:relative;z-index:1;text-shadow:0 1px 2px rgba(0,0,0,.3);">აქტივების განაწილება</div>
+              <div style="display:flex;justify-content:center;margin-bottom:24px;position:relative;z-index:1;">
+                <canvas id="allocationChart" width="240" height="240" style="max-width:100%;height:auto;filter:drop-shadow(0 8px 16px rgba(99,102,241,.3));" aria-label="პორტფოლიოს განაწილების ნამდვილი დიაგრამა" role="img"></canvas>
               </div>
-              <div id="allocationLegend" style="display:flex;flex-direction:column;gap:10px;" role="list" aria-label="ტოკენების განაწილების პროცენტები"></div>
+              <div id="allocationLegend" style="display:flex;flex-direction:column;gap:12px;position:relative;z-index:1;" role="list" aria-label="ტოკენების განაწილების პროცენტები"></div>
             </div>
-            <div>
-              <div style="font-size:11px;color:#9090a0;margin-bottom:16px;text-transform:uppercase;letter-spacing:1px;font-weight:600;" role="heading" aria-level="4">რისკის მეტრიკები</div>
-              <div id="riskMetrics" style="display:flex;flex-direction:column;gap:12px;" role="list" aria-label="პორტფოლიოს რისკის მეტრიკები">
-                <div style="padding:16px;background:rgba(25,25,35,.5);border:1px solid rgba(255,255,255,.06);border-radius:12px;transition:all .2s;" onmouseover="this.style.background='rgba(30,30,40,.6)';this.style.borderColor='rgba(255,255,255,.1)'" onmouseout="this.style.background='rgba(25,25,35,.5)';this.style.borderColor='rgba(255,255,255,.06)'">
-                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-                    <span style="font-size:12px;color:#a0a0b0;font-weight:500;">დივერსიფიკაციის ქულა</span>
-                    <span id="diversificationScore" style="font-size:16px;font-weight:700;color:#e8e8f0;font-variant-numeric:tabular-nums;">-</span>
+            <div style="position:relative;z-index:1;">
+              <div style="font-size:12px;color:#94a3b8;margin-bottom:20px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;text-shadow:0 1px 2px rgba(0,0,0,.3);">რისკის მეტრიკები</div>
+              <div id="riskMetrics" style="display:flex;flex-direction:column;gap:16px;" role="list" aria-label="პორტფოლიოს რისკის მეტრიკები">
+                <div style="padding:20px;background:linear-gradient(145deg,#1e293b 0%,#0f172a 100%);border:2px solid rgba(99,102,241,.25);border-radius:16px;transition:all .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 25px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05);position:relative;overflow:hidden;" onmouseover="this.style.background='linear-gradient(145deg,#334155 0%,#1e293b 100%)';this.style.borderColor='rgba(99,102,241,.4)';this.style.transform='translateY(-4px) scale(1.02)';this.style.boxShadow='0 12px 35px rgba(99,102,241,.25),inset 0 1px 0 rgba(255,255,255,.1)'" onmouseout="this.style.background='linear-gradient(145deg,#1e293b 0%,#0f172a 100%)';this.style.borderColor='rgba(99,102,241,.25)';this.style.transform='translateY(0) scale(1)';this.style.boxShadow='0 8px 25px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05)'">
+                  <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(99,102,241,.05),transparent);opacity:0;transition:opacity .3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'"></div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;position:relative;z-index:1;">
+                    <span style="font-size:13px;color:#cbd5e1;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,.3);">დივერსიფიკაციის ქულა</span>
+                    <span id="diversificationScore" style="font-size:20px;font-weight:800;background:linear-gradient(135deg,#ffffff 0%,#e0e7ff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-variant-numeric:tabular-nums;text-shadow:0 0 20px rgba(99,102,241,.5);filter:drop-shadow(0 2px 4px rgba(0,0,0,.3));">-</span>
                   </div>
-                  <div style="height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;position:relative;">
-                    <div id="diversificationBar" style="height:100%;background:linear-gradient(90deg,#6366f1,#8b5cf6);width:0%;transition:width .5s cubic-bezier(.4,0,.2,1);border-radius:3px;box-shadow:0 0 8px rgba(99,102,241,.4);"></div>
-                  </div>
-                </div>
-                <div style="padding:16px;background:rgba(25,25,35,.5);border:1px solid rgba(255,255,255,.06);border-radius:12px;transition:all .2s;" onmouseover="this.style.background='rgba(30,30,40,.6)';this.style.borderColor='rgba(255,255,255,.1)'" onmouseout="this.style.background='rgba(25,25,35,.5)';this.style.borderColor='rgba(255,255,255,.06)'">
-                  <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <span style="font-size:12px;color:#a0a0b0;font-weight:500;">უდიდესი პოზიცია</span>
-                    <span id="largestPosition" style="font-size:16px;font-weight:700;color:#e8e8f0;font-variant-numeric:tabular-nums;">-</span>
+                  <div style="height:8px;background:rgba(15,23,42,.6);border-radius:4px;overflow:hidden;position:relative;z-index:1;box-shadow:inset 0 2px 4px rgba(0,0,0,.3);">
+                    <div id="diversificationBar" style="height:100%;background:linear-gradient(90deg,#6366f1,#8b5cf6,#ec4899);width:0%;transition:width .6s cubic-bezier(.34,1.56,.64,1);border-radius:4px;box-shadow:0 0 15px rgba(99,102,241,.6),inset 0 1px 0 rgba(255,255,255,.2);position:relative;overflow:hidden;">
+                      <div style="position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:shimmer 2s infinite;"></div>
+                    </div>
                   </div>
                 </div>
-                <div style="padding:16px;background:rgba(25,25,35,.5);border:1px solid rgba(255,255,255,.06);border-radius:12px;transition:all .2s;" onmouseover="this.style.background='rgba(30,30,40,.6)';this.style.borderColor='rgba(255,255,255,.1)'" onmouseout="this.style.background='rgba(25,25,35,.5)';this.style.borderColor='rgba(255,255,255,.06)'">
-                  <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <span style="font-size:12px;color:#a0a0b0;font-weight:500;">ტოკენების რაოდენობა</span>
-                    <span id="tokenCount" style="font-size:16px;font-weight:700;color:#e8e8f0;font-variant-numeric:tabular-nums;">-</span>
+                <div style="padding:20px;background:linear-gradient(145deg,#1e293b 0%,#0f172a 100%);border:2px solid rgba(99,102,241,.25);border-radius:16px;transition:all .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 25px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05);position:relative;overflow:hidden;" onmouseover="this.style.background='linear-gradient(145deg,#334155 0%,#1e293b 100%)';this.style.borderColor='rgba(99,102,241,.4)';this.style.transform='translateY(-4px) scale(1.02)';this.style.boxShadow='0 12px 35px rgba(99,102,241,.25),inset 0 1px 0 rgba(255,255,255,.1)'" onmouseout="this.style.background='linear-gradient(145deg,#1e293b 0%,#0f172a 100%)';this.style.borderColor='rgba(99,102,241,.25)';this.style.transform='translateY(0) scale(1)';this.style.boxShadow='0 8px 25px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05)'">
+                  <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(99,102,241,.05),transparent);opacity:0;transition:opacity .3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'"></div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1;">
+                    <span style="font-size:13px;color:#cbd5e1;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,.3);">უდიდესი პოზიცია</span>
+                    <span id="largestPosition" style="font-size:20px;font-weight:800;background:linear-gradient(135deg,#ffffff 0%,#e0e7ff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-variant-numeric:tabular-nums;text-shadow:0 0 20px rgba(99,102,241,.5);filter:drop-shadow(0 2px 4px rgba(0,0,0,.3));">-</span>
+                  </div>
+                </div>
+                <div style="padding:20px;background:linear-gradient(145deg,#1e293b 0%,#0f172a 100%);border:2px solid rgba(99,102,241,.25);border-radius:16px;transition:all .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 25px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05);position:relative;overflow:hidden;" onmouseover="this.style.background='linear-gradient(145deg,#334155 0%,#1e293b 100%)';this.style.borderColor='rgba(99,102,241,.4)';this.style.transform='translateY(-4px) scale(1.02)';this.style.boxShadow='0 12px 35px rgba(99,102,241,.25),inset 0 1px 0 rgba(255,255,255,.1)'" onmouseout="this.style.background='linear-gradient(145deg,#1e293b 0%,#0f172a 100%)';this.style.borderColor='rgba(99,102,241,.25)';this.style.transform='translateY(0) scale(1)';this.style.boxShadow='0 8px 25px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05)'">
+                  <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(99,102,241,.05),transparent);opacity:0;transition:opacity .3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'"></div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1;">
+                    <span style="font-size:13px;color:#cbd5e1;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,.3);">ტოკენების რაოდენობა</span>
+                    <span id="tokenCount" style="font-size:20px;font-weight:800;background:linear-gradient(135deg,#ffffff 0%,#e0e7ff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-variant-numeric:tabular-nums;text-shadow:0 0 20px rgba(99,102,241,.5);filter:drop-shadow(0 2px 4px rgba(0,0,0,.3));">-</span>
                   </div>
                 </div>
               </div>
@@ -3109,7 +3131,7 @@ function renderPortfolio(holdings) {
   let totalValue = 0, totalCost = 0;
   
   if (!holdings || Object.keys(holdings).length === 0) {
-    list.innerHTML = '<div style="text-align:center;padding:60px 40px;color:#a0a0b0;font-size:14px;background:rgba(30,30,40,.4);border:1px dashed rgba(255,255,255,.08);border-radius:14px;"><div style="font-size:48px;margin-bottom:16px;opacity:0.6;">💼</div><div style="font-weight:500;margin-bottom:8px;color:#d8d8e0;">პოზიციები ჯერ არ არის</div><div style="font-size:12px;color:#9090a0;">დაამატეთ ტოკენები თქვენს პორტფოლიოში</div></div>';
+    list.innerHTML = '<div style="text-align:center;padding:80px 40px;color:#94a3b8;font-size:15px;background:linear-gradient(145deg,#1e293b 0%,#0f172a 100%);border:2px dashed rgba(99,102,241,.3);border-radius:20px;position:relative;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05);"><div style="position:absolute;inset:0;background:radial-gradient(circle at center,rgba(99,102,241,.1),transparent);pointer-events:none;"></div><div style="font-size:64px;margin-bottom:20px;opacity:0.7;filter:drop-shadow(0 4px 8px rgba(99,102,241,.3));position:relative;z-index:1;">💼</div><div style="font-weight:700;margin-bottom:10px;background:linear-gradient(135deg,#f1f5f9 0%,#cbd5e1 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:18px;text-shadow:0 2px 4px rgba(0,0,0,.3);position:relative;z-index:1;">პოზიციები ჯერ არ არის</div><div style="font-size:13px;color:#64748b;text-shadow:0 1px 2px rgba(0,0,0,.3);position:relative;z-index:1;">დაამატეთ ტოკენები თქვენს პორტფოლიოში</div></div>';
     if ($('totalValue')) $('totalValue').textContent = '$0.00';
     if ($('totalPL')) {
       $('totalPL').textContent = '$0.00';
@@ -3356,35 +3378,59 @@ function updatePortfolioAnalytics(holdings, totalValue) {
           legendItem.style.display = 'flex';
           legendItem.style.alignItems = 'center';
           legendItem.style.gap = '10px';
-          legendItem.style.padding = '8px 12px';
-          legendItem.style.background = 'rgba(25,25,35,.3)';
-          legendItem.style.borderRadius = '8px';
-          legendItem.style.border = '1px solid rgba(255,255,255,.04)';
-          legendItem.style.transition = 'all .2s';
+          legendItem.style.padding = '12px 16px';
+          legendItem.style.background = 'rgba(15,23,42,.4)';
+          legendItem.style.borderRadius = '12px';
+          legendItem.style.border = '2px solid rgba(99,102,241,.2)';
+          legendItem.style.transition = 'all .4s cubic-bezier(.34,1.56,.64,1)';
           legendItem.style.cursor = 'pointer';
-          legendItem.onmouseover = function() { this.style.background = 'rgba(30,30,40,.5)'; this.style.borderColor = 'rgba(255,255,255,.08)'; };
-          legendItem.onmouseout = function() { this.style.background = 'rgba(25,25,35,.3)'; this.style.borderColor = 'rgba(255,255,255,.04)'; };
+          legendItem.style.boxShadow = '0 4px 12px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.05)';
+          legendItem.style.position = 'relative';
+          legendItem.style.overflow = 'hidden';
           
           const colorBox = document.createElement('div');
-          colorBox.style.width = '14px';
-          colorBox.style.height = '14px';
-          colorBox.style.borderRadius = '4px';
+          colorBox.style.width = '16px';
+          colorBox.style.height = '16px';
+          colorBox.style.borderRadius = '6px';
           colorBox.style.background = colors[idx % colors.length];
-          colorBox.style.boxShadow = '0 2px 4px rgba(0,0,0,.2)';
+          colorBox.style.boxShadow = `0 4px 12px ${colors[idx % colors.length]}40, 0 2px 4px rgba(0,0,0,.3)`;
+          colorBox.style.border = '2px solid rgba(255,255,255,.1)';
+          colorBox.style.transition = 'all .3s';
           
           const tokenName = document.createElement('span');
-          tokenName.style.color = '#a0a0b0';
-          tokenName.style.fontSize = '13px';
-          tokenName.style.fontWeight = '500';
+          tokenName.style.color = '#cbd5e1';
+          tokenName.style.fontSize = '14px';
+          tokenName.style.fontWeight = '600';
+          tokenName.style.textShadow = '0 1px 2px rgba(0,0,0,.3)';
           tokenName.textContent = token;
           
           const tokenPercent = document.createElement('span');
-          tokenPercent.style.color = '#e8e8f0';
+          tokenPercent.style.background = 'linear-gradient(135deg,#ffffff 0%,#e0e7ff 100%)';
+          tokenPercent.style.webkitBackgroundClip = 'text';
+          tokenPercent.style.webkitTextFillColor = 'transparent';
+          tokenPercent.style.backgroundClip = 'text';
           tokenPercent.style.marginLeft = 'auto';
-          tokenPercent.style.fontWeight = '600';
-          tokenPercent.style.fontSize = '13px';
+          tokenPercent.style.fontWeight = '700';
+          tokenPercent.style.fontSize = '14px';
           tokenPercent.style.fontVariantNumeric = 'tabular-nums';
+          tokenPercent.style.textShadow = '0 0 10px rgba(99,102,241,.3)';
+          tokenPercent.style.filter = 'drop-shadow(0 2px 4px rgba(0,0,0,.3))';
           tokenPercent.textContent = `${percentage.toFixed(1)}%`;
+          
+          legendItem.onmouseenter = function() {
+            this.style.background = 'linear-gradient(145deg,#334155 0%,#1e293b 100%)';
+            this.style.borderColor = 'rgba(99,102,241,.4)';
+            this.style.transform = 'translateX(4px)';
+            colorBox.style.transform = 'scale(1.2) rotate(5deg)';
+            colorBox.style.boxShadow = `0 6px 20px ${colors[idx % colors.length]}60, 0 2px 4px rgba(0,0,0,.3)`;
+          };
+          legendItem.onmouseleave = function() {
+            this.style.background = 'rgba(15,23,42,.4)';
+            this.style.borderColor = 'rgba(99,102,241,.2)';
+            this.style.transform = 'translateX(0)';
+            colorBox.style.transform = 'scale(1) rotate(0deg)';
+            colorBox.style.boxShadow = `0 4px 12px ${colors[idx % colors.length]}40, 0 2px 4px rgba(0,0,0,.3)`;
+          };
           
           legendItem.appendChild(colorBox);
           legendItem.appendChild(tokenName);
