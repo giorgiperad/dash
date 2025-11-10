@@ -4070,13 +4070,12 @@ function updatePortfolioAnalytics(holdings, totalValue) {
       .sort((a, b) => b[1] - a[1])
       .forEach(([token, value], idx) => {
         const percentage = (value / totalAllocation) * 100;
-        const pnl24h = token24hPNL[token]?.pnl || 0;
         
-        // Add compact 4-column legend with 24h PNL
+        // Add compact 4-column legend
         if (legendDiv && percentage > 1) {
           const legendItem = document.createElement('div');
           legendItem.style.display = 'flex';
-          legendItem.style.flexDirection = 'column';
+          legendItem.style.alignItems = 'center';
           legendItem.style.gap = '6px';
           legendItem.style.padding = '8px 10px';
           legendItem.style.background = 'rgba(0,0,0,0.3)';
@@ -4085,12 +4084,6 @@ function updatePortfolioAnalytics(holdings, totalValue) {
           legendItem.style.cursor = 'pointer';
           legendItem.style.border = `1px solid ${colors[idx % colors.length]}30`;
           legendItem.style.backdropFilter = 'blur(8px)';
-          
-          // Top row: Color box, Token name, Percentage
-          const topRow = document.createElement('div');
-          topRow.style.display = 'flex';
-          topRow.style.alignItems = 'center';
-          topRow.style.gap = '6px';
           
           const colorBox = document.createElement('div');
           colorBox.style.width = '10px';
@@ -4122,40 +4115,9 @@ function updatePortfolioAnalytics(holdings, totalValue) {
           tokenPercent.style.flexShrink = '0';
           tokenPercent.textContent = `${percentage.toFixed(1)}%`;
           
-          topRow.appendChild(colorBox);
-          topRow.appendChild(tokenName);
-          topRow.appendChild(tokenPercent);
-          
-          // Bottom row: 24h PNL
-          const pnlRow = document.createElement('div');
-          pnlRow.style.display = 'flex';
-          pnlRow.style.alignItems = 'center';
-          pnlRow.style.justifyContent = 'space-between';
-          pnlRow.style.marginTop = '2px';
-          
-          const pnlLabel = document.createElement('span');
-          pnlLabel.style.color = 'rgba(255,255,255,0.5)';
-          pnlLabel.style.fontSize = '9px';
-          pnlLabel.style.fontWeight = '500';
-          pnlLabel.style.textTransform = 'uppercase';
-          pnlLabel.style.letterSpacing = '0.5px';
-          pnlLabel.textContent = '24h PNL';
-          
-          const pnlValue = document.createElement('span');
-          const pnlSign = pnl24h >= 0 ? '+' : '';
-          const pnlColor = pnl24h >= 0 ? '#22c55e' : '#ef4444';
-          pnlValue.style.color = pnlColor;
-          pnlValue.style.fontSize = '10px';
-          pnlValue.style.fontWeight = '700';
-          pnlValue.style.fontVariantNumeric = 'tabular-nums';
-          pnlValue.style.textShadow = `0 0 6px ${pnlColor}80`;
-          pnlValue.textContent = `${pnlSign}$${formatPrice(Math.abs(pnl24h))}`;
-          
-          pnlRow.appendChild(pnlLabel);
-          pnlRow.appendChild(pnlValue);
-          
-          legendItem.appendChild(topRow);
-          legendItem.appendChild(pnlRow);
+          legendItem.appendChild(colorBox);
+          legendItem.appendChild(tokenName);
+          legendItem.appendChild(tokenPercent);
           
           legendItem.onmouseenter = function() {
             this.style.background = `rgba(${colors[idx % colors.length].substring(1).match(/.{2}/g).map(x => parseInt(x, 16)).join(',')}, 0.15)`;
