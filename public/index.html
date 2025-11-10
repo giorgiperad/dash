@@ -1309,7 +1309,8 @@ auth.onAuthStateChanged(user=>{
   }else{
     $('authContainer').style.display='flex';
     $('userContainer').style.display='none';
-    $('userTabs').style.display='none';
+    const userTabs = $('userTabs');
+    if (userTabs) userTabs.style.display='none';
     $('adminControls').style.display='none';
   }
 });
@@ -2319,7 +2320,22 @@ function showPage(pageName) {
   // No sidebar to close
 }
 
-// Old sidebar navigation removed - using top navigation now
+// Initialize top navigation
+function initTopNavigation() {
+  const navTabs = document.querySelectorAll('.top-nav-tab[data-page]');
+  navTabs.forEach(tab => {
+    tab.addEventListener('click', (e) => {
+      e.preventDefault();
+      const pageName = tab.getAttribute('data-page');
+      if (pageName) {
+        showPage(pageName);
+      }
+    });
+  });
+  
+  // Show market page by default
+  showPage('market');
+}
 
 // Initialize on page load
 if (document.readyState === 'loading') {
