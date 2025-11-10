@@ -74,6 +74,18 @@
   --radius-xl: 20px;
 }
 
+/* ASI Panel Glow Animation */
+@keyframes asiGlow {
+  0% {
+    opacity: 0.08;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.15;
+    transform: scale(1.1);
+  }
+}
+
 [data-theme="light"] {
   /* Light Theme - Clean Modern Style */
   --bg-primary: #f8fafc;
@@ -917,18 +929,31 @@ body{overflow-x:hidden}
 
     <!-- Artificial Superintelligence Alliance Panel -->
     <div id="asiAlliancePanel" style="display:none;margin-bottom:24px;background:var(--bg-card);backdrop-filter:var(--blur);border:1px solid var(--border-secondary);border-radius:var(--radius-lg);padding:20px;position:relative;overflow:hidden;box-shadow:var(--shadow-md);transition:all 0.3s ease;" role="region" aria-label="Artificial Superintelligence Alliance">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border-secondary);">
+      <!-- Futuristic Background Effect - Inspired by AI Humanoid -->
+      <div style="position:absolute;top:0;right:0;width:100%;height:100%;opacity:0.12;pointer-events:none;z-index:0;background:radial-gradient(ellipse at 85% 30%, rgba(99,102,241,0.4) 0%, rgba(139,92,246,0.2) 30%, transparent 60%), radial-gradient(ellipse at 75% 70%, rgba(236,72,153,0.2) 0%, transparent 50%);background-size:cover;background-position:center right;filter:blur(1px);"></div>
+      <div style="position:absolute;top:-80px;right:-80px;width:350px;height:350px;opacity:0.1;pointer-events:none;z-index:0;background:radial-gradient(circle, rgba(99,102,241,0.5) 0%, rgba(139,92,246,0.3) 40%, transparent 70%);border-radius:50%;filter:blur(50px);animation:asiGlow 8s ease-in-out infinite alternate;"></div>
+      <div style="position:absolute;bottom:-40px;right:40px;width:250px;height:250px;opacity:0.08;pointer-events:none;z-index:0;background:radial-gradient(circle, rgba(139,92,246,0.4) 0%, rgba(236,72,153,0.2) 50%, transparent 70%);border-radius:50%;filter:blur(40px);animation:asiGlow 6s ease-in-out infinite alternate-reverse;"></div>
+      
+      <!-- Glowing Accent Lines - Inspired by Cyborg Suit -->
+      <div style="position:absolute;top:0;right:0;width:3px;height:100%;background:linear-gradient(180deg, transparent 0%, rgba(99,102,241,0.6) 15%, rgba(139,92,246,0.8) 30%, rgba(99,102,241,0.6) 50%, rgba(236,72,153,0.4) 70%, transparent 100%);opacity:0.4;z-index:1;box-shadow:0 0 10px rgba(99,102,241,0.3);"></div>
+      <div style="position:absolute;top:0;right:0;width:100%;height:2px;background:linear-gradient(90deg, transparent 0%, rgba(99,102,241,0.5) 20%, rgba(139,92,246,0.7) 40%, rgba(99,102,241,0.5) 60%, transparent 100%);opacity:0.3;z-index:1;box-shadow:0 2px 8px rgba(99,102,241,0.2);"></div>
+      
+      <!-- Subtle Grid Pattern -->
+      <div style="position:absolute;top:0;left:0;right:0;bottom:0;opacity:0.03;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(99,102,241,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.1) 1px, transparent 1px);background-size:30px 30px;"></div>
+      
+      <div style="position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border-secondary);">
         <div style="display:flex;align-items:center;gap:12px;">
-          <div id="asiPanelIcon" style="width:40px;height:40px;border-radius:var(--radius-md);background:linear-gradient(135deg, #8b5cf6 0%, #6366f1 50%, #ec4899 100%);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 12px rgba(139,92,246,0.3);overflow:hidden;">
-            <img id="asiPanelIconImg" src="" style="width:100%;height:100%;object-fit:cover;display:none;" onerror="this.style.display='none';this.parentElement.innerHTML='🤖';">
+          <div id="asiPanelIcon" style="width:40px;height:40px;border-radius:var(--radius-md);background:linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 16px rgba(99,102,241,0.5), 0 0 20px rgba(139,92,246,0.3);overflow:hidden;position:relative;border:1px solid rgba(99,102,241,0.3);">
+            <div style="position:absolute;inset:0;background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3) 0%, transparent 60%);pointer-events:none;"></div>
+            <img id="asiPanelIconImg" src="" style="width:100%;height:100%;object-fit:cover;display:none;position:relative;z-index:1;" onerror="this.style.display='none';this.parentElement.innerHTML='🤖';">
           </div>
           <div>
-            <h3 style="font-size:18px;font-weight:600;color:var(--text-primary);margin:0;letter-spacing:-0.3px;">Artificial Superintelligence Alliance</h3>
-            <p style="font-size:12px;color:var(--text-tertiary);margin:4px 0 0 0;">წარმატება მოდის იმათთან, ვინც დარჩა, როცა სხვები წავიდნენ</p>
+            <h3 style="font-size:18px;font-weight:600;color:var(--text-primary);margin:0;letter-spacing:-0.3px;position:relative;background:linear-gradient(135deg, var(--text-primary) 0%, var(--accent-secondary) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-shadow:0 0 20px rgba(99,102,241,0.2);">Artificial Superintelligence Alliance</h3>
+            <p style="font-size:12px;color:var(--text-tertiary);margin:4px 0 0 0;">ASI Ecosystem Tokens</p>
           </div>
         </div>
       </div>
-      <div id="asiTokensGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">
+      <div id="asiTokensGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;position:relative;z-index:2;">
         <!-- ASI tokens will be rendered here -->
       </div>
     </div>
