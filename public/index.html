@@ -25,93 +25,95 @@
    ═══════════════════════════════════════════════════════════════ */
 * { margin:0; padding:0; box-sizing:border-box; }
 
-/* ──── NEW MODERN THEME VARIABLES ──── */
+/* ──── ELEGANT MODERN THEME ──── */
 :root {
-  /* Dark Theme - Modern & Vibrant */
-  --bg-primary: #0d1117;
-  --bg-secondary: #161b22;
-  --bg-tertiary: #21262d;
-  --bg-card: #1c2128;
-  --bg-card-hover: #252a32;
-  --bg-overlay: rgba(13, 17, 23, 0.95);
-  --bg-input: #0d1117;
-  --bg-input-focus: #161b22;
+  /* Dark Theme - Elegant & Sophisticated */
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #111118;
+  --bg-tertiary: #1a1a24;
+  --bg-card: #14141c;
+  --bg-card-hover: #1c1c28;
+  --bg-overlay: rgba(10, 10, 15, 0.98);
+  --bg-input: #0f0f15;
+  --bg-input-focus: #1a1a24;
   
-  --text-primary: #f0f6fc;
-  --text-secondary: #c9d1d9;
-  --text-tertiary: #8b949e;
-  --text-muted: #6e7681;
+  --text-primary: #ffffff;
+  --text-secondary: #b4b4c4;
+  --text-tertiary: #7a7a8c;
+  --text-muted: #5a5a6a;
   
-  --border-primary: rgba(240, 246, 252, 0.1);
-  --border-secondary: rgba(240, 246, 252, 0.06);
-  --border-accent: rgba(88, 166, 255, 0.3);
+  --border-primary: rgba(255, 255, 255, 0.08);
+  --border-secondary: rgba(255, 255, 255, 0.04);
+  --border-accent: rgba(139, 92, 246, 0.4);
   
-  --accent-primary: #58a6ff;
-  --accent-secondary: #79c0ff;
-  --accent-hover: #4493f8;
+  --accent-primary: #8b5cf6;
+  --accent-secondary: #a78bfa;
+  --accent-hover: #7c3aed;
   
-  --success: #3fb950;
-  --success-bg: rgba(63, 185, 80, 0.1);
-  --error: #f85149;
-  --error-bg: rgba(248, 81, 73, 0.1);
-  --warning: #d29922;
-  --warning-bg: rgba(210, 153, 34, 0.1);
+  --success: #10b981;
+  --success-bg: rgba(16, 185, 129, 0.12);
+  --error: #ef4444;
+  --error-bg: rgba(239, 68, 68, 0.12);
+  --warning: #f59e0b;
+  --warning-bg: rgba(245, 158, 11, 0.12);
   
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.12);
-  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
-  --shadow-glow: 0 0 20px rgba(88, 166, 255, 0.3);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 24px rgba(139, 92, 246, 0.4);
   
-  --gradient-primary: linear-gradient(135deg, #58a6ff 0%, #79c0ff 100%);
-  --gradient-card: linear-gradient(145deg, #1c2128 0%, #161b22 100%);
-  --gradient-text: linear-gradient(135deg, #f0f6fc 0%, #c9d1d9 100%);
+  --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 50%, #ec4899 100%);
+  --gradient-card: linear-gradient(145deg, #14141c 0%, #111118 100%);
+  --gradient-text: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+  --gradient-accent: linear-gradient(135deg, #8b5cf6, #ec4899, #f59e0b);
   
-  --blur: blur(12px);
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
+  --blur: blur(16px);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
 }
 
 [data-theme="light"] {
-  /* Light Theme - Clean & Modern */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f6f8fa;
-  --bg-tertiary: #f0f3f6;
+  /* Light Theme - Clean & Elegant */
+  --bg-primary: #fafafa;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f5f5f5;
   --bg-card: #ffffff;
-  --bg-card-hover: #f6f8fa;
+  --bg-card-hover: #fafafa;
   --bg-overlay: rgba(255, 255, 255, 0.98);
   --bg-input: #ffffff;
-  --bg-input-focus: #f6f8fa;
+  --bg-input-focus: #f5f5f5;
   
-  --text-primary: #24292f;
-  --text-secondary: #57606a;
-  --text-tertiary: #8c959f;
-  --text-muted: #6e7781;
+  --text-primary: #0a0a0f;
+  --text-secondary: #3a3a4a;
+  --text-tertiary: #6a6a7a;
+  --text-muted: #9a9aaa;
   
-  --border-primary: rgba(27, 31, 36, 0.12);
-  --border-secondary: rgba(27, 31, 36, 0.08);
-  --border-accent: rgba(9, 105, 218, 0.3);
+  --border-primary: rgba(0, 0, 0, 0.08);
+  --border-secondary: rgba(0, 0, 0, 0.04);
+  --border-accent: rgba(139, 92, 246, 0.3);
   
-  --accent-primary: #0969da;
-  --accent-secondary: #218bff;
-  --accent-hover: #0860ca;
+  --accent-primary: #8b5cf6;
+  --accent-secondary: #a78bfa;
+  --accent-hover: #7c3aed;
   
-  --success: #1a7f37;
-  --success-bg: rgba(26, 127, 55, 0.1);
-  --error: #cf222e;
-  --error-bg: rgba(207, 34, 46, 0.1);
-  --warning: #9a6700;
-  --warning-bg: rgba(154, 103, 0, 0.1);
+  --success: #059669;
+  --success-bg: rgba(5, 150, 105, 0.1);
+  --error: #dc2626;
+  --error-bg: rgba(220, 38, 38, 0.1);
+  --warning: #d97706;
+  --warning-bg: rgba(217, 119, 6, 0.1);
   
-  --shadow-sm: 0 1px 3px rgba(27, 31, 36, 0.12);
-  --shadow-md: 0 3px 6px rgba(27, 31, 36, 0.15);
-  --shadow-lg: 0 8px 24px rgba(27, 31, 36, 0.2);
-  --shadow-glow: 0 0 16px rgba(9, 105, 218, 0.2);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+  --shadow-glow: 0 0 20px rgba(139, 92, 246, 0.25);
   
-  --gradient-primary: linear-gradient(135deg, #0969da 0%, #218bff 100%);
-  --gradient-card: linear-gradient(145deg, #ffffff 0%, #f6f8fa 100%);
-  --gradient-text: linear-gradient(135deg, #24292f 0%, #57606a 100%);
+  --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 50%, #ec4899 100%);
+  --gradient-card: linear-gradient(145deg, #ffffff 0%, #fafafa 100%);
+  --gradient-text: linear-gradient(135deg, #0a0a0f 0%, #3a3a4a 100%);
+  --gradient-accent: linear-gradient(135deg, #8b5cf6, #ec4899, #f59e0b);
 }
 
 /* ──── ANIMATIONS ──── */
@@ -276,8 +278,14 @@ body{
 
 /* USER TABS */
 .user-tabs{display:none}
-.user-content{display:none}
-.user-content.active{display:block}
+.user-content{display:none;min-height:400px}
+.user-content.active{display:block!important}
+.empty-state{text-align:center;padding:60px 20px;color:var(--text-tertiary)}
+.empty-state-icon{font-size:64px;margin-bottom:20px;opacity:0.5}
+.empty-state-title{font-size:20px;font-weight:600;color:var(--text-secondary);margin-bottom:12px}
+.empty-state-text{font-size:14px;color:var(--text-tertiary);line-height:1.6;max-width:400px;margin:0 auto 24px}
+.empty-state-action{display:inline-block;padding:12px 24px;background:var(--accent-primary);color:#fff;border-radius:var(--radius-md);font-weight:500;text-decoration:none;transition:all 0.3s;box-shadow:var(--shadow-sm)}
+.empty-state-action:hover{background:var(--accent-hover);transform:translateY(-2px);box-shadow:var(--shadow-md)}
 
 /* PORTFOLIO - Bold Vibrant Design with Dynamic Effects */
 .portfolio-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
@@ -2142,6 +2150,15 @@ function initSidebar() {
       if (targetSection) {
         targetSection.classList.add('active');
         targetSection.style.display = 'block';
+        
+        // Load data if needed
+        if (targetTab === 'portfolio' && currentUser) {
+          loadPortfolio();
+        } else if (targetTab === 'targets' && currentUser) {
+          loadTargets();
+        } else if (targetTab === 'alerts' && currentUser) {
+          loadAlerts();
+        }
       }
       
       // Close sidebar on mobile after selection
@@ -2520,13 +2537,13 @@ async function loadPortfolio(){
         // Don't show alert, just log it
       } else {
         console.log('Permission denied - user may not have holdings yet');
-        // Render empty portfolio
-        renderPortfolio({});
       }
+      // Always render portfolio (even if empty) to show empty state
+      renderPortfolio({});
     });
   } catch (e) {
     console.error('Load portfolio error:', e);
-    // Don't show alert, just log it and render empty
+    // Always render portfolio (even if empty) to show empty state
     renderPortfolio({});
   }
 }
@@ -2737,13 +2754,15 @@ async function loadAlerts(){
       throw new Error(errorMsg);
     }
     
-    renderAlerts(data);
+    renderAlerts(data || {});
   } catch (e) {
     console.error('Load alerts error:', e);
     // Don't show alert if it's just empty alerts
     if (!e.message.includes('404') && !e.message.includes('invalid response')) {
-      alert('შეტყობინებების ჩატვირთვის შეცდომა: ' + e.message);
+      console.warn('შეტყობინებების ჩატვირთვის შეცდომა: ' + e.message);
     }
+    // Always render alerts (even if empty) to show empty state
+    renderAlerts({});
   }
 }
 
@@ -3010,16 +3029,16 @@ async function loadTargets() {
     
     targetsRef.once('value', (snapshot) => {
       sellTargets = snapshot.val() || {};
-      renderTargets();
+      renderTargets(); // Always render to show empty state if needed
     }, (error) => {
       console.error('Failed to load targets:', error);
       sellTargets = {};
-      renderTargets();
+      renderTargets(); // Always render to show empty state
     });
   } catch (e) {
     console.error('Load targets error:', e);
     sellTargets = {};
-    renderTargets();
+    renderTargets(); // Always render to show empty state
   }
 }
 
@@ -3030,7 +3049,13 @@ function renderTargets() {
   const targetsArray = Object.entries(sellTargets).map(([id, target]) => ({ id, ...target }));
   
   if (targetsArray.length === 0) {
-    container.innerHTML = '<div style="padding:40px;text-align:center;color:#9aa0a6;font-size:13px;">გასაყიდი მიზნები არ არის დამატებული</div>';
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">🎯</div>
+        <div class="empty-state-title">გასაყიდი მიზნები არ არის</div>
+        <div class="empty-state-text">დაამატეთ გასაყიდი მიზნები თქვენი ტოკენებისთვის, რათა თვალი ადევნოთ სამიზნე ფასებს</div>
+      </div>
+    `;
     return;
   }
   
@@ -3424,7 +3449,13 @@ function renderPortfolio(holdings) {
   let totalValue = 0, totalCost = 0;
   
   if (!holdings || Object.keys(holdings).length === 0) {
-    list.innerHTML = '<div style="text-align:center;padding:80px 40px;color:#94a3b8;font-size:15px;background:linear-gradient(145deg,#1e293b 0%,#0f172a 100%);border:2px dashed rgba(99,102,241,.3);border-radius:20px;position:relative;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05);"><div style="position:absolute;inset:0;background:radial-gradient(circle at center,rgba(99,102,241,.1),transparent);pointer-events:none;"></div><div style="font-size:64px;margin-bottom:20px;opacity:0.7;filter:drop-shadow(0 4px 8px rgba(99,102,241,.3));position:relative;z-index:1;">💼</div><div style="font-weight:700;margin-bottom:10px;background:linear-gradient(135deg,#f1f5f9 0%,#cbd5e1 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:18px;text-shadow:0 2px 4px rgba(0,0,0,.3);position:relative;z-index:1;">პოზიციები ჯერ არ არის</div><div style="font-size:13px;color:#64748b;text-shadow:0 1px 2px rgba(0,0,0,.3);position:relative;z-index:1;">დაამატეთ ტოკენები თქვენს პორტფოლიოში</div></div>';
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">💼</div>
+        <div class="empty-state-title">პორტფოლიო ცარიელია</div>
+        <div class="empty-state-text">დაამატეთ ტოკენები თქვენს პორტფოლიოში, რათა დაიწყოთ თქვენი ინვესტიციების თვალყურდევნება</div>
+      </div>
+    `;
     if ($('totalValue')) $('totalValue').textContent = '$0.00';
     if ($('totalPL')) {
       $('totalPL').textContent = '$0.00';
@@ -3879,9 +3910,16 @@ function startEdit(el) {
 
 function renderAlerts(alerts) {
   const list = $('alertsList');
+  if (!list) return;
   list.innerHTML = '';
   if (!alerts || Object.keys(alerts).length === 0) {
-    list.innerHTML = '<div style="text-align:center;padding:40px;color:#888;">No alerts set. Create one below!</div>';
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">🔔</div>
+        <div class="empty-state-title">შეტყობინებები არ არის</div>
+        <div class="empty-state-text">დაამატეთ ფასის შეტყობინებები, რათა მიიღოთ გაფრთხილებები, როდესაც ტოკენები მიაღწევენ სამიზნე ფასებს</div>
+      </div>
+    `;
     populateTokenSelect('alertToken');
     return;
   }
