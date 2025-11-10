@@ -468,9 +468,9 @@ body{
   .activity-carousel-wrapper{margin-bottom:12px}
   .activity-carousel .carousel-card{min-width:120px;padding:6px 8px}
   #asiAlliancePanel{padding:16px;min-height:250px!important}
-  #asiAlliancePanel div[style*="width:320px"]{width:200px!important;opacity:0.2!important;transform:translateX(10px)!important}
-  #asiAlliancePanel div[style*="padding-right:340px"]{padding-right:220px!important}
-  #asiAlliancePanel div[style*="max-width:calc(100% - 340px)"]{max-width:calc(100% - 220px)!important}
+  #asiAlliancePanel div[style*="width:200px"]:first-of-type{width:150px!important;opacity:0.4!important;transform:translateX(5px)!important}
+  #asiAlliancePanel div[style*="padding-right:220px"]{padding-right:170px!important}
+  #asiAlliancePanel div[style*="max-width:calc(100% - 220px)"]{max-width:calc(100% - 170px)!important}
   #asiTokensGrid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
 }
 
@@ -513,9 +513,9 @@ body{
   .activity-carousel-wrapper{margin-bottom:10px}
   .activity-carousel .carousel-card{min-width:110px;padding:6px}
   #asiAlliancePanel{padding:12px;margin-bottom:16px;min-height:200px!important}
-  #asiAlliancePanel div[style*="width:320px"]{width:150px!important;opacity:0.15!important;transform:translateX(5px)!important}
-  #asiAlliancePanel div[style*="padding-right:340px"]{padding-right:170px!important}
-  #asiAlliancePanel div[style*="max-width:calc(100% - 340px)"]{max-width:calc(100% - 170px)!important}
+  #asiAlliancePanel div[style*="width:200px"]:first-of-type{width:120px!important;opacity:0.35!important;transform:translateX(3px)!important}
+  #asiAlliancePanel div[style*="padding-right:220px"]{padding-right:140px!important}
+  #asiAlliancePanel div[style*="max-width:calc(100% - 220px)"]{max-width:calc(100% - 140px)!important}
   #asiTokensGrid{grid-template-columns:1fr;gap:8px}
   .container{padding:0}
 }
@@ -524,9 +524,9 @@ body{
 @media(max-width:360px){
   .navbar{height:52px;padding:0 6px}
   .top-nav-tab{font-size:9px;padding:4px 6px}
-  #asiAlliancePanel div[style*="width:320px"]{width:120px!important;opacity:0.12!important}
-  #asiAlliancePanel div[style*="padding-right:340px"]{padding-right:140px!important}
-  #asiAlliancePanel div[style*="max-width:calc(100% - 340px)"]{max-width:calc(100% - 140px)!important}
+  #asiAlliancePanel div[style*="width:200px"]:first-of-type{width:100px!important;opacity:0.3!important}
+  #asiAlliancePanel div[style*="padding-right:220px"]{padding-right:120px!important}
+  #asiAlliancePanel div[style*="max-width:calc(100% - 220px)"]{max-width:calc(100% - 120px)!important}
   .main-content{padding:10px 6px;padding-top:76px}
   .logo-title{font-size:11px}
   .logo-icon{width:24px;height:24px}
@@ -939,8 +939,8 @@ body{overflow-x:hidden}
     <!-- Artificial Superintelligence Alliance Panel -->
     <div id="asiAlliancePanel" style="display:none;margin-bottom:24px;background:var(--bg-card);backdrop-filter:var(--blur);border:1px solid var(--border-secondary);border-radius:var(--radius-lg);padding:20px;position:relative;overflow:hidden;box-shadow:var(--shadow-md);transition:all 0.3s ease;min-height:300px;" role="region" aria-label="Artificial Superintelligence Alliance">
       <!-- Sophia Robot - Introducing the Panel -->
-      <div style="position:absolute;top:0;right:0;width:320px;height:100%;pointer-events:none;z-index:1;opacity:0.25;background:url('sophia.png') no-repeat;background-size:contain;background-position:bottom right;filter:drop-shadow(0 0 30px rgba(99,102,241,0.3));transform:translateX(20px);"></div>
-      <div style="position:absolute;top:0;right:0;width:320px;height:100%;pointer-events:none;z-index:0;opacity:0.15;background:radial-gradient(ellipse at 80% 50%, rgba(99,102,241,0.4) 0%, rgba(139,92,246,0.2) 40%, transparent 70%);filter:blur(20px);"></div>
+      <div style="position:absolute;top:0;right:0;width:200px;height:100%;pointer-events:none;z-index:1;opacity:0.45;background:url('sophia.png') no-repeat;background-size:contain;background-position:bottom right;filter:drop-shadow(0 0 20px rgba(99,102,241,0.4));transform:translateX(10px);"></div>
+      <div style="position:absolute;top:0;right:0;width:200px;height:100%;pointer-events:none;z-index:0;opacity:0.2;background:radial-gradient(ellipse at 80% 50%, rgba(99,102,241,0.5) 0%, rgba(139,92,246,0.3) 40%, transparent 70%);filter:blur(15px);"></div>
       
       <!-- Futuristic Background Effect - Inspired by AI Humanoid -->
       <div style="position:absolute;top:0;right:0;width:100%;height:100%;opacity:0.12;pointer-events:none;z-index:0;background:radial-gradient(ellipse at 85% 30%, rgba(99,102,241,0.4) 0%, rgba(139,92,246,0.2) 30%, transparent 60%), radial-gradient(ellipse at 75% 70%, rgba(236,72,153,0.2) 0%, transparent 50%);background-size:cover;background-position:center right;filter:blur(1px);"></div>
@@ -954,7 +954,7 @@ body{overflow-x:hidden}
       <!-- Subtle Grid Pattern -->
       <div style="position:absolute;top:0;left:0;right:0;bottom:0;opacity:0.03;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(99,102,241,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.1) 1px, transparent 1px);background-size:30px 30px;"></div>
       
-      <div style="position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border-secondary);padding-right:340px;">
+      <div style="position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border-secondary);padding-right:220px;">
         <div style="display:flex;align-items:center;gap:12px;">
           <div id="asiPanelIcon" style="width:40px;height:40px;border-radius:var(--radius-md);background:linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 16px rgba(99,102,241,0.5), 0 0 20px rgba(139,92,246,0.3);overflow:hidden;position:relative;border:1px solid rgba(99,102,241,0.3);">
             <div style="position:absolute;inset:0;background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3) 0%, transparent 60%);pointer-events:none;"></div>
@@ -966,7 +966,7 @@ body{overflow-x:hidden}
           </div>
         </div>
       </div>
-      <div id="asiTokensGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;position:relative;z-index:2;max-width:calc(100% - 340px);">
+      <div id="asiTokensGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;position:relative;z-index:2;max-width:calc(100% - 220px);">
         <!-- ASI tokens will be rendered here -->
       </div>
     </div>
