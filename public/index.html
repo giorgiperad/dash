@@ -4270,12 +4270,24 @@ function renderTargetDetails(tokenId, targets) {
             </div>
             <div style="margin-top:6px;padding:6px 10px;background:rgba(99,102,241,.08);border-radius:6px;text-align:center;">
               <span style="font-size:11px;color:#9aa0a6;font-weight:500;">
-                ${progress < 100 ? (
-                  basePrice > 0 && target.targetPrice < basePrice ? 
-                    // Stop-loss: need price to go DOWN
-                    `დარჩენილია: <span style="color:#6366f1;font-weight:700;">${(100 - progress).toFixed(1)}%</span> ($${formatPrice(Math.abs(currentPrice - target.targetPrice))} ფასის ${currentPrice > target.targetPrice ? 'დაწევა' : 'ზრდა'})` :
-                    // Take-profit: need price to go UP
-                    `დარჩენილია: <span style="color:#6366f1;font-weight:700;">${(100 - progress).toFixed(1)}%</span> ($${formatPrice(Math.abs(target.targetPrice - currentPrice))} ფასის ზრდა)`
+                ${!isReached ? (
+                  (() => {
+                    let remainingPercent = 0;
+                    if (basePrice > 0 && target.targetPrice < basePrice) {
+                      // Stop-loss: remaining = (target - current) / current * 100
+                      // Example: Buy $10, Current $8, Target $9 → (9-8)/8 * 100 = 12.5%
+                      if (currentPrice > 0) {
+                        remainingPercent = (Math.abs(target.targetPrice - currentPrice) / currentPrice) * 100;
+                      }
+                    } else if (basePrice > 0 && target.targetPrice > basePrice) {
+                      // Take-profit: remaining = 100 - progress
+                      remainingPercent = 100 - progress;
+                    } else {
+                      // Fallback
+                      remainingPercent = 100 - progress;
+                    }
+                    return `დარჩენილია: <span style="color:#6366f1;font-weight:700;">${remainingPercent.toFixed(1)}%</span>`;
+                  })()
                 ) : 'მიზანი მიღწეულია!'}
               </span>
             </div>
