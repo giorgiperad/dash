@@ -4179,36 +4179,19 @@ function renderTargetDetails(tokenId, targets) {
     }
     
     // Progress calculation: Shows percentage from buy price to target price
-    // For take-profit (target > buy): ((currentPrice - buyPrice) / (targetPrice - buyPrice)) * 100
-    // For stop-loss (target < buy): Different calculation showing progress from current toward target
+    // Simple formula: ((currentPrice - buyPrice) / (targetPrice - buyPrice)) * 100
+    // Works for both take-profit and stop-loss
     // Example: Buy $100, Target $200, Current $150 → Progress = ((150-100)/(200-100)) * 100 = 50%
-    // Example: Buy $10, Target $9, Current $8 → Progress = ((9-8)/8) * 100 = 12.5%
-    //   This shows: "How much of current price needs to increase to reach target?"
+    // Example: Buy $10, Target $9, Current $8.5 → Progress = ((8.5-10)/(9-10)) * 100 = (-1.5/-1) * 100 = 150% → 100%
     let progress = 0;
     if (basePrice > 0 && target.targetPrice > 0) {
-      if (target.targetPrice >= basePrice) {
-        // Take-profit scenario: target is above buy price
-        const priceDifference = target.targetPrice - basePrice;
-        const currentProgress = currentPrice - basePrice;
-        
-        if (priceDifference !== 0) {
-          progress = (currentProgress / priceDifference) * 100;
-        } else {
-          progress = isReached ? 100 : 0;
-        }
+      const priceDifference = target.targetPrice - basePrice;
+      const currentProgress = currentPrice - basePrice;
+      
+      if (priceDifference !== 0) {
+        progress = (currentProgress / priceDifference) * 100;
       } else {
-        // Stop-loss scenario: target is below buy price
-        // Progress calculation: (remaining distance / current price) * 100
-        // Example: Buy $10, Current $8, Target $9
-        // Remaining: $9 - $8 = $1
-        // Progress = ($1 / $8) * 100 = 12.5%
-        // This shows: "12.5% of current price is the remaining distance to target"
-        if (currentPrice > 0 && !isReached) {
-          const remainingDistance = Math.abs(target.targetPrice - currentPrice);
-          progress = (remainingDistance / currentPrice) * 100;
-        } else if (isReached) {
-          progress = 100;
-        }
+        progress = isReached ? 100 : 0;
       }
       
       // If target is reached, show 100%
@@ -4271,23 +4254,7 @@ function renderTargetDetails(tokenId, targets) {
             <div style="margin-top:6px;padding:6px 10px;background:rgba(99,102,241,.08);border-radius:6px;text-align:center;">
               <span style="font-size:11px;color:#9aa0a6;font-weight:500;">
                 ${!isReached ? (
-                  (() => {
-                    let remainingPercent = 0;
-                    if (basePrice > 0 && target.targetPrice < basePrice) {
-                      // Stop-loss: remaining = (target - current) / current * 100
-                      // Example: Buy $10, Current $8, Target $9 → (9-8)/8 * 100 = 12.5%
-                      if (currentPrice > 0) {
-                        remainingPercent = (Math.abs(target.targetPrice - currentPrice) / currentPrice) * 100;
-                      }
-                    } else if (basePrice > 0 && target.targetPrice > basePrice) {
-                      // Take-profit: remaining = 100 - progress
-                      remainingPercent = 100 - progress;
-                    } else {
-                      // Fallback
-                      remainingPercent = 100 - progress;
-                    }
-                    return `დარჩენილია: <span style="color:#6366f1;font-weight:700;">${remainingPercent.toFixed(1)}%</span>`;
-                  })()
+                  `დარჩენილია: <span style="color:#6366f1;font-weight:700;">${(100 - progress).toFixed(1)}%</span>`
                 ) : 'მიზანი მიღწეულია!'}
               </span>
             </div>
