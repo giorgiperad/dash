@@ -1451,6 +1451,9 @@ body{overflow-x:hidden}
   </div>
 
   <div class="nav-right">
+    <button class="theme-toggle" id="refreshButton" aria-label="Refresh data" title="Refresh data" style="position:relative;">
+      <span id="refreshIcon">🔄</span>
+    </button>
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Theme toggle">
       <span id="themeIcon">🌙</span>
     </button>
@@ -4941,10 +4944,24 @@ $('cancelAdd').onclick = () => {
   $('confirmAdd').disabled = true;
 };
 $('refreshBtn').onclick = () => fetchAll();
+$('refreshButton').onclick = () => {
+  const icon = $('refreshIcon');
+  if (icon) {
+    icon.style.animation = 'rotate 1s linear';
+    setTimeout(() => {
+      icon.style.animation = '';
+    }, 1000);
+  }
+  fetchAll();
+  if (currentUser) {
+    loadPortfolio();
+    loadAlerts();
+  }
+};
 
 /* ---------- AUTO REFRESH ---------- */
 let refreshIntervalId = null;
-let refreshIntervalMs = 180000; // Default 3 minutes
+let refreshIntervalMs = 300000; // 5 minutes
 
 function startAutoRefresh() {
   if (refreshIntervalId) clearInterval(refreshIntervalId);
