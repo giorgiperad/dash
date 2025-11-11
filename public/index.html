@@ -3320,9 +3320,48 @@ document.addEventListener('DOMContentLoaded', () => {
 fetchAll();
 
 /* ---------- FETCH MARKET DATA (via Vercel API) ---------- */
-async function fetchAll(){
+async function fetchAll(forceRefresh = false){
   const err = $('error'), load = $('loading');
-  err.innerHTML = ''; load.style.display = 'block';
+  err.innerHTML = '';
+  
+  // Check cache first (unless forced refresh)
+  if (!forceRefresh) {
+    const cachedData = getCachedData();
+    if (cachedData) {
+      // Use cached data
+      cryptoData = cachedData.cryptoData || [];
+      cryptoData.forEach(t => prices[t.id] = t.current_price);
+      globalData = cachedData.globalData;
+      fearGreedData = cachedData.fearGreed;
+      etfFlowsData = cachedData.etfFlows;
+      
+      renderAll();
+      if (cryptoData && cryptoData.length > 0) {
+        renderRecentActivity();
+      }
+      $('contentGrid').style.display = 'block';
+      showPage('market');
+      $('heroStats').style.display = 'grid';
+      
+      if (currentUser) {
+        loadPortfolio();
+        loadAlerts();
+        loadTargets();
+      }
+      populateTargetTokenSelect();
+      if (Object.keys(sellTargets).length > 0) {
+        renderTargets();
+      }
+      
+      load.style.display = 'none';
+      
+      // Fetch fresh data in background (non-blocking)
+      fetchAll(true).catch(e => console.log('Background refresh failed:', e));
+      return;
+    }
+  }
+  
+  load.style.display = 'block';
   try {
     console.log('Fetching market data from /api/portfolio...');
     
@@ -3375,6 +3414,14 @@ async function fetchAll(){
     globalData = data.globalData;
     fearGreedData = data.fearGreed;
     etfFlowsData = data.etfFlows;
+    
+    // Cache the successful response
+    setCachedData({
+      cryptoData,
+      globalData,
+      fearGreedData,
+      etfFlowsData
+    });
     
     if (data.cached && !data.stale) {
       // Silently use cached data - no warning needed for fresh cache
@@ -5207,7 +5254,7 @@ $('cancelAdd').onclick = () => {
   selectedTokenId = null;
   $('confirmAdd').disabled = true;
 };
-$('refreshBtn').onclick = () => fetchAll();
+$('refreshBtn').onclick = () => fetchAll(true); // Force refresh
 $('refreshButton').onclick = () => {
   const icon = $('refreshIcon');
   if (icon) {
@@ -5216,16 +5263,55 @@ $('refreshButton').onclick = () => {
       icon.style.animation = '';
     }, 1000);
   }
-  fetchAll();
+  fetchAll(true); // Force refresh (bypass cache)
   if (currentUser) {
     loadPortfolio();
     loadAlerts();
   }
 };
 
+/* ---------- API CACHING SYSTEM ---------- */
+const API_CACHE_KEY = 'crypto_api_cache';
+const CACHE_DURATION = 60000; // 1 minute cache (adjustable)
+
+function getCachedData() {
+  try {
+    const cached = localStorage.getItem(API_CACHE_KEY);
+    if (!cached) return null;
+    
+    const { data, timestamp } = JSON.parse(cached);
+    const age = Date.now() - timestamp;
+    
+    // Return cached data if still fresh
+    if (age < CACHE_DURATION) {
+      console.log(`Using cached data (${Math.round(age/1000)}s old)`);
+      return data;
+    }
+    
+    // Cache expired
+    localStorage.removeItem(API_CACHE_KEY);
+    return null;
+  } catch (e) {
+    console.error('Cache read error:', e);
+    return null;
+  }
+}
+
+function setCachedData(data) {
+  try {
+    localStorage.setItem(API_CACHE_KEY, JSON.stringify({
+      data,
+      timestamp: Date.now()
+    }));
+    console.log('Data cached successfully');
+  } catch (e) {
+    console.error('Cache write error:', e);
+  }
+}
+
 /* ---------- AUTO REFRESH ---------- */
 let refreshIntervalId = null;
-let refreshIntervalMs = 300000; // 5 minutes
+let refreshIntervalMs = 300000; // 5 minutes (increased to reduce API calls)
 
 function startAutoRefresh() {
   if (refreshIntervalId) clearInterval(refreshIntervalId);
