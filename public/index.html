@@ -219,14 +219,38 @@ body{
 @keyframes rotateGradient{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
 .live-text{font-size:12px;color:var(--success);font-weight:600;text-transform:uppercase;letter-spacing:0.8px;transition:color 0.3s ease}
 .time-display{font-size:14px;color:var(--text-tertiary);font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:0.5px;transition:color 0.3s ease}
-/* TOP NAVIGATION TABS - Clean Modern Style */
-.top-nav-tabs{display:flex;align-items:center;gap:4px;flex:1;justify-content:center;padding:0 32px}
-.top-nav-tab{padding:8px 16px;background:transparent;border:none;color:var(--text-tertiary);font-size:14px;font-weight:500;cursor:pointer;border-radius:var(--radius-sm);transition:all 0.2s ease;position:relative;white-space:nowrap}
-.top-nav-tab:hover{background:var(--bg-tertiary);color:var(--text-primary)}
-.top-nav-tab.active{color:var(--accent-primary);background:var(--bg-tertiary)}
-.top-nav-tab.active::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:60%;height:2px;background:var(--accent-primary);border-radius:2px 2px 0 0}
+/* SIDEBAR NAVIGATION - Desktop Sidebar */
+.app-sidebar{width:260px;min-width:260px;background:var(--bg-secondary);border-right:1px solid var(--border-secondary);position:fixed;left:0;top:70px;bottom:0;overflow-y:auto;z-index:90;transition:all 0.3s ease;display:flex;flex-direction:column}
+.app-sidebar.collapsed{width:70px;min-width:70px}
+.sidebar-header{padding:24px 20px;border-bottom:1px solid var(--border-secondary);display:flex;align-items:center;justify-content:space-between}
+.sidebar-logo{font-size:16px;font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:10px}
+.sidebar-collapse-btn{width:32px;height:32px;border-radius:8px;background:transparent;border:1px solid var(--border-primary);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-secondary);transition:all 0.2s;font-size:14px}
+.sidebar-collapse-btn:hover{background:var(--bg-tertiary);color:var(--text-primary);border-color:var(--accent-primary)}
+.sidebar-nav{flex:1;padding:16px 12px;display:flex;flex-direction:column;gap:4px}
+.sidebar-nav-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--radius-md);cursor:pointer;transition:all 0.2s ease;color:var(--text-secondary);background:transparent;border:none;width:100%;text-align:left;font-size:14px;font-weight:500;position:relative}
+.sidebar-nav-item:hover{background:var(--bg-tertiary);color:var(--text-primary)}
+.sidebar-nav-item.active{background:var(--accent-primary);color:#fff;box-shadow:0 4px 12px rgba(99,102,241,0.2)}
+.sidebar-nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:#fff;border-radius:0 3px 3px 0}
+.sidebar-nav-icon{font-size:20px;width:24px;text-align:center;flex-shrink:0}
+.sidebar-nav-text{flex:1;white-space:nowrap;opacity:1;transition:opacity 0.2s}
+.app-sidebar.collapsed .sidebar-nav-text{opacity:0;width:0;overflow:hidden}
+.sidebar-nav-badge{background:var(--accent-primary);color:#fff;font-size:10px;font-weight:600;padding:2px 6px;border-radius:10px;min-width:18px;text-align:center}
+.sidebar-divider{margin:8px 16px;height:1px;background:var(--border-secondary)}
+.sidebar-section-title{padding:12px 16px 8px;font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-tertiary);font-weight:600}
+.app-sidebar.collapsed .sidebar-section-title{opacity:0;height:0;padding:0;margin:0;overflow:hidden}
+.sidebar-footer{padding:16px;border-top:1px solid var(--border-secondary);display:flex;flex-direction:column;gap:8px}
+.app-sidebar.collapsed .sidebar-footer .sidebar-nav-text{display:none}
 
-/* SIDEBAR MENU - Hidden on Desktop, Visible on Mobile */
+/* MOBILE BOTTOM NAVIGATION */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg-secondary);border-top:1px solid var(--border-secondary);z-index:100;padding:8px 0 max(8px,env(safe-area-inset-bottom));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.bottom-nav-items{display:flex;justify-content:space-around;align-items:center}
+.bottom-nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;border-radius:var(--radius-sm);cursor:pointer;transition:all 0.2s;color:var(--text-tertiary);background:transparent;border:none;flex:1;min-width:0}
+.bottom-nav-item:hover{background:var(--bg-tertiary);color:var(--text-primary)}
+.bottom-nav-item.active{color:var(--accent-primary)}
+.bottom-nav-icon{font-size:20px}
+.bottom-nav-text{font-size:10px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+
+/* MOBILE SIDEBAR (Old - Keep for compatibility) */
 .sidebar{display:none}
 .sidebar-menu{display:flex;flex-direction:column;gap:8px;padding:20px}
 .sidebar-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--radius-md);cursor:pointer;transition:all 0.2s ease;color:var(--text-secondary);background:transparent;border:none;width:100%;text-align:left;font-size:15px;font-weight:500}
@@ -234,8 +258,6 @@ body{
 .sidebar-item.active{background:var(--accent-primary);color:#fff}
 .sidebar-icon{font-size:20px;width:24px;text-align:center}
 .sidebar-text{flex:1}
-.sidebar-divider{display:none}
-.sidebar-section-title{display:none}
 .sidebar-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);z-index:999;opacity:0;transition:opacity 0.3s ease}
 .sidebar-overlay.active{display:block;opacity:1}
 .sidebar-toggle{display:none;width:40px;height:40px;border-radius:10px;background:var(--bg-card);border:1px solid var(--border-primary);align-items:center;justify-content:center;cursor:pointer;transition:all .3s;font-size:20px;color:var(--text-secondary);flex-shrink:0}
@@ -243,7 +265,9 @@ body{
 
 /* MAIN CONTENT WITH SIDEBAR - Vision UI Style */
 .main-layout{display:flex;min-height:100vh;margin-top:0}
-.main-content{flex:1;margin-left:0;padding:32px;transition:margin-left 0.3s ease;min-height:100vh;max-width:100vw;padding-top:102px}
+.main-content{flex:1;margin-left:260px;padding:32px;transition:margin-left 0.3s ease;min-height:100vh;max-width:calc(100vw - 260px);padding-top:102px;padding-bottom:80px}
+.main-content.sidebar-collapsed{margin-left:70px;max-width:calc(100vw - 70px)}
+.main-content.no-sidebar{margin-left:0;max-width:100vw}
 .container{max-width:100%;margin:0;padding:0;position:relative;z-index:2;width:100%;box-sizing:border-box}
 .hero-section{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:32px;grid-auto-rows:minmax(90px,auto)}
 .hero-stat{background:var(--bg-card);backdrop-filter:var(--blur);border-radius:var(--radius-md);padding:16px 20px;border:1px solid var(--border-secondary);transition:all .2s;display:flex;flex-direction:column;justify-content:space-between;min-height:90px;box-shadow:var(--shadow-sm)}
@@ -1426,6 +1450,65 @@ body{overflow-x:hidden}
   #targetsPage #targetDetailsContent {
     margin-top: 16px;
   }
+  
+  /* Sidebar and Navigation Responsive */
+  .app-sidebar {
+    display: none !important;
+  }
+  
+  .main-content {
+    margin-left: 0 !important;
+    max-width: 100vw !important;
+    padding-bottom: 80px !important;
+  }
+  
+  .bottom-nav {
+    display: block !important;
+  }
+  
+  .top-nav-tabs {
+    display: none !important;
+  }
+  
+  /* Dashboard responsive */
+  #dashboardPage .summary-card {
+    min-width: 100% !important;
+  }
+  
+  /* Admin panel responsive */
+  #adminPage .admin-tab-btn {
+    font-size: 11px !important;
+    padding: 8px 12px !important;
+  }
+  
+  #adminPage .admin-tab-content table,
+  #adminPage .admin-tab-content .grid {
+    display: block !important;
+    overflow-x: auto !important;
+  }
+}
+
+/* Tablet styles */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .app-sidebar {
+    width: 200px !important;
+    min-width: 200px !important;
+  }
+  
+  .app-sidebar.collapsed {
+    width: 60px !important;
+    min-width: 60px !important;
+  }
+  
+  .main-content {
+    margin-left: 200px !important;
+    max-width: calc(100vw - 200px) !important;
+  }
+  
+  .main-content.sidebar-collapsed {
+    margin-left: 60px !important;
+    max-width: calc(100vw - 60px) !important;
+  }
 }
 </style>
 </head>
@@ -1446,23 +1529,9 @@ body{overflow-x:hidden}
     </div>
   </div>
 
-  <!-- Top Navigation Tabs -->
-  <div class="top-nav-tabs" style="display:flex;align-items:center;gap:8px;flex:1;justify-content:center;padding:0 32px;">
-    <button class="top-nav-tab active" data-page="market" style="padding:8px 16px;background:transparent;border:none;color:var(--text-tertiary);font-size:14px;font-weight:500;cursor:pointer;border-radius:var(--radius-sm);transition:all 0.2s ease;position:relative;">
-      📊 ბაზარი
-    </button>
-    <button class="top-nav-tab" data-page="portfolio" style="padding:8px 16px;background:transparent;border:none;color:var(--text-tertiary);font-size:14px;font-weight:500;cursor:pointer;border-radius:var(--radius-sm);transition:all 0.2s ease;position:relative;">
-      💼 პორტფოლიო
-    </button>
-    <button class="top-nav-tab" data-page="targets" style="padding:8px 16px;background:transparent;border:none;color:var(--text-tertiary);font-size:14px;font-weight:500;cursor:pointer;border-radius:var(--radius-sm);transition:all 0.2s ease;position:relative;">
-      🎯 Trade
-    </button>
-    <button class="top-nav-tab" data-page="alerts" style="padding:8px 16px;background:transparent;border:none;color:var(--text-tertiary);font-size:14px;font-weight:500;cursor:pointer;border-radius:var(--radius-sm);transition:all 0.2s ease;position:relative;">
-      🔔 შეტყობინებები
-    </button>
-    <button class="top-nav-tab" data-page="profile" style="padding:8px 16px;background:transparent;border:none;color:var(--text-tertiary);font-size:14px;font-weight:500;cursor:pointer;border-radius:var(--radius-sm);transition:all 0.2s ease;position:relative;">
-      👤 პროფილი
-    </button>
+  <!-- Top Navigation - Simplified (Logo and Actions Only) -->
+  <div style="flex:1;display:flex;justify-content:center;align-items:center;">
+    <!-- Search bar can go here in future -->
   </div>
 
   <div class="nav-right">
@@ -1500,13 +1569,93 @@ body{overflow-x:hidden}
   </div>
 </nav>
 
-<!-- Sidebar Overlay -->
+<!-- Desktop Sidebar Navigation -->
+<aside class="app-sidebar" id="appSidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <span>📊</span>
+      <span class="sidebar-nav-text">CCX</span>
+    </div>
+    <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" title="Collapse sidebar">◀</button>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="sidebar-nav-item active" data-page="dashboard">
+      <span class="sidebar-nav-icon">🏠</span>
+      <span class="sidebar-nav-text">Dashboard</span>
+    </div>
+    <div class="sidebar-nav-item" data-page="market">
+      <span class="sidebar-nav-icon">📊</span>
+      <span class="sidebar-nav-text">ბაზარი</span>
+    </div>
+    <div class="sidebar-nav-item" data-page="portfolio">
+      <span class="sidebar-nav-icon">💼</span>
+      <span class="sidebar-nav-text">პორტფოლიო</span>
+    </div>
+    <div class="sidebar-nav-item" data-page="targets">
+      <span class="sidebar-nav-icon">🎯</span>
+      <span class="sidebar-nav-text">Trade</span>
+    </div>
+    <div class="sidebar-nav-item" data-page="alerts">
+      <span class="sidebar-nav-icon">🔔</span>
+      <span class="sidebar-nav-text">შეტყობინებები</span>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section-title">ადმინისტრაცია</div>
+    <div class="sidebar-nav-item" data-page="admin" id="adminNavItem" style="display:none;">
+      <span class="sidebar-nav-icon">⚙️</span>
+      <span class="sidebar-nav-text">Admin Panel</span>
+      <span class="sidebar-nav-badge" id="adminBadge" style="display:none;">ADMIN</span>
+    </div>
+    <div class="sidebar-nav-item" data-page="profile">
+      <span class="sidebar-nav-icon">👤</span>
+      <span class="sidebar-nav-text">პროფილი</span>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-nav-item" style="font-size:12px;opacity:0.7;">
+      <span class="sidebar-nav-icon">ℹ️</span>
+      <span class="sidebar-nav-text">v1.0.0</span>
+    </div>
+  </div>
+</aside>
+
+<!-- Mobile Bottom Navigation -->
+<nav class="bottom-nav" id="bottomNav">
+  <div class="bottom-nav-items">
+    <button class="bottom-nav-item active" data-page="dashboard">
+      <span class="bottom-nav-icon">🏠</span>
+      <span class="bottom-nav-text">Dashboard</span>
+    </button>
+    <button class="bottom-nav-item" data-page="market">
+      <span class="bottom-nav-icon">📊</span>
+      <span class="bottom-nav-text">ბაზარი</span>
+    </button>
+    <button class="bottom-nav-item" data-page="portfolio">
+      <span class="bottom-nav-icon">💼</span>
+      <span class="bottom-nav-text">პორტფოლიო</span>
+    </button>
+    <button class="bottom-nav-item" data-page="targets">
+      <span class="bottom-nav-icon">🎯</span>
+      <span class="bottom-nav-text">Trade</span>
+    </button>
+    <button class="bottom-nav-item" data-page="alerts">
+      <span class="bottom-nav-icon">🔔</span>
+      <span class="bottom-nav-text">შეტყობინებები</span>
+    </button>
+  </div>
+</nav>
+
+<!-- Sidebar Overlay (Mobile) -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<!-- Mobile Sidebar Menu -->
+<!-- Mobile Sidebar Menu (Legacy - for compatibility) -->
 <aside class="sidebar" id="sidebar">
   <nav class="sidebar-menu">
-    <div class="sidebar-item active" data-page="market">
+    <div class="sidebar-item active" data-page="dashboard">
+      <span class="sidebar-icon">🏠</span>
+      <span class="sidebar-text">Dashboard</span>
+    </div>
+    <div class="sidebar-item" data-page="market">
       <span class="sidebar-icon">📊</span>
       <span class="sidebar-text">ბაზარი</span>
     </div>
@@ -1529,10 +1678,80 @@ body{overflow-x:hidden}
   </nav>
 </aside>
 
-<div class="main-content">
+<div class="main-content" id="mainContent">
 <div class="container">
     <div id="loading" class="loading"><div class="spinner"></div><div class="loading-text">ბაზრის მონაცემების ჩატვირთვა...</div></div>
   <div id="error"></div>
+
+  <!-- Dashboard Page (New Home Page) -->
+  <div id="dashboardPage" class="page-content" style="display:none;">
+    <div class="main-section" style="width:100%;">
+      <div class="section-header">
+        <div class="section-title">Dashboard Overview</div>
+      </div>
+
+      <!-- Dashboard Stats Grid -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-bottom:32px;">
+        <div class="summary-card" style="background:linear-gradient(135deg,rgba(99,102,241,0.1) 0%,rgba(139,92,246,0.05) 100%);border:1px solid rgba(99,102,241,0.2);">
+          <div class="summary-label">Portfolio Value</div>
+          <div class="summary-value" id="dashboardPortfolioValue">$0.00</div>
+          <div style="font-size:12px;color:var(--text-tertiary);margin-top:8px;" id="dashboardPortfolioChange">--</div>
+        </div>
+        <div class="summary-card" style="background:linear-gradient(135deg,rgba(34,197,94,0.1) 0%,rgba(16,185,129,0.05) 100%);border:1px solid rgba(34,197,94,0.2);">
+          <div class="summary-label">Active Targets</div>
+          <div class="summary-value" id="dashboardActiveTargets">0</div>
+          <div style="font-size:12px;color:var(--text-tertiary);margin-top:8px;">Reached: <span id="dashboardReachedTargets">0</span></div>
+        </div>
+        <div class="summary-card" style="background:linear-gradient(135deg,rgba(245,158,11,0.1) 0%,rgba(217,119,6,0.05) 100%);border:1px solid rgba(245,158,11,0.2);">
+          <div class="summary-label">Active Alerts</div>
+          <div class="summary-value" id="dashboardActiveAlerts">0</div>
+          <div style="font-size:12px;color:var(--text-tertiary);margin-top:8px;">Triggered: <span id="dashboardTriggeredAlerts">0</span></div>
+        </div>
+        <div class="summary-card" style="background:linear-gradient(135deg,rgba(59,130,246,0.1) 0%,rgba(37,99,235,0.05) 100%);border:1px solid rgba(59,130,246,0.2);">
+          <div class="summary-label">Holdings</div>
+          <div class="summary-value" id="dashboardHoldingsCount">0</div>
+          <div style="font-size:12px;color:var(--text-tertiary);margin-top:8px;">Tokens tracked</div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:32px;">
+        <button onclick="showPage('portfolio')" style="padding:20px;background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:12px;cursor:pointer;transition:all 0.2s;text-align:left;">
+          <div style="font-size:24px;margin-bottom:8px;">💼</div>
+          <div style="font-weight:600;color:var(--text-primary);margin-bottom:4px;">View Portfolio</div>
+          <div style="font-size:12px;color:var(--text-tertiary);">Manage your holdings</div>
+        </button>
+        <button onclick="showPage('targets')" style="padding:20px;background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:12px;cursor:pointer;transition:all 0.2s;text-align:left;">
+          <div style="font-size:24px;margin-bottom:8px;">🎯</div>
+          <div style="font-weight:600;color:var(--text-primary);margin-bottom:4px;">Manage Targets</div>
+          <div style="font-size:12px;color:var(--text-tertiary);">Set sell targets</div>
+        </button>
+        <button onclick="showPage('market')" style="padding:20px;background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:12px;cursor:pointer;transition:all 0.2s;text-align:left;">
+          <div style="font-size:24px;margin-bottom:8px;">📊</div>
+          <div style="font-weight:600;color:var(--text-primary);margin-bottom:4px;">Market Data</div>
+          <div style="font-size:12px;color:var(--text-tertiary);">View crypto prices</div>
+        </button>
+        <button onclick="showPage('alerts')" style="padding:20px;background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:12px;cursor:pointer;transition:all 0.2s;text-align:left;">
+          <div style="font-size:24px;margin-bottom:8px;">🔔</div>
+          <div style="font-weight:600;color:var(--text-primary);margin-bottom:4px;">Price Alerts</div>
+          <div style="font-size:12px;color:var(--text-tertiary);">Set notifications</div>
+        </button>
+      </div>
+
+      <!-- Recent Activity -->
+      <div style="background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:16px;padding:24px;">
+        <div class="section-header" style="margin-bottom:20px;">
+          <div class="section-title">Recent Activity</div>
+        </div>
+        <div id="dashboardRecentActivity" style="min-height:200px;">
+          <div style="text-align:center;padding:40px;color:var(--text-tertiary);">
+            <div style="font-size:32px;margin-bottom:12px;">📈</div>
+            <div>No recent activity</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
     <div class="hero-carousel-wrapper" id="heroStats" style="display:none;margin-bottom:24px;">
       <div class="carousel" id="heroCarousel">
@@ -1771,6 +1990,182 @@ body{overflow-x:hidden}
         </form>
       </div>
     </div>
+
+      <!-- Admin Panel Page -->
+      <div id="adminPage" class="page-content" style="display:none;">
+        <div class="main-section" style="width:100%;">
+          <div class="section-header">
+            <div class="section-title">⚙️ Admin Panel - CMS</div>
+            <div style="font-size:12px;color:var(--text-tertiary);">Content Management System</div>
+          </div>
+
+          <!-- Admin Tabs -->
+          <div style="display:flex;gap:8px;margin-bottom:24px;border-bottom:1px solid var(--border-secondary);padding-bottom:12px;">
+            <button class="admin-tab-btn active" data-admin-tab="tokens" style="padding:10px 20px;background:var(--accent-primary);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:all 0.2s;">🪙 Token Management</button>
+            <button class="admin-tab-btn" data-admin-tab="users" style="padding:10px 20px;background:transparent;border:1px solid var(--border-primary);color:var(--text-secondary);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:all 0.2s;">👥 User Management</button>
+            <button class="admin-tab-btn" data-admin-tab="settings" style="padding:10px 20px;background:transparent;border:1px solid var(--border-primary);color:var(--text-secondary);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:all 0.2s;">⚙️ Settings</button>
+            <button class="admin-tab-btn" data-admin-tab="analytics" style="padding:10px 20px;background:transparent;border:1px solid var(--border-primary);color:var(--text-secondary);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:all 0.2s;">📊 Analytics</button>
+          </div>
+
+          <!-- Token Management Tab -->
+          <div id="adminTokensTab" class="admin-tab-content">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+              <h3 style="font-size:18px;font-weight:600;color:var(--text-primary);">Token Management</h3>
+              <button id="addTokenBtnAdmin" style="padding:10px 20px;background:linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;">➕ Add Token</button>
+            </div>
+            
+            <!-- Token List -->
+            <div style="background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:12px;overflow:hidden;">
+              <div style="display:grid;grid-template-columns:60px 2fr 1fr 1fr 1fr 1fr auto;gap:16px;padding:16px;background:var(--bg-tertiary);border-bottom:1px solid var(--border-secondary);">
+                <div style="font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.8px;font-weight:600;">Icon</div>
+                <div style="font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.8px;font-weight:600;">Token</div>
+                <div style="font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.8px;font-weight:600;">Price</div>
+                <div style="font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.8px;font-weight:600;">24h Change</div>
+                <div style="font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.8px;font-weight:600;">Market Cap</div>
+                <div style="font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.8px;font-weight:600;">Status</div>
+                <div style="font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.8px;font-weight:600;">Actions</div>
+              </div>
+              <div id="adminTokensList" style="max-height:600px;overflow-y:auto;">
+                <!-- Tokens will be rendered here -->
+              </div>
+            </div>
+          </div>
+
+          <!-- User Management Tab -->
+          <div id="adminUsersTab" class="admin-tab-content" style="display:none;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+              <h3 style="font-size:18px;font-weight:600;color:var(--text-primary);">User Management</h3>
+              <div style="display:flex;gap:8px;">
+                <input type="text" id="adminUserSearch" placeholder="Search users..." style="padding:10px 16px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:13px;width:250px;">
+                <button onclick="adminExportUsers()" style="padding:10px 20px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#22c55e;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;">📥 Export</button>
+              </div>
+            </div>
+            
+            <!-- User Stats -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;">
+              <div class="summary-card">
+                <div class="summary-label">Total Users</div>
+                <div class="summary-value" id="adminTotalUsers">0</div>
+              </div>
+              <div class="summary-card">
+                <div class="summary-label">Active Users</div>
+                <div class="summary-value" id="adminActiveUsers">0</div>
+              </div>
+              <div class="summary-card">
+                <div class="summary-label">Users with Portfolio</div>
+                <div class="summary-value" id="adminUsersWithPortfolio">0</div>
+              </div>
+            </div>
+
+            <!-- User List -->
+            <div style="background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:12px;overflow:hidden;">
+              <div style="display:grid;grid-template-columns:50px 2fr 1fr 1fr 1fr auto;gap:16px;padding:16px;background:var(--bg-tertiary);border-bottom:1px solid var(--border-secondary);">
+                <div style="font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.8px;font-weight:600;">Avatar</div>
+                <div style="font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.8px;font-weight:600;">User</div>
+                <div style="font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.8px;font-weight:600;">Email</div>
+                <div style="font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.8px;font-weight:600;">Portfolio Value</div>
+                <div style="font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.8px;font-weight:600;">Status</div>
+                <div style="font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.8px;font-weight:600;">Actions</div>
+              </div>
+              <div id="adminUsersList" style="max-height:600px;overflow-y:auto;">
+                <!-- Users will be rendered here -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Settings Tab -->
+          <div id="adminSettingsTab" class="admin-tab-content" style="display:none;">
+            <h3 style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:24px;">System Settings</h3>
+            
+            <div style="display:grid;gap:24px;">
+              <!-- API Settings -->
+              <div style="background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:12px;padding:24px;">
+                <h4 style="font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">API Configuration</h4>
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                  <div>
+                    <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;font-weight:600;">CoinGecko API Key (Optional)</label>
+                    <input type="text" id="adminCoinGeckoKey" placeholder="Enter CoinGecko API key" style="width:100%;padding:12px 16px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:13px;">
+                    <small style="display:block;margin-top:6px;font-size:11px;color:var(--text-tertiary);">For higher rate limits</small>
+                  </div>
+                  <button onclick="adminSaveApiSettings()" style="padding:10px 20px;background:var(--accent-primary);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;align-self:flex-start;">💾 Save Settings</button>
+                </div>
+              </div>
+
+              <!-- System Settings -->
+              <div style="background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:12px;padding:24px;">
+                <h4 style="font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">System Configuration</h4>
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--bg-tertiary);border-radius:8px;">
+                    <div>
+                      <div style="font-weight:600;color:var(--text-primary);margin-bottom:4px;">Auto Refresh Interval</div>
+                      <div style="font-size:12px;color:var(--text-tertiary);">How often to refresh market data</div>
+                    </div>
+                    <select id="adminRefreshInterval" style="padding:8px 12px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:6px;color:var(--text-primary);font-size:13px;">
+                      <option value="60000">1 minute</option>
+                      <option value="300000" selected>5 minutes</option>
+                      <option value="600000">10 minutes</option>
+                      <option value="900000">15 minutes</option>
+                    </select>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--bg-tertiary);border-radius:8px;">
+                    <div>
+                      <div style="font-weight:600;color:var(--text-primary);margin-bottom:4px;">Cache Duration</div>
+                      <div style="font-size:12px;color:var(--text-tertiary);">How long to cache API responses</div>
+                    </div>
+                    <select id="adminCacheDuration" style="padding:8px 12px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:6px;color:var(--text-primary);font-size:13px;">
+                      <option value="30000">30 seconds</option>
+                      <option value="60000" selected>1 minute</option>
+                      <option value="300000">5 minutes</option>
+                    </select>
+                  </div>
+                  <button onclick="adminSaveSystemSettings()" style="padding:10px 20px;background:var(--accent-primary);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;align-self:flex-start;">💾 Save Settings</button>
+                </div>
+              </div>
+
+              <!-- Maintenance -->
+              <div style="background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:12px;padding:24px;">
+                <h4 style="font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">Maintenance</h4>
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                  <button onclick="adminClearCache()" style="padding:12px 20px;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);color:#f59e0b;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;text-align:left;">🗑️ Clear All Cache</button>
+                  <button onclick="adminRefreshAllData()" style="padding:12px 20px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#22c55e;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;text-align:left;">🔄 Force Refresh All Data</button>
+                  <button onclick="adminExportDatabase()" style="padding:12px 20px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);color:#3b82f6;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;text-align:left;">📥 Export Database</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Analytics Tab -->
+          <div id="adminAnalyticsTab" class="admin-tab-content" style="display:none;">
+            <h3 style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:24px;">System Analytics</h3>
+            
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-bottom:32px;">
+              <div class="summary-card">
+                <div class="summary-label">Total Tokens</div>
+                <div class="summary-value" id="adminAnalyticsTokens">0</div>
+              </div>
+              <div class="summary-card">
+                <div class="summary-label">Total Portfolios</div>
+                <div class="summary-value" id="adminAnalyticsPortfolios">0</div>
+              </div>
+              <div class="summary-card">
+                <div class="summary-label">Total Targets</div>
+                <div class="summary-value" id="adminAnalyticsTargets">0</div>
+              </div>
+              <div class="summary-card">
+                <div class="summary-label">Total Alerts</div>
+                <div class="summary-value" id="adminAnalyticsAlerts">0</div>
+              </div>
+            </div>
+
+            <div style="background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:12px;padding:24px;">
+              <h4 style="font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">Usage Statistics</h4>
+              <div id="adminUsageStats" style="min-height:200px;">
+                <!-- Stats will be rendered here -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- Profile Page Content -->
       <div id="profilePage" class="page-content">
@@ -5441,6 +5836,385 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initSettings);
 } else {
   initSettings();
+}
+
+/* ---------- SIDEBAR NAVIGATION ---------- */
+let sidebarCollapsed = false;
+
+function initSidebarNavigation() {
+  const sidebar = document.getElementById('appSidebar');
+  const collapseBtn = document.getElementById('sidebarCollapseBtn');
+  const mainContent = document.getElementById('mainContent');
+  const sidebarNavItems = document.querySelectorAll('.sidebar-nav-item');
+  const bottomNavItems = document.querySelectorAll('.bottom-nav-item');
+  const topNavTabs = document.querySelectorAll('.top-nav-tab');
+  
+  // Sidebar collapse toggle
+  if (collapseBtn) {
+    collapseBtn.onclick = () => {
+      sidebarCollapsed = !sidebarCollapsed;
+      if (sidebar) {
+        sidebar.classList.toggle('collapsed', sidebarCollapsed);
+        collapseBtn.textContent = sidebarCollapsed ? '▶' : '◀';
+      }
+      if (mainContent) {
+        mainContent.classList.toggle('sidebar-collapsed', sidebarCollapsed);
+      }
+      localStorage.setItem('sidebarCollapsed', sidebarCollapsed);
+    };
+    
+    // Load saved state
+    const savedState = localStorage.getItem('sidebarCollapsed');
+    if (savedState === 'true') {
+      sidebarCollapsed = true;
+      if (sidebar) sidebar.classList.add('collapsed');
+      if (mainContent) mainContent.classList.add('sidebar-collapsed');
+      collapseBtn.textContent = '▶';
+    }
+  }
+  
+  // Navigation item click handlers
+  function handleNavClick(page) {
+    showPage(page);
+    // Update active states
+    sidebarNavItems.forEach(item => {
+      item.classList.toggle('active', item.dataset.page === page);
+    });
+    bottomNavItems.forEach(item => {
+      item.classList.toggle('active', item.dataset.page === page);
+    });
+    topNavTabs.forEach(tab => {
+      tab.classList.toggle('active', tab.dataset.page === page);
+    });
+  }
+  
+  sidebarNavItems.forEach(item => {
+    item.onclick = () => handleNavClick(item.dataset.page);
+  });
+  
+  bottomNavItems.forEach(item => {
+    item.onclick = () => handleNavClick(item.dataset.page);
+  });
+  
+  topNavTabs.forEach(tab => {
+    tab.onclick = () => handleNavClick(tab.dataset.page);
+  });
+  
+  // Mobile menu toggle
+  const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+  const sidebarOverlay = document.getElementById('sidebarOverlay');
+  const mobileSidebar = document.getElementById('sidebar');
+  
+  if (mobileMenuToggle && mobileSidebar) {
+    mobileMenuToggle.onclick = () => {
+      mobileSidebar.classList.toggle('active');
+      if (sidebarOverlay) sidebarOverlay.classList.toggle('active');
+    };
+  }
+  
+  if (sidebarOverlay) {
+    sidebarOverlay.onclick = () => {
+      if (mobileSidebar) mobileSidebar.classList.remove('active');
+      sidebarOverlay.classList.remove('active');
+    };
+  }
+  
+  // Show/hide admin nav based on user role
+  updateAdminNavVisibility();
+}
+
+// Update showPage to handle new pages
+const originalShowPage = window.showPage;
+window.showPage = function(page) {
+  // Hide all page containers
+  const pageContainers = [
+    'dashboardPage', 'marketPage', 'portfolioPage', 'targetsPage', 
+    'alertsPage', 'profilePage', 'adminPage', 'contentGrid'
+  ];
+  pageContainers.forEach(pageId => {
+    const pageEl = document.getElementById(pageId);
+    if (pageEl) pageEl.style.display = 'none';
+  });
+  
+  // Show selected page
+  let pageId = page + 'Page';
+  if (page === 'market') {
+    // Market page uses contentGrid
+    const contentGrid = document.getElementById('contentGrid');
+    if (contentGrid) {
+      contentGrid.style.display = 'grid';
+      // Also show hero stats and activity carousel
+      const heroStats = document.getElementById('heroStats');
+      const activityCarousel = document.getElementById('activityCarouselWrapper');
+      if (heroStats) heroStats.style.display = 'block';
+      if (activityCarousel) activityCarousel.style.display = 'block';
+    }
+  } else {
+    const pageEl = document.getElementById(pageId);
+    if (pageEl) {
+      pageEl.style.display = 'block';
+      
+      // Load page-specific data
+      if (page === 'dashboard') {
+        updateDashboard();
+      } else if (page === 'admin') {
+        if (currentUser && currentUser.email === 'admin@example.com') { // Replace with actual admin check
+          loadAdminData();
+        } else {
+          showPage('dashboard'); // Redirect non-admins
+          return;
+        }
+      }
+    }
+  }
+  
+  // Call original showPage if it exists (for backward compatibility)
+  if (originalShowPage && typeof originalShowPage === 'function' && originalShowPage !== window.showPage) {
+    try {
+      originalShowPage(page);
+    } catch (e) {
+      console.log('Original showPage not compatible, using new implementation');
+    }
+  }
+  
+  // Update navigation active states
+  document.querySelectorAll('.sidebar-nav-item, .bottom-nav-item, .top-nav-tab, .sidebar-item').forEach(item => {
+    if (item.dataset.page === page) {
+      item.classList.add('active');
+    } else {
+      item.classList.remove('active');
+    }
+  });
+  
+  // Update URL hash
+  window.location.hash = page;
+};
+
+// Dashboard update function
+function updateDashboard() {
+  if (!currentUser) return;
+  
+  // Update portfolio value
+  const totalValue = Object.values(portfolioHoldings || {}).reduce((sum, h) => {
+    const price = prices[h.tokenId] || 0;
+    return sum + (h.amount * price);
+  }, 0);
+  
+  const dashboardPortfolioValue = document.getElementById('dashboardPortfolioValue');
+  if (dashboardPortfolioValue) {
+    dashboardPortfolioValue.textContent = `$${formatPrice(totalValue)}`;
+  }
+  
+  // Update active targets
+  const activeTargets = Object.keys(sellTargets || {}).length;
+  const reachedTargets = Object.values(sellTargets || {}).filter(t => {
+    const token = cryptoData.find(c => c.id === t.tokenId);
+    const currentPrice = token?.current_price || prices[t.tokenId] || 0;
+    return currentPrice >= t.targetPrice;
+  }).length;
+  
+  const dashboardActiveTargets = document.getElementById('dashboardActiveTargets');
+  const dashboardReachedTargets = document.getElementById('dashboardReachedTargets');
+  if (dashboardActiveTargets) dashboardActiveTargets.textContent = activeTargets;
+  if (dashboardReachedTargets) dashboardReachedTargets.textContent = reachedTargets;
+  
+  // Update holdings count
+  const holdingsCount = Object.keys(portfolioHoldings || {}).length;
+  const dashboardHoldingsCount = document.getElementById('dashboardHoldingsCount');
+  if (dashboardHoldingsCount) dashboardHoldingsCount.textContent = holdingsCount;
+  
+  // Update alerts (placeholder)
+  const dashboardActiveAlerts = document.getElementById('dashboardActiveAlerts');
+  if (dashboardActiveAlerts) dashboardActiveAlerts.textContent = '0';
+}
+
+// Admin panel functions
+function loadAdminData() {
+  // Load admin data
+  renderAdminTokens();
+  renderAdminUsers();
+  updateAdminAnalytics();
+}
+
+function renderAdminTokens() {
+  const container = document.getElementById('adminTokensList');
+  if (!container) return;
+  
+  let html = '';
+  cryptoData.forEach(token => {
+    const change24h = token.price_change_percentage_24h || 0;
+    const changeColor = change24h >= 0 ? '#22c55e' : '#ef4444';
+    
+    html += `
+      <div style="display:grid;grid-template-columns:60px 2fr 1fr 1fr 1fr 1fr auto;gap:16px;padding:16px;border-bottom:1px solid var(--border-secondary);align-items:center;">
+        <img src="${token.image || ''}" style="width:32px;height:32px;border-radius:50%;" onerror="this.style.display='none'">
+        <div>
+          <div style="font-weight:600;color:var(--text-primary);">${token.name}</div>
+          <div style="font-size:11px;color:var(--text-tertiary);">${token.symbol?.toUpperCase()}</div>
+        </div>
+        <div style="font-weight:600;color:var(--text-primary);">$${formatPrice(token.current_price)}</div>
+        <div style="color:${changeColor};font-weight:600;">${change24h >= 0 ? '+' : ''}${change24h.toFixed(2)}%</div>
+        <div style="color:var(--text-secondary);">$${formatPrice(token.market_cap)}</div>
+        <div style="padding:4px 8px;background:rgba(34,197,94,0.15);color:#22c55e;border-radius:4px;font-size:11px;font-weight:600;text-align:center;">Active</div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="adminEditToken('${token.id}')" style="padding:6px 12px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);color:#3b82f6;border-radius:6px;cursor:pointer;font-size:11px;">Edit</button>
+          <button onclick="adminDeleteToken('${token.id}')" style="padding:6px 12px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444;border-radius:6px;cursor:pointer;font-size:11px;">Delete</button>
+        </div>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html || '<div style="padding:40px;text-align:center;color:var(--text-tertiary);">No tokens found</div>';
+}
+
+function renderAdminUsers() {
+  // Placeholder - implement user loading from Firebase
+  const container = document.getElementById('adminUsersList');
+  if (container) {
+    container.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-tertiary);">User management coming soon</div>';
+  }
+}
+
+function updateAdminAnalytics() {
+  const tokensCount = cryptoData.length;
+  const portfoliosCount = 0; // TODO: Get from Firebase
+  const targetsCount = Object.keys(sellTargets || {}).length;
+  const alertsCount = 0; // TODO: Get from Firebase
+  
+  const analyticsTokens = document.getElementById('adminAnalyticsTokens');
+  const analyticsPortfolios = document.getElementById('adminAnalyticsPortfolios');
+  const analyticsTargets = document.getElementById('adminAnalyticsTargets');
+  const analyticsAlerts = document.getElementById('adminAnalyticsAlerts');
+  
+  if (analyticsTokens) analyticsTokens.textContent = tokensCount;
+  if (analyticsPortfolios) analyticsPortfolios.textContent = portfoliosCount;
+  if (analyticsTargets) analyticsTargets.textContent = targetsCount;
+  if (analyticsAlerts) analyticsAlerts.textContent = alertsCount;
+}
+
+function updateAdminNavVisibility() {
+  const adminNavItem = document.getElementById('adminNavItem');
+  const adminBadge = document.getElementById('adminBadge');
+  
+  // Check if user is admin (replace with actual admin check)
+  const isAdmin = currentUser && currentUser.email === 'admin@example.com';
+  
+  if (adminNavItem) {
+    adminNavItem.style.display = isAdmin ? 'flex' : 'none';
+  }
+  if (adminBadge) {
+    adminBadge.style.display = isAdmin ? 'inline-block' : 'none';
+  }
+}
+
+// Admin tab switching
+document.addEventListener('DOMContentLoaded', () => {
+  const adminTabBtns = document.querySelectorAll('.admin-tab-btn');
+  adminTabBtns.forEach(btn => {
+    btn.onclick = () => {
+      const tab = btn.dataset.adminTab;
+      
+      // Update button states
+      adminTabBtns.forEach(b => {
+        b.classList.toggle('active', b === btn);
+        if (b === btn) {
+          b.style.background = 'var(--accent-primary)';
+          b.style.color = '#fff';
+          b.style.border = 'none';
+        } else {
+          b.style.background = 'transparent';
+          b.style.color = 'var(--text-secondary)';
+          b.style.border = '1px solid var(--border-primary)';
+        }
+      });
+      
+      // Show/hide tab content
+      const tabs = ['adminTokensTab', 'adminUsersTab', 'adminSettingsTab', 'adminAnalyticsTab'];
+      tabs.forEach(tabId => {
+        const tabEl = document.getElementById(tabId);
+        if (tabEl) {
+          tabEl.style.display = tabId === `admin${tab.charAt(0).toUpperCase() + tab.slice(1)}Tab` ? 'block' : 'none';
+        }
+      });
+    };
+  });
+});
+
+// Initialize sidebar navigation on load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initSidebarNavigation);
+} else {
+  initSidebarNavigation();
+}
+
+// Admin panel helper functions
+window.adminEditToken = function(tokenId) {
+  alert(`Edit token: ${tokenId} - Coming soon!`);
+};
+
+window.adminDeleteToken = function(tokenId) {
+  if (confirm(`Are you sure you want to delete token ${tokenId}?`)) {
+    alert(`Delete token: ${tokenId} - Coming soon!`);
+  }
+};
+
+window.adminExportUsers = function() {
+  alert('Export users - Coming soon!');
+};
+
+window.adminSaveApiSettings = function() {
+  const apiKey = document.getElementById('adminCoinGeckoKey')?.value;
+  if (apiKey) {
+    localStorage.setItem('coingecko_api_key', apiKey);
+    alert('API settings saved!');
+  }
+};
+
+window.adminSaveSystemSettings = function() {
+  const refreshInterval = document.getElementById('adminRefreshInterval')?.value;
+  const cacheDuration = document.getElementById('adminCacheDuration')?.value;
+  
+  if (refreshInterval) {
+    refreshIntervalMs = parseInt(refreshInterval);
+    startAutoRefresh();
+    localStorage.setItem('refreshIntervalMs', refreshIntervalMs);
+  }
+  
+  if (cacheDuration) {
+    CACHE_DURATION = parseInt(cacheDuration);
+    localStorage.setItem('cacheDuration', CACHE_DURATION);
+  }
+  
+  alert('System settings saved!');
+};
+
+window.adminClearCache = function() {
+  if (confirm('Clear all cached data?')) {
+    localStorage.removeItem(API_CACHE_KEY);
+    alert('Cache cleared!');
+  }
+};
+
+window.adminRefreshAllData = function() {
+  fetchAll(true);
+  if (currentUser) {
+    loadPortfolio();
+    loadAlerts();
+  }
+  alert('Refreshing all data...');
+};
+
+window.adminExportDatabase = function() {
+  alert('Export database - Coming soon!');
+};
+
+// Set dashboard as default page
+if (window.location.hash === '' || window.location.hash === '#') {
+  setTimeout(() => {
+    if (typeof showPage === 'function') {
+      showPage('dashboard');
+    }
+  }, 100);
 }
 
 if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
