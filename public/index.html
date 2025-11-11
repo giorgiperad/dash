@@ -24,9 +24,6 @@
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="stylesheet" href="/css/styles.css">
-       url('/fonts/alkdots-webfont.woff') format('woff'),
-       url('/fonts/alkdots-webfont.ttf') format('truetype'),
-       url('/fonts/alkdots-webfont.svg#ALKDots') format('svg'),
        url('/public/fonts/alkdots-webfont.woff2') format('woff2'),
        url('/public/fonts/alkdots-webfont.woff') format('woff'),
        url('/public/fonts/alkdots-webfont.ttf') format('truetype');
@@ -1535,11 +1532,6 @@ body{overflow-x:hidden}
     min-width: 80px !important;
   }
   
-  .main-content.with-sidebar {
-    margin-left: 240px !important;
-    max-width: calc(100vw - 240px) !important;
-  }
-  
 </head>
 <body>
 
@@ -2026,7 +2018,7 @@ body{overflow-x:hidden}
           <div class="section-header">
             <div class="section-title">⚙️ Admin Panel - CMS</div>
             <div style="font-size:12px;color:var(--text-tertiary);">Content Management System</div>
-          </div>
+  </div>
 
           <!-- Admin Tabs -->
           <div style="display:flex;gap:8px;margin-bottom:24px;border-bottom:1px solid var(--border-secondary);padding-bottom:12px;">
@@ -2034,7 +2026,7 @@ body{overflow-x:hidden}
             <button class="admin-tab-btn" data-admin-tab="users" style="padding:10px 20px;background:transparent;border:1px solid var(--border-primary);color:var(--text-secondary);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:all 0.2s;">👥 User Management</button>
             <button class="admin-tab-btn" data-admin-tab="settings" style="padding:10px 20px;background:transparent;border:1px solid var(--border-primary);color:var(--text-secondary);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:all 0.2s;">⚙️ Settings</button>
             <button class="admin-tab-btn" data-admin-tab="analytics" style="padding:10px 20px;background:transparent;border:1px solid var(--border-primary);color:var(--text-secondary);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:all 0.2s;">📊 Analytics</button>
-          </div>
+</div>
 
           <!-- Token Management Tab -->
           <div id="adminTokensTab" class="admin-tab-content">
@@ -5788,7 +5780,7 @@ let refreshIntervalMs = 300000; // 5 minutes (increased to reduce API calls)
 function startAutoRefresh() {
   if (refreshIntervalId) clearInterval(refreshIntervalId);
   refreshIntervalId = setInterval(() => {
-  fetchAll();
+fetchAll();
   if (currentUser) {
     loadPortfolio();
     loadAlerts();
@@ -5799,7 +5791,7 @@ function startAutoRefresh() {
 // Quotes section removed
 
 // Load settings and start auto-refresh
-fetchAll();
+  fetchAll();
 startAutoRefresh();
 
 // Quotes section removed - no longer loading quotes
@@ -5969,7 +5961,7 @@ function initSidebarNavigation() {
     };
     
     // Load saved state only if user is authenticated
-    if (currentUser) {
+  if (currentUser) {
       const savedState = localStorage.getItem('sidebarCollapsed');
       if (savedState === 'true') {
         sidebarCollapsed = true;
@@ -6104,13 +6096,13 @@ window.showPage = function(page) {
           return;
         }
       } else if (page === 'portfolio' && isAuthenticated) {
-        loadPortfolio();
+    loadPortfolio();
       } else if (page === 'targets' && isAuthenticated) {
         loadTargets();
         populateTargetTokenSelect();
       } else if (page === 'alerts' && isAuthenticated) {
-        loadAlerts();
-      }
+    loadAlerts();
+  }
     }
   }
   
