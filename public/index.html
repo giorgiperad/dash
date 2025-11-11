@@ -4114,7 +4114,22 @@ function renderTargetDetails(tokenId, targets) {
     const distanceColor = distance >= 0 ? '#22c55e' : '#ef4444';
     const distanceText = distance >= 0 ? `+${distance.toFixed(2)}%` : `${distance.toFixed(2)}%`;
     const isReached = currentPrice >= target.targetPrice;
-    const progress = basePrice > 0 ? Math.min(100, Math.max(0, ((currentPrice - basePrice) / (target.targetPrice - basePrice)) * 100)) : 0;
+    
+    // New progress calculation: Shows how much of the target price has been reached
+    // If target is above current: progress = (currentPrice / targetPrice) * 100
+    // If target is below current: progress = (targetPrice / currentPrice) * 100 (for stop-loss)
+    let progress = 0;
+    if (target.targetPrice > 0 && currentPrice > 0) {
+      if (target.targetPrice >= currentPrice) {
+        // Target is above current price (take profit)
+        progress = (currentPrice / target.targetPrice) * 100;
+      } else {
+        // Target is below current price (stop loss) - show how far below we are
+        // Invert: if current is $150 and target is $100, we're 150% of target (already passed)
+        progress = Math.min(100, (target.targetPrice / currentPrice) * 100);
+      }
+    }
+    progress = Math.min(100, Math.max(0, progress));
     
     html += `
       <div style="background:rgba(10,14,26,.4);border:1px solid ${isReached ? 'rgba(34,197,94,.3)' : 'rgba(255,255,255,.08)'};border-radius:10px;padding:16px;transition:all .2s;">
@@ -4142,15 +4157,28 @@ function renderTargetDetails(tokenId, targets) {
             <button onclick="deleteTarget('${target.id}')" style="padding:8px 14px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#ef4444;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600;transition:all .2s;">წაშლა</button>
           </div>
         </div>
-        ${basePrice > 0 && !isReached ? `
+        ${!isReached && currentPrice > 0 && target.targetPrice > 0 ? `
           <div style="margin-top:12px;">
             <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
               <span style="font-size:10px;color:#9aa0a6;">პროგრესი</span>
               <span style="font-size:10px;color:#9aa0a6;">${progress.toFixed(1)}%</span>
             </div>
-            <div style="height:6px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden;">
-              <div style="height:100%;background:linear-gradient(90deg, #6366f1, #8b5cf6);width:${progress}%;transition:width .5s;border-radius:3px;"></div>
+            <div style="height:6px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden;position:relative;">
+              <div style="height:100%;background:linear-gradient(90deg, #6366f1, #8b5cf6);width:${progress}%;transition:width .5s;border-radius:3px;box-shadow:0 0 8px rgba(99,102,241,.4);"></div>
+              ${target.targetPrice > currentPrice ? `
+                <div style="position:absolute;right:0;top:0;bottom:0;width:2px;background:rgba(34,197,94,.6);box-shadow:0 0 4px rgba(34,197,94,.4);"></div>
+              ` : `
+                <div style="position:absolute;left:0;top:0;bottom:0;width:2px;background:rgba(239,68,68,.6);box-shadow:0 0 4px rgba(239,68,68,.4);"></div>
+              `}
             </div>
+            <div style="display:flex;justify-content:space-between;margin-top:4px;">
+              <span style="font-size:9px;color:#71717a;">$${formatPrice(currentPrice)}</span>
+              <span style="font-size:9px;color:#71717a;">$${formatPrice(target.targetPrice)}</span>
+            </div>
+          </div>
+        ` : isReached ? `
+          <div style="margin-top:12px;padding:8px 12px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:6px;text-align:center;">
+            <span style="font-size:11px;color:#22c55e;font-weight:600;">✓ მიზანი მიღწეულია!</span>
           </div>
         ` : ''}
       </div>
