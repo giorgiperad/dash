@@ -4161,17 +4161,20 @@ function renderTargetDetails(tokenId, targets) {
     const distanceColor = distance >= 0 ? '#22c55e' : '#ef4444';
     const distanceText = distance >= 0 ? `+${distance.toFixed(2)}%` : `${distance.toFixed(2)}%`;
     
-    // Determine if target is reached based on whether it's take-profit or stop-loss
-    // Take-profit: target > entry, reached when current >= target
-    // Stop-loss: target < entry, reached when current <= target
+    // Determine if target is reached - only when price touches or is very close to target
+    // Not when price goes way past the target (especially for stop-loss)
     let isReached = false;
     if (basePrice > 0) {
       if (target.targetPrice >= basePrice) {
         // Take-profit scenario: target is above entry price
+        // Reached when current price is at or above target
         isReached = currentPrice >= target.targetPrice;
       } else {
         // Stop-loss scenario: target is below entry price
-        isReached = currentPrice <= target.targetPrice;
+        // Reached only when current price is at or very close to target (within 1% tolerance)
+        // Not when price goes way below target
+        const tolerance = target.targetPrice * 0.01; // 1% tolerance
+        isReached = currentPrice <= target.targetPrice && currentPrice >= (target.targetPrice - tolerance);
       }
     } else {
       // Fallback: if no buy price, assume take-profit
