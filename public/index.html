@@ -4160,12 +4160,29 @@ function renderTargetDetails(tokenId, targets) {
     const distance = basePrice > 0 ? ((target.targetPrice - basePrice) / basePrice * 100) : 0;
     const distanceColor = distance >= 0 ? '#22c55e' : '#ef4444';
     const distanceText = distance >= 0 ? `+${distance.toFixed(2)}%` : `${distance.toFixed(2)}%`;
-    const isReached = currentPrice >= target.targetPrice;
+    
+    // Determine if target is reached based on whether it's take-profit or stop-loss
+    // Take-profit: target > entry, reached when current >= target
+    // Stop-loss: target < entry, reached when current <= target
+    let isReached = false;
+    if (basePrice > 0) {
+      if (target.targetPrice >= basePrice) {
+        // Take-profit scenario: target is above entry price
+        isReached = currentPrice >= target.targetPrice;
+      } else {
+        // Stop-loss scenario: target is below entry price
+        isReached = currentPrice <= target.targetPrice;
+      }
+    } else {
+      // Fallback: if no buy price, assume take-profit
+      isReached = currentPrice >= target.targetPrice;
+    }
     
     // Progress calculation: Shows percentage from buy price to target price
     // Formula: ((currentPrice - buyPrice) / (targetPrice - buyPrice)) * 100
     // Example: Buy $100, Target $200, Current $150 → Progress = ((150-100)/(200-100)) * 100 = 50%
     // Example: Buy $100, Target $200, Current $200 → Progress = 100% (reached)
+    // Example: Buy $17, Target $15, Current $8 → Progress = ((8-17)/(15-17)) * 100 = (-9/-2) * 100 = 450% → 100% (reached)
     let progress = 0;
     if (basePrice > 0 && target.targetPrice > 0) {
       const priceDifference = target.targetPrice - basePrice;
@@ -4174,9 +4191,15 @@ function renderTargetDetails(tokenId, targets) {
       if (priceDifference !== 0) {
         // Normal case: target is different from buy price
         progress = (currentProgress / priceDifference) * 100;
+        
+        // For stop-loss (target < buy), progress can exceed 100% if price goes below target
+        // For take-profit (target > buy), progress can exceed 100% if price goes above target
+        if (isReached) {
+          progress = 100; // If reached, show 100%
+        }
       } else {
         // Edge case: target equals buy price
-        progress = currentPrice >= target.targetPrice ? 100 : 0;
+        progress = isReached ? 100 : 0;
       }
       
       // Clamp between 0% and 100%
@@ -4186,7 +4209,7 @@ function renderTargetDetails(tokenId, targets) {
       if (target.targetPrice >= currentPrice) {
         progress = (currentPrice / target.targetPrice) * 100;
       } else {
-        progress = 100; // Already passed target
+        progress = isReached ? 100 : 0;
       }
     }
     
@@ -4234,7 +4257,11 @@ function renderTargetDetails(tokenId, targets) {
             <div style="margin-top:6px;padding:6px 10px;background:rgba(99,102,241,.08);border-radius:6px;text-align:center;">
               <span style="font-size:11px;color:#9aa0a6;font-weight:500;">
                 ${progress < 100 ? (
-                  `დარჩენილია: <span style="color:#6366f1;font-weight:700;">${(100 - progress).toFixed(1)}%</span> ($${formatPrice(target.targetPrice - currentPrice)} ფასის ზრდა)`
+                  basePrice > 0 && target.targetPrice < basePrice ? 
+                    // Stop-loss: need price to go DOWN
+                    `დარჩენილია: <span style="color:#6366f1;font-weight:700;">${(100 - progress).toFixed(1)}%</span> ($${formatPrice(Math.abs(currentPrice - target.targetPrice))} ფასის ${currentPrice > target.targetPrice ? 'დაწევა' : 'ზრდა'})` :
+                    // Take-profit: need price to go UP
+                    `დარჩენილია: <span style="color:#6366f1;font-weight:700;">${(100 - progress).toFixed(1)}%</span> ($${formatPrice(Math.abs(target.targetPrice - currentPrice))} ფასის ზრდა)`
                 ) : 'მიზანი მიღწეულია!'}
               </span>
             </div>
