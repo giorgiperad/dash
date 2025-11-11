@@ -4231,8 +4231,12 @@ function renderTargetDetails(tokenId, targets) {
               <span style="font-size:9px;color:#71717a;" title="Current Price">$${formatPrice(currentPrice)}</span>
               <span style="font-size:9px;color:#22c55e;font-weight:600;" title="Target Price">$${formatPrice(target.targetPrice)}</span>
             </div>
-            <div style="margin-top:4px;text-align:center;">
-              <span style="font-size:8px;color:#71717a;">${progress < 100 ? `დარჩენილია: ${(100 - progress).toFixed(1)}%` : 'მიზანი მიღწეულია!'}</span>
+            <div style="margin-top:6px;padding:6px 10px;background:rgba(99,102,241,.08);border-radius:6px;text-align:center;">
+              <span style="font-size:11px;color:#9aa0a6;font-weight:500;">
+                ${progress < 100 ? (
+                  `დარჩენილია: <span style="color:#6366f1;font-weight:700;">${(100 - progress).toFixed(1)}%</span> ($${formatPrice(target.targetPrice - currentPrice)} ფასის ზრდა)`
+                ) : 'მიზანი მიღწეულია!'}
+              </span>
             </div>
           </div>
         ` : isReached ? `
