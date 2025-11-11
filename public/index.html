@@ -220,7 +220,8 @@ body{
 .live-text{font-size:12px;color:var(--success);font-weight:600;text-transform:uppercase;letter-spacing:0.8px;transition:color 0.3s ease}
 .time-display{font-size:14px;color:var(--text-tertiary);font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:0.5px;transition:color 0.3s ease}
 /* SIDEBAR NAVIGATION - Desktop Sidebar */
-.app-sidebar{width:260px;min-width:260px;background:var(--bg-secondary);border-right:1px solid var(--border-secondary);position:fixed;left:0;top:70px;bottom:0;overflow-y:auto;z-index:90;transition:all 0.3s ease;display:flex;flex-direction:column}
+.app-sidebar{width:260px;min-width:260px;background:var(--bg-secondary);border-right:1px solid var(--border-secondary);position:fixed;left:0;top:70px;bottom:0;overflow-y:auto;z-index:90;transition:all 0.3s ease;display:none;flex-direction:column}
+.app-sidebar.visible{display:flex}
 .app-sidebar.collapsed{width:70px;min-width:70px}
 .sidebar-header{padding:24px 20px;border-bottom:1px solid var(--border-secondary);display:flex;align-items:center;justify-content:space-between}
 .sidebar-logo{font-size:16px;font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:10px}
@@ -265,7 +266,8 @@ body{
 
 /* MAIN CONTENT WITH SIDEBAR - Vision UI Style */
 .main-layout{display:flex;min-height:100vh;margin-top:0}
-.main-content{flex:1;margin-left:260px;padding:32px;transition:margin-left 0.3s ease;min-height:100vh;max-width:calc(100vw - 260px);padding-top:102px;padding-bottom:80px}
+.main-content{flex:1;margin-left:0;padding:32px;transition:margin-left 0.3s ease;min-height:100vh;max-width:100vw;padding-top:102px;padding-bottom:80px}
+.main-content.with-sidebar{margin-left:260px;max-width:calc(100vw - 260px)}
 .main-content.sidebar-collapsed{margin-left:70px;max-width:calc(100vw - 70px)}
 .main-content.no-sidebar{margin-left:0;max-width:100vw}
 .container{max-width:100%;margin:0;padding:0;position:relative;z-index:2;width:100%;box-sizing:border-box}
@@ -1456,10 +1458,19 @@ body{overflow-x:hidden}
     display: none !important;
   }
   
+  .app-sidebar.visible {
+    display: none !important;
+  }
+  
   .main-content {
     margin-left: 0 !important;
     max-width: 100vw !important;
     padding-bottom: 80px !important;
+  }
+  
+  .main-content.with-sidebar {
+    margin-left: 0 !important;
+    max-width: 100vw !important;
   }
   
   .bottom-nav {
@@ -1486,6 +1497,32 @@ body{overflow-x:hidden}
     display: block !important;
     overflow-x: auto !important;
   }
+  
+  /* Hide grid pattern on professional pages */
+  #portfolioPage .grain-overlay,
+  #alertsPage .grain-overlay,
+  #targetsPage .grain-overlay {
+    display: none !important;
+  }
+}
+
+/* Professional pages - hide decorative elements */
+#portfolioPage .grain-overlay,
+#alertsPage .grain-overlay,
+#targetsPage .grain-overlay {
+  display: none !important;
+}
+
+#portfolioPage,
+#alertsPage,
+#targetsPage {
+  background: var(--bg-primary) !important;
+}
+
+#portfolioPage::before,
+#alertsPage::before,
+#targetsPage::before {
+  display: none !important;
 }
 
 /* Tablet styles */
@@ -5849,6 +5886,56 @@ function initSidebarNavigation() {
   const bottomNavItems = document.querySelectorAll('.bottom-nav-item');
   const topNavTabs = document.querySelectorAll('.top-nav-tab');
   
+  // Show/hide sidebar based on authentication
+  function updateSidebarVisibility() {
+    const isAuthenticated = currentUser !== null;
+    if (sidebar) {
+      if (isAuthenticated) {
+        sidebar.classList.add('visible');
+        if (mainContent) {
+          mainContent.classList.add('with-sidebar');
+          const savedState = localStorage.getItem('sidebarCollapsed');
+          if (savedState === 'true') {
+            sidebar.classList.add('collapsed');
+            mainContent.classList.add('sidebar-collapsed');
+            mainContent.classList.remove('with-sidebar');
+          }
+        }
+      } else {
+        sidebar.classList.remove('visible');
+        if (mainContent) {
+          mainContent.classList.remove('with-sidebar', 'sidebar-collapsed');
+        }
+      }
+    }
+  }
+  
+  // Initial visibility check
+  updateSidebarVisibility();
+  
+  // Update on auth state changes
+  if (typeof firebase !== 'undefined' && firebase.auth) {
+    // Check if listener already exists
+    if (!window.authStateListener) {
+      window.authStateListener = firebase.auth().onAuthStateChanged((user) => {
+        currentUser = user;
+        updateSidebarVisibility();
+        updateAdminNavVisibility();
+      });
+    }
+  }
+  
+  // Also update when currentUser changes (for compatibility)
+  const originalSetCurrentUser = window.setCurrentUser;
+  if (typeof originalSetCurrentUser === 'function') {
+    window.setCurrentUser = function(user) {
+      currentUser = user;
+      updateSidebarVisibility();
+      updateAdminNavVisibility();
+      if (originalSetCurrentUser) originalSetCurrentUser(user);
+    };
+  }
+  
   // Sidebar collapse toggle
   if (collapseBtn) {
     collapseBtn.onclick = () => {
@@ -5858,17 +5945,26 @@ function initSidebarNavigation() {
         collapseBtn.textContent = sidebarCollapsed ? '▶' : '◀';
       }
       if (mainContent) {
-        mainContent.classList.toggle('sidebar-collapsed', sidebarCollapsed);
+        if (sidebarCollapsed) {
+          mainContent.classList.remove('with-sidebar');
+          mainContent.classList.add('sidebar-collapsed');
+        } else {
+          mainContent.classList.remove('sidebar-collapsed');
+          mainContent.classList.add('with-sidebar');
+        }
       }
       localStorage.setItem('sidebarCollapsed', sidebarCollapsed);
     };
     
     // Load saved state
     const savedState = localStorage.getItem('sidebarCollapsed');
-    if (savedState === 'true') {
+    if (savedState === 'true' && currentUser) {
       sidebarCollapsed = true;
       if (sidebar) sidebar.classList.add('collapsed');
-      if (mainContent) mainContent.classList.add('sidebar-collapsed');
+      if (mainContent) {
+        mainContent.classList.add('sidebar-collapsed');
+        mainContent.classList.remove('with-sidebar');
+      }
       collapseBtn.textContent = '▶';
     }
   }
@@ -5936,6 +6032,18 @@ window.showPage = function(page) {
     if (pageEl) pageEl.style.display = 'none';
   });
   
+  // Hide hero stats and activity carousel on portfolio, alerts, and trade pages
+  const heroStats = document.getElementById('heroStats');
+  const activityCarousel = document.getElementById('activityCarouselWrapper');
+  const asiPanel = document.getElementById('asiAlliancePanel');
+  
+  const hideHeroElements = ['portfolio', 'alerts', 'targets'];
+  if (hideHeroElements.includes(page)) {
+    if (heroStats) heroStats.style.display = 'none';
+    if (activityCarousel) activityCarousel.style.display = 'none';
+    if (asiPanel) asiPanel.style.display = 'none';
+  }
+  
   // Show selected page
   let pageId = page + 'Page';
   if (page === 'market') {
@@ -5943,11 +6051,10 @@ window.showPage = function(page) {
     const contentGrid = document.getElementById('contentGrid');
     if (contentGrid) {
       contentGrid.style.display = 'grid';
-      // Also show hero stats and activity carousel
-      const heroStats = document.getElementById('heroStats');
-      const activityCarousel = document.getElementById('activityCarouselWrapper');
+      // Show hero stats and activity carousel only on market page
       if (heroStats) heroStats.style.display = 'block';
       if (activityCarousel) activityCarousel.style.display = 'block';
+      if (asiPanel) asiPanel.style.display = 'block';
     }
   } else {
     const pageEl = document.getElementById(pageId);
@@ -5957,6 +6064,9 @@ window.showPage = function(page) {
       // Load page-specific data
       if (page === 'dashboard') {
         updateDashboard();
+        // Show hero elements on dashboard too
+        if (heroStats) heroStats.style.display = 'block';
+        if (activityCarousel) activityCarousel.style.display = 'block';
       } else if (page === 'admin') {
         if (currentUser && currentUser.email === 'admin@example.com') { // Replace with actual admin check
           loadAdminData();
@@ -6106,6 +6216,33 @@ function updateAdminNavVisibility() {
     adminBadge.style.display = isAdmin ? 'inline-block' : 'none';
   }
 }
+
+// Global function to update sidebar visibility (can be called from anywhere)
+window.updateSidebarVisibility = function() {
+  const sidebar = document.getElementById('appSidebar');
+  const mainContent = document.getElementById('mainContent');
+  const isAuthenticated = currentUser !== null;
+  
+  if (sidebar) {
+    if (isAuthenticated) {
+      sidebar.classList.add('visible');
+      if (mainContent) {
+        mainContent.classList.add('with-sidebar');
+        const savedState = localStorage.getItem('sidebarCollapsed');
+        if (savedState === 'true') {
+          sidebar.classList.add('collapsed');
+          mainContent.classList.add('sidebar-collapsed');
+          mainContent.classList.remove('with-sidebar');
+        }
+      }
+    } else {
+      sidebar.classList.remove('visible');
+      if (mainContent) {
+        mainContent.classList.remove('with-sidebar', 'sidebar-collapsed');
+      }
+    }
+  }
+};
 
 // Admin tab switching
 document.addEventListener('DOMContentLoaded', () => {
