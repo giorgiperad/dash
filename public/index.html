@@ -23,7 +23,8 @@
 <link rel="stylesheet" href="/fonts/bpg-extrasquare-mtavruli.min.css">
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/icon-192.png">
-<link rel="stylesheet" href="/css/styles.css">
+<style>
+@font-face {
   font-family: 'BPG ExtraSquare Mtavruli';
   src: url('/fonts/bpg-extrasquare-mtavruli-webfont.eot');
   src: url('/fonts/bpg-extrasquare-mtavruli-webfont.eot?#iefix') format('embedded-opentype'),
@@ -1512,6 +1513,17 @@ body{overflow-x:hidden}
 
 /* Tablet styles */
 @media (max-width: 1024px) and (min-width: 769px) {
+  .app-sidebar {
+    width: 240px !important;
+    min-width: 240px !important;
+  }
+  
+  .app-sidebar.collapsed {
+    width: 80px !important;
+    min-width: 80px !important;
+  }
+}
+</style>
 </head>
 <body>
 
