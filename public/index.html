@@ -219,37 +219,40 @@ body{
 @keyframes rotateGradient{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
 .live-text{font-size:12px;color:var(--success);font-weight:600;text-transform:uppercase;letter-spacing:0.8px;transition:color 0.3s ease}
 .time-display{font-size:14px;color:var(--text-tertiary);font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:0.5px;transition:color 0.3s ease}
-/* SIDEBAR NAVIGATION - Desktop Sidebar */
-.app-sidebar{width:260px;min-width:260px;background:var(--bg-secondary);border-right:1px solid var(--border-secondary);position:fixed;left:0;top:70px;bottom:0;overflow-y:auto;z-index:90;transition:all 0.3s ease;display:none;flex-direction:column}
+/* SIDEBAR NAVIGATION - Modern Professional Design */
+.app-sidebar{width:280px;min-width:280px;background:linear-gradient(180deg, rgba(15,23,42,0.98) 0%, rgba(30,41,59,0.95) 100%);border-right:1px solid rgba(255,255,255,0.08);position:fixed;left:0;top:70px;bottom:0;overflow-y:auto;overflow-x:hidden;z-index:90;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);display:none;flex-direction:column;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:4px 0 24px rgba(0,0,0,0.3)}
 .app-sidebar.visible{display:flex}
-.app-sidebar.collapsed{width:70px;min-width:70px}
-.sidebar-header{padding:24px 20px;border-bottom:1px solid var(--border-secondary);display:flex;align-items:center;justify-content:space-between}
-.sidebar-logo{font-size:16px;font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:10px}
-.sidebar-collapse-btn{width:32px;height:32px;border-radius:8px;background:transparent;border:1px solid var(--border-primary);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-secondary);transition:all 0.2s;font-size:14px}
-.sidebar-collapse-btn:hover{background:var(--bg-tertiary);color:var(--text-primary);border-color:var(--accent-primary)}
-.sidebar-nav{flex:1;padding:16px 12px;display:flex;flex-direction:column;gap:4px}
-.sidebar-nav-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--radius-md);cursor:pointer;transition:all 0.2s ease;color:var(--text-secondary);background:transparent;border:none;width:100%;text-align:left;font-size:14px;font-weight:500;position:relative}
-.sidebar-nav-item:hover{background:var(--bg-tertiary);color:var(--text-primary)}
-.sidebar-nav-item.active{background:var(--accent-primary);color:#fff;box-shadow:0 4px 12px rgba(99,102,241,0.2)}
-.sidebar-nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:#fff;border-radius:0 3px 3px 0}
-.sidebar-nav-icon{font-size:20px;width:24px;text-align:center;flex-shrink:0}
-.sidebar-nav-text{flex:1;white-space:nowrap;opacity:1;transition:opacity 0.2s}
+.app-sidebar.collapsed{width:80px;min-width:80px}
+.sidebar-header{padding:20px 16px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,0.2)}
+.sidebar-logo{font-size:15px;font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:10px;letter-spacing:-0.3px}
+.sidebar-collapse-btn{width:32px;height:32px;border-radius:8px;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-secondary);transition:all 0.2s;font-size:12px}
+.sidebar-collapse-btn:hover{background:rgba(99,102,241,0.2);color:#6366f1;border-color:rgba(99,102,241,0.4);transform:scale(1.05)}
+.sidebar-nav{flex:1;padding:12px 8px;display:flex;flex-direction:column;gap:2px}
+.sidebar-nav-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;cursor:pointer;transition:all 0.2s cubic-bezier(0.4,0,0.2,1);color:var(--text-secondary);background:transparent;border:none;width:100%;text-align:left;font-size:14px;font-weight:500;position:relative;margin-bottom:2px}
+.sidebar-nav-item:hover{background:rgba(99,102,241,0.1);color:var(--text-primary);transform:translateX(2px)}
+.sidebar-nav-item.active{background:linear-gradient(135deg, rgba(99,102,241,0.2) 0%, rgba(139,92,246,0.15) 100%);color:#fff;box-shadow:0 4px 12px rgba(99,102,241,0.25), inset 0 1px 0 rgba(255,255,255,0.1);border:1px solid rgba(99,102,241,0.3)}
+.sidebar-nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:70%;background:linear-gradient(180deg, #6366f1 0%, #8b5cf6 100%);border-radius:0 3px 3px 0;box-shadow:0 0 8px rgba(99,102,241,0.6)}
+.sidebar-nav-icon{font-size:20px;width:24px;text-align:center;flex-shrink:0;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.2))}
+.sidebar-nav-item.active .sidebar-nav-icon{filter:drop-shadow(0 0 4px rgba(99,102,241,0.4))}
+.sidebar-nav-text{flex:1;white-space:nowrap;opacity:1;transition:opacity 0.2s;font-weight:500}
 .app-sidebar.collapsed .sidebar-nav-text{opacity:0;width:0;overflow:hidden}
-.sidebar-nav-badge{background:var(--accent-primary);color:#fff;font-size:10px;font-weight:600;padding:2px 6px;border-radius:10px;min-width:18px;text-align:center}
-.sidebar-divider{margin:8px 16px;height:1px;background:var(--border-secondary)}
-.sidebar-section-title{padding:12px 16px 8px;font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-tertiary);font-weight:600}
+.sidebar-nav-badge{background:linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);color:#fff;font-size:9px;font-weight:700;padding:3px 7px;border-radius:8px;min-width:20px;text-align:center;box-shadow:0 2px 6px rgba(99,102,241,0.4);letter-spacing:0.5px}
+.sidebar-divider{margin:12px 16px;height:1px;background:linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%)}
+.sidebar-section-title{padding:16px 16px 8px;font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,0.4);font-weight:700}
 .app-sidebar.collapsed .sidebar-section-title{opacity:0;height:0;padding:0;margin:0;overflow:hidden}
-.sidebar-footer{padding:16px;border-top:1px solid var(--border-secondary);display:flex;flex-direction:column;gap:8px}
+.sidebar-footer{padding:16px;border-top:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;gap:8px;background:rgba(0,0,0,0.2)}
 .app-sidebar.collapsed .sidebar-footer .sidebar-nav-text{display:none}
 
-/* MOBILE BOTTOM NAVIGATION */
-.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg-secondary);border-top:1px solid var(--border-secondary);z-index:100;padding:8px 0 max(8px,env(safe-area-inset-bottom));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+/* MOBILE BOTTOM NAVIGATION - Modern Professional */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:linear-gradient(180deg, rgba(15,23,42,0.98) 0%, rgba(30,41,59,0.95) 100%);border-top:1px solid rgba(255,255,255,0.08);z-index:100;padding:8px 0 max(8px,env(safe-area-inset-bottom));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 -4px 24px rgba(0,0,0,0.3)}
 .bottom-nav-items{display:flex;justify-content:space-around;align-items:center}
-.bottom-nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;border-radius:var(--radius-sm);cursor:pointer;transition:all 0.2s;color:var(--text-tertiary);background:transparent;border:none;flex:1;min-width:0}
-.bottom-nav-item:hover{background:var(--bg-tertiary);color:var(--text-primary)}
-.bottom-nav-item.active{color:var(--accent-primary)}
-.bottom-nav-icon{font-size:20px}
-.bottom-nav-text{font-size:10px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.bottom-nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:all 0.2s cubic-bezier(0.4,0,0.2,1);color:rgba(255,255,255,0.5);background:transparent;border:none;flex:1;min-width:0;position:relative}
+.bottom-nav-item:hover{background:rgba(99,102,241,0.1);color:rgba(255,255,255,0.8)}
+.bottom-nav-item.active{color:#6366f1}
+.bottom-nav-item.active::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:40px;height:3px;background:linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);border-radius:0 0 3px 3px;box-shadow:0 0 8px rgba(99,102,241,0.6)}
+.bottom-nav-icon{font-size:22px;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.2))}
+.bottom-nav-item.active .bottom-nav-icon{filter:drop-shadow(0 0 4px rgba(99,102,241,0.4))}
+.bottom-nav-text{font-size:10px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;letter-spacing:0.3px}
 
 /* MOBILE SIDEBAR (Old - Keep for compatibility) */
 .sidebar{display:none}
@@ -264,11 +267,11 @@ body{
 .sidebar-toggle{display:none;width:40px;height:40px;border-radius:10px;background:var(--bg-card);border:1px solid var(--border-primary);align-items:center;justify-content:center;cursor:pointer;transition:all .3s;font-size:20px;color:var(--text-secondary);flex-shrink:0}
 .sidebar-toggle:hover{background:var(--bg-card-hover);border-color:var(--accent-primary);color:var(--accent-primary)}
 
-/* MAIN CONTENT WITH SIDEBAR - Vision UI Style */
+/* MAIN CONTENT WITH SIDEBAR - Modern Professional Layout */
 .main-layout{display:flex;min-height:100vh;margin-top:0}
-.main-content{flex:1;margin-left:0;padding:32px;transition:margin-left 0.3s ease;min-height:100vh;max-width:100vw;padding-top:102px;padding-bottom:80px}
-.main-content.with-sidebar{margin-left:260px;max-width:calc(100vw - 260px)}
-.main-content.sidebar-collapsed{margin-left:70px;max-width:calc(100vw - 70px)}
+.main-content{flex:1;margin-left:0;padding:32px;transition:margin-left 0.3s cubic-bezier(0.4,0,0.2,1);min-height:100vh;max-width:100vw;padding-top:102px;padding-bottom:80px}
+.main-content.with-sidebar{margin-left:280px;max-width:calc(100vw - 280px)}
+.main-content.sidebar-collapsed{margin-left:80px;max-width:calc(100vw - 80px)}
 .main-content.no-sidebar{margin-left:0;max-width:100vw}
 .container{max-width:100%;margin:0;padding:0;position:relative;z-index:2;width:100%;box-sizing:border-box}
 .hero-section{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:32px;grid-auto-rows:minmax(90px,auto)}
@@ -1473,7 +1476,12 @@ body{overflow-x:hidden}
     max-width: 100vw !important;
   }
   
+  /* Bottom nav only shows for authenticated users */
   .bottom-nav {
+    display: none !important;
+  }
+  
+  .bottom-nav.visible {
     display: block !important;
   }
   
@@ -1528,23 +1536,23 @@ body{overflow-x:hidden}
 /* Tablet styles */
 @media (max-width: 1024px) and (min-width: 769px) {
   .app-sidebar {
-    width: 200px !important;
-    min-width: 200px !important;
+    width: 240px !important;
+    min-width: 240px !important;
   }
   
   .app-sidebar.collapsed {
-    width: 60px !important;
-    min-width: 60px !important;
+    width: 80px !important;
+    min-width: 80px !important;
   }
   
-  .main-content {
-    margin-left: 200px !important;
-    max-width: calc(100vw - 200px) !important;
+  .main-content.with-sidebar {
+    margin-left: 240px !important;
+    max-width: calc(100vw - 240px) !important;
   }
   
   .main-content.sidebar-collapsed {
-    margin-left: 60px !important;
-    max-width: calc(100vw - 60px) !important;
+    margin-left: 80px !important;
+    max-width: calc(100vw - 80px) !important;
   }
 }
 </style>
@@ -2429,7 +2437,17 @@ updateTime();setInterval(updateTime,1000);
 /* ---------- AUTH (same as before) ---------- */
 $('loginBtn').onclick = () => authModal('login');
 $('registerBtn').onclick = () => authModal('register');
-$('logoutBtn').onclick = () => auth.signOut();
+$('logoutBtn').onclick = async () => {
+  try {
+    await auth.signOut();
+    // Sidebar will be hidden automatically via onAuthStateChanged
+    // Redirect to market page
+    showPage('market');
+  } catch (e) {
+    console.error('Logout error:', e);
+    alert('გასვლის შეცდომა: ' + e.message);
+  }
+};
 
 function authModal(mode){
   const email = prompt(`შეიყვანეთ ელფოსტა:`);
@@ -2454,6 +2472,11 @@ function authModal(mode){
     .then(() => {
       if(mode === 'register') {
         alert('რეგისტრაცია წარმატებულია! ახლა შეხვედით სისტემაში.');
+      }
+      // Sidebar will be shown automatically via onAuthStateChanged
+      // Redirect to dashboard for new users
+      if(mode === 'register') {
+        setTimeout(() => showPage('dashboard'), 500);
       }
     })
     .catch(e => {
@@ -2541,11 +2564,20 @@ auth.onAuthStateChanged(user=>{
     if (userTabs) userTabs.style.display='flex';
     if(user.email === 'testireba5@gmail.com') $('adminControls').classList.add('show');
     
+    // Update sidebar visibility for authenticated user
+    if (typeof window.updateSidebarVisibility === 'function') {
+      window.updateSidebarVisibility();
+    }
+    if (typeof updateAdminNavVisibility === 'function') {
+      updateAdminNavVisibility();
+    }
+    
     // Load user data when authenticated
     // Wait a bit to ensure Firebase is fully initialized
     setTimeout(() => {
       loadPortfolio();
       loadAlerts();
+      loadTargets();
     }, 500);
   }else{
     $('authContainer').style.display='flex';
@@ -2553,6 +2585,18 @@ auth.onAuthStateChanged(user=>{
     const userTabs = $('userTabs');
     if (userTabs) userTabs.style.display='none';
     $('adminControls').style.display='none';
+    
+    // Hide sidebar for unauthenticated user
+    if (typeof window.updateSidebarVisibility === 'function') {
+      window.updateSidebarVisibility();
+    }
+    
+    // Redirect to market page if on protected pages
+    const currentPage = window.location.hash.replace('#', '') || 'market';
+    const protectedPages = ['dashboard', 'portfolio', 'targets', 'alerts', 'profile', 'admin'];
+    if (protectedPages.includes(currentPage)) {
+      showPage('market');
+    }
   }
 });
 
@@ -5886,9 +5930,9 @@ function initSidebarNavigation() {
   const bottomNavItems = document.querySelectorAll('.bottom-nav-item');
   const topNavTabs = document.querySelectorAll('.top-nav-tab');
   
-  // Show/hide sidebar based on authentication
+  // Show/hide sidebar based on authentication - Modern implementation
   function updateSidebarVisibility() {
-    const isAuthenticated = currentUser !== null;
+    const isAuthenticated = currentUser !== null && currentUser !== undefined;
     if (sidebar) {
       if (isAuthenticated) {
         sidebar.classList.add('visible');
@@ -5902,7 +5946,7 @@ function initSidebarNavigation() {
           }
         }
       } else {
-        sidebar.classList.remove('visible');
+        sidebar.classList.remove('visible', 'collapsed');
         if (mainContent) {
           mainContent.classList.remove('with-sidebar', 'sidebar-collapsed');
         }
@@ -5910,39 +5954,23 @@ function initSidebarNavigation() {
     }
   }
   
-  // Initial visibility check
-  updateSidebarVisibility();
+  // Initial visibility check - wait for auth to initialize
+  setTimeout(() => {
+    updateSidebarVisibility();
+  }, 100);
   
-  // Update on auth state changes
-  if (typeof firebase !== 'undefined' && firebase.auth) {
-    // Check if listener already exists
-    if (!window.authStateListener) {
-      window.authStateListener = firebase.auth().onAuthStateChanged((user) => {
-        currentUser = user;
-        updateSidebarVisibility();
-        updateAdminNavVisibility();
-      });
-    }
-  }
+  // Also listen to auth state changes via the existing handler
+  // The auth.onAuthStateChanged handler will call updateSidebarVisibility
   
-  // Also update when currentUser changes (for compatibility)
-  const originalSetCurrentUser = window.setCurrentUser;
-  if (typeof originalSetCurrentUser === 'function') {
-    window.setCurrentUser = function(user) {
-      currentUser = user;
-      updateSidebarVisibility();
-      updateAdminNavVisibility();
-      if (originalSetCurrentUser) originalSetCurrentUser(user);
-    };
-  }
-  
-  // Sidebar collapse toggle
+  // Sidebar collapse toggle - Modern implementation
   if (collapseBtn) {
     collapseBtn.onclick = () => {
+      if (!currentUser) return; // Don't collapse if not authenticated
       sidebarCollapsed = !sidebarCollapsed;
       if (sidebar) {
         sidebar.classList.toggle('collapsed', sidebarCollapsed);
         collapseBtn.textContent = sidebarCollapsed ? '▶' : '◀';
+        collapseBtn.style.transform = sidebarCollapsed ? 'rotate(0deg)' : 'rotate(180deg)';
       }
       if (mainContent) {
         if (sidebarCollapsed) {
@@ -5956,16 +5984,21 @@ function initSidebarNavigation() {
       localStorage.setItem('sidebarCollapsed', sidebarCollapsed);
     };
     
-    // Load saved state
-    const savedState = localStorage.getItem('sidebarCollapsed');
-    if (savedState === 'true' && currentUser) {
-      sidebarCollapsed = true;
-      if (sidebar) sidebar.classList.add('collapsed');
-      if (mainContent) {
-        mainContent.classList.add('sidebar-collapsed');
-        mainContent.classList.remove('with-sidebar');
+    // Load saved state only if user is authenticated
+    if (currentUser) {
+      const savedState = localStorage.getItem('sidebarCollapsed');
+      if (savedState === 'true') {
+        sidebarCollapsed = true;
+        if (sidebar) sidebar.classList.add('collapsed');
+        if (mainContent) {
+          mainContent.classList.add('sidebar-collapsed');
+          mainContent.classList.remove('with-sidebar');
+        }
+        collapseBtn.textContent = '▶';
+        collapseBtn.style.transform = 'rotate(0deg)';
+      } else {
+        collapseBtn.style.transform = 'rotate(180deg)';
       }
-      collapseBtn.textContent = '▶';
     }
   }
   
@@ -6019,9 +6052,19 @@ function initSidebarNavigation() {
   updateAdminNavVisibility();
 }
 
-// Update showPage to handle new pages
+// Update showPage to handle new pages - Modern Professional Implementation
 const originalShowPage = window.showPage;
 window.showPage = function(page) {
+  // Check authentication for protected pages
+  const protectedPages = ['dashboard', 'portfolio', 'targets', 'alerts', 'profile', 'admin'];
+  const isAuthenticated = currentUser !== null && currentUser !== undefined;
+  
+  if (protectedPages.includes(page) && !isAuthenticated) {
+    // Redirect to market if trying to access protected page without auth
+    page = 'market';
+    console.log('Redirecting to market - authentication required');
+  }
+  
   // Hide all page containers
   const pageContainers = [
     'dashboardPage', 'marketPage', 'portfolioPage', 'targetsPage', 
@@ -6032,7 +6075,7 @@ window.showPage = function(page) {
     if (pageEl) pageEl.style.display = 'none';
   });
   
-  // Hide hero stats and activity carousel on portfolio, alerts, and trade pages
+  // Hide hero stats and activity carousel on portfolio, alerts, and trade pages for professional look
   const heroStats = document.getElementById('heroStats');
   const activityCarousel = document.getElementById('activityCarouselWrapper');
   const asiPanel = document.getElementById('asiAlliancePanel');
@@ -6068,12 +6111,21 @@ window.showPage = function(page) {
         if (heroStats) heroStats.style.display = 'block';
         if (activityCarousel) activityCarousel.style.display = 'block';
       } else if (page === 'admin') {
-        if (currentUser && currentUser.email === 'admin@example.com') { // Replace with actual admin check
+        // Check admin access
+        const isAdmin = currentUser && (currentUser.email === 'testireba5@gmail.com' || currentUser.email === 'admin@example.com');
+        if (isAdmin) {
           loadAdminData();
         } else {
           showPage('dashboard'); // Redirect non-admins
           return;
         }
+      } else if (page === 'portfolio' && isAuthenticated) {
+        loadPortfolio();
+      } else if (page === 'targets' && isAuthenticated) {
+        loadTargets();
+        populateTargetTokenSelect();
+      } else if (page === 'alerts' && isAuthenticated) {
+        loadAlerts();
       }
     }
   }
@@ -6205,9 +6257,11 @@ function updateAdminAnalytics() {
 function updateAdminNavVisibility() {
   const adminNavItem = document.getElementById('adminNavItem');
   const adminBadge = document.getElementById('adminBadge');
+  const bottomNav = document.getElementById('bottomNav');
   
-  // Check if user is admin (replace with actual admin check)
-  const isAdmin = currentUser && currentUser.email === 'admin@example.com';
+  // Check if user is admin (using the same check as existing code)
+  const isAdmin = currentUser && (currentUser.email === 'testireba5@gmail.com' || currentUser.email === 'admin@example.com');
+  const isAuthenticated = currentUser !== null && currentUser !== undefined;
   
   if (adminNavItem) {
     adminNavItem.style.display = isAdmin ? 'flex' : 'none';
@@ -6215,13 +6269,23 @@ function updateAdminNavVisibility() {
   if (adminBadge) {
     adminBadge.style.display = isAdmin ? 'inline-block' : 'none';
   }
+  
+  // Show/hide bottom nav based on authentication (mobile only)
+  if (bottomNav && window.innerWidth <= 768) {
+    if (isAuthenticated) {
+      bottomNav.style.display = 'block';
+    } else {
+      bottomNav.style.display = 'none';
+    }
+  }
 }
 
 // Global function to update sidebar visibility (can be called from anywhere)
 window.updateSidebarVisibility = function() {
   const sidebar = document.getElementById('appSidebar');
   const mainContent = document.getElementById('mainContent');
-  const isAuthenticated = currentUser !== null;
+  const bottomNav = document.getElementById('bottomNav');
+  const isAuthenticated = currentUser !== null && currentUser !== undefined;
   
   if (sidebar) {
     if (isAuthenticated) {
@@ -6236,11 +6300,25 @@ window.updateSidebarVisibility = function() {
         }
       }
     } else {
-      sidebar.classList.remove('visible');
+      sidebar.classList.remove('visible', 'collapsed');
       if (mainContent) {
         mainContent.classList.remove('with-sidebar', 'sidebar-collapsed');
       }
     }
+  }
+  
+  // Update bottom nav visibility for mobile
+  if (bottomNav) {
+    if (isAuthenticated && window.innerWidth <= 768) {
+      bottomNav.classList.add('visible');
+    } else {
+      bottomNav.classList.remove('visible');
+    }
+  }
+  
+  // Update admin nav visibility
+  if (typeof updateAdminNavVisibility === 'function') {
+    updateAdminNavVisibility();
   }
 };
 
@@ -6283,6 +6361,13 @@ if (document.readyState === 'loading') {
 } else {
   initSidebarNavigation();
 }
+
+// Handle window resize to update bottom nav visibility
+window.addEventListener('resize', () => {
+  if (typeof window.updateSidebarVisibility === 'function') {
+    window.updateSidebarVisibility();
+  }
+});
 
 // Admin panel helper functions
 window.adminEditToken = function(tokenId) {
@@ -6345,13 +6430,41 @@ window.adminExportDatabase = function() {
   alert('Export database - Coming soon!');
 };
 
-// Set dashboard as default page
-if (window.location.hash === '' || window.location.hash === '#') {
-  setTimeout(() => {
-    if (typeof showPage === 'function') {
-      showPage('dashboard');
+// Initialize page on load - Modern implementation
+function initializePage() {
+  const hash = window.location.hash.replace('#', '');
+  const protectedPages = ['dashboard', 'portfolio', 'targets', 'alerts', 'profile', 'admin'];
+  
+  // Check if user is authenticated
+  const isAuthenticated = currentUser !== null && currentUser !== undefined;
+  
+  if (hash && hash !== '') {
+    // If trying to access protected page without auth, redirect to market
+    if (protectedPages.includes(hash) && !isAuthenticated) {
+      showPage('market');
+      window.location.hash = 'market';
+    } else {
+      showPage(hash);
     }
-  }, 100);
+  } else {
+    // Default page based on auth status
+    if (isAuthenticated) {
+      showPage('dashboard');
+      window.location.hash = 'dashboard';
+    } else {
+      showPage('market');
+      window.location.hash = 'market';
+    }
+  }
+}
+
+// Initialize page after DOM and auth are ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(initializePage, 300);
+  });
+} else {
+  setTimeout(initializePage, 300);
 }
 
 if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
