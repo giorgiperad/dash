@@ -1713,7 +1713,7 @@ body{overflow-x:hidden}
       <div id="targetsPage" class="page-content">
         <div class="main-section" style="width:100%;">
           <div class="section-header">
-            <div class="section-title">თარგეთები</div>
+            <div class="section-title"></div>
           </div>
 
           <!-- Two-Panel Layout -->
@@ -3990,7 +3990,7 @@ function renderTargets() {
           <div style="font-size:10px;color:#71717a;margin-top:2px;">${tokenSymbol}</div>
         </div>
         <div style="text-align:right;flex-shrink:0;">
-          <div style="font-size:10px;color:#9aa0a6;margin-bottom:2px;">${targetCount} მიზანი</div>
+          <div style="font-size:10px;color:#9aa0a6;margin-bottom:2px;">${targetCount} დონე</div>
           ${reachedCount > 0 ? `<div style="font-size:10px;color:#22c55e;font-weight:600;">✓ ${reachedCount}</div>` : ''}
         </div>
       </div>
@@ -4189,7 +4189,7 @@ window.editTarget = function(targetId) {
   }
   const target = sellTargets[targetId];
   if (!target) {
-    alert('მიზანი ვერ მოიძებნა');
+    alert('დონე ვერ მოიძებნა');
     return;
   }
   
