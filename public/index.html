@@ -1871,6 +1871,55 @@ body{overflow-x:hidden}
   </div>
 </div>
 
+<!-- Edit Target Modal -->
+<div id="editTargetModal" class="modal">
+  <div class="modal-content" style="max-width:500px;">
+    <div class="modal-header">
+      <h3>დონის რედაქტირება</h3>
+      <button class="modal-close" onclick="closeEditTargetModal()">×</button>
+    </div>
+    <form id="editTargetForm" style="padding:24px;">
+      <input type="hidden" id="editTargetId">
+      <div class="form-group" style="margin-bottom:20px;">
+        <label style="display:block;font-size:12px;color:#9aa0a6;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.8px;font-weight:600;">სამიზნე ფასი (USD)</label>
+        <input type="number" step="any" id="editTargetPrice" required 
+          style="width:100%;padding:12px 16px;background:rgba(10,14,26,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#e8eaed;font-size:14px;transition:all .2s;"
+          onfocus="this.style.borderColor='#6366f1';this.style.background='rgba(10,14,26,.8)'"
+          onblur="this.style.borderColor='rgba(255,255,255,.1)';this.style.background='rgba(10,14,26,.6)'">
+        <small style="display:block;margin-top:6px;color:#71717a;font-size:11px;">მიმდინარე ფასი: <span id="editTargetCurrentPrice" style="color:#fafafa;font-weight:600;">$0.00</span></small>
+      </div>
+      <div class="form-group" style="margin-bottom:24px;">
+        <label style="display:block;font-size:12px;color:#9aa0a6;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.8px;font-weight:600;">გასაყიდი პროცენტი (%)</label>
+        <input type="number" step="any" min="0" max="100" id="editTargetPercentage" required
+          style="width:100%;padding:12px 16px;background:rgba(10,14,26,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#e8eaed;font-size:14px;transition:all .2s;"
+          onfocus="this.style.borderColor='#6366f1';this.style.background='rgba(10,14,26,.8)'"
+          onblur="this.style.borderColor='rgba(255,255,255,.1)';this.style.background='rgba(10,14,26,.6)'">
+        <div style="margin-top:8px;">
+          <input type="range" min="0" max="100" step="1" id="editTargetPercentageSlider" 
+            style="width:100%;height:6px;background:rgba(255,255,255,.1);border-radius:3px;outline:none;cursor:pointer;"
+            oninput="document.getElementById('editTargetPercentage').value = this.value">
+          <div style="display:flex;justify-content:space-between;margin-top:4px;">
+            <span style="font-size:10px;color:#71717a;">0%</span>
+            <span style="font-size:10px;color:#71717a;">50%</span>
+            <span style="font-size:10px;color:#71717a;">100%</span>
+          </div>
+        </div>
+      </div>
+      <div id="editTargetStatus" style="margin-bottom:16px;padding:12px;border-radius:8px;display:none;font-size:13px;"></div>
+      <div class="modal-actions" style="display:flex;gap:12px;justify-content:flex-end;">
+        <button type="button" class="modal-btn cancel" onclick="closeEditTargetModal()" 
+          style="padding:12px 24px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#e8eaed;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all .2s;">
+          გაუქმება
+        </button>
+        <button type="submit" class="modal-btn save"
+          style="padding:12px 24px;background:linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all .2s;box-shadow:0 4px 12px rgba(99,102,241,.3);">
+          შენახვა
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <!-- Modals and other shared components -->
 <div id="addTokenModal" class="modal">
   <div class="modal-content" style="max-width:600px;width:90vw;">
@@ -4193,14 +4242,108 @@ window.editTarget = function(targetId) {
     return;
   }
   
-  const newPrice = prompt('შეიყვანეთ ახალი სამიზნე ფასი:', target.targetPrice);
-  if (newPrice === null || isNaN(parseFloat(newPrice))) return;
+  // Get token info for display
+  const token = cryptoData.find(t => t.id === target.tokenId);
+  const currentPrice = token?.current_price || prices[target.tokenId] || 0;
   
-  const newPercentage = prompt('შეიყვანეთ გასაყიდი პროცენტი:', target.percentage);
-  if (newPercentage === null || isNaN(parseFloat(newPercentage))) return;
+  // Populate modal
+  $('editTargetId').value = targetId;
+  $('editTargetPrice').value = target.targetPrice;
+  $('editTargetPercentage').value = target.percentage;
+  $('editTargetPercentageSlider').value = target.percentage;
+  $('editTargetCurrentPrice').textContent = `$${formatPrice(currentPrice)}`;
   
-  updateTarget(targetId, parseFloat(newPrice), parseFloat(newPercentage));
+  // Hide status message
+  const statusEl = $('editTargetStatus');
+  statusEl.style.display = 'none';
+  
+  // Show modal
+  $('editTargetModal').classList.add('show');
+  
+  // Focus on price input
+  setTimeout(() => {
+    $('editTargetPrice').focus();
+    $('editTargetPrice').select();
+  }, 100);
 };
+
+function closeEditTargetModal() {
+  $('editTargetModal').classList.remove('show');
+  $('editTargetForm').reset();
+  const statusEl = $('editTargetStatus');
+  statusEl.style.display = 'none';
+}
+
+// Sync slider with input
+if ($('editTargetPercentage')) {
+  $('editTargetPercentage').oninput = function() {
+    const value = Math.min(100, Math.max(0, parseFloat(this.value) || 0));
+    $('editTargetPercentageSlider').value = value;
+    this.value = value;
+  };
+  
+  $('editTargetPercentageSlider').oninput = function() {
+    $('editTargetPercentage').value = this.value;
+  };
+}
+
+// Handle form submission
+if ($('editTargetForm')) {
+  $('editTargetForm').onsubmit = async (e) => {
+    e.preventDefault();
+    
+    const targetId = $('editTargetId').value;
+    const targetPrice = parseFloat($('editTargetPrice').value);
+    const percentage = parseFloat($('editTargetPercentage').value);
+    const statusEl = $('editTargetStatus');
+    
+    // Validation
+    if (isNaN(targetPrice) || targetPrice <= 0) {
+      statusEl.style.display = 'block';
+      statusEl.style.background = 'rgba(239,68,68,.15)';
+      statusEl.style.border = '1px solid rgba(239,68,68,.3)';
+      statusEl.style.color = '#ef4444';
+      statusEl.textContent = 'გთხოვთ შეიყვანოთ სწორი სამიზნე ფასი';
+      return;
+    }
+    
+    if (isNaN(percentage) || percentage <= 0 || percentage > 100) {
+      statusEl.style.display = 'block';
+      statusEl.style.background = 'rgba(239,68,68,.15)';
+      statusEl.style.border = '1px solid rgba(239,68,68,.3)';
+      statusEl.style.color = '#ef4444';
+      statusEl.textContent = 'პროცენტი უნდა იყოს 0-100 დიაპაზონში';
+      return;
+    }
+    
+    // Show loading
+    statusEl.style.display = 'block';
+    statusEl.style.background = 'rgba(99,102,241,.15)';
+    statusEl.style.border = '1px solid rgba(99,102,241,.3)';
+    statusEl.style.color = '#6366f1';
+    statusEl.textContent = 'განახლება...';
+    
+    try {
+      await updateTarget(targetId, targetPrice, percentage);
+      
+      // Show success
+      statusEl.style.background = 'rgba(34,197,94,.15)';
+      statusEl.style.border = '1px solid rgba(34,197,94,.3)';
+      statusEl.style.color = '#22c55e';
+      statusEl.textContent = '✓ დონე წარმატებით განახლდა!';
+      
+      // Close modal after short delay
+      setTimeout(() => {
+        closeEditTargetModal();
+      }, 1000);
+    } catch (error) {
+      statusEl.style.background = 'rgba(239,68,68,.15)';
+      statusEl.style.border = '1px solid rgba(239,68,68,.3)';
+      statusEl.style.color = '#ef4444';
+      statusEl.textContent = 'შეცდომა: ' + (error.message || 'დონის განახლება ვერ მოხერხდა');
+    }
+  };
+}
 
 async function updateTarget(targetId, targetPrice, percentage) {
   if (!currentUser) return;
