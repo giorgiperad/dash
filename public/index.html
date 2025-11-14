@@ -1842,11 +1842,6 @@ body{overflow-x:hidden}
           </div>
         </div>
 
-        <!-- Performance vs BTC/ETH -->
-        <div class="summary-card" style="padding:24px;">
-          <h4 style="font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">Performance Comparison</h4>
-          <canvas id="performanceComparisonChart" style="max-height:300px;"></canvas>
-        </div>
       </div>
 
       <!-- Toggle Advanced Analytics Button -->
@@ -5393,9 +5388,9 @@ function renderPortfolio(holdings) {
       symbol: h.tokenId ? h.tokenId.toUpperCase().substring(0, 4) : 'UNK', 
       image: 'https://via.placeholder.com/32?text=?' 
     };
-    const price = prices[h.tokenId] || 0;
+    const price = token.current_price || prices[h.tokenId] || 0;
     const value = h.amount * price;
-    const cost = h.amount * h.buyPrice;
+    const cost = h.amount * (h.buyPrice || 0);
     totalValue += value;
     totalCost += cost;
     const pl = value - cost;
@@ -5453,7 +5448,12 @@ function renderPortfolio(holdings) {
   const prevROI = parseFloat($('roi')?.textContent.replace(/[^0-9.-]/g, '') || '0');
   
   const pl = totalValue - totalCost;
-  const roi = totalCost > 0 ? ((totalValue / totalCost - 1) * 100) : 0;
+  let roi = totalCost > 0 ? ((totalValue / totalCost - 1) * 100) : 0;
+  
+  // Ensure ROI is a valid number
+  if (isNaN(roi) || !isFinite(roi)) {
+    roi = 0;
+  }
   
   // Update dashboard stats
   updateDashboardStats(holdings, sellTargets || {}, alerts || {});
@@ -5501,18 +5501,20 @@ function renderPortfolio(holdings) {
   
   // Update ROI card with conditional colors and animation
   if ($('roi')) {
-    const newROI = totalCost > 0 ? `${roi >= 0 ? '+' : ''}${roi.toFixed(2)}%` : '0%';
-    if (Math.abs(prevROI - roi) > 0.01) {
-      animateValue($('roi'), `${prevROI >= 0 ? '+' : ''}${prevROI.toFixed(2)}%`, newROI, 800);
+    const safeROI = isNaN(roi) || !isFinite(roi) ? 0 : roi;
+    const safePrevROI = isNaN(prevROI) || !isFinite(prevROI) ? 0 : prevROI;
+    const newROI = totalCost > 0 ? `${safeROI >= 0 ? '+' : ''}${safeROI.toFixed(2)}%` : '0%';
+    if (Math.abs(safePrevROI - safeROI) > 0.01) {
+      animateValue($('roi'), `${safePrevROI >= 0 ? '+' : ''}${safePrevROI.toFixed(2)}%`, newROI, 800);
     } else {
       $('roi').textContent = newROI;
     }
-    $('roi').style.color = roi >= 0 ? '#10b981' : '#ef4444';
+    $('roi').style.color = safeROI >= 0 ? '#10b981' : '#ef4444';
     
     // Update parent summary card colors
     const roiCard = $('roi').closest('.summary-card');
     if (roiCard) {
-      if (roi >= 0) {
+      if (safeROI >= 0) {
         roiCard.style.borderColor = 'rgba(16,185,129,.3)';
         roiCard.style.background = 'linear-gradient(135deg,rgba(10,14,26,.6) 0%,rgba(16,185,129,.08) 100%)';
         roiCard.querySelector('.summary-value').style.background = 'linear-gradient(135deg,#10b981 0%,#059669 100%)';
