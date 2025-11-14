@@ -1,4 +1,5 @@
 const admin = require('firebase-admin');
+const { rateLimiters } = require('./rate-limit');
 
 // In-memory cache for CoinGecko data
 const cache = {
@@ -97,10 +98,26 @@ module.exports = async function handler(req, res) {
     return;
   }
 
+  // Apply rate limiting for GET requests (public endpoint)
+  if (req.method === 'GET') {
+    const rateLimiter = rateLimiters.lenient;
+    return new Promise((resolve) => {
+      rateLimiter(req, res, () => {
+        handleRequest(req, res).then(resolve).catch(resolve);
+      });
+    });
+  }
+
+  // For authenticated requests, handle directly (auth already provides some protection)
+  return handleRequest(req, res);
+};
+
+async function handleRequest(req, res) {
+
   // Initialize Firebase Admin (if not already initialized)
   getDatabase(); // This ensures Firebase Admin is initialized
 
-  // Handle GET - Fetch market data (existing functionality)
+  // Handle GET - Fetch market data
   if (req.method === 'GET') {
     try {
       console.log('Portfolio API called');
@@ -373,9 +390,12 @@ module.exports = async function handler(req, res) {
 
     // POST - Add new holding
     if (req.method === 'POST') {
+      const { validateHolding } = require('./utils/validation');
       const { holding } = req.body;
-      if (!holding || !holding.tokenId || !holding.amount || !holding.buyPrice) {
-        return res.status(400).json({ error: 'Missing required fields: tokenId, amount, buyPrice' });
+      
+      const validation = validateHolding(holding);
+      if (!validation.valid) {
+        return res.status(400).json({ error: 'Validation failed', errors: validation.errors });
       }
 
       const newHoldingRef = userHoldingsRef.push();
