@@ -730,7 +730,7 @@ function renderTokens() {
     const change = coin.price_change_percentage_24h || 0;
     const changeClass = change >= 0 ? 'positive' : 'negative';
     list.innerHTML += `
-      <div class="token-row" style="--index: ${idx}" onclick="showTokenChart('${coin.id}', '${coin.name}', '${coin.symbol}', '${coin.image}')" style="cursor:pointer;">
+      <div class="token-row" style="--index: ${idx}; cursor:pointer;" onclick="showTokenChart('${coin.id}', '${coin.name}', '${coin.symbol}', '${coin.image}')">
         <div class="token-icon-col"><img src="${coin.image}" class="token-icon" alt="${coin.name}"></div>
         <div class="token-name-col">
           <h3>${coin.name}</h3>
@@ -1542,20 +1542,34 @@ let priceChart = null;
 let currentChartTokenId = null;
 
 window.showTokenChart = async function(tokenId, tokenName, tokenSymbol, tokenImage) {
+  console.log('Opening chart for:', tokenId, tokenName); // Debug log
   currentChartTokenId = tokenId;
-  const modal = $('tokenChartModal') || createChartModal();
+  
+  let modal = document.getElementById('tokenChartModal');
+  if (!modal) {
+    modal = createChartModal();
+  }
+  
   modal.classList.add('show');
   
   // Update modal header
   const titleEl = modal.querySelector('.token-detail-title');
   if (titleEl) {
-    titleEl.innerHTML = `
-      <img src="${tokenImage}" alt="${tokenName}" onerror="this.src='https://via.placeholder.com/48?text=?'">
-      <div>
-        <h2>${tokenName}</h2>
-        <div style="font-size:14px;color:#888;margin-top:4px;">${tokenSymbol.toUpperCase()}</div>
-      </div>
-    `;
+    const img = titleEl.querySelector('img');
+    const h2 = titleEl.querySelector('h2');
+    if (img) img.src = tokenImage;
+    if (img) img.alt = tokenName;
+    if (h2) h2.textContent = tokenName;
+    
+    // Add symbol if not exists
+    let symbolDiv = titleEl.querySelector('.token-symbol-display');
+    if (!symbolDiv) {
+      symbolDiv = document.createElement('div');
+      symbolDiv.className = 'token-symbol-display';
+      symbolDiv.style.cssText = 'font-size:14px;color:#888;margin-top:4px;';
+      titleEl.appendChild(symbolDiv);
+    }
+    symbolDiv.textContent = tokenSymbol.toUpperCase();
   }
   
   // Load chart with default 7 days
@@ -1566,6 +1580,10 @@ function createChartModal() {
   const modal = document.createElement('div');
   modal.id = 'tokenChartModal';
   modal.className = 'token-detail-modal';
+  
+  // Store tokenId for button handlers
+  const tokenIdForButtons = currentChartTokenId || '';
+  
   modal.innerHTML = `
     <div class="token-detail-content">
       <div class="token-detail-header">
@@ -1573,17 +1591,17 @@ function createChartModal() {
           <img src="" alt="">
           <h2></h2>
         </div>
-        <button class="modal-close" onclick="$('tokenChartModal').classList.remove('show')">×</button>
+        <button class="modal-close" onclick="document.getElementById('tokenChartModal').classList.remove('show')">×</button>
       </div>
       <div class="chart-container">
         <div class="chart-header">
           <div class="chart-title">Price History</div>
           <div class="chart-controls">
-            <button class="chart-btn" onclick="loadPriceChart('${currentChartTokenId}', 1)">1D</button>
-            <button class="chart-btn" onclick="loadPriceChart('${currentChartTokenId}', 7)">7D</button>
-            <button class="chart-btn active" onclick="loadPriceChart('${currentChartTokenId}', 30)">30D</button>
-            <button class="chart-btn" onclick="loadPriceChart('${currentChartTokenId}', 90)">90D</button>
-            <button class="chart-btn" onclick="loadPriceChart('${currentChartTokenId}', 365)">1Y</button>
+            <button class="chart-btn" data-days="1">1D</button>
+            <button class="chart-btn active" data-days="7">7D</button>
+            <button class="chart-btn" data-days="30">30D</button>
+            <button class="chart-btn" data-days="90">90D</button>
+            <button class="chart-btn" data-days="365">1Y</button>
           </div>
         </div>
         <div class="chart-wrapper">
@@ -1593,6 +1611,14 @@ function createChartModal() {
     </div>
   `;
   document.body.appendChild(modal);
+  
+  // Add click handlers to buttons
+  modal.querySelectorAll('.chart-btn').forEach(btn => {
+    btn.onclick = () => {
+      const days = parseInt(btn.dataset.days);
+      loadPriceChart(currentChartTokenId, days);
+    };
+  });
   
   // Close on backdrop click
   modal.onclick = (e) => {
