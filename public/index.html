@@ -14,6 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <!-- ALKDots Font - Local from GitHub -->
 <link rel="stylesheet" href="/fonts/alkdots.min.css">
 <!-- BPG ExtraSquare Mtavruli Font - Local from GitHub -->
@@ -757,22 +758,401 @@ body{
 .skeleton-circle{width:56px;height:56px;border-radius:50%}
 .skeleton-card{height:80px;border-radius:12px;margin-bottom:12px}
 
-/* PRICE CHART MODAL */
-.token-detail-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);align-items:center;justify-content:center;z-index:2000;padding:20px}
-.token-detail-modal.show{display:flex}
-.token-detail-content{background:#0d0d0d;border:2px solid #1a1a1a;border-radius:24px;padding:32px;width:90%;max-width:900px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.6)}
-.token-detail-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding-bottom:20px;border-bottom:2px solid #1a1a1a}
-.token-detail-title{display:flex;align-items:center;gap:16px}
-.token-detail-title img{width:48px;height:48px;border-radius:50%}
-.token-detail-title h2{font-size:24px;font-weight:900;background:linear-gradient(135deg,#8b5cf6,#ec4899);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin:0}
-.chart-container{background:#0a0a0a;border:1px solid #1a1a1a;border-radius:16px;padding:24px;margin:24px 0;position:relative}
-.chart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px}
-.chart-title{font-size:18px;font-weight:800;color:#fff}
-.chart-controls{display:flex;gap:8px;flex-wrap:wrap}
-.chart-btn{padding:6px 16px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;color:#888;font-size:12px;font-weight:700;cursor:pointer;transition:all .3s}
-.chart-btn:hover{background:rgba(139,92,246,.1);border-color:#8b5cf6;color:#8b5cf6}
-.chart-btn.active{background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;color:#fff}
-.chart-wrapper{position:relative;height:300px;width:100%}
+/* ──── ANIMATED GRADIENT BACKGROUND ──── */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animated-gradient {
+  background: linear-gradient(-45deg, #6366f1, #8b5cf6, #ec4899, #f59e0b);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+/* ──── GLASSMORPHISM EFFECTS ──── */
+.glass {
+  background: rgba(20, 25, 32, 0.7);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glass-card {
+  background: rgba(20, 25, 32, 0.6);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="light"] .glass {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .glass-card {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* ──── MICRO-INTERACTIONS ──── */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.interactive {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.interactive:active {
+  transform: translateY(0);
+}
+
+.btn-micro {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-micro::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn-micro:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* ──── ENHANCED LOADING ANIMATIONS ──── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes progress {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+.loading-spinner {
+  border: 3px solid rgba(99, 102, 241, 0.2);
+  border-top-color: var(--accent-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.progress-bar {
+  height: 4px;
+  background: var(--gradient-primary);
+  animation: progress 2s ease-in-out;
+  border-radius: 2px;
+}
+
+/* ──── TOAST NOTIFICATIONS ──── */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.toast {
+  min-width: 300px;
+  max-width: 400px;
+  padding: 16px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: auto;
+  animation: slideUp 0.3s ease-out;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.toast.success {
+  border-left: 4px solid var(--success);
+}
+
+.toast.error {
+  border-left: 4px solid var(--error);
+}
+
+.toast.warning {
+  border-left: 4px solid var(--warning);
+}
+
+.toast.info {
+  border-left: 4px solid var(--accent-primary);
+}
+
+.toast-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.toast-content {
+  flex: 1;
+}
+
+.toast-title {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: var(--text-primary);
+}
+
+.toast-message {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.toast-close:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* ──── THEME TOGGLE BUTTON ──── */
+.theme-toggle {
+  position: relative;
+  width: 60px;
+  height: 32px;
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border-primary);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+}
+
+.theme-toggle.active {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+.theme-toggle-slider {
+  width: 24px;
+  height: 24px;
+  background: var(--bg-primary);
+  border-radius: 50%;
+  transition: transform 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.theme-toggle.active .theme-toggle-slider {
+  transform: translateX(28px);
+}
+
+/* ──── COLOR SCHEME SELECTOR ──── */
+.color-scheme-selector {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.color-scheme-option {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--border-primary);
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.color-scheme-option:hover {
+  transform: scale(1.1);
+  border-color: var(--accent-primary);
+}
+
+.color-scheme-option.active {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+}
+
+.color-scheme-option[data-scheme="purple"] {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+}
+
+.color-scheme-option[data-scheme="blue"] {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa, #93c5fd);
+}
+
+.color-scheme-option[data-scheme="green"] {
+  background: linear-gradient(135deg, #10b981, #34d399, #6ee7b7);
+}
+
+.color-scheme-option[data-scheme="orange"] {
+  background: linear-gradient(135deg, #f59e0b, #fbbf24, #fcd34d);
+}
+
+/* ──── QUICK ACTIONS MENU ──── */
+.quick-actions {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+}
+
+.fab {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fab:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+}
+
+.fab:active {
+  transform: scale(0.95);
+}
+
+.fab-menu {
+  position: absolute;
+  bottom: 70px;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.3s;
+}
+
+.fab-menu.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.fab-item {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  color: var(--text-primary);
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.fab-item:hover {
+  transform: scale(1.1);
+  background: var(--bg-card-hover);
+  box-shadow: var(--shadow-lg);
+}
+
+.fab-item-label {
+  position: absolute;
+  right: 60px;
+  background: var(--bg-card);
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s;
+  border: 1px solid var(--border-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.fab-item:hover .fab-item-label {
+  opacity: 1;
+  visibility: visible;
+}
 
 /* ENHANCED ERROR HANDLING */
 .error{background:rgba(239,68,68,.1);border:2px solid rgba(239,68,68,.3);color:#ef4444;border-radius:16px;padding:24px;margin:24px 0;font-weight:700;text-align:center;animation:fadeInUp .5s ease-out}
@@ -1432,6 +1812,30 @@ body{overflow-x:hidden}
 
 <div class="grain-overlay"></div>
 
+<!-- Toast Notifications Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Quick Actions Menu -->
+<div class="quick-actions" id="quickActions">
+  <div class="fab-menu" id="fabMenu">
+    <div class="fab-item interactive" id="fabRefresh" title="Refresh Data">
+      <i class="fas fa-sync-alt"></i>
+      <span class="fab-item-label">Refresh</span>
+    </div>
+    <div class="fab-item interactive" id="fabSettings" title="Settings">
+      <i class="fas fa-cog"></i>
+      <span class="fab-item-label">Settings</span>
+    </div>
+    <div class="fab-item interactive" id="fabHelp" title="Help">
+      <i class="fas fa-question-circle"></i>
+      <span class="fab-item-label">Help</span>
+    </div>
+  </div>
+  <button class="fab interactive btn-micro" id="fabMain" aria-label="Quick Actions">
+    <i class="fas fa-plus" id="fabIcon"></i>
+  </button>
+</div>
+
 <nav class="navbar">
   <div class="logo-section">
     <div class="logo-icon"><img src="https://ta3bviqjtxy1kv7x.public.blob.vercel-storage.com/sticker.webp" alt="Logo"></div>
@@ -1447,13 +1851,22 @@ body{overflow-x:hidden}
   </div>
 
   <div class="nav-right">
-    <button class="theme-toggle" id="refreshButton" aria-label="Refresh data" title="Refresh data" style="position:relative;">
-      <span id="refreshIcon">🔄</span>
+    <button class="theme-toggle interactive btn-micro" id="refreshButton" aria-label="Refresh data" title="Refresh data" style="position:relative;">
+      <i class="fas fa-sync-alt" id="refreshIcon"></i>
     </button>
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Theme toggle">
-      <span id="themeIcon">🌙</span>
+    
+    <!-- Color Scheme Selector -->
+    <div class="color-scheme-selector" style="display:flex;" id="colorSchemeSelector">
+      <div class="color-scheme-option active" data-scheme="purple" title="Purple Theme" aria-label="Purple color scheme"></div>
+      <div class="color-scheme-option" data-scheme="blue" title="Blue Theme" aria-label="Blue color scheme"></div>
+      <div class="color-scheme-option" data-scheme="green" title="Green Theme" aria-label="Green color scheme"></div>
+      <div class="color-scheme-option" data-scheme="orange" title="Orange Theme" aria-label="Orange color scheme"></div>
+    </div>
+    
+    <button class="theme-toggle interactive btn-micro" id="themeToggle" aria-label="Toggle theme" title="Theme toggle">
+      <i class="fas fa-moon" id="themeIcon"></i>
     </button>
-    <div class="live-indicator"><div class="live-dot"></div><div class="live-text">live</div></div>
+    <div class="live-indicator glass"><div class="live-dot"></div><div class="live-text">live</div></div>
     <div class="time-display" id="navTime">--:--:--</div>
 
     <div id="authContainer">
@@ -3168,7 +3581,7 @@ function renderTokens() {
     const change = coin.price_change_percentage_24h || 0;
     const changeClass = change >= 0 ? 'positive' : 'negative';
     list.innerHTML += `
-      <div class="token-row" style="--index: ${idx}; cursor:pointer;" onclick="showTokenChart('${coin.id}', '${coin.name}', '${coin.symbol}', '${coin.image}')">
+      <div class="token-row" style="--index: ${idx};">
         <div class="token-icon-col"><img src="${coin.image}" class="token-icon" alt="${coin.name}"></div>
         <div class="token-name-col">
           <h3>${coin.name}</h3>
@@ -5604,16 +6017,20 @@ $('refreshBtn').onclick = () => fetchAll(true); // Force refresh
 $('refreshButton').onclick = () => {
   const icon = $('refreshIcon');
   if (icon) {
-    icon.style.animation = 'rotate 1s linear';
+    icon.style.animation = 'spin 1s linear infinite';
     setTimeout(() => {
       icon.style.animation = '';
-    }, 1000);
+    }, 2000);
   }
+  showToast('info', 'Refreshing', 'Updating market data...', 2000);
   fetchAll(true); // Force refresh (bypass cache)
   if (currentUser) {
     loadPortfolio();
     loadAlerts();
   }
+  setTimeout(() => {
+    showToast('success', 'Refreshed', 'Market data updated successfully');
+  }, 2000);
 };
 
 /* ---------- API CACHING SYSTEM ---------- */
@@ -6502,207 +6919,7 @@ if (document.readyState === 'loading') {
   initTopNavigation();
 }
 
-/* ---------- PRICE CHART FUNCTIONALITY ---------- */
-let priceChart = null;
-let currentChartTokenId = null;
-
-window.showTokenChart = async function(tokenId, tokenName, tokenSymbol, tokenImage) {
-  console.log('Opening chart for:', tokenId, tokenName);
-  currentChartTokenId = tokenId;
-  
-  let modal = document.getElementById('tokenChartModal');
-  if (!modal) {
-    modal = createChartModal();
-  }
-  
-  modal.classList.add('show');
-  modal.style.display = 'flex';
-  
-  // Update modal header
-  const titleEl = modal.querySelector('.token-detail-title');
-  if (titleEl) {
-    const img = titleEl.querySelector('img');
-    const h2 = titleEl.querySelector('h2');
-    if (img) img.src = tokenImage;
-    if (img) img.alt = tokenName;
-    if (h2) h2.textContent = tokenName;
-    
-    let symbolDiv = titleEl.querySelector('.token-symbol-display');
-    if (!symbolDiv) {
-      symbolDiv = document.createElement('div');
-      symbolDiv.className = 'token-symbol-display';
-      symbolDiv.style.cssText = 'font-size:14px;color:#888;margin-top:4px;';
-      titleEl.appendChild(symbolDiv);
-    }
-    symbolDiv.textContent = tokenSymbol.toUpperCase();
-  }
-  
-  await loadPriceChart(tokenId, 7);
-};
-
-function createChartModal() {
-  const modal = document.createElement('div');
-  modal.id = 'tokenChartModal';
-  modal.className = 'token-detail-modal';
-  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);align-items:center;justify-content:center;z-index:2000;padding:20px;';
-  
-  modal.innerHTML = `
-    <div class="token-detail-content" style="background:#0d0d0d;border:2px solid #1a1a1a;border-radius:24px;padding:32px;width:90%;max-width:900px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.6);">
-      <div class="token-detail-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding-bottom:20px;border-bottom:2px solid #1a1a1a;">
-        <div class="token-detail-title" style="display:flex;align-items:center;gap:16px;">
-          <img src="" alt="" style="width:48px;height:48px;border-radius:50%;">
-          <h2 style="font-size:24px;font-weight:900;background:linear-gradient(135deg,#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:0;"></h2>
-        </div>
-        <button class="modal-close" onclick="const m=document.getElementById('tokenChartModal');m.classList.remove('show');m.style.display='none';" style="background:transparent;border:none;color:#666;font-size:28px;cursor:pointer;padding:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px;transition:all .3s;">×</button>
-      </div>
-      <div class="chart-container" style="background:#0a0a0a;border:1px solid #1a1a1a;border-radius:16px;padding:24px;margin:24px 0;position:relative;">
-        <div class="chart-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-          <div class="chart-title" style="font-size:18px;font-weight:800;color:#fff;">Price History</div>
-          <div class="chart-controls" style="display:flex;gap:8px;">
-            <button class="chart-btn" data-days="1" style="padding:6px 16px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;color:#888;font-size:12px;font-weight:700;cursor:pointer;transition:all .3s;">1D</button>
-            <button class="chart-btn active" data-days="7" style="padding:6px 16px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;color:#fff;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:all .3s;">7D</button>
-            <button class="chart-btn" data-days="30" style="padding:6px 16px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;color:#888;font-size:12px;font-weight:700;cursor:pointer;transition:all .3s;">30D</button>
-            <button class="chart-btn" data-days="90" style="padding:6px 16px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;color:#888;font-size:12px;font-weight:700;cursor:pointer;transition:all .3s;">90D</button>
-            <button class="chart-btn" data-days="365" style="padding:6px 16px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;color:#888;font-size:12px;font-weight:700;cursor:pointer;transition:all .3s;">1Y</button>
-          </div>
-        </div>
-        <div class="chart-wrapper" style="position:relative;height:300px;width:100%;">
-          <canvas id="priceChartCanvas"></canvas>
-        </div>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(modal);
-  
-  modal.querySelectorAll('.chart-btn').forEach(btn => {
-    btn.onclick = () => {
-      const days = parseInt(btn.dataset.days);
-      modal.querySelectorAll('.chart-btn').forEach(b => {
-        b.classList.remove('active');
-        b.style.background = '#0a0a0a';
-        b.style.border = '1px solid #1a1a1a';
-        b.style.color = '#888';
-      });
-      btn.classList.add('active');
-      btn.style.background = 'linear-gradient(135deg,#8b5cf6,#ec4899)';
-      btn.style.border = 'none';
-      btn.style.color = '#fff';
-      loadPriceChart(currentChartTokenId, days);
-    };
-  });
-  
-  modal.onclick = (e) => {
-    if (e.target === modal) {
-      modal.classList.remove('show');
-      modal.style.display = 'none';
-    }
-  };
-  
-  return modal;
-}
-
-async function loadPriceChart(tokenId, days) {
-  if (!tokenId) return;
-  
-  const modal = document.getElementById('tokenChartModal');
-  if (!modal) return;
-  
-  const canvas = document.getElementById('priceChartCanvas');
-  if (!canvas) return;
-  
-  const wrapper = canvas.parentElement;
-  wrapper.innerHTML = '<div style="text-align:center;padding:60px;color:#888;">Loading chart...</div>';
-  
-  try {
-    const res = await fetch(`/api/history?id=${encodeURIComponent(tokenId)}&days=${days}`);
-    const data = await res.json();
-    
-    if (!res.ok || !data.prices || data.prices.length === 0) {
-      throw new Error(data.error || 'Failed to load price history');
-    }
-    
-    wrapper.innerHTML = '<canvas id="priceChartCanvas"></canvas>';
-    const newCanvas = document.getElementById('priceChartCanvas');
-    const newCtx = newCanvas.getContext('2d');
-    
-    if (priceChart) {
-      priceChart.destroy();
-    }
-    
-    const labels = data.prices.map(p => new Date(p.x).toLocaleDateString());
-    const prices = data.prices.map(p => p.y);
-    
-    const firstPrice = prices[0];
-    const lastPrice = prices[prices.length - 1];
-    const isPositive = lastPrice >= firstPrice;
-    const chartColor = isPositive ? '#10b981' : '#ef4444';
-    
-    priceChart = new Chart(newCtx, {
-      type: 'line',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: 'Price (USD)',
-          data: prices,
-          borderColor: chartColor,
-          backgroundColor: chartColor + '20',
-          borderWidth: 2,
-          fill: true,
-          tension: 0.4,
-          pointRadius: 0,
-          pointHoverRadius: 4
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            mode: 'index',
-            intersect: false,
-            backgroundColor: 'rgba(10, 10, 10, 0.9)',
-            titleColor: '#fff',
-            bodyColor: '#fff',
-            borderColor: '#8b5cf6',
-            borderWidth: 1,
-            callbacks: {
-              label: function(context) {
-                return '$' + formatPrice(context.parsed.y);
-              }
-            }
-          }
-        },
-        scales: {
-          x: {
-            grid: { color: 'rgba(255, 255, 255, 0.05)', display: false },
-            ticks: { color: '#888', maxTicksLimit: 8 }
-          },
-          y: {
-            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-            ticks: {
-              color: '#888',
-              callback: function(value) {
-                return '$' + formatPrice(value);
-              }
-            }
-          }
-        },
-        interaction: {
-          mode: 'nearest',
-          axis: 'x',
-          intersect: false
-        }
-      }
-    });
-    
-  } catch (error) {
-    console.error('Chart load error:', error);
-    wrapper.innerHTML = `<div class="error" style="margin:20px;background:rgba(239,68,68,.1);border:2px solid rgba(239,68,68,.3);color:#ef4444;border-radius:16px;padding:24px;font-weight:700;text-align:center;">Error loading chart: ${error.message}</div>`;
-  }
-}
-
-window.loadPriceChart = loadPriceChart;
+/* ---------- NEW FEATURES WILL BE ADDED HERE ---------- */
 
 </script>
 
