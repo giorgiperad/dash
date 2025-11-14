@@ -13,6 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <!-- ALKDots Font - Local from GitHub -->
 <link rel="stylesheet" href="/fonts/alkdots.min.css">
 <!-- BPG ExtraSquare Mtavruli Font - Local from GitHub -->
@@ -747,6 +748,26 @@ body{
   .admin-btn{width:100%;justify-content:center}
   .sidebar-card{padding:20px;border-radius:14px}
   .quotes-list,.top-gainers-list{gap:8px}
+}
+
+/* PRICE CHART MODAL */
+.token-detail-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);align-items:center;justify-content:center;z-index:2000;padding:20px}
+.token-detail-modal.show{display:flex}
+.token-detail-content{background:#0d0d0d;border:2px solid #1a1a1a;border-radius:24px;padding:32px;width:90%;max-width:900px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.token-detail-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding-bottom:20px;border-bottom:2px solid #1a1a1a}
+.token-detail-title{display:flex;align-items:center;gap:16px}
+.token-detail-title img{width:48px;height:48px;border-radius:50%}
+.token-detail-title h2{font-size:24px;font-weight:900;background:linear-gradient(135deg,#8b5cf6,#ec4899);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin:0}
+.chart-container{background:#0a0a0a;border:1px solid #1a1a1a;border-radius:16px;padding:24px;margin:24px 0;position:relative}
+.chart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.chart-title{font-size:18px;font-weight:800;color:#fff}
+.chart-controls{display:flex;gap:8px}
+.chart-btn{padding:6px 16px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;color:#888;font-size:12px;font-weight:700;cursor:pointer;transition:all .3s}
+.chart-btn:hover{background:rgba(139,92,246,.1);border-color:#8b5cf6;color:#8b5cf6}
+.chart-btn.active{background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;color:#fff}
+.chart-wrapper{position:relative;height:300px;width:100%}
+
+@media(max-width:480px){
   .quote-item,.gainer-item{padding:12px;border-radius:10px}
   .settings-panel{gap:12px}
   .setting-item{flex-direction:column;align-items:flex-start;gap:8px}
@@ -3073,7 +3094,7 @@ function renderTokens() {
     const change = coin.price_change_percentage_24h || 0;
     const changeClass = change >= 0 ? 'positive' : 'negative';
     list.innerHTML += `
-      <div class="token-row" style="--index: ${idx}">
+      <div class="token-row" style="--index: ${idx}; cursor:pointer;" onclick="showTokenChart('${coin.id}', '${coin.name}', '${coin.symbol}', '${coin.image}')">
         <div class="token-icon-col"><img src="${coin.image}" class="token-icon" alt="${coin.name}"></div>
         <div class="token-name-col">
           <h3>${coin.name}</h3>
@@ -6359,6 +6380,204 @@ if (document.readyState === 'loading') {
 } else {
   initTopNavigation();
 }
+
+/* ---------- PRICE CHART FUNCTIONALITY ---------- */
+let priceChart = null;
+let currentChartTokenId = null;
+
+window.showTokenChart = async function(tokenId, tokenName, tokenSymbol, tokenImage) {
+  console.log('Opening chart for:', tokenId, tokenName);
+  currentChartTokenId = tokenId;
+  
+  let modal = document.getElementById('tokenChartModal');
+  if (!modal) {
+    modal = createChartModal();
+  }
+  
+  modal.classList.add('show');
+  
+  // Update modal header
+  const titleEl = modal.querySelector('.token-detail-title');
+  if (titleEl) {
+    const img = titleEl.querySelector('img');
+    const h2 = titleEl.querySelector('h2');
+    if (img) img.src = tokenImage;
+    if (img) img.alt = tokenName;
+    if (h2) h2.textContent = tokenName;
+    
+    let symbolDiv = titleEl.querySelector('.token-symbol-display');
+    if (!symbolDiv) {
+      symbolDiv = document.createElement('div');
+      symbolDiv.className = 'token-symbol-display';
+      symbolDiv.style.cssText = 'font-size:14px;color:#888;margin-top:4px;';
+      titleEl.appendChild(symbolDiv);
+    }
+    symbolDiv.textContent = tokenSymbol.toUpperCase();
+  }
+  
+  await loadPriceChart(tokenId, 7);
+};
+
+function createChartModal() {
+  const modal = document.createElement('div');
+  modal.id = 'tokenChartModal';
+  modal.className = 'token-detail-modal';
+  modal.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);align-items:center;justify-content:center;z-index:2000;padding:20px;';
+  
+  modal.innerHTML = `
+    <div class="token-detail-content" style="background:#0d0d0d;border:2px solid #1a1a1a;border-radius:24px;padding:32px;width:90%;max-width:900px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.6);">
+      <div class="token-detail-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding-bottom:20px;border-bottom:2px solid #1a1a1a;">
+        <div class="token-detail-title" style="display:flex;align-items:center;gap:16px;">
+          <img src="" alt="" style="width:48px;height:48px;border-radius:50%;">
+          <h2 style="font-size:24px;font-weight:900;background:linear-gradient(135deg,#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:0;"></h2>
+        </div>
+        <button class="modal-close" onclick="document.getElementById('tokenChartModal').classList.remove('show')" style="background:transparent;border:none;color:#666;font-size:28px;cursor:pointer;padding:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px;transition:all .3s;">×</button>
+      </div>
+      <div class="chart-container" style="background:#0a0a0a;border:1px solid #1a1a1a;border-radius:16px;padding:24px;margin:24px 0;position:relative;">
+        <div class="chart-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <div class="chart-title" style="font-size:18px;font-weight:800;color:#fff;">Price History</div>
+          <div class="chart-controls" style="display:flex;gap:8px;">
+            <button class="chart-btn" data-days="1" style="padding:6px 16px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;color:#888;font-size:12px;font-weight:700;cursor:pointer;transition:all .3s;">1D</button>
+            <button class="chart-btn active" data-days="7" style="padding:6px 16px;background:linear-gradient(135deg,#8b5cf6,#ec4899);border:none;color:#fff;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:all .3s;">7D</button>
+            <button class="chart-btn" data-days="30" style="padding:6px 16px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;color:#888;font-size:12px;font-weight:700;cursor:pointer;transition:all .3s;">30D</button>
+            <button class="chart-btn" data-days="90" style="padding:6px 16px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;color:#888;font-size:12px;font-weight:700;cursor:pointer;transition:all .3s;">90D</button>
+            <button class="chart-btn" data-days="365" style="padding:6px 16px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;color:#888;font-size:12px;font-weight:700;cursor:pointer;transition:all .3s;">1Y</button>
+          </div>
+        </div>
+        <div class="chart-wrapper" style="position:relative;height:300px;width:100%;">
+          <canvas id="priceChartCanvas"></canvas>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  
+  modal.querySelectorAll('.chart-btn').forEach(btn => {
+    btn.onclick = () => {
+      const days = parseInt(btn.dataset.days);
+      modal.querySelectorAll('.chart-btn').forEach(b => {
+        b.classList.remove('active');
+        b.style.background = '#0a0a0a';
+        b.style.border = '1px solid #1a1a1a';
+        b.style.color = '#888';
+      });
+      btn.classList.add('active');
+      btn.style.background = 'linear-gradient(135deg,#8b5cf6,#ec4899)';
+      btn.style.border = 'none';
+      btn.style.color = '#fff';
+      loadPriceChart(currentChartTokenId, days);
+    };
+  });
+  
+  modal.onclick = (e) => {
+    if (e.target === modal) modal.classList.remove('show');
+  };
+  
+  return modal;
+}
+
+async function loadPriceChart(tokenId, days) {
+  if (!tokenId) return;
+  
+  const modal = document.getElementById('tokenChartModal');
+  if (!modal) return;
+  
+  const canvas = document.getElementById('priceChartCanvas');
+  if (!canvas) return;
+  
+  const wrapper = canvas.parentElement;
+  wrapper.innerHTML = '<div style="text-align:center;padding:60px;color:#888;">Loading chart...</div>';
+  
+  try {
+    const res = await fetch(`/api/history?id=${encodeURIComponent(tokenId)}&days=${days}`);
+    const data = await res.json();
+    
+    if (!res.ok || !data.prices || data.prices.length === 0) {
+      throw new Error(data.error || 'Failed to load price history');
+    }
+    
+    wrapper.innerHTML = '<canvas id="priceChartCanvas"></canvas>';
+    const newCanvas = document.getElementById('priceChartCanvas');
+    const newCtx = newCanvas.getContext('2d');
+    
+    if (priceChart) {
+      priceChart.destroy();
+    }
+    
+    const labels = data.prices.map(p => new Date(p.x).toLocaleDateString());
+    const prices = data.prices.map(p => p.y);
+    
+    const firstPrice = prices[0];
+    const lastPrice = prices[prices.length - 1];
+    const isPositive = lastPrice >= firstPrice;
+    const chartColor = isPositive ? '#10b981' : '#ef4444';
+    
+    priceChart = new Chart(newCtx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Price (USD)',
+          data: prices,
+          borderColor: chartColor,
+          backgroundColor: chartColor + '20',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 0,
+          pointHoverRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+            backgroundColor: 'rgba(10, 10, 10, 0.9)',
+            titleColor: '#fff',
+            bodyColor: '#fff',
+            borderColor: '#8b5cf6',
+            borderWidth: 1,
+            callbacks: {
+              label: function(context) {
+                return '$' + formatPrice(context.parsed.y);
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: 'rgba(255, 255, 255, 0.05)', display: false },
+            ticks: { color: '#888', maxTicksLimit: 8 }
+          },
+          y: {
+            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+            ticks: {
+              color: '#888',
+              callback: function(value) {
+                return '$' + formatPrice(value);
+              }
+            }
+          }
+        },
+        interaction: {
+          mode: 'nearest',
+          axis: 'x',
+          intersect: false
+        }
+      }
+    });
+    
+  } catch (error) {
+    console.error('Chart load error:', error);
+    wrapper.innerHTML = `<div class="error" style="margin:20px;background:rgba(239,68,68,.1);border:2px solid rgba(239,68,68,.3);color:#ef4444;border-radius:16px;padding:24px;font-weight:700;text-align:center;">Error loading chart: ${error.message}</div>`;
+  }
+}
+
+window.loadPriceChart = loadPriceChart;
 
 </script>
 
