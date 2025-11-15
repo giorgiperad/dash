@@ -1604,9 +1604,6 @@ body{overflow-x:hidden}
     <button class="theme-toggle" id="refreshButton" aria-label="Refresh data" title="Refresh data" style="position:relative;">
       <span id="refreshIcon">🔄</span>
     </button>
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Theme toggle">
-      <span id="themeIcon">🌙</span>
-    </button>
     <button class="theme-toggle" id="notificationToggle" aria-label="Notifications" title="Notifications" style="position:relative;">
       <span id="notificationIcon">🔔</span>
       <span id="notificationBadge" style="display:none;position:absolute;top:-6px;right:-6px;background:linear-gradient(135deg, #ef4444, #dc2626);color:#fff;border-radius:50%;width:20px;height:20px;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700;border:2px solid var(--bg-primary);box-shadow:0 2px 8px rgba(239,68,68,0.4);animation:pulse 2s infinite;">0</span>
@@ -6889,11 +6886,12 @@ window.adminSaveSystemSettings = function() {
   const refreshInterval = document.getElementById('adminRefreshInterval')?.value;
   const cacheDuration = document.getElementById('adminCacheDuration')?.value;
   
-  if (refreshInterval) {
-    refreshIntervalMs = parseInt(refreshInterval);
-    startAutoRefresh();
-    localStorage.setItem('refreshIntervalMs', refreshIntervalMs);
-  }
+  // Auto refresh disabled
+  // if (refreshInterval) {
+  //   refreshIntervalMs = parseInt(refreshInterval);
+  //   startAutoRefresh();
+  //   localStorage.setItem('refreshIntervalMs', refreshIntervalMs);
+  // }
   
   if (cacheDuration) {
     CACHE_DURATION = parseInt(cacheDuration);
@@ -7595,44 +7593,12 @@ document.addEventListener('click', function(e) {
   }
 });
 
-/* 5. DARK/LIGHT THEME WITH AUTO-DETECTION */
+/* 5. DARK THEME ONLY - NO LIGHT THEME */
 function initTheme() {
-  const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const savedTheme = localStorage.getItem('theme');
-  let theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
-  
-  document.documentElement.setAttribute('data-theme', theme);
-  updateThemeIcon(theme);
-  
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-    if (!localStorage.getItem('theme')) {
-      const newTheme = e.matches ? 'dark' : 'light';
-      document.documentElement.setAttribute('data-theme', newTheme);
-      updateThemeIcon(newTheme);
-    }
-  });
+  // Force dark theme only
+  document.documentElement.setAttribute('data-theme', 'dark');
+  localStorage.setItem('theme', 'dark');
 }
-
-function toggleTheme() {
-  const currentTheme = document.documentElement.getAttribute('data-theme');
-  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-  
-  document.documentElement.setAttribute('data-theme', newTheme);
-  localStorage.setItem('theme', newTheme);
-  updateThemeIcon(newTheme);
-  
-  showNotification('Theme Changed', `Switched to ${newTheme} theme`, 'info');
-  logAuditEvent('user', 'theme_changed', { theme: newTheme });
-}
-
-function updateThemeIcon(theme) {
-  const icon = document.getElementById('themeIcon');
-  if (icon) {
-    icon.textContent = theme === 'dark' ? '🌙' : '☀️';
-  }
-}
-
-document.getElementById('themeToggle')?.addEventListener('click', toggleTheme);
 initTheme();
 
 /* 15. AUDIT LOGGING */
