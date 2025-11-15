@@ -2381,15 +2381,63 @@ body{overflow-x:hidden}
                   <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Direction</th>
                   <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Closing Qty (Cont.)</th>
                   <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Trading Fee</th>
-                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;">Realized PNL</th>
+                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Realized PNL</th>
+                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;">Action</th>
                 </tr>
               </thead>
               <tbody id="tradesTableBody">
                 <tr>
-                  <td colspan="7" style="padding:40px;text-align:center;color:var(--text-tertiary);font-size:14px;">ჯერ არ არის ტრანზაქციები</td>
+                  <td colspan="8" style="padding:40px;text-align:center;color:var(--text-tertiary);font-size:14px;">ჯერ არ არის ტრანზაქციები</td>
                 </tr>
               </tbody>
             </table>
+          </div>
+
+          <!-- Edit Trade Modal -->
+          <div id="editTradeModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:10000;align-items:center;justify-content:center;">
+            <div style="background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:16px;padding:32px;max-width:600px;width:90%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+                <div style="font-size:20px;font-weight:700;color:var(--text-primary);">ტრანზაქციის რედაქტირება</div>
+                <button type="button" id="closeEditModal" style="background:none;border:none;color:var(--text-secondary);font-size:24px;cursor:pointer;padding:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px;transition:all 0.2s;" onmouseenter="this.style.background='var(--bg-tertiary)'" onmouseleave="this.style.background='transparent'">×</button>
+              </div>
+              <form id="editTradeForm" style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;">
+                <div>
+                  <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">ლევერაჟი</label>
+                  <input type="number" step="0.1" id="editLeverage" placeholder="1x" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+                </div>
+                <div>
+                  <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Avg Entry Price</label>
+                  <input type="number" step="0.01" id="editEntryPrice" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+                </div>
+                <div>
+                  <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Avg Close Price</label>
+                  <input type="number" step="0.01" id="editExitPrice" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+                </div>
+                <div>
+                  <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Direction</label>
+                  <select id="editDirection" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+                    <option value="Long">Long</option>
+                    <option value="Short">Short</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Closing Qty (Cont.)</label>
+                  <input type="number" step="0.01" id="editClosingQty" placeholder="0.00" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+                </div>
+                <div>
+                  <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Trading Fee</label>
+                  <input type="number" step="0.01" id="editTradingFee" placeholder="0.00" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+                </div>
+                <div style="grid-column:span 2;">
+                  <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Realized PNL</label>
+                  <input type="number" step="0.01" id="editNetPL" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+                </div>
+                <div style="grid-column:span 2;display:flex;gap:12px;justify-content:flex-end;margin-top:8px;">
+                  <button type="button" id="cancelEditBtn" style="padding:12px 24px;background:var(--bg-tertiary);border:1px solid var(--border-primary);color:var(--text-secondary);border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;font-family:'Arial',sans-serif;">გაუქმება</button>
+                  <button type="submit" style="padding:12px 24px;background:var(--success);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;font-family:'Arial',sans-serif;">შენახვა</button>
+                </div>
+              </form>
+            </div>
           </div>
       </div>
     </div>
@@ -8090,8 +8138,80 @@ async function addTrade(token, entryPrice, exitPrice, netPL, date, leverage, sto
   renderTradesTable();
 }
 
+// Edit trade
+let editingTradeId = null;
+
+function editTrade(tradeId) {
+  const trade = trades.find(t => t.id === tradeId);
+  if (!trade) return;
+  
+  editingTradeId = tradeId;
+  
+  // Populate form with trade data
+  document.getElementById('editLeverage').value = trade.leverage || '';
+  document.getElementById('editEntryPrice').value = trade.entryPrice || '';
+  document.getElementById('editExitPrice').value = trade.exitPrice || '';
+  document.getElementById('editDirection').value = trade.direction || (trade.exitPrice > trade.entryPrice ? 'Long' : 'Short');
+  document.getElementById('editClosingQty').value = trade.closingQty || '';
+  document.getElementById('editTradingFee').value = trade.tradingFee || '';
+  document.getElementById('editNetPL').value = trade.net || '';
+  
+  // Show modal
+  document.getElementById('editTradeModal').style.display = 'flex';
+}
+
+// Save edited trade
+async function saveEditedTrade() {
+  if (!editingTradeId) return;
+  
+  const trade = trades.find(t => t.id === editingTradeId);
+  if (!trade) return;
+  
+  const leverage = document.getElementById('editLeverage').value;
+  const entryPrice = parseFloat(document.getElementById('editEntryPrice').value);
+  const exitPrice = parseFloat(document.getElementById('editExitPrice').value);
+  const direction = document.getElementById('editDirection').value;
+  const closingQty = document.getElementById('editClosingQty').value;
+  const tradingFee = document.getElementById('editTradingFee').value;
+  const netPL = parseFloat(document.getElementById('editNetPL').value);
+  
+  if (!entryPrice || !exitPrice || isNaN(netPL)) {
+    alert('გთხოვთ შეავსოთ ყველა სავალდებულო ველი');
+    return;
+  }
+  
+  // Update trade
+  trade.leverage = leverage ? parseFloat(leverage) : null;
+  trade.entryPrice = entryPrice;
+  trade.exitPrice = exitPrice;
+  trade.direction = direction;
+  trade.closingQty = closingQty ? parseFloat(closingQty) : null;
+  trade.tradingFee = tradingFee ? parseFloat(tradingFee) : null;
+  trade.net = netPL;
+  
+  // Recalculate percentages if stop loss/take profit exist
+  if (trade.stopLoss) {
+    trade.stopLossPercent = calculatePercentage(entryPrice, trade.stopLoss);
+  }
+  if (trade.takeProfit) {
+    trade.takeProfitPercent = calculatePercentage(entryPrice, trade.takeProfit);
+  }
+  
+  await saveTrades();
+  updateMetrics();
+  renderTradesTable();
+  
+  // Close modal
+  document.getElementById('editTradeModal').style.display = 'none';
+  editingTradeId = null;
+}
+
 // Delete trade
 async function deleteTrade(tradeId) {
+  if (!confirm('დარწმუნებული ხართ, რომ გსურთ ამ ტრანზაქციის წაშლა?')) {
+    return;
+  }
+  
   const index = trades.findIndex(t => t.id === tradeId);
   if (index === -1) return;
   
@@ -8107,6 +8227,42 @@ async function deleteTrade(tradeId) {
   await saveTrades();
   updateMetrics();
   renderTradesTable();
+}
+
+// Make functions globally available
+window.editTrade = editTrade;
+window.deleteTrade = deleteTrade;
+
+// Edit modal event listeners
+if (document.getElementById('editTradeForm')) {
+  document.getElementById('editTradeForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await saveEditedTrade();
+  });
+}
+
+if (document.getElementById('closeEditModal')) {
+  document.getElementById('closeEditModal').addEventListener('click', () => {
+    document.getElementById('editTradeModal').style.display = 'none';
+    editingTradeId = null;
+  });
+}
+
+if (document.getElementById('cancelEditBtn')) {
+  document.getElementById('cancelEditBtn').addEventListener('click', () => {
+    document.getElementById('editTradeModal').style.display = 'none';
+    editingTradeId = null;
+  });
+}
+
+// Close modal when clicking outside
+if (document.getElementById('editTradeModal')) {
+  document.getElementById('editTradeModal').addEventListener('click', (e) => {
+    if (e.target.id === 'editTradeModal') {
+      document.getElementById('editTradeModal').style.display = 'none';
+      editingTradeId = null;
+    }
+  });
 }
 
 // Clear all trades
@@ -8282,7 +8438,7 @@ function renderTradesTable() {
   if (!tbody) return;
   
   if (trades.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="padding:40px;text-align:center;color:var(--text-tertiary);font-size:14px;">ჯერ არ არის ტრანზაქციები</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" style="padding:40px;text-align:center;color:var(--text-tertiary);font-size:14px;">ჯერ არ არის ტრანზაქციები</td></tr>';
     return;
   }
   
@@ -8292,7 +8448,9 @@ function renderTradesTable() {
     
     // Determine direction based on entry/exit price or P&L
     let direction = '-';
-    if (trade.exitPrice && trade.entryPrice) {
+    if (trade.direction) {
+      direction = trade.direction;
+    } else if (trade.exitPrice && trade.entryPrice) {
       direction = trade.exitPrice > trade.entryPrice ? 'Long' : 'Short';
     } else if (trade.net !== undefined) {
       direction = trade.net > 0 ? 'Long' : 'Short';
@@ -8312,7 +8470,13 @@ function renderTradesTable() {
         <td style="padding:12px;text-align:center;color:var(--text-primary);font-weight:600;border-right:1px solid var(--border-secondary);">${direction}</td>
         <td style="padding:12px;text-align:center;color:var(--text-primary);border-right:1px solid var(--border-secondary);">${closingQty}</td>
         <td style="padding:12px;text-align:center;color:var(--text-primary);border-right:1px solid var(--border-secondary);">${tradingFee}</td>
-        <td style="padding:12px;text-align:center;font-weight:600;color:${isPositive ? 'var(--success)' : 'var(--error)'};">${trade.net >= 0 ? '+' : ''}$${Math.abs(trade.net).toFixed(2)}</td>
+        <td style="padding:12px;text-align:center;font-weight:600;color:${isPositive ? 'var(--success)' : 'var(--error)'};border-right:1px solid var(--border-secondary);">${trade.net >= 0 ? '+' : ''}$${Math.abs(trade.net).toFixed(2)}</td>
+        <td style="padding:12px;text-align:center;">
+          <div style="display:flex;gap:8px;justify-content:center;">
+            <button onclick="editTrade('${trade.id}')" style="padding:6px 12px;background:var(--accent-primary);border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s;font-family:'Arial',sans-serif;" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'">რედაქტირება</button>
+            <button onclick="deleteTrade('${trade.id}')" style="padding:6px 12px;background:var(--error);border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s;font-family:'Arial',sans-serif;" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'">წაშლა</button>
+          </div>
+        </td>
       </tr>
     `;
   }).join('');
