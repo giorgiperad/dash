@@ -14,6 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <!-- ALKDots Font - Local from GitHub -->
 <link rel="stylesheet" href="/fonts/alkdots.min.css">
 <!-- BPG ExtraSquare Mtavruli Font - Local from GitHub -->
@@ -2263,11 +2264,11 @@ body{overflow-x:hidden}
 
           <!-- CSV Import Section -->
           <div style="background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:12px;padding:24px;margin-bottom:24px;">
-            <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">CSV იმპორტი</div>
+            <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">CSV/Excel იმპორტი</div>
             <div style="display:flex;gap:16px;align-items:end;flex-wrap:wrap;">
               <div style="flex:1;min-width:200px;">
-                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">CSV ფაილი</label>
-                <input type="file" id="csvFileInput" accept=".csv" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;cursor:pointer;">
+                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">CSV/Excel ფაილი</label>
+                <input type="file" id="csvFileInput" accept=".csv,.xlsx,.xls" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;cursor:pointer;">
               </div>
               <button type="button" id="importCsvBtn" style="padding:12px 24px;background:var(--accent-primary);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;font-family:'Arial',sans-serif;white-space:nowrap;">იმპორტი</button>
               <button type="button" id="clearPreviewBtn" style="padding:12px 24px;background:var(--bg-tertiary);border:1px solid var(--border-primary);color:var(--text-secondary);border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;font-family:'Arial',sans-serif;white-space:nowrap;display:none;">გასუფთავება</button>
@@ -8371,46 +8372,111 @@ function mapCSVRowToTrade(row) {
   return trade;
 }
 
-// Handle CSV file import
+// Parse Excel file
+function parseExcel(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        
+        // Get first sheet
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        
+        // Convert to JSON
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+        
+        if (jsonData.length === 0) {
+          reject(new Error('Excel ფაილი ცარიელია'));
+          return;
+        }
+        
+        // First row is headers
+        const headers = jsonData[0].map(h => String(h).trim().toLowerCase());
+        
+        // Convert rows to objects
+        const rows = [];
+        for (let i = 1; i < jsonData.length; i++) {
+          const row = {};
+          headers.forEach((header, idx) => {
+            row[header] = jsonData[i][idx] !== undefined ? String(jsonData[i][idx]).trim() : '';
+          });
+          rows.push(row);
+        }
+        
+        resolve({ headers, rows });
+      } catch (error) {
+        reject(error);
+      }
+    };
+    reader.onerror = () => reject(new Error('ფაილის წაკითხვის შეცდომა'));
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+// Handle CSV/Excel file import
 async function handleCSVImport() {
   const fileInput = document.getElementById('csvFileInput');
   const file = fileInput.files[0];
   
   if (!file) {
-    showCSVStatus('გთხოვთ აირჩიოთ CSV ფაილი', 'error');
+    showCSVStatus('გთხოვთ აირჩიოთ CSV ან Excel ფაილი', 'error');
     return;
   }
   
-  const reader = new FileReader();
-  reader.onload = async (e) => {
-    try {
-      const text = e.target.result;
-      const { headers, rows } = parseCSV(text);
-      
-      if (rows.length === 0) {
-        showCSVStatus('CSV ფაილში ტრანზაქციები ვერ მოიძებნა', 'error');
-        return;
-      }
-      
-      // Map rows to trades
-      csvPreviewData = rows.map(row => mapCSVRowToTrade(row))
-        .filter(trade => trade.entryPrice !== null && trade.exitPrice !== null && trade.netPL !== null);
-      
-      if (csvPreviewData.length === 0) {
-        showCSVStatus('ვერ მოხერხდა ტრანზაქციების გამოტანა CSV-დან. შეამოწმეთ ფაილის ფორმატი.', 'error');
-        return;
-      }
-      
-      // Show preview
-      showCSVPreview(csvPreviewData);
-      showCSVStatus(`ნაპოვნია ${csvPreviewData.length} ტრანზაქცია`, 'success');
-    } catch (error) {
-      console.error('CSV import error:', error);
-      showCSVStatus('შეცდომა CSV ფაილის წაკითხვისას: ' + error.message, 'error');
-    }
-  };
+  const fileName = file.name.toLowerCase();
+  const isExcel = fileName.endsWith('.xlsx') || fileName.endsWith('.xls');
   
-  reader.readAsText(file);
+  try {
+    let headers, rows;
+    
+    if (isExcel) {
+      // Parse Excel file
+      if (typeof XLSX === 'undefined') {
+        showCSVStatus('Excel ბიბლიოთეკა არ არის ჩატვირთული', 'error');
+        return;
+      }
+      
+      const result = await parseExcel(file);
+      headers = result.headers;
+      rows = result.rows;
+    } else {
+      // Parse CSV file
+      const reader = new FileReader();
+      const text = await new Promise((resolve, reject) => {
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = () => reject(new Error('ფაილის წაკითხვის შეცდომა'));
+        reader.readAsText(file);
+      });
+      
+      const result = parseCSV(text);
+      headers = result.headers;
+      rows = result.rows;
+    }
+    
+    if (rows.length === 0) {
+      showCSVStatus('ფაილში ტრანზაქციები ვერ მოიძებნა', 'error');
+      return;
+    }
+    
+    // Map rows to trades
+    csvPreviewData = rows.map(row => mapCSVRowToTrade(row))
+      .filter(trade => trade.entryPrice !== null && trade.exitPrice !== null && trade.netPL !== null);
+    
+    if (csvPreviewData.length === 0) {
+      showCSVStatus('ვერ მოხერხდა ტრანზაქციების გამოტანა. შეამოწმეთ ფაილის ფორმატი და სვეტების სახელები.', 'error');
+      return;
+    }
+    
+    // Show preview
+    showCSVPreview(csvPreviewData);
+    showCSVStatus(`ნაპოვნია ${csvPreviewData.length} ტრანზაქცია`, 'success');
+  } catch (error) {
+    console.error('Import error:', error);
+    showCSVStatus('შეცდომა ფაილის წაკითხვისას: ' + error.message, 'error');
+  }
 }
 
 // Show CSV preview
