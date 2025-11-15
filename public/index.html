@@ -2371,7 +2371,13 @@ body{overflow-x:hidden}
 
           <!-- Table Section -->
           <div style="background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:12px;padding:24px;overflow-x:auto;">
-            <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">ტრანზაქციების ისტორია</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+              <div style="font-size:18px;font-weight:600;color:var(--text-primary);">ტრანზაქციების ისტორია</div>
+              <button type="button" id="exportCsvBtn" style="padding:10px 20px;background:var(--accent-primary);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;transition:all 0.2s;font-family:'Arial',sans-serif;display:flex;align-items:center;gap:8px;" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'">
+                <span>📥</span>
+                <span>CSV ექსპორტი</span>
+              </button>
+            </div>
             <table id="tradesTable" style="width:100%;border-collapse:collapse;font-family:'Arial',sans-serif;">
               <thead>
                 <tr style="background:var(--bg-tertiary);border-bottom:2px solid var(--border-secondary);">
@@ -8263,6 +8269,90 @@ if (document.getElementById('editTradeModal')) {
       editingTradeId = null;
     }
   });
+}
+
+// Export trades to CSV
+function exportTradesToCSV() {
+  if (trades.length === 0) {
+    alert('ექსპორტისთვის ტრანზაქციები არ არის');
+    return;
+  }
+  
+  // Define CSV headers matching the table columns
+  const headers = [
+    'Leverage',
+    'Avg Entry Price',
+    'Avg Close Price',
+    'Direction',
+    'Closing Qty (Cont.)',
+    'Trading Fee',
+    'Realized PNL'
+  ];
+  
+  // Convert trades to CSV rows
+  const csvRows = trades.map(trade => {
+    const leverage = trade.leverage ? trade.leverage + 'x' : '';
+    const entryPrice = trade.entryPrice ? trade.entryPrice.toFixed(2) : '';
+    const exitPrice = trade.exitPrice ? trade.exitPrice.toFixed(2) : '';
+    
+    // Determine direction
+    let direction = '';
+    if (trade.direction) {
+      direction = trade.direction;
+    } else if (trade.exitPrice && trade.entryPrice) {
+      direction = trade.exitPrice > trade.entryPrice ? 'Long' : 'Short';
+    } else if (trade.net !== undefined) {
+      direction = trade.net > 0 ? 'Long' : 'Short';
+    }
+    
+    const closingQty = trade.closingQty !== undefined && trade.closingQty !== null ? trade.closingQty.toFixed(2) : '';
+    const tradingFee = trade.tradingFee !== undefined && trade.tradingFee !== null ? trade.tradingFee.toFixed(2) : '';
+    const realizedPNL = trade.net !== undefined ? trade.net.toFixed(2) : '';
+    
+    // Escape values that contain commas or quotes
+    const escapeCSV = (value) => {
+      if (value === null || value === undefined || value === '') return '';
+      const stringValue = String(value);
+      if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
+        return '"' + stringValue.replace(/"/g, '""') + '"';
+      }
+      return stringValue;
+    };
+    
+    return [
+      escapeCSV(leverage),
+      escapeCSV(entryPrice),
+      escapeCSV(exitPrice),
+      escapeCSV(direction),
+      escapeCSV(closingQty),
+      escapeCSV(tradingFee),
+      escapeCSV(realizedPNL)
+    ].join(',');
+  });
+  
+  // Combine headers and rows
+  const csvContent = [headers.join(','), ...csvRows].join('\n');
+  
+  // Create blob and download
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  
+  link.setAttribute('href', url);
+  link.setAttribute('download', `trades_export_${new Date().toISOString().split('T')[0]}.csv`);
+  link.style.visibility = 'hidden';
+  
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  
+  // Clean up the URL
+  URL.revokeObjectURL(url);
+}
+
+// Export CSV button event listener
+if (document.getElementById('exportCsvBtn')) {
+  document.getElementById('exportCsvBtn').addEventListener('click', exportTradesToCSV);
 }
 
 // Clear all trades
