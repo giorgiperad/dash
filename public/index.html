@@ -1881,7 +1881,7 @@ body{overflow-x:hidden}
               <div style="font-weight:600;color:var(--text-primary);margin-bottom:6px;font-size:16px;">View Portfolio</div>
               <div style="font-size:13px;color:var(--text-tertiary);line-height:1.5;">Manage your holdings and track performance</div>
             </div>
-          </button>
+        </button>
           <button onclick="showPage('targets')" class="dashboard-action-btn" style="padding:24px;background:linear-gradient(135deg,var(--bg-card) 0%,var(--bg-tertiary) 100%);border:1px solid var(--border-secondary);border-radius:16px;cursor:pointer;transition:all 0.3s;text-align:left;position:relative;overflow:hidden;">
             <div style="position:absolute;top:0;right:0;width:100px;height:100px;background:radial-gradient(circle,rgba(34,197,94,0.1),transparent);border-radius:50%;transform:translate(30px,-30px);"></div>
             <div style="position:relative;z-index:1;">
@@ -1889,7 +1889,7 @@ body{overflow-x:hidden}
               <div style="font-weight:600;color:var(--text-primary);margin-bottom:6px;font-size:16px;">Manage Targets</div>
               <div style="font-size:13px;color:var(--text-tertiary);line-height:1.5;">Set and track sell targets</div>
             </div>
-          </button>
+        </button>
           <button onclick="showPage('market')" class="dashboard-action-btn" style="padding:24px;background:linear-gradient(135deg,var(--bg-card) 0%,var(--bg-tertiary) 100%);border:1px solid var(--border-secondary);border-radius:16px;cursor:pointer;transition:all 0.3s;text-align:left;position:relative;overflow:hidden;">
             <div style="position:absolute;top:0;right:0;width:100px;height:100px;background:radial-gradient(circle,rgba(59,130,246,0.1),transparent);border-radius:50%;transform:translate(30px,-30px);"></div>
             <div style="position:relative;z-index:1;">
@@ -1897,7 +1897,7 @@ body{overflow-x:hidden}
               <div style="font-weight:600;color:var(--text-primary);margin-bottom:6px;font-size:16px;">Market Data</div>
               <div style="font-size:13px;color:var(--text-tertiary);line-height:1.5;">View real-time crypto prices</div>
             </div>
-          </button>
+        </button>
           <button onclick="showPage('alerts')" class="dashboard-action-btn" style="padding:24px;background:linear-gradient(135deg,var(--bg-card) 0%,var(--bg-tertiary) 100%);border:1px solid var(--border-secondary);border-radius:16px;cursor:pointer;transition:all 0.3s;text-align:left;position:relative;overflow:hidden;">
             <div style="position:absolute;top:0;right:0;width:100px;height:100px;background:radial-gradient(circle,rgba(245,158,11,0.1),transparent);border-radius:50%;transform:translate(30px,-30px);"></div>
             <div style="position:relative;z-index:1;">
@@ -1905,7 +1905,7 @@ body{overflow-x:hidden}
               <div style="font-weight:600;color:var(--text-primary);margin-bottom:6px;font-size:16px;">Price Alerts</div>
               <div style="font-size:13px;color:var(--text-tertiary);line-height:1.5;">Set price notifications</div>
             </div>
-          </button>
+        </button>
         </div>
       </div>
 
@@ -2217,13 +2217,27 @@ body{overflow-x:hidden}
 
               <!-- Total Profits -->
               <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">სულ მოგება</div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--success);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricTotalProfits">$0.00</div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">მომგებიან ტრანზაქციებზე სულ მოგება</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--success);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricTotalProfits">
+                <div>$0.00</div>
+                <div style="font-size:11px;color:var(--text-tertiary);font-weight:500;" id="metricTotalProfitsPercent">0.00%</div>
+              </div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">მომგებიან ტრანზაქციებზე სულ მოგება ($ და %)</div>
 
               <!-- Total Losses -->
               <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">სულ ზარალი</div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--error);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricTotalLosses">$0.00</div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">ზარალისმომტან ტრანზაქციებზე სულ ზარალი</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--error);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricTotalLosses">
+                <div>$0.00</div>
+                <div style="font-size:11px;color:var(--text-tertiary);font-weight:500;" id="metricTotalLossesPercent">0.00%</div>
+              </div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">ზარალისმომტან ტრანზაქციებზე სულ ზარალი ($ და %)</div>
+
+              <!-- Net P&L -->
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">წმინდა P&L</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricNetPL">
+                <div>$0.00</div>
+                <div style="font-size:11px;color:var(--text-tertiary);font-weight:500;" id="metricNetPLPercent">0.00%</div>
+              </div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">სულ მოგება მინუს სულ ზარალი ($ და %)</div>
 
               <!-- Odds of Winning -->
               <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">მოგების შანსი</div>
@@ -2237,28 +2251,43 @@ body{overflow-x:hidden}
 
               <!-- Average Win -->
               <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">საშუალო მოგება</div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--success);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricAvgWin">$0.00</div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">სულ მოგება გაყოფილი მომგებიანზე</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--success);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricAvgWin">
+                <div>$0.00</div>
+                <div style="font-size:11px;color:var(--text-tertiary);font-weight:500;" id="metricAvgWinPercent">0.00%</div>
+              </div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">სულ მოგება გაყოფილი მომგებიანზე ($ და %)</div>
 
               <!-- Average Loss -->
               <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">საშუალო ზარალი</div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--error);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricAvgLoss">$0.00</div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">სულ ზარალი გაყოფილი ზარალისმომტანზე</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--error);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricAvgLoss">
+                <div>$0.00</div>
+                <div style="font-size:11px;color:var(--text-tertiary);font-weight:500;" id="metricAvgLossPercent">0.00%</div>
+              </div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">სულ ზარალი გაყოფილი ზარალისმომტანზე ($ და %)</div>
 
               <!-- W -->
               <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">W</div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--text-primary);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricW">$0.00</div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">საშუალო მოგება გამრავლებული მოგების შანსზე</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--text-primary);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricW">
+                <div>$0.00</div>
+                <div style="font-size:11px;color:var(--text-tertiary);font-weight:500;" id="metricWPercent">0.00%</div>
+              </div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">საშუალო მოგება გამრავლებული მოგების შანსზე ($ და %)</div>
 
               <!-- L -->
               <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">L</div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--error);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricL">$0.00</div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">საშუალო ზარალი გამრავლებული ზარალის შანსზე</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--error);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricL">
+                <div>$0.00</div>
+                <div style="font-size:11px;color:var(--text-tertiary);font-weight:500;" id="metricLPercent">0.00%</div>
+              </div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">საშუალო ზარალი გამრავლებული ზარალის შანსზე ($ და %)</div>
 
               <!-- Expectancy (Highlighted) -->
               <div style="background:linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);padding:10px 12px;font-weight:700;color:#1f2937;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">მოსალოდნელი მნიშვნელობა</div>
-              <div style="background:linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);padding:10px 12px;font-weight:700;color:#1f2937;text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricExpectancy">$0.00</div>
-              <div style="background:linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);padding:10px 12px;font-size:12px;color:#1f2937;font-weight:600;border-top:1px solid var(--border-secondary);">W პლუს L (სადაც L უარყოფითია)</div>
+              <div style="background:linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);padding:10px 12px;font-weight:700;color:#1f2937;text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricExpectancy">
+                <div>$0.00</div>
+                <div style="font-size:11px;color:#1f2937;font-weight:600;opacity:0.8;" id="metricExpectancyPercent">0.00%</div>
+              </div>
+              <div style="background:linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);padding:10px 12px;font-size:12px;color:#1f2937;font-weight:600;border-top:1px solid var(--border-secondary);">W პლუს L (სადაც L უარყოფითია) ($ და %)</div>
             </div>
           </div>
 
@@ -2367,8 +2396,8 @@ body{overflow-x:hidden}
               </tbody>
             </table>
           </div>
-        </div>
       </div>
+    </div>
 
       <!-- Admin Panel Page -->
       <div id="adminPage" class="page-content" style="display:none;">
@@ -8117,19 +8146,139 @@ function updateMetrics() {
   const l = avgLoss * (oddsLosing / 100);
   const expectancy = w - l; // L is already positive, so we subtract
   
-  // Update UI
+  // Calculate total capital (sum of all entry prices) for percentage calculations
+  const totalCapital = trades.reduce((sum, t) => sum + (t.entryPrice || 0), 0);
+  const avgEntryPrice = totalTrades > 0 ? totalCapital / totalTrades : 0;
+  const totalAbsoluteValue = totalProfits + totalLosses;
+  
+  // Calculate Net P&L (Total Profits - Total Losses)
+  const netPL = totalProfits - totalLosses;
+  
+  // Calculate percentages
+  const totalProfitsPercent = totalCapital > 0 ? (totalProfits / totalCapital) * 100 : 0;
+  const totalLossesPercent = totalCapital > 0 ? (totalLosses / totalCapital) * 100 : 0;
+  const netPLPercent = totalCapital > 0 ? (netPL / totalCapital) * 100 : 0;
+  const avgWinPercent = avgEntryPrice > 0 ? (avgWin / avgEntryPrice) * 100 : 0;
+  const avgLossPercent = avgEntryPrice > 0 ? (avgLoss / avgEntryPrice) * 100 : 0;
+  const wPercent = avgEntryPrice > 0 ? (w / avgEntryPrice) * 100 : 0;
+  const lPercent = avgEntryPrice > 0 ? (l / avgEntryPrice) * 100 : 0;
+  const expectancyPercent = avgEntryPrice > 0 ? (expectancy / avgEntryPrice) * 100 : 0;
+  
+  // Update UI - Dollar values
   document.getElementById('metricTotalTrades').textContent = totalTrades;
   document.getElementById('metricWinners').textContent = winners;
   document.getElementById('metricLosers').textContent = losers;
-  document.getElementById('metricTotalProfits').textContent = '$' + totalProfits.toFixed(2);
-  document.getElementById('metricTotalLosses').textContent = '$' + totalLosses.toFixed(2);
+  
+  // Update Total Profits (dollar and percentage)
+  const totalProfitsEl = document.getElementById('metricTotalProfits');
+  if (totalProfitsEl) {
+    const firstChild = totalProfitsEl.querySelector('div:first-child');
+    const secondChild = document.getElementById('metricTotalProfitsPercent');
+    if (firstChild) {
+      firstChild.textContent = '$' + totalProfits.toFixed(2);
+    }
+    if (secondChild) {
+      secondChild.textContent = (totalProfitsPercent >= 0 ? '+' : '') + totalProfitsPercent.toFixed(2) + '%';
+    }
+  }
+  
+  // Update Total Losses (dollar and percentage)
+  const totalLossesEl = document.getElementById('metricTotalLosses');
+  if (totalLossesEl) {
+    const firstChild = totalLossesEl.querySelector('div:first-child');
+    const secondChild = document.getElementById('metricTotalLossesPercent');
+    if (firstChild) {
+      firstChild.textContent = '$' + totalLosses.toFixed(2);
+    }
+    if (secondChild) {
+      secondChild.textContent = (totalLossesPercent >= 0 ? '+' : '') + totalLossesPercent.toFixed(2) + '%';
+    }
+  }
+  
+  // Update Net P&L (dollar and percentage)
+  const netPLEl = document.getElementById('metricNetPL');
+  if (netPLEl) {
+    const firstChild = netPLEl.querySelector('div:first-child');
+    const secondChild = document.getElementById('metricNetPLPercent');
+    const netPLColor = netPL >= 0 ? 'var(--success)' : 'var(--error)';
+    if (firstChild) {
+      firstChild.textContent = (netPL >= 0 ? '+' : '') + '$' + Math.abs(netPL).toFixed(2);
+      firstChild.style.color = netPLColor;
+    }
+    if (secondChild) {
+      secondChild.textContent = (netPLPercent >= 0 ? '+' : '') + netPLPercent.toFixed(2) + '%';
+      secondChild.style.color = netPLColor;
+    }
+    netPLEl.style.color = netPLColor;
+  }
+  
   document.getElementById('metricOddsWinning').textContent = oddsWinning.toFixed(2) + '%';
   document.getElementById('metricOddsLosing').textContent = oddsLosing.toFixed(2) + '%';
-  document.getElementById('metricAvgWin').textContent = '$' + avgWin.toFixed(2);
-  document.getElementById('metricAvgLoss').textContent = '$' + avgLoss.toFixed(2);
-  document.getElementById('metricW').textContent = '$' + w.toFixed(2);
-  document.getElementById('metricL').textContent = '$' + l.toFixed(2);
-  document.getElementById('metricExpectancy').textContent = '$' + expectancy.toFixed(2);
+  
+  // Update Average Win (dollar and percentage)
+  const avgWinEl = document.getElementById('metricAvgWin');
+  if (avgWinEl) {
+    const firstChild = avgWinEl.querySelector('div:first-child');
+    const secondChild = document.getElementById('metricAvgWinPercent');
+    if (firstChild) {
+      firstChild.textContent = '$' + avgWin.toFixed(2);
+    }
+    if (secondChild) {
+      secondChild.textContent = (avgWinPercent >= 0 ? '+' : '') + avgWinPercent.toFixed(2) + '%';
+    }
+  }
+  
+  // Update Average Loss (dollar and percentage)
+  const avgLossEl = document.getElementById('metricAvgLoss');
+  if (avgLossEl) {
+    const firstChild = avgLossEl.querySelector('div:first-child');
+    const secondChild = document.getElementById('metricAvgLossPercent');
+    if (firstChild) {
+      firstChild.textContent = '$' + avgLoss.toFixed(2);
+    }
+    if (secondChild) {
+      secondChild.textContent = (avgLossPercent >= 0 ? '+' : '') + avgLossPercent.toFixed(2) + '%';
+    }
+  }
+  
+  // Update W (dollar and percentage)
+  const wEl = document.getElementById('metricW');
+  if (wEl) {
+    const firstChild = wEl.querySelector('div:first-child');
+    const secondChild = document.getElementById('metricWPercent');
+    if (firstChild) {
+      firstChild.textContent = '$' + w.toFixed(2);
+    }
+    if (secondChild) {
+      secondChild.textContent = (wPercent >= 0 ? '+' : '') + wPercent.toFixed(2) + '%';
+    }
+  }
+  
+  // Update L (dollar and percentage)
+  const lEl = document.getElementById('metricL');
+  if (lEl) {
+    const firstChild = lEl.querySelector('div:first-child');
+    const secondChild = document.getElementById('metricLPercent');
+    if (firstChild) {
+      firstChild.textContent = '$' + l.toFixed(2);
+    }
+    if (secondChild) {
+      secondChild.textContent = (lPercent >= 0 ? '+' : '') + lPercent.toFixed(2) + '%';
+    }
+  }
+  
+  // Update Expectancy (dollar and percentage)
+  const expectancyEl = document.getElementById('metricExpectancy');
+  if (expectancyEl) {
+    const firstChild = expectancyEl.querySelector('div:first-child');
+    const secondChild = document.getElementById('metricExpectancyPercent');
+    if (firstChild) {
+      firstChild.textContent = '$' + expectancy.toFixed(2);
+    }
+    if (secondChild) {
+      secondChild.textContent = (expectancyPercent >= 0 ? '+' : '') + expectancyPercent.toFixed(2) + '%';
+    }
+  }
 }
 
 // Render trades table
