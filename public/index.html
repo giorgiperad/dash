@@ -1668,13 +1668,13 @@ body{overflow-x:hidden}
     </div>
     <div class="sidebar-nav-item" data-page="tradingJournal">
       <span class="sidebar-nav-icon">📝</span>
-      <span class="sidebar-nav-text">სავაჭრო ჟურნალი</span>
+      <span class="sidebar-nav-text">Trading Journal</span>
     </div>
     <div class="sidebar-divider"></div>
-    <div class="sidebar-section-title">ადმინისტრაცია</div>
+    <div class="sidebar-section-title"></div>
     <div class="sidebar-nav-item" data-page="admin" id="adminNavItem" style="display:none;">
       <span class="sidebar-nav-icon">⚙️</span>
-      <span class="sidebar-nav-text">Admin Panel</span>
+      <span class="sidebar-nav-text"> Panel</span>
       <span class="sidebar-nav-badge" id="adminBadge" style="display:none;">ADMIN</span>
     </div>
     <div class="sidebar-nav-item" data-page="profile">
@@ -2184,8 +2184,8 @@ body{overflow-x:hidden}
         <div class="main-section" style="width:100%;">
           <div class="section-header" style="margin-bottom:24px;">
             <div>
-              <div class="section-title" style="font-size:24px;font-weight:700;margin-bottom:4px;">სავაჭრო ჟურნალი</div>
-              <div style="font-size:13px;color:var(--text-tertiary);">თვალყურს ადევნეთ თქვენს ტრანზაქციებს და გაანალიზეთ შესრულება</div>
+              <div class="section-title" style="font-size:24px;font-weight:700;margin-bottom:4px;">Trading Journal</div>
+              <div style="font-size:13px;color:var(--text-tertiary);">Track your trades and analyze performance</div>
             </div>
           </div>
 
@@ -2193,74 +2193,74 @@ body{overflow-x:hidden}
           <div style="background:var(--bg-tertiary);border:1px solid var(--border-secondary);border-radius:12px;padding:20px;margin-bottom:24px;">
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-secondary);border:1px solid var(--border-secondary);border-radius:8px;overflow:hidden;">
               <!-- Header Row -->
-              <div style="background:var(--bg-card);padding:12px;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-primary);border-right:1px solid var(--border-secondary);">მეტრიკა</div>
-              <div style="background:var(--bg-card);padding:12px;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-primary);text-align:right;border-right:1px solid var(--border-secondary);">მნიშვნელობა</div>
-              <div style="background:var(--bg-card);padding:12px;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-primary);">აღწერა</div>
+              <div style="background:var(--bg-card);padding:12px;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-primary);border-right:1px solid var(--border-secondary);">Metric</div>
+              <div style="background:var(--bg-card);padding:12px;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-primary);text-align:right;border-right:1px solid var(--border-secondary);">Value</div>
+              <div style="background:var(--bg-card);padding:12px;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-primary);">Description</div>
 
               <!-- Total Trades -->
-              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">სულ ტრანზაქციები</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">Total Trades</div>
               <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--text-primary);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricTotalTrades">0</div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">ტრანზაქციების საერთო რაოდენობა</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Total number of trades</div>
 
               <!-- Winners -->
-              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">მომგებიანი</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">Winners</div>
               <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--success);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricWinners">0</div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">მომგებიანი ტრანზაქციების რაოდენობა</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Number of winning trades</div>
 
               <!-- Losers -->
-              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">ზარალისმომტანი</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">Losers</div>
               <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--error);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricLosers">0</div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">სულ ტრანზაქციები მინუს მომგებიანი</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Total trades minus winners</div>
 
               <!-- Total Profits -->
-              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">სულ მოგება</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">Total Profits</div>
               <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--success);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricTotalProfits">
                 <div>$0.00</div>
                 <div style="font-size:11px;color:var(--text-tertiary);font-weight:500;" id="metricTotalProfitsPercent">0.00%</div>
               </div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">მომგებიან ტრანზაქციებზე სულ მოგება ($ და %)</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Total profit on winning trades ($ and %)</div>
 
               <!-- Total Losses -->
-              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">სულ ზარალი</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">Total Losses</div>
               <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--error);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricTotalLosses">
                 <div>$0.00</div>
                 <div style="font-size:11px;color:var(--text-tertiary);font-weight:500;" id="metricTotalLossesPercent">0.00%</div>
               </div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">ზარალისმომტან ტრანზაქციებზე სულ ზარალი ($ და %)</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Total loss on losing trades ($ and %)</div>
 
               <!-- Net P&L -->
-              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">წმინდა P&L</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">Net P&L</div>
               <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricNetPL">
                 <div>$0.00</div>
                 <div style="font-size:11px;color:var(--text-tertiary);font-weight:500;" id="metricNetPLPercent">0.00%</div>
               </div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">სულ მოგება მინუს სულ ზარალი ($ და %)</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Total profits minus total losses ($ and %)</div>
 
               <!-- Odds of Winning -->
-              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">მოგების შანსი</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">Odds of Winning</div>
               <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--text-primary);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricOddsWinning">0.00%</div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">მომგებიანი გაყოფილი სულ ტრანზაქციებზე</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Winners divided by total trades</div>
 
               <!-- Odds of Losing -->
-              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">ზარალის შანსი</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">Odds of Losing</div>
               <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--text-primary);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricOddsLosing">0.00%</div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">ზარალისმომტანი გაყოფილი სულ ტრანზაქციებზე</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Losers divided by total trades</div>
 
               <!-- Average Win -->
-              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">საშუალო მოგება</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">Average Win</div>
               <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--success);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricAvgWin">
                 <div>$0.00</div>
                 <div style="font-size:11px;color:var(--text-tertiary);font-weight:500;" id="metricAvgWinPercent">0.00%</div>
               </div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">სულ მოგება გაყოფილი მომგებიანზე ($ და %)</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Total profits divided by winners ($ and %)</div>
 
               <!-- Average Loss -->
-              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">საშუალო ზარალი</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">Average Loss</div>
               <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--error);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricAvgLoss">
                 <div>$0.00</div>
                 <div style="font-size:11px;color:var(--text-tertiary);font-weight:500;" id="metricAvgLossPercent">0.00%</div>
               </div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">სულ ზარალი გაყოფილი ზარალისმომტანზე ($ და %)</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Total losses divided by losers ($ and %)</div>
 
               <!-- W -->
               <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">W</div>
@@ -2268,7 +2268,7 @@ body{overflow-x:hidden}
                 <div>$0.00</div>
                 <div style="font-size:11px;color:var(--text-tertiary);font-weight:500;" id="metricWPercent">0.00%</div>
               </div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">საშუალო მოგება გამრავლებული მოგების შანსზე ($ და %)</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Average win multiplied by odds of winning ($ and %)</div>
 
               <!-- L -->
               <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">L</div>
@@ -2276,47 +2276,47 @@ body{overflow-x:hidden}
                 <div>$0.00</div>
                 <div style="font-size:11px;color:var(--text-tertiary);font-weight:500;" id="metricLPercent">0.00%</div>
               </div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">საშუალო ზარალი გამრავლებული ზარალის შანსზე ($ და %)</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Average loss multiplied by odds of losing ($ and %)</div>
 
               <!-- Expectancy (Highlighted) -->
-              <div style="background:linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);padding:10px 12px;font-weight:700;color:#1f2937;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">მოსალოდნელი მნიშვნელობა</div>
+              <div style="background:linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);padding:10px 12px;font-weight:700;color:#1f2937;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">Expectancy</div>
               <div style="background:linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);padding:10px 12px;font-weight:700;color:#1f2937;text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricExpectancy">
                 <div>$0.00</div>
                 <div style="font-size:11px;color:#1f2937;font-weight:600;opacity:0.8;" id="metricExpectancyPercent">0.00%</div>
               </div>
-              <div style="background:linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);padding:10px 12px;font-size:12px;color:#1f2937;font-weight:600;border-top:1px solid var(--border-secondary);">W პლუს L (სადაც L უარყოფითია) ($ და %)</div>
+              <div style="background:linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);padding:10px 12px;font-size:12px;color:#1f2937;font-weight:600;border-top:1px solid var(--border-secondary);">W plus L (where L is negative) ($ and %)</div>
             </div>
           </div>
 
           <!-- CSV Import Section -->
           <div style="background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:12px;padding:24px;margin-bottom:24px;">
-            <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">CSV/Excel იმპორტი</div>
+            <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">CSV/Excel Import</div>
             <div style="display:flex;gap:16px;align-items:end;flex-wrap:wrap;">
               <div style="flex:1;min-width:200px;">
-                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">CSV/Excel ფაილი</label>
+                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">CSV/Excel File</label>
                 <input type="file" id="csvFileInput" accept=".csv,.xlsx,.xls" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;cursor:pointer;">
               </div>
-              <button type="button" id="importCsvBtn" style="padding:12px 24px;background:var(--accent-primary);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;font-family:'Arial',sans-serif;white-space:nowrap;">იმპორტი</button>
-              <button type="button" id="clearPreviewBtn" style="padding:12px 24px;background:var(--bg-tertiary);border:1px solid var(--border-primary);color:var(--text-secondary);border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;font-family:'Arial',sans-serif;white-space:nowrap;display:none;">გასუფთავება</button>
+              <button type="button" id="importCsvBtn" style="padding:12px 24px;background:var(--accent-primary);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;font-family:'Arial',sans-serif;white-space:nowrap;">Import</button>
+              <button type="button" id="clearPreviewBtn" style="padding:12px 24px;background:var(--bg-tertiary);border:1px solid var(--border-primary);color:var(--text-secondary);border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;font-family:'Arial',sans-serif;white-space:nowrap;display:none;">Clear</button>
             </div>
             <div id="csvPreview" style="margin-top:20px;display:none;">
-              <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:12px;">პრევიუ (<span id="previewCount">0</span> ტრანზაქცია)</div>
+              <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:12px;">Preview (<span id="previewCount">0</span> trades)</div>
               <div style="max-height:300px;overflow-y:auto;border:1px solid var(--border-secondary);border-radius:8px;">
                 <table id="csvPreviewTable" style="width:100%;border-collapse:collapse;font-family:'Arial',sans-serif;font-size:12px;">
                   <thead>
                     <tr style="background:var(--bg-tertiary);position:sticky;top:0;">
-                      <th style="padding:8px;text-align:center;font-weight:700;color:var(--text-primary);border-right:1px solid var(--border-secondary);border-bottom:1px solid var(--border-secondary);">ტოკენი</th>
-                      <th style="padding:8px;text-align:center;font-weight:700;color:var(--text-primary);border-right:1px solid var(--border-secondary);border-bottom:1px solid var(--border-secondary);">შესვლის ფასი</th>
-                      <th style="padding:8px;text-align:center;font-weight:700;color:var(--text-primary);border-right:1px solid var(--border-secondary);border-bottom:1px solid var(--border-secondary);">გასვლის ფასი</th>
+                      <th style="padding:8px;text-align:center;font-weight:700;color:var(--text-primary);border-right:1px solid var(--border-secondary);border-bottom:1px solid var(--border-secondary);">Token</th>
+                      <th style="padding:8px;text-align:center;font-weight:700;color:var(--text-primary);border-right:1px solid var(--border-secondary);border-bottom:1px solid var(--border-secondary);">Entry Price</th>
+                      <th style="padding:8px;text-align:center;font-weight:700;color:var(--text-primary);border-right:1px solid var(--border-secondary);border-bottom:1px solid var(--border-secondary);">Exit Price</th>
                       <th style="padding:8px;text-align:center;font-weight:700;color:var(--text-primary);border-right:1px solid var(--border-secondary);border-bottom:1px solid var(--border-secondary);">P&L</th>
-                      <th style="padding:8px;text-align:center;font-weight:700;color:var(--text-primary);border-right:1px solid var(--border-secondary);border-bottom:1px solid var(--border-secondary);">თარიღი</th>
+                      <th style="padding:8px;text-align:center;font-weight:700;color:var(--text-primary);border-right:1px solid var(--border-secondary);border-bottom:1px solid var(--border-secondary);">Date</th>
                     </tr>
                   </thead>
                   <tbody id="csvPreviewBody"></tbody>
                 </table>
               </div>
               <div style="margin-top:12px;display:flex;gap:12px;justify-content:flex-end;">
-                <button type="button" id="confirmImportBtn" style="padding:10px 20px;background:var(--success);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;transition:all 0.2s;font-family:'Arial',sans-serif;">დადასტურება და იმპორტი</button>
+                <button type="button" id="confirmImportBtn" style="padding:10px 20px;background:var(--success);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;transition:all 0.2s;font-family:'Arial',sans-serif;">Confirm & Import</button>
               </div>
             </div>
             <div id="csvImportStatus" style="margin-top:12px;display:none;padding:12px;border-radius:8px;font-size:13px;font-weight:600;"></div>
@@ -2324,30 +2324,30 @@ body{overflow-x:hidden}
 
           <!-- Form Section -->
           <div style="background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:12px;padding:24px;margin-bottom:24px;">
-            <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">ტრანზაქციის დამატება</div>
+            <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">Add Trade</div>
             <form id="tradingJournalForm" style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;align-items:end;">
               <div>
-                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">ტოკენი</label>
+                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Token</label>
                 <input type="text" id="tradeToken" placeholder="BTC, ETH..." style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
               </div>
               <div>
-                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">შესვლის ფასი</label>
+                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Entry Price</label>
                 <input type="number" step="0.01" id="entryPrice" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
               </div>
               <div>
-                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">გასვლის ფასი</label>
+                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Exit Price</label>
                 <input type="number" step="0.01" id="exitPrice" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
               </div>
               <div>
-                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">წმინდა P&L</label>
+                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Net P&L</label>
                 <input type="number" step="0.01" id="netPL" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
               </div>
               <div>
-                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">თარიღი</label>
+                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Date</label>
                 <input type="date" id="tradeDate" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
               </div>
               <div>
-                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">ლევერაჟი</label>
+                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Leverage</label>
                 <input type="number" step="0.1" id="leverage" placeholder="1x" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
               </div>
               <div>
@@ -2360,8 +2360,8 @@ body{overflow-x:hidden}
               </div>
               <div style="grid-column:span 2;"></div>
               <div style="grid-column:span 5;display:flex;gap:12px;justify-content:flex-end;">
-                <button type="submit" style="padding:12px 24px;background:var(--success);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;font-family:'Arial',sans-serif;">დამატება</button>
-                <button type="button" id="clearAllTradesBtn" style="padding:12px 24px;background:var(--error);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;font-family:'Arial',sans-serif;">ყველას წაშლა</button>
+                <button type="submit" style="padding:12px 24px;background:var(--success);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;font-family:'Arial',sans-serif;">Add Trade</button>
+                <button type="button" id="clearAllTradesBtn" style="padding:12px 24px;background:var(--error);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;font-family:'Arial',sans-serif;">Clear All Trades</button>
               </div>
             </form>
           </div>
@@ -2369,10 +2369,10 @@ body{overflow-x:hidden}
           <!-- Table Section -->
           <div style="background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:12px;padding:24px;overflow-x:auto;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-              <div style="font-size:18px;font-weight:600;color:var(--text-primary);">ტრანზაქციების ისტორია</div>
+              <div style="font-size:18px;font-weight:600;color:var(--text-primary);">Trade History</div>
               <button type="button" id="exportCsvBtn" style="padding:10px 20px;background:var(--accent-primary);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;transition:all 0.2s;font-family:'Arial',sans-serif;display:flex;align-items:center;gap:8px;" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'">
                 <span>📥</span>
-                <span>CSV ექსპორტი</span>
+                <span>CSV Export</span>
               </button>
             </div>
             <table id="tradesTable" style="width:100%;border-collapse:collapse;font-family:'Arial',sans-serif;">
@@ -2390,7 +2390,7 @@ body{overflow-x:hidden}
               </thead>
               <tbody id="tradesTableBody">
                 <tr>
-                  <td colspan="8" style="padding:40px;text-align:center;color:var(--text-tertiary);font-size:14px;">ჯერ არ არის ტრანზაქციები</td>
+                  <td colspan="8" style="padding:40px;text-align:center;color:var(--text-tertiary);font-size:14px;">No trades yet</td>
                 </tr>
               </tbody>
             </table>
@@ -2400,12 +2400,12 @@ body{overflow-x:hidden}
           <div id="editTradeModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:10000;align-items:center;justify-content:center;" onclick="if(event.target.id === 'editTradeModal') { this.style.display = 'none'; editingTradeId = null; }">
             <div style="background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:16px;padding:32px;max-width:600px;width:90%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
-                <div style="font-size:20px;font-weight:700;color:var(--text-primary);">ტრანზაქციის რედაქტირება</div>
+                <div style="font-size:20px;font-weight:700;color:var(--text-primary);">Edit Trade</div>
                 <button type="button" id="closeEditModal" style="background:none;border:none;color:var(--text-secondary);font-size:24px;cursor:pointer;padding:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px;transition:all 0.2s;" onmouseenter="this.style.background='var(--bg-tertiary)'" onmouseleave="this.style.background='transparent'">×</button>
               </div>
               <form id="editTradeForm" style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;">
                 <div>
-                  <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">ლევერაჟი</label>
+                  <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Leverage</label>
                   <input type="number" step="0.1" id="editLeverage" placeholder="1x" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
                 </div>
                 <div>
@@ -2436,8 +2436,8 @@ body{overflow-x:hidden}
                   <input type="number" step="0.01" id="editNetPL" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
                 </div>
                 <div style="grid-column:span 2;display:flex;gap:12px;justify-content:flex-end;margin-top:8px;">
-                  <button type="button" id="cancelEditBtn" style="padding:12px 24px;background:var(--bg-tertiary);border:1px solid var(--border-primary);color:var(--text-secondary);border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;font-family:'Arial',sans-serif;">გაუქმება</button>
-                  <button type="submit" style="padding:12px 24px;background:var(--success);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;font-family:'Arial',sans-serif;">შენახვა</button>
+                  <button type="button" id="cancelEditBtn" style="padding:12px 24px;background:var(--bg-tertiary);border:1px solid var(--border-primary);color:var(--text-secondary);border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;font-family:'Arial',sans-serif;">Cancel</button>
+                  <button type="submit" style="padding:12px 24px;background:var(--success);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;font-family:'Arial',sans-serif;">Save</button>
                 </div>
               </form>
             </div>
@@ -8208,7 +8208,7 @@ async function saveEditedTrade() {
 
 // Delete trade
 async function deleteTrade(tradeId) {
-  if (!confirm('დარწმუნებული ხართ, რომ გსურთ ამ ტრანზაქციის წაშლა?')) {
+  if (!confirm('Are you sure you want to delete this trade?')) {
     return;
   }
   
@@ -8289,7 +8289,7 @@ setTimeout(initEditModalListeners, 2000);
 // Export trades to CSV
 function exportTradesToCSV() {
   if (trades.length === 0) {
-    alert('ექსპორტისთვის ტრანზაქციები არ არის');
+    alert('No trades to export');
     return;
   }
   
@@ -8372,7 +8372,7 @@ if (document.getElementById('exportCsvBtn')) {
 
 // Clear all trades
 async function clearAllTrades() {
-  if (!confirm('დარწმუნებული ხართ, რომ გსურთ ყველა ტრანზაქციის წაშლა? ეს მოქმედება ვერ გაუქმდება.')) {
+  if (!confirm('Are you sure you want to delete all trades? This action cannot be undone.')) {
     return;
   }
   
@@ -8543,7 +8543,7 @@ function renderTradesTable() {
   if (!tbody) return;
   
   if (trades.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="8" style="padding:40px;text-align:center;color:var(--text-tertiary);font-size:14px;">ჯერ არ არის ტრანზაქციები</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" style="padding:40px;text-align:center;color:var(--text-tertiary);font-size:14px;">No trades yet</td></tr>';
     return;
   }
   
@@ -8578,8 +8578,8 @@ function renderTradesTable() {
         <td style="padding:12px;text-align:center;font-weight:600;color:${isPositive ? 'var(--success)' : 'var(--error)'};border-right:1px solid var(--border-secondary);">${trade.net >= 0 ? '+' : ''}$${Math.abs(trade.net).toFixed(2)}</td>
         <td style="padding:12px;text-align:center;">
           <div style="display:flex;gap:8px;justify-content:center;">
-            <button onclick="window.editTrade && window.editTrade('${trade.id}')" style="padding:6px 12px;background:var(--accent-primary);border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s;font-family:'Arial',sans-serif;" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'">რედაქტირება</button>
-            <button onclick="window.deleteTrade && window.deleteTrade('${trade.id}')" style="padding:6px 12px;background:var(--error);border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s;font-family:'Arial',sans-serif;" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'">წაშლა</button>
+            <button onclick="window.editTrade && window.editTrade('${trade.id}')" style="padding:6px 12px;background:var(--accent-primary);border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s;font-family:'Arial',sans-serif;" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'">Edit</button>
+            <button onclick="window.deleteTrade && window.deleteTrade('${trade.id}')" style="padding:6px 12px;background:var(--error);border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s;font-family:'Arial',sans-serif;" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'">Delete</button>
           </div>
         </td>
       </tr>
@@ -8602,7 +8602,7 @@ if (document.getElementById('tradingJournalForm')) {
     const takeProfit = document.getElementById('takeProfit').value;
     
     if (!entryPrice || !exitPrice || !netPL) {
-      alert('გთხოვთ შეავსოთ ყველა სავალდებულო ველი');
+      alert('Please fill in all required fields');
       return;
     }
     
@@ -9047,7 +9047,7 @@ function parseExcel(file) {
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
         
         if (jsonData.length === 0) {
-          reject(new Error('Excel ფაილი ცარიელია'));
+          reject(new Error('Excel file is empty'));
           return;
         }
         
@@ -9095,7 +9095,7 @@ async function handleCSVImport() {
   const file = fileInput.files[0];
   
   if (!file) {
-    showCSVStatus('გთხოვთ აირჩიოთ CSV ან Excel ფაილი', 'error');
+    showCSVStatus('Please select a CSV or Excel file', 'error');
     return;
   }
   
@@ -9108,7 +9108,7 @@ async function handleCSVImport() {
     if (isExcel) {
       // Parse Excel file
       if (typeof XLSX === 'undefined') {
-        showCSVStatus('Excel ბიბლიოთეკა არ არის ჩატვირთული', 'error');
+        showCSVStatus('Excel library is not loaded', 'error');
         return;
       }
       
@@ -9120,7 +9120,7 @@ async function handleCSVImport() {
       const reader = new FileReader();
       const text = await new Promise((resolve, reject) => {
         reader.onload = (e) => resolve(e.target.result);
-        reader.onerror = () => reject(new Error('ფაილის წაკითხვის შეცდომა'));
+        reader.onerror = () => reject(new Error('File reading error'));
         reader.readAsText(file);
       });
       
@@ -9130,7 +9130,7 @@ async function handleCSVImport() {
     }
     
     if (rows.length === 0) {
-      showCSVStatus('ფაილში ტრანზაქციები ვერ მოიძებნა', 'error');
+      showCSVStatus('No trades found in file', 'error');
       return;
     }
     
@@ -9164,16 +9164,16 @@ async function handleCSVImport() {
     console.log(`Mapped ${csvPreviewData.length} valid trades from ${rows.length} rows`);
     
     if (csvPreviewData.length === 0) {
-      showCSVStatus('ვერ მოხერხდა ტრანზაქციების გამოტანა. შეამოწმეთ ფაილის ფორმატი და სვეტების სახელები. საჭიროა: Entry Price და Exit Price ან Realized PNL. შეამოწმეთ კონსოლი დეტალებისთვის.', 'error');
+      showCSVStatus('Could not extract trades. Check file format and column names. Required: Entry Price and Exit Price OR Realized PNL. Check console for details.', 'error');
       return;
     }
     
     // Show preview
     showCSVPreview(csvPreviewData);
-    showCSVStatus(`ნაპოვნია ${csvPreviewData.length} ტრანზაქცია`, 'success');
+    showCSVStatus(`Found ${csvPreviewData.length} trades`, 'success');
   } catch (error) {
     console.error('Import error:', error);
-    showCSVStatus('შეცდომა ფაილის წაკითხვისას: ' + error.message, 'error');
+    showCSVStatus('Error reading file: ' + error.message, 'error');
   }
 }
 
@@ -9221,12 +9221,12 @@ function showCSVStatus(message, type) {
 // Confirm and import CSV trades
 async function confirmCSVImport() {
   if (csvPreviewData.length === 0) {
-    showCSVStatus('იმპორტისთვის ტრანზაქციები არ არის', 'error');
+    showCSVStatus('No trades to import', 'error');
     return;
   }
   
   if (!currentUser) {
-    showCSVStatus('გთხოვთ შეხვიდეთ სისტემაში იმპორტისთვის', 'error');
+    showCSVStatus('Please log in to import trades', 'error');
     return;
   }
   
@@ -9317,7 +9317,7 @@ async function confirmCSVImport() {
     renderTradesTable();
   } catch (error) {
     console.error('Error saving imported trades:', error);
-    showCSVStatus('შეცდომა ტრანზაქციების შენახვისას: ' + error.message, 'error');
+    showCSVStatus('Error saving trades: ' + error.message, 'error');
     return;
   }
   
@@ -9328,9 +9328,9 @@ async function confirmCSVImport() {
   document.getElementById('clearPreviewBtn').style.display = 'none';
   
   if (errors === 0) {
-    showCSVStatus(`წარმატებით იმპორტირდა ${imported} ტრანზაქცია`, 'success');
+    showCSVStatus(`Successfully imported ${imported} trades`, 'success');
   } else {
-    showCSVStatus(`იმპორტირდა ${imported} ტრანზაქცია, ${errors} შეცდომა`, 'error');
+    showCSVStatus(`Imported ${imported} trades, ${errors} errors`, 'error');
   }
 }
 
