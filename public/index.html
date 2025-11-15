@@ -2380,8 +2380,6 @@ body{overflow-x:hidden}
                   <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">შესვლის ფასი</th>
                   <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">გასვლის ფასი</th>
                   <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">ლევერაჟი</th>
-                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Stop Loss %</th>
-                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Take Profit %</th>
                   <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">წმინდა</th>
                   <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">მოგება</th>
                   <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">ზარალი</th>
@@ -2391,7 +2389,7 @@ body{overflow-x:hidden}
               </thead>
               <tbody id="tradesTableBody">
                 <tr>
-                  <td colspan="12" style="padding:40px;text-align:center;color:var(--text-tertiary);font-size:14px;">ჯერ არ არის ტრანზაქციები</td>
+                  <td colspan="10" style="padding:40px;text-align:center;color:var(--text-tertiary);font-size:14px;">ჯერ არ არის ტრანზაქციები</td>
                 </tr>
               </tbody>
             </table>
@@ -8287,7 +8285,7 @@ function renderTradesTable() {
   if (!tbody) return;
   
   if (trades.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="12" style="padding:40px;text-align:center;color:var(--text-tertiary);font-size:14px;">ჯერ არ არის ტრანზაქციები</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="10" style="padding:40px;text-align:center;color:var(--text-tertiary);font-size:14px;">ჯერ არ არის ტრანზაქციები</td></tr>';
     return;
   }
   
@@ -8297,11 +8295,6 @@ function renderTradesTable() {
     const loss = !isPositive ? '(' + Math.abs(trade.net).toFixed(2) + ')' : '';
     
     const leverageDisplay = trade.leverage ? trade.leverage + 'x' : '-';
-    const stopLossPercentDisplay = trade.stopLossPercent !== null ? (trade.stopLossPercent >= 0 ? '+' : '') + trade.stopLossPercent.toFixed(2) + '%' : '-';
-    const takeProfitPercentDisplay = trade.takeProfitPercent !== null ? (trade.takeProfitPercent >= 0 ? '+' : '') + trade.takeProfitPercent.toFixed(2) + '%' : '-';
-    
-    const stopLossColor = trade.stopLossPercent !== null ? (trade.stopLossPercent < 0 ? 'var(--error)' : 'var(--success)') : 'var(--text-tertiary)';
-    const takeProfitColor = trade.takeProfitPercent !== null ? (trade.takeProfitPercent > 0 ? 'var(--success)' : 'var(--error)') : 'var(--text-tertiary)';
     
     return `
       <tr style="border-bottom:1px solid var(--border-secondary);background:var(--bg-card);transition:background 0.2s;" onmouseenter="this.style.background='var(--bg-tertiary)'" onmouseleave="this.style.background='var(--bg-card)'">
@@ -8310,8 +8303,6 @@ function renderTradesTable() {
         <td style="padding:12px;text-align:center;color:var(--text-primary);border-right:1px solid var(--border-secondary);">${trade.entryPrice.toFixed(2)}</td>
         <td style="padding:12px;text-align:center;color:var(--text-primary);border-right:1px solid var(--border-secondary);">${trade.exitPrice.toFixed(2)}</td>
         <td style="padding:12px;text-align:center;color:var(--text-primary);font-weight:600;border-right:1px solid var(--border-secondary);">${leverageDisplay}</td>
-        <td style="padding:12px;text-align:center;color:${stopLossColor};font-weight:600;border-right:1px solid var(--border-secondary);">${stopLossPercentDisplay}</td>
-        <td style="padding:12px;text-align:center;color:${takeProfitColor};font-weight:600;border-right:1px solid var(--border-secondary);">${takeProfitPercentDisplay}</td>
         <td style="padding:12px;text-align:center;font-weight:600;color:${isPositive ? 'var(--success)' : 'var(--error)'};border-right:1px solid var(--border-secondary);">${trade.net >= 0 ? '+' : ''}${trade.net.toFixed(2)}</td>
         <td style="padding:12px;text-align:center;color:var(--success);font-weight:600;border-right:1px solid var(--border-secondary);">${profit}</td>
         <td style="padding:12px;text-align:center;color:var(--error);font-weight:600;border-right:1px solid var(--border-secondary);">${loss}</td>
@@ -8718,26 +8709,56 @@ async function confirmCSVImport() {
     return;
   }
   
+  if (!currentUser) {
+    showCSVStatus('გთხოვთ შეხვიდეთ სისტემაში იმპორტისთვის', 'error');
+    return;
+  }
+  
   let imported = 0;
   let errors = 0;
   
+  // Import all trades first
   for (const tradeData of csvPreviewData) {
     try {
-      await addTrade(
-        tradeData.token || '',
-        tradeData.entryPrice,
-        tradeData.exitPrice,
-        tradeData.netPL,
-        tradeData.date || new Date().toISOString().split('T')[0],
-        tradeData.leverage || null,
-        tradeData.stopLoss || null,
-        tradeData.takeProfit || null
-      );
+      const entry = parseFloat(tradeData.entryPrice);
+      const stopLossPrice = tradeData.stopLoss ? parseFloat(tradeData.stopLoss) : null;
+      const takeProfitPrice = tradeData.takeProfit ? parseFloat(tradeData.takeProfit) : null;
+      
+      const stopLossPercent = stopLossPrice ? calculatePercentage(entry, stopLossPrice) : null;
+      const takeProfitPercent = takeProfitPrice ? calculatePercentage(entry, takeProfitPrice) : null;
+      
+      const trade = {
+        id: Date.now().toString() + '-' + Math.random().toString(36).substr(2, 9),
+        tradeNumber: nextTradeNumber++,
+        token: tradeData.token || '',
+        entryPrice: entry,
+        exitPrice: parseFloat(tradeData.exitPrice),
+        leverage: tradeData.leverage ? parseFloat(tradeData.leverage) : null,
+        stopLoss: stopLossPrice,
+        stopLossPercent: stopLossPercent,
+        takeProfit: takeProfitPrice,
+        takeProfitPercent: takeProfitPercent,
+        net: parseFloat(tradeData.netPL),
+        date: tradeData.date || new Date().toISOString().split('T')[0]
+      };
+      
+      trades.push(trade);
       imported++;
     } catch (error) {
       console.error('Error importing trade:', error);
       errors++;
     }
+  }
+  
+  // Save all trades to Firebase at once
+  try {
+    await saveTrades();
+    updateMetrics();
+    renderTradesTable();
+  } catch (error) {
+    console.error('Error saving imported trades:', error);
+    showCSVStatus('შეცდომა ტრანზაქციების შენახვისას: ' + error.message, 'error');
+    return;
   }
   
   // Clear preview
