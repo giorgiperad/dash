@@ -1523,20 +1523,36 @@ body{overflow-x:hidden}
 /* Professional pages - hide decorative elements */
 #portfolioPage .grain-overlay,
 #alertsPage .grain-overlay,
-#targetsPage .grain-overlay {
+#targetsPage .grain-overlay,
+#tradingJournalPage .grain-overlay {
   display: none !important;
 }
 
 #portfolioPage,
 #alertsPage,
-#targetsPage {
+#targetsPage,
+#tradingJournalPage {
   background: var(--bg-primary) !important;
 }
 
 #portfolioPage::before,
 #alertsPage::before,
-#targetsPage::before {
+#targetsPage::before,
+#tradingJournalPage::before {
   display: none !important;
+}
+
+/* Trading Journal Table Styles */
+#tradesTable tbody tr:nth-child(even) {
+  background: var(--bg-tertiary) !important;
+}
+
+#tradesTable tbody tr:nth-child(odd) {
+  background: var(--bg-card) !important;
+}
+
+#tradesTable tbody tr:hover {
+  background: var(--bg-card-hover) !important;
 }
 
 /* Tablet styles */
@@ -1651,6 +1667,10 @@ body{overflow-x:hidden}
     <div class="sidebar-nav-item" data-page="alerts">
       <span class="sidebar-nav-icon">🔔</span>
       <span class="sidebar-nav-text">შეტყობინებები</span>
+    </div>
+    <div class="sidebar-nav-item" data-page="tradingJournal">
+      <span class="sidebar-nav-icon">📝</span>
+      <span class="sidebar-nav-text">Trading Journal</span>
     </div>
     <div class="sidebar-divider"></div>
     <div class="sidebar-section-title">ადმინისტრაცია</div>
@@ -2160,6 +2180,139 @@ body{overflow-x:hidden}
         </form>
       </div>
     </div>
+
+      <!-- Trading Journal Page -->
+      <div id="tradingJournalPage" class="page-content" style="display:none;">
+        <div class="main-section" style="width:100%;">
+          <div class="section-header" style="margin-bottom:24px;">
+            <div>
+              <div class="section-title" style="font-size:24px;font-weight:700;margin-bottom:4px;">Trading Journal Calculator</div>
+              <div style="font-size:13px;color:var(--text-tertiary);">Track your trades and analyze performance</div>
+            </div>
+          </div>
+
+          <!-- Metrics Dashboard -->
+          <div style="background:var(--bg-tertiary);border:1px solid var(--border-secondary);border-radius:12px;padding:20px;margin-bottom:24px;">
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-secondary);border:1px solid var(--border-secondary);border-radius:8px;overflow:hidden;">
+              <!-- Header Row -->
+              <div style="background:var(--bg-card);padding:12px;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-primary);border-right:1px solid var(--border-secondary);">Metric Label</div>
+              <div style="background:var(--bg-card);padding:12px;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-primary);text-align:right;border-right:1px solid var(--border-secondary);">Metric Value</div>
+              <div style="background:var(--bg-card);padding:12px;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-primary);">Description</div>
+
+              <!-- Total Trades -->
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">Total Trades</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--text-primary);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricTotalTrades">0</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Total Number of Trades</div>
+
+              <!-- Winners -->
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">Winners</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--success);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricWinners">0</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Total Number of Profitable Trades</div>
+
+              <!-- Losers -->
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">Losers</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--error);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricLosers">0</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Total Trades minus Winners</div>
+
+              <!-- Total Profits -->
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">Total Profits</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--success);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricTotalProfits">$0.00</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Total Profits on Profitable Trades</div>
+
+              <!-- Total Losses -->
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">Total Losses</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--error);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricTotalLosses">$0.00</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Total Losses on Losing Trades</div>
+
+              <!-- Odds of Winning -->
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">Odds of Winning</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--text-primary);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricOddsWinning">0.00%</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Winners divided by Total Trades</div>
+
+              <!-- Odds of Losing -->
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">Odds of Losing</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--text-primary);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricOddsLosing">0.00%</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Losers divided by Total Trades</div>
+
+              <!-- Average Win -->
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">Average Win</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--success);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricAvgWin">$0.00</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Total Profits divided by Winners</div>
+
+              <!-- Average Loss -->
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">Average Loss</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--error);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricAvgLoss">$0.00</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Total Losses divided by Losers</div>
+
+              <!-- W -->
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">W</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--text-primary);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricW">$0.00</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Average Win times Odds of Winning</div>
+
+              <!-- L -->
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">L</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--error);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricL">$0.00</div>
+              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Average Loss times Odds of Losing</div>
+
+              <!-- Expectancy (Highlighted) -->
+              <div style="background:linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);padding:10px 12px;font-weight:700;color:#1f2937;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">Expectancy</div>
+              <div style="background:linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);padding:10px 12px;font-weight:700;color:#1f2937;text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricExpectancy">$0.00</div>
+              <div style="background:linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);padding:10px 12px;font-size:12px;color:#1f2937;font-weight:600;border-top:1px solid var(--border-secondary);">W plus L (where L is negative)</div>
+            </div>
+          </div>
+
+          <!-- Form Section -->
+          <div style="background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:12px;padding:24px;margin-bottom:24px;">
+            <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">Add Trade</div>
+            <form id="tradingJournalForm" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:end;">
+              <div>
+                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Entry Price</label>
+                <input type="number" step="0.01" id="entryPrice" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+              </div>
+              <div>
+                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Exit Price</label>
+                <input type="number" step="0.01" id="exitPrice" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+              </div>
+              <div>
+                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Net P&L</label>
+                <input type="number" step="0.01" id="netPL" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+              </div>
+              <div>
+                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Date</label>
+                <input type="date" id="tradeDate" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+              </div>
+              <div style="grid-column:span 4;display:flex;gap:12px;justify-content:flex-end;">
+                <button type="submit" style="padding:12px 24px;background:var(--success);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;font-family:'Arial',sans-serif;">Add Trade</button>
+                <button type="button" id="clearAllTradesBtn" style="padding:12px 24px;background:var(--error);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;font-family:'Arial',sans-serif;">Clear All Trades</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Table Section -->
+          <div style="background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:12px;padding:24px;overflow-x:auto;">
+            <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">Trade History</div>
+            <table id="tradesTable" style="width:100%;border-collapse:collapse;font-family:'Arial',sans-serif;">
+              <thead>
+                <tr style="background:var(--bg-tertiary);border-bottom:2px solid var(--border-secondary);">
+                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Trade-#</th>
+                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Entry Price</th>
+                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Exit Price</th>
+                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Net</th>
+                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Profit</th>
+                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Loss</th>
+                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Date</th>
+                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="tradesTableBody">
+                <tr>
+                  <td colspan="8" style="padding:40px;text-align:center;color:var(--text-tertiary);font-size:14px;">No trades yet</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
 
       <!-- Admin Panel Page -->
       <div id="adminPage" class="page-content" style="display:none;">
@@ -3718,16 +3871,18 @@ function showPage(pageName) {
   const activityCarouselEl = document.getElementById('activityCarouselWrapper');
   const asiPanelEl = document.getElementById('asiAlliancePanel');
   
-  // Show carousels only on market/main pages, hide on dashboard
-  const isDashboard = pageName === 'dashboard';
+  // Show carousels only on market page, hide on dashboard, portfolio, alerts, profile, and tradingJournal pages
+  const pagesToHide = ['dashboard', 'portfolio', 'alerts', 'profile', 'tradingJournal'];
+  const shouldHide = pagesToHide.includes(pageName);
+  
   if (heroStatsEl) {
-    heroStatsEl.style.display = isDashboard ? 'none' : 'grid';
+    heroStatsEl.style.display = shouldHide ? 'none' : 'grid';
   }
   if (activityCarouselEl) {
-    activityCarouselEl.style.display = isDashboard ? 'none' : 'block';
+    activityCarouselEl.style.display = shouldHide ? 'none' : 'block';
   }
   if (asiPanelEl) {
-    asiPanelEl.style.display = isDashboard ? 'none' : 'block';
+    asiPanelEl.style.display = shouldHide ? 'none' : 'block';
   }
   
   // Hide all pages
@@ -3757,6 +3912,8 @@ function showPage(pageName) {
     populateTargetTokenSelect();
   } else if (pageName === 'alerts' && currentUser) {
     loadAlerts();
+  } else if (pageName === 'tradingJournal' && currentUser) {
+    loadTrades();
   }
   
   // No sidebar to close
@@ -6281,7 +6438,7 @@ function initSidebarNavigation() {
 const originalShowPage = window.showPage;
 window.showPage = function(page) {
   // Check authentication for protected pages
-  const protectedPages = ['dashboard', 'portfolio', 'targets', 'alerts', 'profile', 'admin'];
+  const protectedPages = ['dashboard', 'portfolio', 'targets', 'alerts', 'profile', 'admin', 'tradingJournal'];
   const isAuthenticated = currentUser !== null && currentUser !== undefined;
   
   if (protectedPages.includes(page) && !isAuthenticated) {
@@ -6293,7 +6450,7 @@ window.showPage = function(page) {
   // Hide all page containers
   const pageContainers = [
     'dashboardPage', 'marketPage', 'portfolioPage', 'targetsPage', 
-    'alertsPage', 'profilePage', 'adminPage', 'contentGrid'
+    'alertsPage', 'profilePage', 'adminPage', 'tradingJournalPage', 'contentGrid'
   ];
   pageContainers.forEach(pageId => {
     const pageEl = document.getElementById(pageId);
@@ -6305,7 +6462,7 @@ window.showPage = function(page) {
   const activityCarousel = document.getElementById('activityCarouselWrapper');
   const asiPanel = document.getElementById('asiAlliancePanel');
   
-  const hideHeroElements = ['portfolio', 'alerts', 'targets'];
+  const hideHeroElements = ['portfolio', 'alerts', 'targets', 'tradingJournal'];
   if (hideHeroElements.includes(page)) {
     if (heroStats) heroStats.style.display = 'none';
     if (activityCarousel) activityCarousel.style.display = 'none';
@@ -6351,6 +6508,8 @@ window.showPage = function(page) {
         populateTargetTokenSelect();
       } else if (page === 'alerts' && isAuthenticated) {
     loadAlerts();
+      } else if (page === 'tradingJournal' && isAuthenticated) {
+        loadTrades();
   }
     }
   }
@@ -7747,6 +7906,232 @@ if (originalRenderAlerts) {
     };
   }
 }
+
+/* ──── TRADING JOURNAL CALCULATOR ──── */
+let trades = [];
+let nextTradeNumber = 1;
+
+// Initialize date field to today
+if (document.getElementById('tradeDate')) {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('tradeDate').value = today;
+}
+
+// Load trades from Firebase
+async function loadTrades() {
+  if (!currentUser) {
+    trades = [];
+    nextTradeNumber = 1;
+    updateMetrics();
+    renderTradesTable();
+    return;
+  }
+
+  try {
+    const userId = currentUser.uid;
+    const db = firebase.database();
+    const snapshot = await db.ref(`users/${userId}/trades`).once('value');
+    const tradesData = snapshot.val() || {};
+    
+    // Convert to array and sort by tradeNumber
+    trades = Object.values(tradesData).sort((a, b) => a.tradeNumber - b.tradeNumber);
+    
+    // Set next trade number
+    if (trades.length > 0) {
+      nextTradeNumber = Math.max(...trades.map(t => t.tradeNumber)) + 1;
+    } else {
+      nextTradeNumber = 1;
+    }
+    
+    updateMetrics();
+    renderTradesTable();
+  } catch (error) {
+    console.error('Error loading trades:', error);
+    trades = [];
+    nextTradeNumber = 1;
+    updateMetrics();
+    renderTradesTable();
+  }
+}
+
+// Save trades to Firebase
+async function saveTrades() {
+  if (!currentUser) return;
+
+  try {
+    const userId = currentUser.uid;
+    const db = firebase.database();
+    const tradesObj = {};
+    
+    trades.forEach(trade => {
+      tradesObj[trade.id] = trade;
+    });
+    
+    await db.ref(`users/${userId}/trades`).set(tradesObj);
+  } catch (error) {
+    console.error('Error saving trades:', error);
+    alert('Error saving trades: ' + error.message);
+  }
+}
+
+// Add trade
+async function addTrade(entryPrice, exitPrice, netPL, date) {
+  const trade = {
+    id: Date.now().toString(),
+    tradeNumber: nextTradeNumber++,
+    entryPrice: parseFloat(entryPrice),
+    exitPrice: parseFloat(exitPrice),
+    net: parseFloat(netPL),
+    date: date || new Date().toISOString().split('T')[0]
+  };
+  
+  trades.push(trade);
+  await saveTrades();
+  updateMetrics();
+  renderTradesTable();
+}
+
+// Delete trade
+async function deleteTrade(tradeId) {
+  const index = trades.findIndex(t => t.id === tradeId);
+  if (index === -1) return;
+  
+  trades.splice(index, 1);
+  
+  // Renumber trades
+  trades.sort((a, b) => a.tradeNumber - b.tradeNumber);
+  trades.forEach((trade, idx) => {
+    trade.tradeNumber = idx + 1;
+  });
+  nextTradeNumber = trades.length + 1;
+  
+  await saveTrades();
+  updateMetrics();
+  renderTradesTable();
+}
+
+// Clear all trades
+async function clearAllTrades() {
+  if (!confirm('Are you sure you want to clear all trades? This action cannot be undone.')) {
+    return;
+  }
+  
+  trades = [];
+  nextTradeNumber = 1;
+  await saveTrades();
+  updateMetrics();
+  renderTradesTable();
+}
+
+// Calculate and update metrics
+function updateMetrics() {
+  const totalTrades = trades.length;
+  const winners = trades.filter(t => t.net > 0).length;
+  const losers = trades.filter(t => t.net < 0).length;
+  
+  const totalProfits = trades.filter(t => t.net > 0).reduce((sum, t) => sum + t.net, 0);
+  const totalLosses = Math.abs(trades.filter(t => t.net < 0).reduce((sum, t) => sum + t.net, 0));
+  
+  const oddsWinning = totalTrades > 0 ? (winners / totalTrades) * 100 : 0;
+  const oddsLosing = totalTrades > 0 ? (losers / totalTrades) * 100 : 0;
+  
+  const avgWin = winners > 0 ? totalProfits / winners : 0;
+  const avgLoss = losers > 0 ? totalLosses / losers : 0;
+  
+  const w = avgWin * (oddsWinning / 100);
+  const l = avgLoss * (oddsLosing / 100);
+  const expectancy = w - l; // L is already positive, so we subtract
+  
+  // Update UI
+  document.getElementById('metricTotalTrades').textContent = totalTrades;
+  document.getElementById('metricWinners').textContent = winners;
+  document.getElementById('metricLosers').textContent = losers;
+  document.getElementById('metricTotalProfits').textContent = '$' + totalProfits.toFixed(2);
+  document.getElementById('metricTotalLosses').textContent = '$' + totalLosses.toFixed(2);
+  document.getElementById('metricOddsWinning').textContent = oddsWinning.toFixed(2) + '%';
+  document.getElementById('metricOddsLosing').textContent = oddsLosing.toFixed(2) + '%';
+  document.getElementById('metricAvgWin').textContent = '$' + avgWin.toFixed(2);
+  document.getElementById('metricAvgLoss').textContent = '$' + avgLoss.toFixed(2);
+  document.getElementById('metricW').textContent = '$' + w.toFixed(2);
+  document.getElementById('metricL').textContent = '$' + l.toFixed(2);
+  document.getElementById('metricExpectancy').textContent = '$' + expectancy.toFixed(2);
+}
+
+// Render trades table
+function renderTradesTable() {
+  const tbody = document.getElementById('tradesTableBody');
+  if (!tbody) return;
+  
+  if (trades.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" style="padding:40px;text-align:center;color:var(--text-tertiary);font-size:14px;">No trades yet</td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = trades.map(trade => {
+    const isPositive = trade.net > 0;
+    const profit = isPositive ? trade.net.toFixed(2) : '';
+    const loss = !isPositive ? '(' + Math.abs(trade.net).toFixed(2) + ')' : '';
+    
+    return `
+      <tr style="border-bottom:1px solid var(--border-secondary);background:var(--bg-card);transition:background 0.2s;" onmouseenter="this.style.background='var(--bg-tertiary)'" onmouseleave="this.style.background='var(--bg-card)'">
+        <td style="padding:12px;text-align:center;font-weight:600;color:var(--text-primary);border-right:1px solid var(--border-secondary);">${trade.tradeNumber}</td>
+        <td style="padding:12px;text-align:center;color:var(--text-primary);border-right:1px solid var(--border-secondary);">${trade.entryPrice.toFixed(2)}</td>
+        <td style="padding:12px;text-align:center;color:var(--text-primary);border-right:1px solid var(--border-secondary);">${trade.exitPrice.toFixed(2)}</td>
+        <td style="padding:12px;text-align:center;font-weight:600;color:${isPositive ? 'var(--success)' : 'var(--error)'};border-right:1px solid var(--border-secondary);">${trade.net >= 0 ? '+' : ''}${trade.net.toFixed(2)}</td>
+        <td style="padding:12px;text-align:center;color:var(--success);font-weight:600;border-right:1px solid var(--border-secondary);">${profit}</td>
+        <td style="padding:12px;text-align:center;color:var(--error);font-weight:600;border-right:1px solid var(--border-secondary);">${loss}</td>
+        <td style="padding:12px;text-align:center;color:var(--text-secondary);border-right:1px solid var(--border-secondary);">${trade.date}</td>
+        <td style="padding:12px;text-align:center;">
+          <button onclick="deleteTrade('${trade.id}')" style="padding:6px 12px;background:var(--error);border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s;font-family:'Arial',sans-serif;" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'">Delete</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+// Form submission handler
+if (document.getElementById('tradingJournalForm')) {
+  document.getElementById('tradingJournalForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const entryPrice = document.getElementById('entryPrice').value;
+    const exitPrice = document.getElementById('exitPrice').value;
+    const netPL = document.getElementById('netPL').value;
+    const date = document.getElementById('tradeDate').value || new Date().toISOString().split('T')[0];
+    
+    if (!entryPrice || !exitPrice || !netPL) {
+      alert('Please fill in all required fields');
+      return;
+    }
+    
+    await addTrade(entryPrice, exitPrice, netPL, date);
+    
+    // Clear form
+    document.getElementById('tradingJournalForm').reset();
+    document.getElementById('tradeDate').value = new Date().toISOString().split('T')[0];
+  });
+}
+
+// Clear all trades button
+if (document.getElementById('clearAllTradesBtn')) {
+  document.getElementById('clearAllTradesBtn').addEventListener('click', clearAllTrades);
+}
+
+// Load trades when page is shown (integrated into existing showPage function)
+// This is handled in the main showPage function above
+
+// Load trades on auth state change
+firebase.auth().onAuthStateChanged((user) => {
+  if (user && window.location.hash !== '#login' && window.location.hash !== '#register') {
+    const currentPage = document.querySelector('.page-content.active');
+    if (currentPage && currentPage.id === 'tradingJournalPage') {
+      loadTrades();
+    }
+  }
+});
+
+// Make functions globally available
+window.deleteTrade = deleteTrade;
 
 </script>
 
