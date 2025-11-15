@@ -8751,9 +8751,24 @@ function mapCSVRowToTrade(row) {
     }
   }
   
-  // Entry Price mapping (Binance: "Avg Entry Price")
-  // Try exact match first, then variations
-  const entryKeys = ['avg entry price', 'avg. entry price', 'avgentryprice', 'average entry price', 'entry', 'entryprice', 'entry price', 'buy price', 'buyprice', 'open', 'openprice', 'open price', 'price', 'executed price'];
+  // Entry Price mapping
+  // MEXC: "Avg Entry Price" | Binance: "Entry Price"
+  const entryKeys = [
+    'avg entry price',        // MEXC
+    'entry price',            // Binance
+    'avg. entry price',
+    'avgentryprice',
+    'average entry price',
+    'entry',
+    'entryprice',
+    'buy price',
+    'buyprice',
+    'open',
+    'openprice',
+    'open price',
+    'price',
+    'executed price'
+  ];
   for (const key of entryKeys) {
     const value = row[key];
     if (value !== undefined && value !== null && value !== '' && String(value).trim() !== '') {
@@ -8768,7 +8783,10 @@ function mapCSVRowToTrade(row) {
   // Also check all row keys for entry-related columns
   if (!trade.entryPrice) {
     for (const key in row) {
-      if (key.includes('entry') && (key.includes('price') || key.includes('avg'))) {
+      const lowerKey = key.toLowerCase();
+      if ((lowerKey.includes('entry') && lowerKey.includes('price')) || 
+          (lowerKey === 'entry price') ||
+          (lowerKey.includes('avg') && lowerKey.includes('entry'))) {
         const value = row[key];
         if (value !== undefined && value !== null && value !== '' && String(value).trim() !== '') {
           const parsed = parseFloat(String(value).replace(/[^\d.-]/g, ''));
@@ -8781,8 +8799,23 @@ function mapCSVRowToTrade(row) {
     }
   }
   
-  // Exit Price mapping (Binance: "Avg Close Price")
-  const exitKeys = ['avg close price', 'avg. close price', 'avgcloseprice', 'average close price', 'exit', 'exitprice', 'exit price', 'sell price', 'sellprice', 'close', 'closeprice', 'close price'];
+  // Exit Price mapping
+  // MEXC: "Avg Close Price" | Binance: "Avg. Close Price" (note: user wrote "Avg. Close Pirce" but likely meant "Price")
+  const exitKeys = [
+    'avg close price',        // MEXC
+    'avg. close price',       // Binance
+    'avg. close pirce',      // Handle typo in user's message
+    'avgcloseprice',
+    'average close price',
+    'exit',
+    'exitprice',
+    'exit price',
+    'sell price',
+    'sellprice',
+    'close',
+    'closeprice',
+    'close price'
+  ];
   for (const key of exitKeys) {
     const value = row[key];
     if (value !== undefined && value !== null && value !== '' && String(value).trim() !== '') {
@@ -8797,7 +8830,9 @@ function mapCSVRowToTrade(row) {
   // Also check all row keys for close-related columns
   if (!trade.exitPrice) {
     for (const key in row) {
-      if (key.includes('close') && (key.includes('price') || key.includes('avg'))) {
+      const lowerKey = key.toLowerCase();
+      if ((lowerKey.includes('close') && (lowerKey.includes('price') || lowerKey.includes('avg'))) ||
+          lowerKey.includes('avg. close')) {
         const value = row[key];
         if (value !== undefined && value !== null && value !== '' && String(value).trim() !== '') {
           const parsed = parseFloat(String(value).replace(/[^\d.-]/g, ''));
@@ -8810,8 +8845,25 @@ function mapCSVRowToTrade(row) {
     }
   }
   
-  // Net P&L mapping (Binance: "Realized PNL")
-  const pnlKeys = ['realized pnl', 'realizedpnl', 'realized p&l', 'realized pnl', 'pnl', 'profit', 'profit/loss', 'profit loss', 'net', 'net pnl', 'total', 'total pnl', 'realized profit'];
+  // Net P&L mapping
+  // MEXC: "Realized PNL" | Binance: "Closing PNL"
+  const pnlKeys = [
+    'realized pnl',           // MEXC
+    'realizedpnl',
+    'closing pnl',            // Binance
+    'closingpnl',
+    'realized p&l',
+    'closing p&l',
+    'pnl',
+    'profit',
+    'profit/loss',
+    'profit loss',
+    'net',
+    'net pnl',
+    'total',
+    'total pnl',
+    'realized profit'
+  ];
   for (const key of pnlKeys) {
     const value = row[key];
     if (value !== undefined && value !== null && value !== '' && String(value).trim() !== '') {
@@ -8826,7 +8878,9 @@ function mapCSVRowToTrade(row) {
   // Also check all row keys for PNL-related columns
   if (!trade.netPL) {
     for (const key in row) {
-      if ((key.includes('pnl') || key.includes('p&l') || key.includes('realized')) && key !== 'realized pnl') {
+      const lowerKey = key.toLowerCase();
+      if ((lowerKey.includes('pnl') || lowerKey.includes('p&l')) && 
+          (lowerKey.includes('realized') || lowerKey.includes('closing'))) {
         const value = row[key];
         if (value !== undefined && value !== null && value !== '' && String(value).trim() !== '') {
           const parsed = parseFloat(String(value).replace(/[^\d.-]/g, ''));
@@ -8958,20 +9012,52 @@ function mapCSVRowToTrade(row) {
   }
   
   // Closing Qty (Contract) mapping
-  const closingQtyKeys = ['closing qty', 'closingqty', 'closing qty (cont.)', 'closing quantity', 'quantity', 'qty', 'size', 'contracts'];
+  // MEXC: "Closing Qty (Cont.)" | Binance: "Closed Vol."
+  const closingQtyKeys = [
+    'closing qty (cont.)',    // MEXC
+    'closing qty',
+    'closed vol.',            // Binance
+    'closed vol',
+    'closedvol',
+    'closingqty',
+    'closing quantity',
+    'quantity',
+    'qty',
+    'size',
+    'contracts',
+    'volume',
+    'vol'
+  ];
   for (const key of closingQtyKeys) {
-    if (row[key] && !isNaN(parseFloat(row[key]))) {
-      trade.closingQty = parseFloat(row[key]);
-      break;
+    const value = row[key];
+    if (value !== undefined && value !== null && value !== '' && String(value).trim() !== '') {
+      const parsed = parseFloat(String(value).replace(/[^\d.-]/g, ''));
+      if (!isNaN(parsed) && isFinite(parsed)) {
+        trade.closingQty = parsed;
+        break;
+      }
     }
   }
   
   // Trading Fee mapping
-  const tradingFeeKeys = ['trading fee', 'tradingfee', 'fee', 'commission', 'trading commission'];
+  // MEXC: "Trading Fee" | Binance: (may not have this column)
+  const tradingFeeKeys = [
+    'trading fee',            // MEXC
+    'tradingfee',
+    'fee',
+    'commission',
+    'trading commission',
+    'fees',
+    'total fee'
+  ];
   for (const key of tradingFeeKeys) {
-    if (row[key] && !isNaN(parseFloat(row[key]))) {
-      trade.tradingFee = parseFloat(row[key]);
-      break;
+    const value = row[key];
+    if (value !== undefined && value !== null && value !== '' && String(value).trim() !== '') {
+      const parsed = parseFloat(String(value).replace(/[^\d.-]/g, ''));
+      if (!isNaN(parsed) && isFinite(parsed)) {
+        trade.tradingFee = parsed;
+        break;
+      }
     }
   }
   
