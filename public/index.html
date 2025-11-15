@@ -2302,41 +2302,49 @@ body{overflow-x:hidden}
           <!-- Form Section -->
           <div style="background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:12px;padding:24px;margin-bottom:24px;">
             <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">Add Trade</div>
-            <form id="tradingJournalForm" style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;align-items:end;">
+            <form id="tradingJournalForm" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:end;">
               <div>
                 <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Token</label>
                 <input type="text" id="tradeToken" placeholder="BTC, ETH..." style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
-              </div>
-              <div>
-                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Entry Price</label>
-                <input type="number" step="any" id="entryPrice" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
-              </div>
-              <div>
-                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Exit Price</label>
-                <input type="number" step="any" id="exitPrice" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
-              </div>
-              <div>
-                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Net P&L</label>
-                <input type="number" step="any" id="netPL" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
-              </div>
-              <div>
-                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Date</label>
-                <input type="date" id="tradeDate" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
               </div>
               <div>
                 <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Leverage</label>
                 <input type="number" step="any" id="leverage" placeholder="1x" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
               </div>
               <div>
-                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Stop Loss</label>
-                <input type="number" step="any" id="stopLoss" placeholder="0.00" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Avg Entry Price</label>
+                <input type="number" step="any" id="entryPrice" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
               </div>
               <div>
-                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Take Profit</label>
-                <input type="number" step="any" id="takeProfit" placeholder="0.00" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Avg Close Price</label>
+                <input type="number" step="any" id="exitPrice" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
               </div>
-              <div style="grid-column:span 2;"></div>
-              <div style="grid-column:span 5;display:flex;gap:12px;justify-content:flex-end;">
+              <div>
+                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Direction</label>
+                <select id="tradeDirection" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+                  <option value="">Select Direction</option>
+                  <option value="Long">Long</option>
+                  <option value="Short">Short</option>
+                </select>
+              </div>
+              <div>
+                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Closing Qty (Cont.)</label>
+                <input type="number" step="any" id="closingQty" placeholder="0.00" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+              </div>
+              <div>
+                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Trading Fee</label>
+                <input type="number" step="any" id="tradingFee" placeholder="0.00" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+              </div>
+              <div>
+                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Realized PNL</label>
+                <input type="number" step="any" id="netPL" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+              </div>
+              <div>
+                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Date</label>
+                <input type="date" id="tradeDate" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+              </div>
+              <div style="grid-column:span 3;"></div>
+              <div style="grid-column:span 4;display:flex;gap:12px;justify-content:flex-end;margin-top:8px;">
                 <button type="submit" style="padding:12px 24px;background:var(--success);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;font-family:'Arial',sans-serif;">Add Trade</button>
                 <button type="button" id="clearAllTradesBtn" style="padding:12px 24px;background:var(--error);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;font-family:'Arial',sans-serif;">Clear All Trades</button>
               </div>
@@ -8058,25 +8066,17 @@ function calculatePercentage(entry, target) {
 }
 
 // Add trade
-async function addTrade(token, entryPrice, exitPrice, netPL, date, leverage, stopLoss, takeProfit) {
-  const entry = parseFloat(entryPrice);
-  const stopLossPrice = stopLoss ? parseFloat(stopLoss) : null;
-  const takeProfitPrice = takeProfit ? parseFloat(takeProfit) : null;
-  
-  const stopLossPercent = stopLossPrice ? calculatePercentage(entry, stopLossPrice) : null;
-  const takeProfitPercent = takeProfitPrice ? calculatePercentage(entry, takeProfitPrice) : null;
-  
+async function addTrade(token, leverage, entryPrice, exitPrice, direction, closingQty, tradingFee, netPL, date) {
   const trade = {
     id: Date.now().toString(),
     tradeNumber: nextTradeNumber++,
     token: token || '',
-    entryPrice: entry,
-    exitPrice: parseFloat(exitPrice),
     leverage: leverage ? parseFloat(leverage) : null,
-    stopLoss: stopLossPrice,
-    stopLossPercent: stopLossPercent,
-    takeProfit: takeProfitPrice,
-    takeProfitPercent: takeProfitPercent,
+    entryPrice: parseFloat(entryPrice),
+    exitPrice: parseFloat(exitPrice),
+    direction: direction || null,
+    closingQty: closingQty ? parseFloat(closingQty) : null,
+    tradingFee: tradingFee ? parseFloat(tradingFee) : null,
     net: parseFloat(netPL),
     date: date || new Date().toISOString().split('T')[0]
   };
@@ -8524,20 +8524,21 @@ if (document.getElementById('tradingJournalForm')) {
     e.preventDefault();
     
     const token = document.getElementById('tradeToken').value.trim();
+    const leverage = document.getElementById('leverage').value;
     const entryPrice = document.getElementById('entryPrice').value;
     const exitPrice = document.getElementById('exitPrice').value;
+    const direction = document.getElementById('tradeDirection').value;
+    const closingQty = document.getElementById('closingQty').value;
+    const tradingFee = document.getElementById('tradingFee').value;
     const netPL = document.getElementById('netPL').value;
     const date = document.getElementById('tradeDate').value || new Date().toISOString().split('T')[0];
-    const leverage = document.getElementById('leverage').value;
-    const stopLoss = document.getElementById('stopLoss').value;
-    const takeProfit = document.getElementById('takeProfit').value;
     
     if (!entryPrice || !exitPrice || !netPL) {
-      alert('Please fill in all required fields');
+      alert('Please fill in all required fields (Avg Entry Price, Avg Close Price, and Realized PNL)');
       return;
     }
     
-    await addTrade(token, entryPrice, exitPrice, netPL, date, leverage, stopLoss, takeProfit);
+    await addTrade(token, leverage, entryPrice, exitPrice, direction, closingQty, tradingFee, netPL, date);
     
     // Clear form
     document.getElementById('tradingJournalForm').reset();
