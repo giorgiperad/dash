@@ -2261,6 +2261,40 @@ body{overflow-x:hidden}
             </div>
           </div>
 
+          <!-- CSV Import Section -->
+          <div style="background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:12px;padding:24px;margin-bottom:24px;">
+            <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">CSV იმპორტი</div>
+            <div style="display:flex;gap:16px;align-items:end;flex-wrap:wrap;">
+              <div style="flex:1;min-width:200px;">
+                <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">CSV ფაილი</label>
+                <input type="file" id="csvFileInput" accept=".csv" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;cursor:pointer;">
+              </div>
+              <button type="button" id="importCsvBtn" style="padding:12px 24px;background:var(--accent-primary);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;font-family:'Arial',sans-serif;white-space:nowrap;">იმპორტი</button>
+              <button type="button" id="clearPreviewBtn" style="padding:12px 24px;background:var(--bg-tertiary);border:1px solid var(--border-primary);color:var(--text-secondary);border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;font-family:'Arial',sans-serif;white-space:nowrap;display:none;">გასუფთავება</button>
+            </div>
+            <div id="csvPreview" style="margin-top:20px;display:none;">
+              <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:12px;">პრევიუ (<span id="previewCount">0</span> ტრანზაქცია)</div>
+              <div style="max-height:300px;overflow-y:auto;border:1px solid var(--border-secondary);border-radius:8px;">
+                <table id="csvPreviewTable" style="width:100%;border-collapse:collapse;font-family:'Arial',sans-serif;font-size:12px;">
+                  <thead>
+                    <tr style="background:var(--bg-tertiary);position:sticky;top:0;">
+                      <th style="padding:8px;text-align:center;font-weight:700;color:var(--text-primary);border-right:1px solid var(--border-secondary);border-bottom:1px solid var(--border-secondary);">ტოკენი</th>
+                      <th style="padding:8px;text-align:center;font-weight:700;color:var(--text-primary);border-right:1px solid var(--border-secondary);border-bottom:1px solid var(--border-secondary);">შესვლის ფასი</th>
+                      <th style="padding:8px;text-align:center;font-weight:700;color:var(--text-primary);border-right:1px solid var(--border-secondary);border-bottom:1px solid var(--border-secondary);">გასვლის ფასი</th>
+                      <th style="padding:8px;text-align:center;font-weight:700;color:var(--text-primary);border-right:1px solid var(--border-secondary);border-bottom:1px solid var(--border-secondary);">P&L</th>
+                      <th style="padding:8px;text-align:center;font-weight:700;color:var(--text-primary);border-right:1px solid var(--border-secondary);border-bottom:1px solid var(--border-secondary);">თარიღი</th>
+                    </tr>
+                  </thead>
+                  <tbody id="csvPreviewBody"></tbody>
+                </table>
+              </div>
+              <div style="margin-top:12px;display:flex;gap:12px;justify-content:flex-end;">
+                <button type="button" id="confirmImportBtn" style="padding:10px 20px;background:var(--success);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;transition:all 0.2s;font-family:'Arial',sans-serif;">დადასტურება და იმპორტი</button>
+              </div>
+            </div>
+            <div id="csvImportStatus" style="margin-top:12px;display:none;padding:12px;border-radius:8px;font-size:13px;font-weight:600;"></div>
+          </div>
+
           <!-- Form Section -->
           <div style="background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:12px;padding:24px;margin-bottom:24px;">
             <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">ტრანზაქციის დამატება</div>
@@ -8170,6 +8204,318 @@ if (document.getElementById('tradingJournalForm')) {
 // Clear all trades button
 if (document.getElementById('clearAllTradesBtn')) {
   document.getElementById('clearAllTradesBtn').addEventListener('click', clearAllTrades);
+}
+
+/* ──── CSV IMPORT FUNCTIONALITY ──── */
+let csvPreviewData = [];
+
+// Parse CSV file
+function parseCSV(text) {
+  const lines = text.split('\n').filter(line => line.trim());
+  if (lines.length === 0) return [];
+  
+  // Detect delimiter (comma, semicolon, or tab)
+  const firstLine = lines[0];
+  let delimiter = ',';
+  if (firstLine.includes(';') && firstLine.split(';').length > firstLine.split(',').length) {
+    delimiter = ';';
+  } else if (firstLine.includes('\t') && firstLine.split('\t').length > firstLine.split(',').length) {
+    delimiter = '\t';
+  }
+  
+  // Parse header
+  const headers = lines[0].split(delimiter).map(h => h.trim().replace(/"/g, ''));
+  
+  // Parse rows
+  const rows = [];
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+    
+    // Handle quoted fields
+    const values = [];
+    let current = '';
+    let inQuotes = false;
+    
+    for (let j = 0; j < line.length; j++) {
+      const char = line[j];
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if ((char === delimiter || char === '\n') && !inQuotes) {
+        values.push(current.trim());
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    values.push(current.trim());
+    
+    if (values.length === headers.length) {
+      const row = {};
+      headers.forEach((header, idx) => {
+        row[header.toLowerCase()] = values[idx] || '';
+      });
+      rows.push(row);
+    }
+  }
+  
+  return { headers, rows };
+}
+
+// Map CSV columns to trade fields (flexible mapping for different exchanges)
+function mapCSVRowToTrade(row) {
+  const trade = {
+    token: '',
+    entryPrice: null,
+    exitPrice: null,
+    netPL: null,
+    date: null,
+    leverage: null,
+    stopLoss: null,
+    takeProfit: null
+  };
+  
+  // Token/Symbol mapping
+  const tokenKeys = ['symbol', 'token', 'pair', 'market', 'coin', 'asset', 'currency'];
+  for (const key of tokenKeys) {
+    if (row[key]) {
+      trade.token = row[key].toUpperCase().replace(/[^A-Z0-9]/g, '');
+      break;
+    }
+  }
+  
+  // Entry Price mapping
+  const entryKeys = ['entry', 'entryprice', 'entry price', 'buy price', 'buyprice', 'open', 'openprice', 'open price', 'price', 'executed price'];
+  for (const key of entryKeys) {
+    if (row[key] && !isNaN(parseFloat(row[key]))) {
+      trade.entryPrice = parseFloat(row[key]);
+      break;
+    }
+  }
+  
+  // Exit Price mapping
+  const exitKeys = ['exit', 'exitprice', 'exit price', 'sell price', 'sellprice', 'close', 'closeprice', 'close price'];
+  for (const key of exitKeys) {
+    if (row[key] && !isNaN(parseFloat(row[key]))) {
+      trade.exitPrice = parseFloat(row[key]);
+      break;
+    }
+  }
+  
+  // Net P&L mapping
+  const pnlKeys = ['pnl', 'profit', 'profit/loss', 'profit loss', 'net', 'net pnl', 'realized pnl', 'realizedpnl', 'total', 'total pnl'];
+  for (const key of pnlKeys) {
+    if (row[key] && !isNaN(parseFloat(row[key]))) {
+      trade.netPL = parseFloat(row[key]);
+      break;
+    }
+  }
+  
+  // If P&L not found, calculate from entry/exit
+  if (!trade.netPL && trade.entryPrice && trade.exitPrice) {
+    trade.netPL = trade.exitPrice - trade.entryPrice;
+  }
+  
+  // Date mapping
+  const dateKeys = ['date', 'time', 'datetime', 'timestamp', 'closed date', 'executed date'];
+  for (const key of dateKeys) {
+    if (row[key]) {
+      const dateStr = row[key].trim();
+      // Try to parse various date formats
+      let date = null;
+      if (dateStr.includes('T')) {
+        date = new Date(dateStr);
+      } else if (dateStr.includes('/')) {
+        const parts = dateStr.split(/[/\s-]/);
+        if (parts.length >= 3) {
+          date = new Date(parts[0] + '-' + parts[1] + '-' + parts[2]);
+        }
+      } else if (dateStr.includes('-')) {
+        date = new Date(dateStr);
+      }
+      
+      if (date && !isNaN(date.getTime())) {
+        trade.date = date.toISOString().split('T')[0];
+        break;
+      }
+    }
+  }
+  
+  // Leverage mapping
+  const leverageKeys = ['leverage', 'lev', 'margin', 'margin ratio'];
+  for (const key of leverageKeys) {
+    if (row[key] && !isNaN(parseFloat(row[key]))) {
+      trade.leverage = parseFloat(row[key]);
+      break;
+    }
+  }
+  
+  // Stop Loss mapping
+  const stopLossKeys = ['stop loss', 'stoploss', 'sl', 'stop'];
+  for (const key of stopLossKeys) {
+    if (row[key] && !isNaN(parseFloat(row[key]))) {
+      trade.stopLoss = parseFloat(row[key]);
+      break;
+    }
+  }
+  
+  // Take Profit mapping
+  const takeProfitKeys = ['take profit', 'takeprofit', 'tp', 'target'];
+  for (const key of takeProfitKeys) {
+    if (row[key] && !isNaN(parseFloat(row[key]))) {
+      trade.takeProfit = parseFloat(row[key]);
+      break;
+    }
+  }
+  
+  return trade;
+}
+
+// Handle CSV file import
+async function handleCSVImport() {
+  const fileInput = document.getElementById('csvFileInput');
+  const file = fileInput.files[0];
+  
+  if (!file) {
+    showCSVStatus('გთხოვთ აირჩიოთ CSV ფაილი', 'error');
+    return;
+  }
+  
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    try {
+      const text = e.target.result;
+      const { headers, rows } = parseCSV(text);
+      
+      if (rows.length === 0) {
+        showCSVStatus('CSV ფაილში ტრანზაქციები ვერ მოიძებნა', 'error');
+        return;
+      }
+      
+      // Map rows to trades
+      csvPreviewData = rows.map(row => mapCSVRowToTrade(row))
+        .filter(trade => trade.entryPrice !== null && trade.exitPrice !== null && trade.netPL !== null);
+      
+      if (csvPreviewData.length === 0) {
+        showCSVStatus('ვერ მოხერხდა ტრანზაქციების გამოტანა CSV-დან. შეამოწმეთ ფაილის ფორმატი.', 'error');
+        return;
+      }
+      
+      // Show preview
+      showCSVPreview(csvPreviewData);
+      showCSVStatus(`ნაპოვნია ${csvPreviewData.length} ტრანზაქცია`, 'success');
+    } catch (error) {
+      console.error('CSV import error:', error);
+      showCSVStatus('შეცდომა CSV ფაილის წაკითხვისას: ' + error.message, 'error');
+    }
+  };
+  
+  reader.readAsText(file);
+}
+
+// Show CSV preview
+function showCSVPreview(data) {
+  const preview = document.getElementById('csvPreview');
+  const previewBody = document.getElementById('csvPreviewBody');
+  const previewCount = document.getElementById('previewCount');
+  const clearBtn = document.getElementById('clearPreviewBtn');
+  
+  previewCount.textContent = data.length;
+  preview.style.display = 'block';
+  clearBtn.style.display = 'inline-block';
+  
+  previewBody.innerHTML = data.map((trade, idx) => {
+    const isPositive = trade.netPL > 0;
+    return `
+      <tr style="border-bottom:1px solid var(--border-secondary);background:${idx % 2 === 0 ? 'var(--bg-card)' : 'var(--bg-tertiary)'};">
+        <td style="padding:8px;text-align:center;color:var(--text-primary);border-right:1px solid var(--border-secondary);">${trade.token || '-'}</td>
+        <td style="padding:8px;text-align:center;color:var(--text-primary);border-right:1px solid var(--border-secondary);">${trade.entryPrice ? trade.entryPrice.toFixed(2) : '-'}</td>
+        <td style="padding:8px;text-align:center;color:var(--text-primary);border-right:1px solid var(--border-secondary);">${trade.exitPrice ? trade.exitPrice.toFixed(2) : '-'}</td>
+        <td style="padding:8px;text-align:center;color:${isPositive ? 'var(--success)' : 'var(--error)'};font-weight:600;border-right:1px solid var(--border-secondary);">${trade.netPL >= 0 ? '+' : ''}${trade.netPL.toFixed(2)}</td>
+        <td style="padding:8px;text-align:center;color:var(--text-secondary);">${trade.date || '-'}</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+// Show CSV import status
+function showCSVStatus(message, type) {
+  const statusEl = document.getElementById('csvImportStatus');
+  statusEl.style.display = 'block';
+  statusEl.textContent = message;
+  statusEl.style.background = type === 'success' ? 'var(--success-bg)' : 'var(--error-bg)';
+  statusEl.style.border = type === 'success' ? '1px solid var(--success)' : '1px solid var(--error)';
+  statusEl.style.color = type === 'success' ? 'var(--success)' : 'var(--error)';
+  
+  if (type === 'success') {
+    setTimeout(() => {
+      statusEl.style.display = 'none';
+    }, 5000);
+  }
+}
+
+// Confirm and import CSV trades
+async function confirmCSVImport() {
+  if (csvPreviewData.length === 0) {
+    showCSVStatus('იმპორტისთვის ტრანზაქციები არ არის', 'error');
+    return;
+  }
+  
+  let imported = 0;
+  let errors = 0;
+  
+  for (const tradeData of csvPreviewData) {
+    try {
+      await addTrade(
+        tradeData.token || '',
+        tradeData.entryPrice,
+        tradeData.exitPrice,
+        tradeData.netPL,
+        tradeData.date || new Date().toISOString().split('T')[0],
+        tradeData.leverage || null,
+        tradeData.stopLoss || null,
+        tradeData.takeProfit || null
+      );
+      imported++;
+    } catch (error) {
+      console.error('Error importing trade:', error);
+      errors++;
+    }
+  }
+  
+  // Clear preview
+  csvPreviewData = [];
+  document.getElementById('csvPreview').style.display = 'none';
+  document.getElementById('csvFileInput').value = '';
+  document.getElementById('clearPreviewBtn').style.display = 'none';
+  
+  if (errors === 0) {
+    showCSVStatus(`წარმატებით იმპორტირდა ${imported} ტრანზაქცია`, 'success');
+  } else {
+    showCSVStatus(`იმპორტირდა ${imported} ტრანზაქცია, ${errors} შეცდომა`, 'error');
+  }
+}
+
+// Clear CSV preview
+function clearCSVPreview() {
+  csvPreviewData = [];
+  document.getElementById('csvPreview').style.display = 'none';
+  document.getElementById('csvFileInput').value = '';
+  document.getElementById('clearPreviewBtn').style.display = 'none';
+  document.getElementById('csvImportStatus').style.display = 'none';
+}
+
+// CSV import event listeners
+if (document.getElementById('importCsvBtn')) {
+  document.getElementById('importCsvBtn').addEventListener('click', handleCSVImport);
+}
+
+if (document.getElementById('confirmImportBtn')) {
+  document.getElementById('confirmImportBtn').addEventListener('click', confirmCSVImport);
+}
+
+if (document.getElementById('clearPreviewBtn')) {
+  document.getElementById('clearPreviewBtn').addEventListener('click', clearCSVPreview);
 }
 
 // Load trades when page is shown (integrated into existing showPage function)
