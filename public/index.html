@@ -2262,29 +2262,6 @@ body{overflow-x:hidden}
               </div>
               <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Total losses divided by losers ($ and %)</div>
 
-              <!-- W -->
-              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">W</div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--text-primary);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricW">
-                <div>$0.00</div>
-                <div style="font-size:11px;color:var(--text-tertiary);font-weight:500;" id="metricWPercent">0.00%</div>
-              </div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Average win multiplied by odds of winning ($ and %)</div>
-
-              <!-- L -->
-              <div style="background:var(--bg-card);padding:10px 12px;font-weight:600;color:var(--text-primary);border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">L</div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-weight:700;color:var(--error);text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricL">
-                <div>$0.00</div>
-                <div style="font-size:11px;color:var(--text-tertiary);font-weight:500;" id="metricLPercent">0.00%</div>
-              </div>
-              <div style="background:var(--bg-card);padding:10px 12px;font-size:12px;color:var(--text-tertiary);border-top:1px solid var(--border-secondary);">Average loss multiplied by odds of losing ($ and %)</div>
-
-              <!-- Expectancy (Highlighted) -->
-              <div style="background:linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);padding:10px 12px;font-weight:700;color:#1f2937;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);">Expectancy</div>
-              <div style="background:linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);padding:10px 12px;font-weight:700;color:#1f2937;text-align:right;border-top:1px solid var(--border-secondary);border-right:1px solid var(--border-secondary);" id="metricExpectancy">
-                <div>$0.00</div>
-                <div style="font-size:11px;color:#1f2937;font-weight:600;opacity:0.8;" id="metricExpectancyPercent">0.00%</div>
-              </div>
-              <div style="background:linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);padding:10px 12px;font-size:12px;color:#1f2937;font-weight:600;border-top:1px solid var(--border-secondary);">W plus L (where L is negative) ($ and %)</div>
             </div>
           </div>
 
@@ -2332,15 +2309,15 @@ body{overflow-x:hidden}
               </div>
               <div>
                 <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Entry Price</label>
-                <input type="number" step="0.01" id="entryPrice" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+                <input type="number" step="any" id="entryPrice" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
               </div>
               <div>
                 <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Exit Price</label>
-                <input type="number" step="0.01" id="exitPrice" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+                <input type="number" step="any" id="exitPrice" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
               </div>
               <div>
                 <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Net P&L</label>
-                <input type="number" step="0.01" id="netPL" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+                <input type="number" step="any" id="netPL" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
               </div>
               <div>
                 <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Date</label>
@@ -2348,15 +2325,15 @@ body{overflow-x:hidden}
               </div>
               <div>
                 <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Leverage</label>
-                <input type="number" step="0.1" id="leverage" placeholder="1x" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+                <input type="number" step="any" id="leverage" placeholder="1x" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
               </div>
               <div>
                 <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Stop Loss</label>
-                <input type="number" step="0.01" id="stopLoss" placeholder="0.00" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+                <input type="number" step="any" id="stopLoss" placeholder="0.00" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
               </div>
               <div>
                 <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Take Profit</label>
-                <input type="number" step="0.01" id="takeProfit" placeholder="0.00" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+                <input type="number" step="any" id="takeProfit" placeholder="0.00" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
               </div>
               <div style="grid-column:span 2;"></div>
               <div style="grid-column:span 5;display:flex;gap:12px;justify-content:flex-end;">
@@ -2406,15 +2383,15 @@ body{overflow-x:hidden}
               <form id="editTradeForm" style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;">
                 <div>
                   <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Leverage</label>
-                  <input type="number" step="0.1" id="editLeverage" placeholder="1x" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+                  <input type="number" step="any" id="editLeverage" placeholder="1x" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
                 </div>
                 <div>
                   <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Avg Entry Price</label>
-                  <input type="number" step="0.01" id="editEntryPrice" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+                  <input type="number" step="any" id="editEntryPrice" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
                 </div>
                 <div>
                   <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Avg Close Price</label>
-                  <input type="number" step="0.01" id="editExitPrice" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+                  <input type="number" step="any" id="editExitPrice" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
                 </div>
                 <div>
                   <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Direction</label>
@@ -2425,15 +2402,15 @@ body{overflow-x:hidden}
                 </div>
                 <div>
                   <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Closing Qty (Cont.)</label>
-                  <input type="number" step="0.01" id="editClosingQty" placeholder="0.00" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+                  <input type="number" step="any" id="editClosingQty" placeholder="0.00" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
                 </div>
                 <div>
                   <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Trading Fee</label>
-                  <input type="number" step="0.01" id="editTradingFee" placeholder="0.00" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+                  <input type="number" step="any" id="editTradingFee" placeholder="0.00" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
                 </div>
                 <div style="grid-column:span 2;">
                   <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Realized PNL</label>
-                  <input type="number" step="0.01" id="editNetPL" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+                  <input type="number" step="any" id="editNetPL" placeholder="0.00" required style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
                 </div>
                 <div style="grid-column:span 2;display:flex;gap:12px;justify-content:flex-end;margin-top:8px;">
                   <button type="button" id="cancelEditBtn" style="padding:12px 24px;background:var(--bg-tertiary);border:1px solid var(--border-primary);color:var(--text-secondary);border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;font-family:'Arial',sans-serif;">Cancel</button>
@@ -8398,10 +8375,6 @@ function updateMetrics() {
   const avgWin = winners > 0 ? totalProfits / winners : 0;
   const avgLoss = losers > 0 ? totalLosses / losers : 0;
   
-  const w = avgWin * (oddsWinning / 100);
-  const l = avgLoss * (oddsLosing / 100);
-  const expectancy = w - l; // L is already positive, so we subtract
-  
   // Calculate total capital (sum of all entry prices) for percentage calculations
   const totalCapital = trades.reduce((sum, t) => sum + (t.entryPrice || 0), 0);
   const avgEntryPrice = totalTrades > 0 ? totalCapital / totalTrades : 0;
@@ -8416,9 +8389,6 @@ function updateMetrics() {
   const netPLPercent = totalCapital > 0 ? (netPL / totalCapital) * 100 : 0;
   const avgWinPercent = avgEntryPrice > 0 ? (avgWin / avgEntryPrice) * 100 : 0;
   const avgLossPercent = avgEntryPrice > 0 ? (avgLoss / avgEntryPrice) * 100 : 0;
-  const wPercent = avgEntryPrice > 0 ? (w / avgEntryPrice) * 100 : 0;
-  const lPercent = avgEntryPrice > 0 ? (l / avgEntryPrice) * 100 : 0;
-  const expectancyPercent = avgEntryPrice > 0 ? (expectancy / avgEntryPrice) * 100 : 0;
   
   // Update UI - Dollar values
   document.getElementById('metricTotalTrades').textContent = totalTrades;
@@ -8496,45 +8466,6 @@ function updateMetrics() {
       secondChild.textContent = (avgLossPercent >= 0 ? '+' : '') + avgLossPercent.toFixed(2) + '%';
     }
   }
-  
-  // Update W (dollar and percentage)
-  const wEl = document.getElementById('metricW');
-  if (wEl) {
-    const firstChild = wEl.querySelector('div:first-child');
-    const secondChild = document.getElementById('metricWPercent');
-    if (firstChild) {
-      firstChild.textContent = '$' + w.toFixed(2);
-    }
-    if (secondChild) {
-      secondChild.textContent = (wPercent >= 0 ? '+' : '') + wPercent.toFixed(2) + '%';
-    }
-  }
-  
-  // Update L (dollar and percentage)
-  const lEl = document.getElementById('metricL');
-  if (lEl) {
-    const firstChild = lEl.querySelector('div:first-child');
-    const secondChild = document.getElementById('metricLPercent');
-    if (firstChild) {
-      firstChild.textContent = '$' + l.toFixed(2);
-    }
-    if (secondChild) {
-      secondChild.textContent = (lPercent >= 0 ? '+' : '') + lPercent.toFixed(2) + '%';
-    }
-  }
-  
-  // Update Expectancy (dollar and percentage)
-  const expectancyEl = document.getElementById('metricExpectancy');
-  if (expectancyEl) {
-    const firstChild = expectancyEl.querySelector('div:first-child');
-    const secondChild = document.getElementById('metricExpectancyPercent');
-    if (firstChild) {
-      firstChild.textContent = '$' + expectancy.toFixed(2);
-    }
-    if (secondChild) {
-      secondChild.textContent = (expectancyPercent >= 0 ? '+' : '') + expectancyPercent.toFixed(2) + '%';
-    }
-  }
 }
 
 // Render trades table
@@ -8569,17 +8500,17 @@ function renderTradesTable() {
     
     return `
       <tr style="border-bottom:1px solid var(--border-secondary);background:var(--bg-card);transition:background 0.2s;" onmouseenter="this.style.background='var(--bg-tertiary)'" onmouseleave="this.style.background='var(--bg-card)'">
-        <td style="padding:12px;text-align:center;color:var(--text-primary);font-weight:600;border-right:1px solid var(--border-secondary);">${leverageDisplay}</td>
-        <td style="padding:12px;text-align:center;color:var(--text-primary);border-right:1px solid var(--border-secondary);">${trade.entryPrice.toFixed(2)}</td>
-        <td style="padding:12px;text-align:center;color:var(--text-primary);border-right:1px solid var(--border-secondary);">${trade.exitPrice.toFixed(2)}</td>
-        <td style="padding:12px;text-align:center;color:var(--text-primary);font-weight:600;border-right:1px solid var(--border-secondary);">${direction}</td>
-        <td style="padding:12px;text-align:center;color:var(--text-primary);border-right:1px solid var(--border-secondary);">${closingQty}</td>
-        <td style="padding:12px;text-align:center;color:var(--text-primary);border-right:1px solid var(--border-secondary);">${tradingFee}</td>
-        <td style="padding:12px;text-align:center;font-weight:600;color:${isPositive ? 'var(--success)' : 'var(--error)'};border-right:1px solid var(--border-secondary);">${trade.net >= 0 ? '+' : ''}$${Math.abs(trade.net).toFixed(2)}</td>
+        <td style="padding:12px;text-align:center;color:var(--text-primary);font-weight:600;border-right:1px solid var(--border-secondary);cursor:pointer;" onclick="window.editTrade && window.editTrade('${trade.id}')" title="Click to edit">${leverageDisplay}</td>
+        <td style="padding:12px;text-align:center;color:var(--text-primary);border-right:1px solid var(--border-secondary);cursor:pointer;" onclick="window.editTrade && window.editTrade('${trade.id}')" title="Click to edit">${trade.entryPrice.toFixed(2)}</td>
+        <td style="padding:12px;text-align:center;color:var(--text-primary);border-right:1px solid var(--border-secondary);cursor:pointer;" onclick="window.editTrade && window.editTrade('${trade.id}')" title="Click to edit">${trade.exitPrice.toFixed(2)}</td>
+        <td style="padding:12px;text-align:center;color:var(--text-primary);font-weight:600;border-right:1px solid var(--border-secondary);cursor:pointer;" onclick="window.editTrade && window.editTrade('${trade.id}')" title="Click to edit">${direction}</td>
+        <td style="padding:12px;text-align:center;color:var(--text-primary);border-right:1px solid var(--border-secondary);cursor:pointer;" onclick="window.editTrade && window.editTrade('${trade.id}')" title="Click to edit">${closingQty}</td>
+        <td style="padding:12px;text-align:center;color:var(--text-primary);border-right:1px solid var(--border-secondary);cursor:pointer;" onclick="window.editTrade && window.editTrade('${trade.id}')" title="Click to edit">${tradingFee}</td>
+        <td style="padding:12px;text-align:center;font-weight:600;color:${isPositive ? 'var(--success)' : 'var(--error)'};border-right:1px solid var(--border-secondary);cursor:pointer;" onclick="window.editTrade && window.editTrade('${trade.id}')" title="Click to edit">${trade.net >= 0 ? '+' : ''}$${Math.abs(trade.net).toFixed(2)}</td>
         <td style="padding:12px;text-align:center;">
           <div style="display:flex;gap:8px;justify-content:center;">
-            <button onclick="window.editTrade && window.editTrade('${trade.id}')" style="padding:6px 12px;background:var(--accent-primary);border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s;font-family:'Arial',sans-serif;" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'">Edit</button>
-            <button onclick="window.deleteTrade && window.deleteTrade('${trade.id}')" style="padding:6px 12px;background:var(--error);border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s;font-family:'Arial',sans-serif;" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'">Delete</button>
+            <button onclick="window.editTrade && window.editTrade('${trade.id}')" style="padding:8px 16px;background:var(--accent-primary);border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s;font-family:'Arial',sans-serif;box-shadow:0 2px 4px rgba(99,102,241,0.3);" onmouseenter="this.style.transform='scale(1.05)';this.style.boxShadow='0 4px 8px rgba(99,102,241,0.5)'" onmouseleave="this.style.transform='scale(1)';this.style.boxShadow='0 2px 4px rgba(99,102,241,0.3)'">✏️ Edit</button>
+            <button onclick="window.deleteTrade && window.deleteTrade('${trade.id}')" style="padding:8px 16px;background:var(--error);border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s;font-family:'Arial',sans-serif;box-shadow:0 2px 4px rgba(239,68,68,0.3);" onmouseenter="this.style.transform='scale(1.05)';this.style.boxShadow='0 4px 8px rgba(239,68,68,0.5)'" onmouseleave="this.style.transform='scale(1)';this.style.boxShadow='0 2px 4px rgba(239,68,68,0.3)'">🗑️ Delete</button>
           </div>
         </td>
       </tr>
