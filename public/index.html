@@ -8276,17 +8276,20 @@ function mapCSVRowToTrade(row) {
     takeProfit: null
   };
   
-  // Token/Symbol mapping
-  const tokenKeys = ['symbol', 'token', 'pair', 'market', 'coin', 'asset', 'currency'];
+  // Token/Symbol mapping (Binance Futures format: "Futures" column)
+  const tokenKeys = ['futures', 'symbol', 'token', 'pair', 'market', 'coin', 'asset', 'currency', 'instrument'];
   for (const key of tokenKeys) {
     if (row[key]) {
-      trade.token = row[key].toUpperCase().replace(/[^A-Z0-9]/g, '');
+      let tokenValue = String(row[key]).trim();
+      // Remove common suffixes like /USDT, /USD, etc.
+      tokenValue = tokenValue.replace(/\/USDT?$/i, '').replace(/\/USD$/i, '').replace(/\/PERP$/i, '');
+      trade.token = tokenValue.toUpperCase().replace(/[^A-Z0-9]/g, '');
       break;
     }
   }
   
-  // Entry Price mapping
-  const entryKeys = ['entry', 'entryprice', 'entry price', 'buy price', 'buyprice', 'open', 'openprice', 'open price', 'price', 'executed price'];
+  // Entry Price mapping (Binance: "Avg Entry Price")
+  const entryKeys = ['avg entry price', 'avgentryprice', 'entry', 'entryprice', 'entry price', 'buy price', 'buyprice', 'open', 'openprice', 'open price', 'price', 'executed price', 'average entry price'];
   for (const key of entryKeys) {
     if (row[key] && !isNaN(parseFloat(row[key]))) {
       trade.entryPrice = parseFloat(row[key]);
@@ -8294,8 +8297,8 @@ function mapCSVRowToTrade(row) {
     }
   }
   
-  // Exit Price mapping
-  const exitKeys = ['exit', 'exitprice', 'exit price', 'sell price', 'sellprice', 'close', 'closeprice', 'close price'];
+  // Exit Price mapping (Binance: "Avg Close Price")
+  const exitKeys = ['avg close price', 'avgcloseprice', 'exit', 'exitprice', 'exit price', 'sell price', 'sellprice', 'close', 'closeprice', 'close price', 'average close price'];
   for (const key of exitKeys) {
     if (row[key] && !isNaN(parseFloat(row[key]))) {
       trade.exitPrice = parseFloat(row[key]);
@@ -8303,8 +8306,8 @@ function mapCSVRowToTrade(row) {
     }
   }
   
-  // Net P&L mapping
-  const pnlKeys = ['pnl', 'profit', 'profit/loss', 'profit loss', 'net', 'net pnl', 'realized pnl', 'realizedpnl', 'total', 'total pnl'];
+  // Net P&L mapping (Binance: "Realized PNL")
+  const pnlKeys = ['realized pnl', 'realizedpnl', 'realized p&l', 'pnl', 'profit', 'profit/loss', 'profit loss', 'net', 'net pnl', 'total', 'total pnl', 'realized profit'];
   for (const key of pnlKeys) {
     if (row[key] && !isNaN(parseFloat(row[key]))) {
       trade.netPL = parseFloat(row[key]);
@@ -8314,24 +8317,54 @@ function mapCSVRowToTrade(row) {
   
   // If P&L not found, calculate from entry/exit
   if (!trade.netPL && trade.entryPrice && trade.exitPrice) {
-    trade.netPL = trade.exitPrice - trade.entryPrice;
+    // Check direction for futures (Long/Short)
+    const direction = row['direction'] || row['side'] || row['type'] || '';
+    const isLong = direction.toLowerCase().includes('long') || direction.toLowerCase().includes('buy');
+    const isShort = direction.toLowerCase().includes('short') || direction.toLowerCase().includes('sell');
+    
+    if (isLong) {
+      trade.netPL = trade.exitPrice - trade.entryPrice;
+    } else if (isShort) {
+      trade.netPL = trade.entryPrice - trade.exitPrice;
+    } else {
+      // Default: assume long position
+      trade.netPL = trade.exitPrice - trade.entryPrice;
+    }
   }
   
-  // Date mapping
-  const dateKeys = ['date', 'time', 'datetime', 'timestamp', 'closed date', 'executed date'];
+  // Date mapping (Binance: "Close Time" or "Open Time")
+  const dateKeys = ['close time', 'closetime', 'closed date', 'date', 'time', 'datetime', 'timestamp', 'executed date', 'open time', 'opentime'];
   for (const key of dateKeys) {
     if (row[key]) {
-      const dateStr = row[key].trim();
+      const dateStr = String(row[key]).trim();
+      if (!dateStr || dateStr === '') continue;
+      
       // Try to parse various date formats
       let date = null;
-      if (dateStr.includes('T')) {
+      
+      // Handle Unix timestamp (milliseconds or seconds)
+      if (/^\d+$/.test(dateStr)) {
+        const timestamp = parseInt(dateStr);
+        date = new Date(timestamp > 1000000000000 ? timestamp : timestamp * 1000);
+      }
+      // Handle ISO format with T
+      else if (dateStr.includes('T')) {
         date = new Date(dateStr);
-      } else if (dateStr.includes('/')) {
+      }
+      // Handle date with slashes
+      else if (dateStr.includes('/')) {
         const parts = dateStr.split(/[/\s-]/);
         if (parts.length >= 3) {
-          date = new Date(parts[0] + '-' + parts[1] + '-' + parts[2]);
+          // Try different date formats
+          if (parts[0].length === 4) {
+            date = new Date(parts[0] + '-' + parts[1] + '-' + parts[2]);
+          } else {
+            date = new Date(parts[2] + '-' + parts[0] + '-' + parts[1]);
+          }
         }
-      } else if (dateStr.includes('-')) {
+      }
+      // Handle date with dashes
+      else if (dateStr.includes('-')) {
         date = new Date(dateStr);
       }
       
@@ -8342,8 +8375,8 @@ function mapCSVRowToTrade(row) {
     }
   }
   
-  // Leverage mapping
-  const leverageKeys = ['leverage', 'lev', 'margin', 'margin ratio'];
+  // Leverage mapping (Binance: "Margin Mode" - extract from isolated margin or cross margin, or look for leverage column)
+  const leverageKeys = ['leverage', 'lev', 'margin ratio', 'marginratio'];
   for (const key of leverageKeys) {
     if (row[key] && !isNaN(parseFloat(row[key]))) {
       trade.leverage = parseFloat(row[key]);
@@ -8351,8 +8384,17 @@ function mapCSVRowToTrade(row) {
     }
   }
   
+  // Try to extract leverage from margin mode (e.g., "Isolated 10x" or "Cross 5x")
+  if (!trade.leverage) {
+    const marginMode = row['margin mode'] || row['marginmode'] || '';
+    const marginMatch = String(marginMode).match(/(\d+(?:\.\d+)?)\s*x/i);
+    if (marginMatch) {
+      trade.leverage = parseFloat(marginMatch[1]);
+    }
+  }
+  
   // Stop Loss mapping
-  const stopLossKeys = ['stop loss', 'stoploss', 'sl', 'stop'];
+  const stopLossKeys = ['stop loss', 'stoploss', 'sl', 'stop', 'stop loss price'];
   for (const key of stopLossKeys) {
     if (row[key] && !isNaN(parseFloat(row[key]))) {
       trade.stopLoss = parseFloat(row[key]);
@@ -8361,7 +8403,7 @@ function mapCSVRowToTrade(row) {
   }
   
   // Take Profit mapping
-  const takeProfitKeys = ['take profit', 'takeprofit', 'tp', 'target'];
+  const takeProfitKeys = ['take profit', 'takeprofit', 'tp', 'target', 'take profit price'];
   for (const key of takeProfitKeys) {
     if (row[key] && !isNaN(parseFloat(row[key]))) {
       trade.takeProfit = parseFloat(row[key]);
