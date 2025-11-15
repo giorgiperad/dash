@@ -8148,22 +8148,50 @@ async function addTrade(token, entryPrice, exitPrice, netPL, date, leverage, sto
 let editingTradeId = null;
 
 function editTrade(tradeId) {
-  const trade = trades.find(t => t.id === tradeId);
-  if (!trade) return;
-  
-  editingTradeId = tradeId;
-  
-  // Populate form with trade data
-  document.getElementById('editLeverage').value = trade.leverage || '';
-  document.getElementById('editEntryPrice').value = trade.entryPrice || '';
-  document.getElementById('editExitPrice').value = trade.exitPrice || '';
-  document.getElementById('editDirection').value = trade.direction || (trade.exitPrice > trade.entryPrice ? 'Long' : 'Short');
-  document.getElementById('editClosingQty').value = trade.closingQty || '';
-  document.getElementById('editTradingFee').value = trade.tradingFee || '';
-  document.getElementById('editNetPL').value = trade.net || '';
-  
-  // Show modal
-  document.getElementById('editTradeModal').style.display = 'flex';
+  try {
+    const trade = trades.find(t => t.id === tradeId);
+    if (!trade) {
+      console.error('Trade not found:', tradeId);
+      alert('ტრანზაქცია ვერ მოიძებნა');
+      return;
+    }
+    
+    editingTradeId = tradeId;
+    
+    // Get modal elements
+    const modal = document.getElementById('editTradeModal');
+    const leverageEl = document.getElementById('editLeverage');
+    const entryPriceEl = document.getElementById('editEntryPrice');
+    const exitPriceEl = document.getElementById('editExitPrice');
+    const directionEl = document.getElementById('editDirection');
+    const closingQtyEl = document.getElementById('editClosingQty');
+    const tradingFeeEl = document.getElementById('editTradingFee');
+    const netPLEl = document.getElementById('editNetPL');
+    
+    if (!modal || !leverageEl || !entryPriceEl || !exitPriceEl || !directionEl || !closingQtyEl || !tradingFeeEl || !netPLEl) {
+      console.error('Edit modal elements not found');
+      alert('რედაქტირების ფორმა ვერ მოიძებნა. გთხოვთ განაახლოთ გვერდი.');
+      return;
+    }
+    
+    // Populate form with trade data
+    leverageEl.value = trade.leverage || '';
+    entryPriceEl.value = trade.entryPrice || '';
+    exitPriceEl.value = trade.exitPrice || '';
+    directionEl.value = trade.direction || (trade.exitPrice > trade.entryPrice ? 'Long' : 'Short');
+    closingQtyEl.value = trade.closingQty || '';
+    tradingFeeEl.value = trade.tradingFee || '';
+    netPLEl.value = trade.net || '';
+    
+    // Show modal
+    modal.style.display = 'flex';
+    
+    // Re-initialize listeners in case they weren't attached
+    initEditModalListeners();
+  } catch (error) {
+    console.error('Error in editTrade:', error);
+    alert('შეცდომა ტრანზაქციის რედაქტირებისას: ' + error.message);
+  }
 }
 
 // Save edited trade
@@ -8584,8 +8612,8 @@ function renderTradesTable() {
         <td style="padding:12px;text-align:center;font-weight:600;color:${isPositive ? 'var(--success)' : 'var(--error)'};border-right:1px solid var(--border-secondary);">${trade.net >= 0 ? '+' : ''}$${Math.abs(trade.net).toFixed(2)}</td>
         <td style="padding:12px;text-align:center;">
           <div style="display:flex;gap:8px;justify-content:center;">
-            <button onclick="editTrade('${trade.id}')" style="padding:6px 12px;background:var(--accent-primary);border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s;font-family:'Arial',sans-serif;" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'">რედაქტირება</button>
-            <button onclick="deleteTrade('${trade.id}')" style="padding:6px 12px;background:var(--error);border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s;font-family:'Arial',sans-serif;" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'">წაშლა</button>
+            <button onclick="window.editTrade && window.editTrade('${trade.id}')" style="padding:6px 12px;background:var(--accent-primary);border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s;font-family:'Arial',sans-serif;" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'">რედაქტირება</button>
+            <button onclick="window.deleteTrade && window.deleteTrade('${trade.id}')" style="padding:6px 12px;background:var(--error);border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s;font-family:'Arial',sans-serif;" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'">წაშლა</button>
           </div>
         </td>
       </tr>
@@ -8710,29 +8738,41 @@ function mapCSVRowToTrade(row) {
   }
   
   // Entry Price mapping (Binance: "Avg Entry Price")
-  const entryKeys = ['avg entry price', 'avgentryprice', 'entry', 'entryprice', 'entry price', 'buy price', 'buyprice', 'open', 'openprice', 'open price', 'price', 'executed price', 'average entry price'];
+  const entryKeys = ['avg entry price', 'avgentryprice', 'entry', 'entryprice', 'entry price', 'buy price', 'buyprice', 'open', 'openprice', 'open price', 'price', 'executed price', 'average entry price', 'avg. entry price'];
   for (const key of entryKeys) {
-    if (row[key] && !isNaN(parseFloat(row[key]))) {
-      trade.entryPrice = parseFloat(row[key]);
-      break;
+    const value = row[key];
+    if (value !== undefined && value !== null && value !== '' && !isNaN(parseFloat(value))) {
+      const parsed = parseFloat(value);
+      if (!isNaN(parsed) && isFinite(parsed)) {
+        trade.entryPrice = parsed;
+        break;
+      }
     }
   }
   
   // Exit Price mapping (Binance: "Avg Close Price")
-  const exitKeys = ['avg close price', 'avgcloseprice', 'exit', 'exitprice', 'exit price', 'sell price', 'sellprice', 'close', 'closeprice', 'close price', 'average close price'];
+  const exitKeys = ['avg close price', 'avgcloseprice', 'exit', 'exitprice', 'exit price', 'sell price', 'sellprice', 'close', 'closeprice', 'close price', 'average close price', 'avg. close price'];
   for (const key of exitKeys) {
-    if (row[key] && !isNaN(parseFloat(row[key]))) {
-      trade.exitPrice = parseFloat(row[key]);
-      break;
+    const value = row[key];
+    if (value !== undefined && value !== null && value !== '' && !isNaN(parseFloat(value))) {
+      const parsed = parseFloat(value);
+      if (!isNaN(parsed) && isFinite(parsed)) {
+        trade.exitPrice = parsed;
+        break;
+      }
     }
   }
   
   // Net P&L mapping (Binance: "Realized PNL")
-  const pnlKeys = ['realized pnl', 'realizedpnl', 'realized p&l', 'pnl', 'profit', 'profit/loss', 'profit loss', 'net', 'net pnl', 'total', 'total pnl', 'realized profit'];
+  const pnlKeys = ['realized pnl', 'realizedpnl', 'realized p&l', 'realized pnl', 'pnl', 'profit', 'profit/loss', 'profit loss', 'net', 'net pnl', 'total', 'total pnl', 'realized profit'];
   for (const key of pnlKeys) {
-    if (row[key] && !isNaN(parseFloat(row[key]))) {
-      trade.netPL = parseFloat(row[key]);
-      break;
+    const value = row[key];
+    if (value !== undefined && value !== null && value !== '' && !isNaN(parseFloat(value))) {
+      const parsed = parseFloat(value);
+      if (!isNaN(parsed) && isFinite(parsed)) {
+        trade.netPL = parsed;
+        break;
+      }
     }
   }
   
