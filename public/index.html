@@ -2400,7 +2400,7 @@ body{overflow-x:hidden}
           </div>
 
           <!-- Edit Trade Modal -->
-          <div id="editTradeModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:10000;align-items:center;justify-content:center;">
+          <div id="editTradeModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:10000;align-items:center;justify-content:center;" onclick="if(event.target.id === 'editTradeModal') { this.style.display = 'none'; editingTradeId = null; }">
             <div style="background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:16px;padding:32px;max-width:600px;width:90%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
                 <div style="font-size:20px;font-weight:700;color:var(--text-primary);">ტრანზაქციის რედაქტირება</div>
@@ -8697,13 +8697,27 @@ function parseCSV(text) {
     }
     values.push(current.trim());
     
-    if (values.length === headers.length) {
-      const row = {};
-      headers.forEach((header, idx) => {
-        row[header.toLowerCase()] = values[idx] || '';
-      });
-      rows.push(row);
-    }
+    // Handle cases where values might not match headers exactly
+    const row = {};
+    headers.forEach((header, idx) => {
+      const cleanHeader = header.toLowerCase().trim();
+      const value = values[idx] !== undefined ? values[idx] : '';
+      row[cleanHeader] = value;
+      // Also add variations for common column name issues
+      if (cleanHeader.includes('entry') && cleanHeader.includes('price')) {
+        row['avg entry price'] = value;
+        row['avgentryprice'] = value;
+      }
+      if (cleanHeader.includes('close') && cleanHeader.includes('price')) {
+        row['avg close price'] = value;
+        row['avgcloseprice'] = value;
+      }
+      if (cleanHeader.includes('realized') && (cleanHeader.includes('pnl') || cleanHeader.includes('p&l'))) {
+        row['realized pnl'] = value;
+        row['realizedpnl'] = value;
+      }
+    });
+    rows.push(row);
   }
   
   return { headers, rows };
@@ -8738,11 +8752,12 @@ function mapCSVRowToTrade(row) {
   }
   
   // Entry Price mapping (Binance: "Avg Entry Price")
-  const entryKeys = ['avg entry price', 'avgentryprice', 'entry', 'entryprice', 'entry price', 'buy price', 'buyprice', 'open', 'openprice', 'open price', 'price', 'executed price', 'average entry price', 'avg. entry price'];
+  // Try exact match first, then variations
+  const entryKeys = ['avg entry price', 'avg. entry price', 'avgentryprice', 'average entry price', 'entry', 'entryprice', 'entry price', 'buy price', 'buyprice', 'open', 'openprice', 'open price', 'price', 'executed price'];
   for (const key of entryKeys) {
     const value = row[key];
-    if (value !== undefined && value !== null && value !== '' && !isNaN(parseFloat(value))) {
-      const parsed = parseFloat(value);
+    if (value !== undefined && value !== null && value !== '' && String(value).trim() !== '') {
+      const parsed = parseFloat(String(value).replace(/[^\d.-]/g, ''));
       if (!isNaN(parsed) && isFinite(parsed)) {
         trade.entryPrice = parsed;
         break;
@@ -8750,15 +8765,47 @@ function mapCSVRowToTrade(row) {
     }
   }
   
+  // Also check all row keys for entry-related columns
+  if (!trade.entryPrice) {
+    for (const key in row) {
+      if (key.includes('entry') && (key.includes('price') || key.includes('avg'))) {
+        const value = row[key];
+        if (value !== undefined && value !== null && value !== '' && String(value).trim() !== '') {
+          const parsed = parseFloat(String(value).replace(/[^\d.-]/g, ''));
+          if (!isNaN(parsed) && isFinite(parsed)) {
+            trade.entryPrice = parsed;
+            break;
+          }
+        }
+      }
+    }
+  }
+  
   // Exit Price mapping (Binance: "Avg Close Price")
-  const exitKeys = ['avg close price', 'avgcloseprice', 'exit', 'exitprice', 'exit price', 'sell price', 'sellprice', 'close', 'closeprice', 'close price', 'average close price', 'avg. close price'];
+  const exitKeys = ['avg close price', 'avg. close price', 'avgcloseprice', 'average close price', 'exit', 'exitprice', 'exit price', 'sell price', 'sellprice', 'close', 'closeprice', 'close price'];
   for (const key of exitKeys) {
     const value = row[key];
-    if (value !== undefined && value !== null && value !== '' && !isNaN(parseFloat(value))) {
-      const parsed = parseFloat(value);
+    if (value !== undefined && value !== null && value !== '' && String(value).trim() !== '') {
+      const parsed = parseFloat(String(value).replace(/[^\d.-]/g, ''));
       if (!isNaN(parsed) && isFinite(parsed)) {
         trade.exitPrice = parsed;
         break;
+      }
+    }
+  }
+  
+  // Also check all row keys for close-related columns
+  if (!trade.exitPrice) {
+    for (const key in row) {
+      if (key.includes('close') && (key.includes('price') || key.includes('avg'))) {
+        const value = row[key];
+        if (value !== undefined && value !== null && value !== '' && String(value).trim() !== '') {
+          const parsed = parseFloat(String(value).replace(/[^\d.-]/g, ''));
+          if (!isNaN(parsed) && isFinite(parsed)) {
+            trade.exitPrice = parsed;
+            break;
+          }
+        }
       }
     }
   }
@@ -8767,11 +8814,27 @@ function mapCSVRowToTrade(row) {
   const pnlKeys = ['realized pnl', 'realizedpnl', 'realized p&l', 'realized pnl', 'pnl', 'profit', 'profit/loss', 'profit loss', 'net', 'net pnl', 'total', 'total pnl', 'realized profit'];
   for (const key of pnlKeys) {
     const value = row[key];
-    if (value !== undefined && value !== null && value !== '' && !isNaN(parseFloat(value))) {
-      const parsed = parseFloat(value);
+    if (value !== undefined && value !== null && value !== '' && String(value).trim() !== '') {
+      const parsed = parseFloat(String(value).replace(/[^\d.-]/g, ''));
       if (!isNaN(parsed) && isFinite(parsed)) {
         trade.netPL = parsed;
         break;
+      }
+    }
+  }
+  
+  // Also check all row keys for PNL-related columns
+  if (!trade.netPL) {
+    for (const key in row) {
+      if ((key.includes('pnl') || key.includes('p&l') || key.includes('realized')) && key !== 'realized pnl') {
+        const value = row[key];
+        if (value !== undefined && value !== null && value !== '' && String(value).trim() !== '') {
+          const parsed = parseFloat(String(value).replace(/[^\d.-]/g, ''));
+          if (!isNaN(parsed) && isFinite(parsed)) {
+            trade.netPL = parsed;
+            break;
+          }
+        }
       }
     }
   }
@@ -8944,7 +9007,22 @@ function parseExcel(file) {
         for (let i = 1; i < jsonData.length; i++) {
           const row = {};
           headers.forEach((header, idx) => {
-            row[header] = jsonData[i][idx] !== undefined ? String(jsonData[i][idx]).trim() : '';
+            const cleanHeader = header.toLowerCase().trim();
+            const value = jsonData[i][idx] !== undefined ? String(jsonData[i][idx]).trim() : '';
+            row[cleanHeader] = value;
+            // Also add variations for common column name issues
+            if (cleanHeader.includes('entry') && cleanHeader.includes('price')) {
+              row['avg entry price'] = value;
+              row['avgentryprice'] = value;
+            }
+            if (cleanHeader.includes('close') && cleanHeader.includes('price')) {
+              row['avg close price'] = value;
+              row['avgcloseprice'] = value;
+            }
+            if (cleanHeader.includes('realized') && (cleanHeader.includes('pnl') || cleanHeader.includes('p&l'))) {
+              row['realized pnl'] = value;
+              row['realizedpnl'] = value;
+            }
           });
           rows.push(row);
         }
