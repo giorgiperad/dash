@@ -8239,37 +8239,58 @@ async function deleteTrade(tradeId) {
 window.editTrade = editTrade;
 window.deleteTrade = deleteTrade;
 
-// Edit modal event listeners
-if (document.getElementById('editTradeForm')) {
-  document.getElementById('editTradeForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    await saveEditedTrade();
-  });
-}
-
-if (document.getElementById('closeEditModal')) {
-  document.getElementById('closeEditModal').addEventListener('click', () => {
-    document.getElementById('editTradeModal').style.display = 'none';
-    editingTradeId = null;
-  });
-}
-
-if (document.getElementById('cancelEditBtn')) {
-  document.getElementById('cancelEditBtn').addEventListener('click', () => {
-    document.getElementById('editTradeModal').style.display = 'none';
-    editingTradeId = null;
-  });
-}
-
-// Close modal when clicking outside
-if (document.getElementById('editTradeModal')) {
-  document.getElementById('editTradeModal').addEventListener('click', (e) => {
-    if (e.target.id === 'editTradeModal') {
-      document.getElementById('editTradeModal').style.display = 'none';
+// Edit modal event listeners - initialize when DOM is ready
+function initEditModalListeners() {
+  const editForm = document.getElementById('editTradeForm');
+  const closeBtn = document.getElementById('closeEditModal');
+  const cancelBtn = document.getElementById('cancelEditBtn');
+  const modal = document.getElementById('editTradeModal');
+  
+  if (editForm && !editForm.hasAttribute('data-listener-attached')) {
+    editForm.setAttribute('data-listener-attached', 'true');
+    editForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      await saveEditedTrade();
+    });
+  }
+  
+  if (closeBtn && !closeBtn.hasAttribute('data-listener-attached')) {
+    closeBtn.setAttribute('data-listener-attached', 'true');
+    closeBtn.addEventListener('click', () => {
+      if (modal) modal.style.display = 'none';
       editingTradeId = null;
-    }
-  });
+    });
+  }
+  
+  if (cancelBtn && !cancelBtn.hasAttribute('data-listener-attached')) {
+    cancelBtn.setAttribute('data-listener-attached', 'true');
+    cancelBtn.addEventListener('click', () => {
+      if (modal) modal.style.display = 'none';
+      editingTradeId = null;
+    });
+  }
+  
+  if (modal && !modal.hasAttribute('data-listener-attached')) {
+    modal.setAttribute('data-listener-attached', 'true');
+    modal.addEventListener('click', (e) => {
+      if (e.target.id === 'editTradeModal') {
+        modal.style.display = 'none';
+        editingTradeId = null;
+      }
+    });
+  }
 }
+
+// Initialize edit modal listeners when page loads
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initEditModalListeners);
+} else {
+  initEditModalListeners();
+}
+
+// Also try to initialize after page navigation
+setTimeout(initEditModalListeners, 500);
+setTimeout(initEditModalListeners, 2000);
 
 // Export trades to CSV
 function exportTradesToCSV() {
@@ -8943,12 +8964,37 @@ async function handleCSVImport() {
       return;
     }
     
-    // Map rows to trades
-    csvPreviewData = rows.map(row => mapCSVRowToTrade(row))
-      .filter(trade => trade.entryPrice !== null && trade.exitPrice !== null && trade.netPL !== null);
+      // Debug: Log headers and first row
+    console.log('CSV Headers:', headers);
+    if (rows.length > 0) {
+      console.log('First CSV row:', rows[0]);
+    }
+    
+    // Map rows to trades - be more lenient with required fields
+    csvPreviewData = rows.map((row, idx) => {
+      const trade = mapCSVRowToTrade(row);
+      console.log(`Row ${idx + 1} mapped:`, trade);
+      return trade;
+    }).filter(trade => {
+      // At minimum, we need entry price and exit price OR net P&L
+      const hasEntryExit = trade.entryPrice !== null && trade.exitPrice !== null;
+      const hasNetPL = trade.netPL !== null;
+      // If we have entry/exit but no P&L, calculate it
+      if (hasEntryExit && !hasNetPL) {
+        trade.netPL = trade.exitPrice - trade.entryPrice;
+      }
+      // Accept if we have entry/exit OR net P&L
+      const isValid = hasEntryExit || hasNetPL;
+      if (!isValid) {
+        console.warn('Filtered out trade (missing required fields):', trade);
+      }
+      return isValid;
+    });
+    
+    console.log(`Mapped ${csvPreviewData.length} valid trades from ${rows.length} rows`);
     
     if (csvPreviewData.length === 0) {
-      showCSVStatus('ვერ მოხერხდა ტრანზაქციების გამოტანა. შეამოწმეთ ფაილის ფორმატი და სვეტების სახელები.', 'error');
+      showCSVStatus('ვერ მოხერხდა ტრანზაქციების გამოტანა. შეამოწმეთ ფაილის ფორმატი და სვეტების სახელები. საჭიროა: Entry Price და Exit Price ან Realized PNL. შეამოწმეთ კონსოლი დეტალებისთვის.', 'error');
       return;
     }
     
@@ -9027,14 +9073,37 @@ async function confirmCSVImport() {
       const stopLossPercent = stopLossPrice ? calculatePercentage(entry, stopLossPrice) : null;
       const takeProfitPercent = takeProfitPrice ? calculatePercentage(entry, takeProfitPrice) : null;
       
+      // Ensure we have required data
+      if (!entry || isNaN(entry)) {
+        console.warn('Missing or invalid entry price, skipping trade');
+        errors++;
+        continue;
+      }
+      
+      const exit = parseFloat(tradeData.exitPrice);
+      if (!exit || isNaN(exit)) {
+        console.warn('Missing or invalid exit price, skipping trade');
+        errors++;
+        continue;
+      }
+      
+      // Get net P&L or calculate it
+      let netPLValue = tradeData.netPL;
+      if (!netPLValue || isNaN(parseFloat(netPLValue))) {
+        // Calculate from entry/exit
+        netPLValue = exit - entry;
+      } else {
+        netPLValue = parseFloat(netPLValue);
+      }
+      
       // Determine direction
       let direction = null;
       if (tradeData.direction) {
         direction = String(tradeData.direction).trim();
-      } else if (tradeData.exitPrice && tradeData.entryPrice) {
-        direction = parseFloat(tradeData.exitPrice) > parseFloat(tradeData.entryPrice) ? 'Long' : 'Short';
-      } else if (tradeData.netPL) {
-        direction = parseFloat(tradeData.netPL) > 0 ? 'Long' : 'Short';
+      } else if (exit && entry) {
+        direction = exit > entry ? 'Long' : 'Short';
+      } else if (netPLValue) {
+        direction = netPLValue > 0 ? 'Long' : 'Short';
       }
       
       // Closing Qty (Contract)
@@ -9050,13 +9119,13 @@ async function confirmCSVImport() {
         tradeNumber: nextTradeNumber++,
         token: tradeData.token || '',
         entryPrice: entry,
-        exitPrice: parseFloat(tradeData.exitPrice),
+        exitPrice: exit,
         leverage: tradeData.leverage ? parseFloat(tradeData.leverage) : null,
         stopLoss: stopLossPrice,
         stopLossPercent: stopLossPercent,
         takeProfit: takeProfitPrice,
         takeProfitPercent: takeProfitPercent,
-        net: parseFloat(tradeData.netPL),
+        net: netPLValue,
         date: tradeData.date || new Date().toISOString().split('T')[0],
         direction: direction,
         closingQty: closingQtyNum,
