@@ -2375,21 +2375,18 @@ body{overflow-x:hidden}
             <table id="tradesTable" style="width:100%;border-collapse:collapse;font-family:'Arial',sans-serif;">
               <thead>
                 <tr style="background:var(--bg-tertiary);border-bottom:2px solid var(--border-secondary);">
-                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">ტრანზაქცია-#</th>
-                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">ტოკენი</th>
-                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">შესვლის ფასი</th>
-                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">გასვლის ფასი</th>
-                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">ლევერაჟი</th>
-                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">წმინდა</th>
-                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">მოგება</th>
-                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">ზარალი</th>
-                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">თარიღი</th>
-                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;">მოქმედება</th>
+                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Leverage</th>
+                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Avg Entry Price</th>
+                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Avg Close Price</th>
+                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Direction</th>
+                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Closing Qty (Cont.)</th>
+                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Trading Fee</th>
+                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;">Realized PNL</th>
                 </tr>
               </thead>
               <tbody id="tradesTableBody">
                 <tr>
-                  <td colspan="10" style="padding:40px;text-align:center;color:var(--text-tertiary);font-size:14px;">ჯერ არ არის ტრანზაქციები</td>
+                  <td colspan="7" style="padding:40px;text-align:center;color:var(--text-tertiary);font-size:14px;">ჯერ არ არის ტრანზაქციები</td>
                 </tr>
               </tbody>
             </table>
@@ -8285,31 +8282,37 @@ function renderTradesTable() {
   if (!tbody) return;
   
   if (trades.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="10" style="padding:40px;text-align:center;color:var(--text-tertiary);font-size:14px;">ჯერ არ არის ტრანზაქციები</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="padding:40px;text-align:center;color:var(--text-tertiary);font-size:14px;">ჯერ არ არის ტრანზაქციები</td></tr>';
     return;
   }
   
   tbody.innerHTML = trades.map(trade => {
     const isPositive = trade.net > 0;
-    const profit = isPositive ? trade.net.toFixed(2) : '';
-    const loss = !isPositive ? '(' + Math.abs(trade.net).toFixed(2) + ')' : '';
-    
     const leverageDisplay = trade.leverage ? trade.leverage + 'x' : '-';
+    
+    // Determine direction based on entry/exit price or P&L
+    let direction = '-';
+    if (trade.exitPrice && trade.entryPrice) {
+      direction = trade.exitPrice > trade.entryPrice ? 'Long' : 'Short';
+    } else if (trade.net !== undefined) {
+      direction = trade.net > 0 ? 'Long' : 'Short';
+    }
+    
+    // Closing Qty (Contract) - if not available, show '-'
+    const closingQty = trade.closingQty !== undefined && trade.closingQty !== null ? trade.closingQty.toFixed(2) : '-';
+    
+    // Trading Fee - if not available, show '-'
+    const tradingFee = trade.tradingFee !== undefined && trade.tradingFee !== null ? '$' + trade.tradingFee.toFixed(2) : '-';
     
     return `
       <tr style="border-bottom:1px solid var(--border-secondary);background:var(--bg-card);transition:background 0.2s;" onmouseenter="this.style.background='var(--bg-tertiary)'" onmouseleave="this.style.background='var(--bg-card)'">
-        <td style="padding:12px;text-align:center;font-weight:600;color:var(--text-primary);border-right:1px solid var(--border-secondary);">${trade.tradeNumber}</td>
-        <td style="padding:12px;text-align:center;color:var(--text-primary);font-weight:600;border-right:1px solid var(--border-secondary);">${trade.token || '-'}</td>
+        <td style="padding:12px;text-align:center;color:var(--text-primary);font-weight:600;border-right:1px solid var(--border-secondary);">${leverageDisplay}</td>
         <td style="padding:12px;text-align:center;color:var(--text-primary);border-right:1px solid var(--border-secondary);">${trade.entryPrice.toFixed(2)}</td>
         <td style="padding:12px;text-align:center;color:var(--text-primary);border-right:1px solid var(--border-secondary);">${trade.exitPrice.toFixed(2)}</td>
-        <td style="padding:12px;text-align:center;color:var(--text-primary);font-weight:600;border-right:1px solid var(--border-secondary);">${leverageDisplay}</td>
-        <td style="padding:12px;text-align:center;font-weight:600;color:${isPositive ? 'var(--success)' : 'var(--error)'};border-right:1px solid var(--border-secondary);">${trade.net >= 0 ? '+' : ''}${trade.net.toFixed(2)}</td>
-        <td style="padding:12px;text-align:center;color:var(--success);font-weight:600;border-right:1px solid var(--border-secondary);">${profit}</td>
-        <td style="padding:12px;text-align:center;color:var(--error);font-weight:600;border-right:1px solid var(--border-secondary);">${loss}</td>
-        <td style="padding:12px;text-align:center;color:var(--text-secondary);border-right:1px solid var(--border-secondary);">${trade.date}</td>
-        <td style="padding:12px;text-align:center;">
-          <button onclick="deleteTrade('${trade.id}')" style="padding:6px 12px;background:var(--error);border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s;font-family:'Arial',sans-serif;" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'">წაშლა</button>
-        </td>
+        <td style="padding:12px;text-align:center;color:var(--text-primary);font-weight:600;border-right:1px solid var(--border-secondary);">${direction}</td>
+        <td style="padding:12px;text-align:center;color:var(--text-primary);border-right:1px solid var(--border-secondary);">${closingQty}</td>
+        <td style="padding:12px;text-align:center;color:var(--text-primary);border-right:1px solid var(--border-secondary);">${tradingFee}</td>
+        <td style="padding:12px;text-align:center;font-weight:600;color:${isPositive ? 'var(--success)' : 'var(--error)'};">${trade.net >= 0 ? '+' : ''}$${Math.abs(trade.net).toFixed(2)}</td>
       </tr>
     `;
   }).join('');
@@ -8413,7 +8416,10 @@ function mapCSVRowToTrade(row) {
     date: null,
     leverage: null,
     stopLoss: null,
-    takeProfit: null
+    takeProfit: null,
+    direction: null,
+    closingQty: null,
+    tradingFee: null
   };
   
   // Token/Symbol mapping (Binance Futures format: "Futures" column)
@@ -8547,6 +8553,46 @@ function mapCSVRowToTrade(row) {
   for (const key of takeProfitKeys) {
     if (row[key] && !isNaN(parseFloat(row[key]))) {
       trade.takeProfit = parseFloat(row[key]);
+      break;
+    }
+  }
+  
+  // Direction mapping
+  const directionKeys = ['direction', 'side', 'type', 'position'];
+  for (const key of directionKeys) {
+    if (row[key]) {
+      const dirValue = String(row[key]).trim();
+      if (dirValue.toLowerCase().includes('long') || dirValue.toLowerCase().includes('buy')) {
+        trade.direction = 'Long';
+        break;
+      } else if (dirValue.toLowerCase().includes('short') || dirValue.toLowerCase().includes('sell')) {
+        trade.direction = 'Short';
+        break;
+      }
+    }
+  }
+  
+  // If direction not found, determine from entry/exit
+  if (!trade.direction && trade.entryPrice && trade.exitPrice) {
+    trade.direction = trade.exitPrice > trade.entryPrice ? 'Long' : 'Short';
+  } else if (!trade.direction && trade.netPL !== null) {
+    trade.direction = trade.netPL > 0 ? 'Long' : 'Short';
+  }
+  
+  // Closing Qty (Contract) mapping
+  const closingQtyKeys = ['closing qty', 'closingqty', 'closing qty (cont.)', 'closing quantity', 'quantity', 'qty', 'size', 'contracts'];
+  for (const key of closingQtyKeys) {
+    if (row[key] && !isNaN(parseFloat(row[key]))) {
+      trade.closingQty = parseFloat(row[key]);
+      break;
+    }
+  }
+  
+  // Trading Fee mapping
+  const tradingFeeKeys = ['trading fee', 'tradingfee', 'fee', 'commission', 'trading commission'];
+  for (const key of tradingFeeKeys) {
+    if (row[key] && !isNaN(parseFloat(row[key]))) {
+      trade.tradingFee = parseFloat(row[key]);
       break;
     }
   }
@@ -8727,6 +8773,24 @@ async function confirmCSVImport() {
       const stopLossPercent = stopLossPrice ? calculatePercentage(entry, stopLossPrice) : null;
       const takeProfitPercent = takeProfitPrice ? calculatePercentage(entry, takeProfitPrice) : null;
       
+      // Determine direction
+      let direction = null;
+      if (tradeData.direction) {
+        direction = String(tradeData.direction).trim();
+      } else if (tradeData.exitPrice && tradeData.entryPrice) {
+        direction = parseFloat(tradeData.exitPrice) > parseFloat(tradeData.entryPrice) ? 'Long' : 'Short';
+      } else if (tradeData.netPL) {
+        direction = parseFloat(tradeData.netPL) > 0 ? 'Long' : 'Short';
+      }
+      
+      // Closing Qty (Contract)
+      const closingQty = tradeData.closingQty || tradeData['closing qty'] || tradeData['closing qty (cont.)'] || tradeData.quantity || null;
+      const closingQtyNum = closingQty ? parseFloat(closingQty) : null;
+      
+      // Trading Fee
+      const tradingFee = tradeData.tradingFee || tradeData['trading fee'] || tradeData.fee || null;
+      const tradingFeeNum = tradingFee ? parseFloat(tradingFee) : null;
+      
       const trade = {
         id: Date.now().toString() + '-' + Math.random().toString(36).substr(2, 9),
         tradeNumber: nextTradeNumber++,
@@ -8739,7 +8803,10 @@ async function confirmCSVImport() {
         takeProfit: takeProfitPrice,
         takeProfitPercent: takeProfitPercent,
         net: parseFloat(tradeData.netPL),
-        date: tradeData.date || new Date().toISOString().split('T')[0]
+        date: tradeData.date || new Date().toISOString().split('T')[0],
+        direction: direction,
+        closingQty: closingQtyNum,
+        tradingFee: tradingFeeNum
       };
       
       trades.push(trade);
