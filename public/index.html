@@ -2363,6 +2363,7 @@ body{overflow-x:hidden}
             <table id="tradesTable" style="width:100%;border-collapse:collapse;font-family:'Arial',sans-serif;">
               <thead>
                 <tr style="background:var(--bg-tertiary);border-bottom:2px solid var(--border-secondary);">
+                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Token</th>
                   <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Leverage</th>
                   <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Avg Entry Price</th>
                   <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Avg Close Price</th>
@@ -2375,7 +2376,7 @@ body{overflow-x:hidden}
               </thead>
               <tbody id="tradesTableBody">
                 <tr>
-                  <td colspan="9" style="padding:40px;text-align:center;color:var(--text-tertiary);font-size:14px;">No trades yet</td>
+                  <td colspan="8" style="padding:40px;text-align:center;color:var(--text-tertiary);font-size:14px;">No trades yet</td>
                 </tr>
               </tbody>
             </table>
@@ -2389,6 +2390,11 @@ body{overflow-x:hidden}
                 <button type="button" id="closeEditModal" style="background:none;border:none;color:var(--text-secondary);font-size:24px;cursor:pointer;padding:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px;transition:all 0.2s;" onmouseenter="this.style.background='var(--bg-tertiary)'" onmouseleave="this.style.background='transparent'">×</button>
               </div>
               <form id="editTradeForm" style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;">
+                <div>
+                  <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Token</label>
+                  <input type="text" id="editToken" placeholder="BTC, ETH..." style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
+                </div>
+                
                 <div>
                   <label style="display:block;font-size:12px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Leverage</label>
                   <input type="number" step="any" id="editLeverage" placeholder="1x" style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:'Arial',sans-serif;">
@@ -8103,6 +8109,7 @@ function editTrade(tradeId) {
     
     // Get modal elements
     const modal = document.getElementById('editTradeModal');
+    const tokenEl = document.getElementById('editToken');
     const leverageEl = document.getElementById('editLeverage');
     const entryPriceEl = document.getElementById('editEntryPrice');
     const exitPriceEl = document.getElementById('editExitPrice');
@@ -8118,6 +8125,7 @@ function editTrade(tradeId) {
     }
     
     // Populate form with trade data
+    tokenEl.value = trade.token || '';
     leverageEl.value = trade.leverage || '';
     entryPriceEl.value = trade.entryPrice || '';
     exitPriceEl.value = trade.exitPrice || '';
@@ -8144,6 +8152,7 @@ async function saveEditedTrade() {
   const trade = trades.find(t => t.id === editingTradeId);
   if (!trade) return;
   
+  const token = document.getElementById('editToken').value;
   const leverage = document.getElementById('editLeverage').value;
   const entryPrice = parseFloat(document.getElementById('editEntryPrice').value);
   const exitPrice = parseFloat(document.getElementById('editExitPrice').value);
@@ -8158,6 +8167,7 @@ async function saveEditedTrade() {
   }
   
   // Update trade
+  trade.token = token || '';
   trade.leverage = leverage ? parseFloat(leverage) : null;
   trade.entryPrice = entryPrice;
   trade.exitPrice = exitPrice;
@@ -8272,6 +8282,7 @@ function exportTradesToCSV() {
   
   // Define CSV headers matching the table columns
   const headers = [
+    'Token'
     'Leverage',
     'Avg Entry Price',
     'Avg Close Price',
@@ -8283,6 +8294,7 @@ function exportTradesToCSV() {
   
   // Convert trades to CSV rows
   const csvRows = trades.map(trade => {
+    const token = trade.token || '';
     const leverage = trade.leverage ? trade.leverage + 'x' : '';
     const entryPrice = trade.entryPrice ? trade.entryPrice.toFixed(2) : '';
     const exitPrice = trade.exitPrice ? trade.exitPrice.toFixed(2) : '';
@@ -8312,6 +8324,7 @@ function exportTradesToCSV() {
     };
     
     return [
+    escapeCSV(token),
       escapeCSV(leverage),
       escapeCSV(entryPrice),
       escapeCSV(exitPrice),
@@ -8474,13 +8487,14 @@ function renderTradesTable() {
   if (!tbody) return;
   
   if (trades.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="8" style="padding:40px;text-align:center;color:var(--text-tertiary);font-size:14px;">No trades yet</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" style="padding:40px;text-align:center;color:var(--text-tertiary);font-size:14px;">No trades yet</td></tr>';
     return;
   }
   
   tbody.innerHTML = trades.map(trade => {
     const isPositive = trade.net > 0;
     const leverageDisplay = trade.leverage ? trade.leverage + 'x' : '-';
+    const tokenDisplay = trade.token || '-';
     
     // Determine direction based on entry/exit price or P&L
     let direction = '-';
@@ -8500,6 +8514,7 @@ function renderTradesTable() {
     
     return `
       <tr style="border-bottom:1px solid var(--border-secondary);background:var(--bg-card);transition:background 0.2s;" onmouseenter="this.style.background='var(--bg-tertiary)'" onmouseleave="this.style.background='var(--bg-card)'">
+                <td style="padding:12px;text-align:center;color:var(--text-primary);font-weight:600;border-right:1px solid var(--border-secondary);cursor:pointer;" onclick="window.editTrade && window.editTrade('${trade.id}')" title="Click to edit">${tokenDisplay}</td>
         <td style="padding:12px;text-align:center;color:var(--text-primary);font-weight:600;border-right:1px solid var(--border-secondary);cursor:pointer;" onclick="window.editTrade && window.editTrade('${trade.id}')" title="Click to edit">${leverageDisplay}</td>
         <td style="padding:12px;text-align:center;color:var(--text-primary);border-right:1px solid var(--border-secondary);cursor:pointer;" onclick="window.editTrade && window.editTrade('${trade.id}')" title="Click to edit">${trade.entryPrice.toFixed(2)}</td>
         <td style="padding:12px;text-align:center;color:var(--text-primary);border-right:1px solid var(--border-secondary);cursor:pointer;" onclick="window.editTrade && window.editTrade('${trade.id}')" title="Click to edit">${trade.exitPrice.toFixed(2)}</td>
