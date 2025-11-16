@@ -2363,6 +2363,8 @@ body{overflow-x:hidden}
             <table id="tradesTable" style="width:100%;border-collapse:collapse;font-family:'Arial',sans-serif;">
               <thead>
                 <tr style="background:var(--bg-tertiary);border-bottom:2px solid var(--border-secondary);">
+                  <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Token</th>
+
                   <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Leverage</th>
                   <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Avg Entry Price</th>
                   <th style="padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;border-right:1px solid var(--border-secondary);">Avg Close Price</th>
@@ -8272,7 +8274,6 @@ function exportTradesToCSV() {
   
   // Define CSV headers matching the table columns
   const headers = [
-  'Token',
     'Leverage',
     'Avg Entry Price',
     'Avg Close Price',
