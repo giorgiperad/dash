@@ -4635,13 +4635,10 @@ $('editHoldingForm').onsubmit = async e => {
 };
 
 
-    // Update dashboard if on dashboard page
-    if (currentUser && document.getElementById('dashboardPage')?.style.display !== 'none') {
-      updateDashboardStats(portfolioHoldings || {}, sellTargets || {}, alerts);
+   // Update dashboard if on dashboard page
+   if (currentUser && document.getElementById('dashboardPage')?.style.display !== 'none') {
+      updateDashboardStats(portfolioHoldings || {}, sellTargets || {});
     }
-   catch (e) {
-    console.error('Load alerts error:', e);
-   
 
 
 $('addTargetForm').onsubmit = async e => {
