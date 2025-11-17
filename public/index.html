@@ -8490,9 +8490,15 @@ function renderTradesTable() {
     tbody.innerHTML = '<tr><td colspan="9" style="padding:40px;text-align:center;color:var(--text-tertiary);font-size:14px;">No trades yet</td></tr>';
     return;
   }
-  
-  tbody.innerHTML = trades.map(trade => {
-    const isPositive = trade.net > 0;
+  // Sort trades by ID (timestamp) in descending order (newest first)
+const sortedTrades = [...trades].sort((a, b) => {
+  const idA = parseInt(a.id.split('-')[0]) || 0;
+  const idB = parseInt(b.id.split('-')[0]) || 0;
+  return idB - idA;
+});
+
+tbody.innerHTML = sortedTrades.map(trade => {
+  const isPositive = trade.net > 0;
     const leverageDisplay = trade.leverage ? trade.leverage + 'x' : '-';
     const tokenDisplay = trade.token || '-';
     
