@@ -7848,7 +7848,7 @@ function editTrade(tradeId) {
     const tradingFeeEl = document.getElementById('editTradingFee');
     const netPLEl = document.getElementById('editNetPL');
     
-    if (!modal || !leverageEl || !entryPriceEl || !exitPriceEl || !directionEl || !closingQtyEl || !tradingFeeEl || !netPLEl) {
+    if (!modal || !tokenEl || !leverageEl || !entryPriceEl || !exitPriceEl || !directionEl || !closingQtyEl || !tradingFeeEl || !netPLEl) {
       console.error('Edit modal elements not found');
       alert('რედაქტირების ფორმა ვერ მოიძებნა. გთხოვთ განაახლოთ გვერდი.');
       return;
