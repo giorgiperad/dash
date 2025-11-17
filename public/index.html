@@ -441,16 +441,6 @@ body{
 .add-holding-form button{background:var(--accent-primary);border:none;color:#fff;padding:10px 18px;border-radius:var(--radius-sm);font-weight:500;cursor:pointer;transition:all .2s;font-size:13px}
 .add-holding-form button:hover{background:var(--accent-hover)}
 
-/* ALERTS */
-.alerts-list{display:flex;flex-direction:column;gap:10px}
-.alert-row{display:grid;grid-template-columns:80px 2fr 1fr 1fr 80px;gap:16px;padding:16px 20px;background:var(--bg-tertiary);border:1px solid var(--border-secondary);border-radius:var(--radius-md);align-items:center;transition:all .2s}
-.alert-row:hover{background:var(--bg-card-hover);border-color:var(--border-primary);transform:translateX(4px)}
-.alert-row.triggered{background:var(--success-bg);border-color:var(--success)}
-.add-alert-form{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 80px;gap:12px;margin-top:24px}
-.add-alert-form select,.add-alert-form input{padding:10px 14px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:var(--radius-sm);color:var(--text-primary);font-size:13px;transition:all .2s}
-.add-alert-form select:focus,.add-alert-form input:focus{outline:none;border-color:var(--accent-primary);background:var(--bg-input-focus)}
-.add-alert-form button{background:var(--accent-primary);border:none;color:#fff;padding:10px 18px;border-radius:var(--radius-sm);font-weight:500;cursor:pointer;transition:all .2s;font-size:13px}
-.add-alert-form button:hover{background:var(--accent-hover)}
 
 /* MODALS */
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(12px);align-items:center;justify-content:center;z-index:1000}
@@ -1523,21 +1513,18 @@ body{overflow-x:hidden}
 
 /* Professional pages - hide decorative elements */
 #portfolioPage .grain-overlay,
-#alertsPage .grain-overlay,
 #targetsPage .grain-overlay,
 #tradingJournalPage .grain-overlay {
   display: none !important;
 }
 
 #portfolioPage,
-#alertsPage,
 #targetsPage,
 #tradingJournalPage {
   background: var(--bg-primary) !important;
 }
 
 #portfolioPage::before,
-#alertsPage::before,
 #targetsPage::before,
 #tradingJournalPage::before {
   display: none !important;
@@ -1878,14 +1865,7 @@ body{overflow-x:hidden}
               <div style="font-size:13px;color:var(--text-tertiary);line-height:1.5;">View real-time crypto prices</div>
             </div>
         </button>
-          <button onclick="showPage('alerts')" class="dashboard-action-btn" style="padding:24px;background:linear-gradient(135deg,var(--bg-card) 0%,var(--bg-tertiary) 100%);border:1px solid var(--border-secondary);border-radius:16px;cursor:pointer;transition:all 0.3s;text-align:left;position:relative;overflow:hidden;">
-            <div style="position:absolute;top:0;right:0;width:100px;height:100px;background:radial-gradient(circle,rgba(245,158,11,0.1),transparent);border-radius:50%;transform:translate(30px,-30px);"></div>
-            <div style="position:relative;z-index:1;">
-              <div style="font-size:32px;margin-bottom:12px;display:inline-block;width:56px;height:56px;background:rgba(245,158,11,0.15);border-radius:12px;display:flex;align-items:center;justify-content:center;">🔔</div>
-              <div style="font-weight:600;color:var(--text-primary);margin-bottom:6px;font-size:16px;">Price Alerts</div>
-              <div style="font-size:13px;color:var(--text-tertiary);line-height:1.5;">Set price notifications</div>
-            </div>
-        </button>
+          
         </div>
       </div>
 
@@ -2560,10 +2540,6 @@ body{overflow-x:hidden}
                 <div class="summary-label">Total Targets</div>
                 <div class="summary-value" id="adminAnalyticsTargets">0</div>
               </div>
-              <div class="summary-card">
-                <div class="summary-label">Total Alerts</div>
-                <div class="summary-value" id="adminAnalyticsAlerts">0</div>
-              </div>
             </div>
 
             <div style="background:var(--bg-card);border:1px solid var(--border-secondary);border-radius:12px;padding:24px;">
@@ -2977,7 +2953,7 @@ auth.onAuthStateChanged(user=>{
     
     // Redirect to market page if on protected pages
     const currentPage = window.location.hash.replace('#', '') || 'market';
-    const protectedPages = ['dashboard', 'portfolio', 'targets', 'alerts', 'profile', 'admin'];
+    const protectedPages = ['dashboard', 'portfolio', 'targets',  'profile', 'admin'];
     if (protectedPages.includes(currentPage)) {
       showPage('market');
     }
@@ -3955,7 +3931,7 @@ function showPage(pageName) {
   const asiPanelEl = document.getElementById('asiAlliancePanel');
   
   // Show carousels only on market page, hide on dashboard, portfolio, alerts, profile, and tradingJournal pages
-  const pagesToHide = ['dashboard', 'portfolio', 'alerts', 'profile', 'tradingJournal'];
+  const pagesToHide = ['dashboard', 'portfolio',  'profile', 'tradingJournal'];
   const shouldHide = pagesToHide.includes(pageName);
   
   if (heroStatsEl) {
@@ -6493,10 +6469,7 @@ function updateDashboard() {
   const dashboardHoldingsCount = document.getElementById('dashboardHoldingsCount');
   if (dashboardHoldingsCount) dashboardHoldingsCount.textContent = holdingsCount;
   
-  // Update alerts (placeholder)
-  const dashboardActiveAlerts = document.getElementById('dashboardActiveAlerts');
-  if (dashboardActiveAlerts) dashboardActiveAlerts.textContent = '0';
-}
+  
 
 // Admin panel functions
 function loadAdminData() {
@@ -6549,17 +6522,14 @@ function updateAdminAnalytics() {
   const tokensCount = cryptoData.length;
   const portfoliosCount = 0; // TODO: Get from Firebase
   const targetsCount = Object.keys(sellTargets || {}).length;
-  const alertsCount = 0; // TODO: Get from Firebase
   
   const analyticsTokens = document.getElementById('adminAnalyticsTokens');
   const analyticsPortfolios = document.getElementById('adminAnalyticsPortfolios');
   const analyticsTargets = document.getElementById('adminAnalyticsTargets');
-  const analyticsAlerts = document.getElementById('adminAnalyticsAlerts');
   
   if (analyticsTokens) analyticsTokens.textContent = tokensCount;
   if (analyticsPortfolios) analyticsPortfolios.textContent = portfoliosCount;
   if (analyticsTargets) analyticsTargets.textContent = targetsCount;
-  if (analyticsAlerts) analyticsAlerts.textContent = alertsCount;
 }
 
 function updateAdminNavVisibility() {
@@ -6716,7 +6686,7 @@ window.adminExportDatabase = function() {
 // Initialize page on load - Modern implementation
 function initializePage() {
   const hash = window.location.hash.replace('#', '');
-  const protectedPages = ['dashboard', 'portfolio', 'targets', 'alerts', 'profile', 'admin'];
+  const protectedPages = ['dashboard', 'portfolio', 'targets',  'profile', 'admin'];
   
   // Check if user is authenticated
   const isAuthenticated = currentUser !== null && currentUser !== undefined;
@@ -7749,7 +7719,7 @@ if (window.showPage && !window._dashboardWrapped) {
     originalShowPage.apply(this, arguments);
     if (page === 'dashboard' && currentUser) {
       setTimeout(() => {
-        updateDashboardStats(portfolioHoldings || {}, sellTargets || {}, alerts || {});
+        updateDashboardStats(portfolioHoldings || {}, sellTargets || {});
       }, 500);
     }
   };
