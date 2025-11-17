@@ -4639,7 +4639,7 @@ $('editHoldingForm').onsubmit = async e => {
     if (currentUser && document.getElementById('dashboardPage')?.style.display !== 'none') {
       updateDashboardStats(portfolioHoldings || {}, sellTargets || {}, alerts);
     }
-  } catch (e) {
+   catch (e) {
     console.error('Load alerts error:', e);
    
 
