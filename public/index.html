@@ -1662,10 +1662,7 @@ body{overflow-x:hidden}
       <span class="sidebar-nav-icon">🎯</span>
       <span class="sidebar-nav-text">Trade</span>
     </div>
-    <div class="sidebar-nav-item" data-page="alerts">
-      <span class="sidebar-nav-icon">🔔</span>
-      <span class="sidebar-nav-text">შეტყობინებები</span>
-    </div>
+    
     <div class="sidebar-nav-item" data-page="tradingJournal">
       <span class="sidebar-nav-icon">📝</span>
       <span class="sidebar-nav-text">Trading Journal</span>
@@ -1760,21 +1757,7 @@ body{overflow-x:hidden}
         </div>
       </div>
 
-        <!-- Active Alerts Card -->
-        <div class="summary-card dashboard-stat-card" style="background:linear-gradient(135deg,rgba(245,158,11,0.15) 0%,rgba(217,119,6,0.08) 100%);border:1px solid rgba(245,158,11,0.3);position:relative;overflow:hidden;">
-          <div style="position:absolute;top:-50px;right:-50px;width:150px;height:150px;background:radial-gradient(circle,rgba(245,158,11,0.2),transparent);border-radius:50%;"></div>
-          <div style="position:relative;z-index:1;">
-            <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px;">
-              <div>
-                <div class="summary-label" style="font-size:13px;opacity:0.8;margin-bottom:8px;">Active Alerts</div>
-                <div class="summary-value" id="dashboardActiveAlerts" style="font-size:32px;font-weight:700;line-height:1.2;">0</div>
-              </div>
-              <div style="width:48px;height:48px;background:rgba(245,158,11,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;">🔔</div>
-            </div>
-            <div style="font-size:13px;color:var(--text-secondary);margin-top:12px;">Triggered: <span id="dashboardTriggeredAlerts" style="color:var(--warning);font-weight:600;">0</span></div>
-          </div>
-    </div>
-  </div>
+        
 
       <!-- Professional Performance Metrics -->
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin-bottom:40px;">
@@ -2157,27 +2140,7 @@ body{overflow-x:hidden}
         </div>
       </div>
 
-      <!-- Alerts Page Content -->
-      <div id="alertsPage" class="page-content">
-        <div class="main-section" style="width:100%;">
-          <div class="section-header">
-            <div class="section-title">შეტყობინებები</div>
-          </div>
-
-        <div class="alerts-list" id="alertsList"></div>
-
-        <form class="add-alert-form" id="addAlertForm">
-          <select id="alertToken" required></select>
-          <select id="alertCondition" required>
-              <option value="above">ზემოთ</option>
-              <option value="below">ქვემოთ</option>
-          </select>
-            <input type="number" step="any" placeholder="სამიზნე ფასი" id="targetPrice" required>
-            <input type="text" placeholder="შეტყობინება (არასავალდებულო)" id="alertMessage">
-            <button type="submit">დაყენება</button>
-        </form>
-      </div>
-    </div>
+      
 
       <!-- Trading Journal Page -->
       <div id="tradingJournalPage" class="page-content" style="display:none;">
@@ -2998,7 +2961,6 @@ auth.onAuthStateChanged(user=>{
     // Wait a bit to ensure Firebase is fully initialized
     setTimeout(() => {
       loadPortfolio();
-      loadAlerts();
       loadTargets();
     }, 500);
   }else{
@@ -3041,7 +3003,6 @@ function renderAll() {
     renderRecentActivity();
   }
   populateTokenSelect('holdingToken');
-  populateTokenSelect('alertToken');
 }
 
 // Crypto ETF Data from SoSoValue
@@ -4033,7 +3994,6 @@ function showPage(pageName) {
     loadTargets();
     populateTargetTokenSelect();
   } else if (pageName === 'alerts' && currentUser) {
-    loadAlerts();
   } else if (pageName === 'tradingJournal' && currentUser) {
     loadTrades();
   }
@@ -4185,15 +4145,7 @@ function vibrate(pattern = [50]) {
   }
 }
 
-// Add haptic feedback to alerts
-const originalAddAlert = window.addAlert;
-if (originalAddAlert) {
-  window.addAlert = async function(alertData) {
-    const result = await originalAddAlert.call(this, alertData);
-    vibrate([50, 50, 50]); // Short vibration pattern when adding alert
-    return result;
-  };
-}
+
 
 /* ---------- SCREEN READER OPTIMIZATION ---------- */
 // Add ARIA labels to interactive elements
@@ -4270,7 +4222,6 @@ async function fetchAll(forceRefresh = false){
       
       if (currentUser) {
         loadPortfolio();
-        loadAlerts();
         loadTargets();
       }
       populateTargetTokenSelect();
@@ -4403,7 +4354,6 @@ async function fetchAll(forceRefresh = false){
            // Load portfolio, alerts, and targets after market data is loaded
            if(currentUser) { 
              loadPortfolio(); 
-             loadAlerts();
              loadTargets();
            }
            // Populate target token select
@@ -4684,106 +4634,15 @@ $('editHoldingForm').onsubmit = async e => {
   }
 };
 
-/* ---------- ALERTS (via Vercel API) ---------- */
-async function loadAlerts(){
-  if(!currentUser) return;
-  try {
-    const token = await currentUser.getIdToken();
-    const res = await fetch('/api/alerts', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    
-    let data;
-    try {
-      const text = await res.text();
-      if (!text) {
-        data = {};
-      } else {
-        data = JSON.parse(text);
-      }
-    } catch (jsonError) {
-      console.error('Failed to parse alerts response:', jsonError);
-      throw new Error(`Server returned invalid response (${res.status} ${res.statusText}). Response: ${(await res.text()).substring(0, 100)}`);
-    }
-    
-    if (!res.ok) {
-      const errorMsg = data.error || data.message || `HTTP ${res.status}: ${res.statusText}`;
-      throw new Error(errorMsg);
-    }
-    
-    const alertsData = data || {};
-    alerts = alertsData; // Store globally for dashboard
-    renderAlerts(alertsData);
+
     // Update dashboard if on dashboard page
     if (currentUser && document.getElementById('dashboardPage')?.style.display !== 'none') {
       updateDashboardStats(portfolioHoldings || {}, sellTargets || {}, alerts);
     }
   } catch (e) {
     console.error('Load alerts error:', e);
-    // Don't show alert if it's just empty alerts
-    if (!e.message.includes('404') && !e.message.includes('invalid response')) {
-      console.warn('შეტყობინებების ჩატვირთვის შეცდომა: ' + e.message);
-    }
-    // Always render alerts (even if empty) to show empty state
-    alerts = {};
-    renderAlerts({});
-  }
-}
+   
 
-async function addAlert(alert) {
-  try {
-    const token = await currentUser.getIdToken();
-    const res = await fetch('/api/alerts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ alert })
-    });
-    if (res.status !== 200) throw new Error('დამატება ვერ მოხერხდა');
-    loadAlerts();
-  } catch (e) {
-    alert('დამატების შეცდომა: ' + e.message);
-  }
-}
-
-window.deleteAlert = async (id) => {
-  if(!confirm('წაშლა?')) return;
-  try {
-    const token = await currentUser.getIdToken();
-    const res = await fetch(`/api/alerts?id=${encodeURIComponent(id)}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    
-    let data;
-    try {
-      data = await res.json();
-    } catch (jsonError) {
-      const text = await res.text();
-      throw new Error(`Server returned invalid response (${res.status} ${res.statusText}): ${text.substring(0, 100)}`);
-    }
-    
-    if (!res.ok) {
-      const errorMsg = data.error || data.message || `HTTP ${res.status}: ${res.statusText}`;
-      throw new Error(errorMsg);
-    }
-    
-    loadAlerts();
-  } catch (e) {
-    alert('შეტყობინების წაშლის შეცდომა: ' + e.message);
-    console.error('Delete alert error:', e);
-  }
-};
-
-$('addAlertForm').onsubmit = async e => {
-  e.preventDefault();
-  const tokenId = $('alertToken').value;
-  const condition = $('alertCondition').value;
-  const target = parseFloat($('targetPrice').value);
-  const message = $('alertMessage').value;
-  if(!tokenId || isNaN(target)) return alert('გთხოვთ შეავსოთ ყველა ველი');
-  await addAlert({ tokenId, condition, target, message });
-  e.target.reset();
-};
 
 $('addTargetForm').onsubmit = async e => {
   e.preventDefault();
@@ -6155,57 +6014,7 @@ function startEdit(el) {
   cancelBtn.onclick = () => loadPortfolio();
 }
 
-function renderAlerts(alerts) {
-  const list = $('alertsList');
-  if (!list) return;
-  list.innerHTML = '';
-  if (!alerts || Object.keys(alerts).length === 0) {
-    list.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-state-icon">🔔</div>
-        <div class="empty-state-title">შეტყობინებები არ არის</div>
-        <div class="empty-state-text">დაამატეთ ფასის შეტყობინებები, რათა მიიღოთ გაფრთხილებები, როდესაც ტოკენები მიაღწევენ სამიზნე ფასებს</div>
-      </div>
-    `;
-    populateTokenSelect('alertToken');
-    return;
-  }
-  Object.entries(alerts || {}).forEach(([id, a]) => {
-    if (!a || !a.tokenId) return; // Skip invalid alerts
-    const token = cryptoData.find(t => t.id === a.tokenId);
-    const tokenName = token?.name || a.tokenId || 'Unknown Token';
-    const tokenImage = token?.image || 'https://via.placeholder.com/32?text=?';
-    const price = prices[a.tokenId] || 0;
-    const triggered = (a.condition === 'above' && price >= a.target) || (a.condition === 'below' && price <= a.target);
-    list.innerHTML += `
-      <div class="alert-row ${triggered ? 'triggered' : ''}">
-        <div class="token-icon-col"><img src="${tokenImage}" class="token-icon" onerror="this.src='https://via.placeholder.com/32?text=?'"></div>
-        <div>${tokenName}</div>
-        <div>${a.condition === 'above' ? '>' : '<'} $${formatPrice(a.target || 0)}</div>
-        <div>$${formatPrice(price)}</div>
-        <div class="delete-btn" onclick="deleteAlert('${id}')">X</div>
-      </div>`;
-    if (triggered && !a.notified) {
-      // Haptic feedback on mobile
-      vibrate([100, 50, 100, 50, 100]); // Strong vibration pattern for alert trigger
-      
-      if (typeof confetti !== 'undefined') {
-      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-      }
-      if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification('CCX შეტყობინება', { body: `${a.message || ''} ${tokenName} არის ${a.condition === 'above' ? 'ზემოთ' : 'ქვემოთ'} $${a.target}!` });
-      }
-      
-      // Announce to screen readers
-      const liveRegion = document.getElementById('liveRegion');
-      if (liveRegion) {
-        liveRegion.textContent = `შეტყობინება გააქტიურდა: ${tokenName} არის ${a.condition === 'above' ? 'ზემოთ' : 'ქვემოთ'} $${a.target}`;
-        setTimeout(() => liveRegion.textContent = '', 1000);
-      }
-    }
-  });
-  populateTokenSelect('alertToken');
-}
+
 
 /* ---------- POPULATE SELECTS ---------- */
 function populateTokenSelect(id) {
@@ -6262,7 +6071,6 @@ $('refreshButton').onclick = () => {
   fetchAll(true); // Force refresh (bypass cache)
   if (currentUser) {
     loadPortfolio();
-    loadAlerts();
   }
 };
 
@@ -6311,7 +6119,6 @@ function startAutoRefresh() {
 fetchAll();
   if (currentUser) {
     loadPortfolio();
-    loadAlerts();
   }
   }, refreshIntervalMs);
 }
@@ -6560,7 +6367,7 @@ function initSidebarNavigation() {
 const originalShowPage = window.showPage;
 window.showPage = function(page) {
   // Check authentication for protected pages
-  const protectedPages = ['dashboard', 'portfolio', 'targets', 'alerts', 'profile', 'admin', 'tradingJournal'];
+  const protectedPages = ['dashboard', 'portfolio', 'targets', 'profile', 'admin', 'tradingJournal'];
   const isAuthenticated = currentUser !== null && currentUser !== undefined;
   
   if (protectedPages.includes(page) && !isAuthenticated) {
@@ -6628,8 +6435,6 @@ window.showPage = function(page) {
       } else if (page === 'targets' && isAuthenticated) {
         loadTargets();
         populateTargetTokenSelect();
-      } else if (page === 'alerts' && isAuthenticated) {
-    loadAlerts();
       } else if (page === 'tradingJournal' && isAuthenticated) {
         loadTrades();
   }
@@ -6903,7 +6708,6 @@ window.adminRefreshAllData = function() {
   fetchAll(true);
   if (currentUser) {
     loadPortfolio();
-    loadAlerts();
   }
   alert('Refreshing all data...');
 };
@@ -7823,29 +7627,7 @@ function updateDashboardStats(holdings, targets, alertsData) {
     reachedTargetsEl.textContent = reachedCount;
   }
   
-  // Update Alerts
-  const alertsArray = Object.values(alertsData || {});
-  const activeAlertsEl = document.getElementById('dashboardActiveAlerts');
-  if (activeAlertsEl) {
-    activeAlertsEl.textContent = alertsArray.length;
-  }
   
-  // Count triggered alerts
-  let triggeredCount = 0;
-  alertsArray.forEach(alert => {
-    const token = cryptoData?.find(t => t.id === alert.tokenId);
-    const currentPrice = token?.current_price || prices[alert.tokenId] || 0;
-    if (alert.condition === 'above' && currentPrice >= alert.price) {
-      triggeredCount++;
-    } else if (alert.condition === 'below' && currentPrice <= alert.price) {
-      triggeredCount++;
-    }
-  });
-  
-  const triggeredAlertsEl = document.getElementById('dashboardTriggeredAlerts');
-  if (triggeredAlertsEl) {
-    triggeredAlertsEl.textContent = triggeredCount;
-  }
   
   // Update Total P&L
   const totalPLEl = document.getElementById('dashboardTotalPL');
@@ -7955,7 +7737,6 @@ function refreshDashboard() {
   if (currentUser) {
     loadPortfolio();
     loadTargets();
-    loadAlerts();
     fetchAll(true);
     showNotification('Dashboard Refreshed', 'All data has been updated', 'success');
   } else {
@@ -7977,26 +7758,7 @@ if (window.showPage && !window._dashboardWrapped) {
   };
 }
 
-// Update alerts when they're loaded
-const originalRenderAlerts = window.renderAlerts;
-if (originalRenderAlerts) {
-  window.renderAlerts = function(alertsData) {
-    originalRenderAlerts.apply(this, arguments);
-    alerts = alertsData || {};
-    if (currentUser) {
-      updateDashboardStats(portfolioHoldings || {}, sellTargets || {}, alerts);
-    }
-  };
-} else {
-  // If renderAlerts doesn't exist, hook into loadAlerts
-  const originalLoadAlerts = window.loadAlerts;
-  if (originalLoadAlerts) {
-    window.loadAlerts = async function() {
-      await originalLoadAlerts.apply(this, arguments);
-      // Alerts will be updated when renderAlerts is called
-    };
-  }
-}
+
 
 /* ──── TRADING JOURNAL CALCULATOR ──── */
 let trades = [];
